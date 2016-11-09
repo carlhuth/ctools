@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'CTools',
     'author': 'chromoly',
-    'version': (1, 7),
+    'version': (1, 8, 1),
     'blender': (2, 78, 0),
     'location': '',
     'description': 'Collection of add-ons',
@@ -45,7 +45,7 @@ if 'bpy' in locals():
     importlib.reload(addongroup)
     CToolsPreferences.reload_sub_modules()
 else:
-    from .addonutils import addongroup
+    from .utils import addongroup
 
 import bpy
 

@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Lock Coordinates',
     'author': 'chromoly',
-    'version': (0, 2, 5),
+    'version': (0, 2, 6),
     'blender': (2, 78, 0),
     'location': 'View3D > ToolShelf > Lock Coordinates, '
                 'View3D > Header, '
@@ -56,8 +56,8 @@ try:
     importlib.reload(addongroup)
     importlib.reload(registerinfo)
 except NameError:
-    from .addonutils import addongroup
-    from .addonutils import registerinfo
+    from ..utils import addongroup
+    from ..utils import registerinfo
 
 
 # BMLayerItem name

@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Overwrite Builtin Images',
     'author': 'chromoly',
-    'version': (0, 2, 2),
+    'version': (0, 2, 3),
     'blender': (2, 78, 0),
     'location': 'UserPreference > Add-ons > Overwrite Builtin Images',
     'description': 'Overwrite splash and icon images',
@@ -41,8 +41,8 @@ try:
     importlib.reload(addongroup)
     importlib.reload(registerinfo)
 except NameError:
-    from .addonutils import addongroup
-    from .addonutils import registerinfo
+    from ..utils import addongroup
+    from ..utils import registerinfo
 
 
 def test_platform():

@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Mouse Gesture',
     'author': 'chromoly',
-    'version': (0, 7, 2),
+    'version': (0, 7, 3),
     'blender': (2, 78, 0),
     'location': 'UserPreferences > Add-ons > Mouse Gesture',
     'description': '',
@@ -45,8 +45,8 @@ try:
     importlib.reload(addongroup)
     importlib.reload(registerinfo)
 except NameError:
-    from .addonutils import addongroup
-    from .addonutils import registerinfo
+    from ..utils import addongroup
+    from ..utils import registerinfo
 
 
 PIXEL_SIZE = 1.0

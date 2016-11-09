@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Make UV Grid',
     'author': 'chromoly',
-    'version': (0, 1, 1),
+    'version': (0, 1, 2),
     'blender': (2, 78, 0),
     'location': 'Image Editor > Header > Image > Make UV Grid',
     'description': 'Make UV grid image',
@@ -42,8 +42,8 @@ try:
     importlib.reload(addongroup)
     importlib.reload(registerinfo)
 except NameError:
-    from .addonutils import addongroup
-    from .addonutils import registerinfo
+    from ..utils import addongroup
+    from ..utils import registerinfo
 
 
 DEFAULT_PATTERN = 'CHECKER'  # 'CHECKER', 'CHECKER_CIRCLE', 'FULL'

@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Lock 3D Cursor',
     'author': 'chromoly',
-    'version': (0, 4, 1),
+    'version': (0, 4, 2),
     'blender': (2, 78, 0),
     'location': '3D View -> Action Mouse / Alt + Action Mouse',
     'description': 'commit a791153: 3D Cursor: Add option to lock it in place '
@@ -52,10 +52,10 @@ try:
     importlib.reload(structures)
     importlib.reload(vagl)
 except NameError:
-    from .addonutils import addongroup
-    from .addonutils import customproperty
-    from .addonutils import registerinfo
-    from .addonutils import structures
+    from ..utils import addongroup
+    from ..utils import customproperty
+    from ..utils import registerinfo
+    from ..utils import structures
     from . import vagl
 
 

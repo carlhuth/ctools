@@ -58,8 +58,8 @@ try:
     importlib.reload(memocoords)
     importlib.reload(tooldata)
 except NameError:
-    from . import addongroup
-    from . import registerinfo
+    from ..utils import addongroup
+    from ..utils import registerinfo
     from . import localutils
     from . import va
     from . import enums

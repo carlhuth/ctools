@@ -21,7 +21,7 @@ from ctypes import *
 import functools
 import logging
 
-from .addonutils.structures import wmWindow, wmEventHandler
+from ..utils.structures import wmWindow, wmEventHandler
 
 import bpy
 

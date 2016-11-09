@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Emulate Numpad',
     'author': 'chromoly',
-    'version': (0, 1, 1),
+    'version': (0, 1, 2),
     'blender': (2, 78, 0),
     'location': 'Screen > MiddleMouse',
     # 英語で書けるかよw
@@ -51,9 +51,9 @@ try:
     importlib.reload(structures)
 except NameError:
     from .. import listvalidkeys
-    from .addonutils import addongroup
-    from .addonutils import registerinfo
-    from .addonutils import structures
+    from ..utils import addongroup
+    from ..utils import registerinfo
+    from ..utils import structures
 
 
 OPERATOR_PRIORITY = [

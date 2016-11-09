@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'File Browser Confirm',
     'author': 'chromoly',
-    'version': (0, 1, 2),
+    'version': (0, 1, 3),
     'blender': (2, 78, 0),
     'location': 'File Browser',
     'description': '',
@@ -45,11 +45,11 @@ try:
     importlib.reload(utils)
     importlib.reload(wrapoperator)
 except NameError:
-    from .addonutils import addongroup
-    from .addonutils import customproperty
-    from .addonutils import registerinfo
-    from .addonutils import structures
-    from .addonutils import utils
+    from ..utils import addongroup
+    from ..utils import customproperty
+    from ..utils import registerinfo
+    from ..utils import structures
+    from ..utils import utils
     from . import wrapoperator
 
 

@@ -23,7 +23,7 @@ bl_info = {
     'name': 'Screencast Keys Mod',
     'author': 'Paulo Gomes, Bart Crouch, John E. Herrenyo, '
               'Gaia Clary, Pablo Vazquez, chromoly, Nutti',
-    'version': (2, 0, 2),
+    'version': (2, 0, 3),
     'blender': (2, 78, 0),
     'location': '3D View > Properties Panel > Screencast Keys',
     'warning': '',
@@ -65,9 +65,9 @@ try:
     importlib.reload(utils)
     importlib.reload(modalmanager)
 except NameError:
-    from .addonutils import addongroup
-    from .addonutils import registerinfo
-    from .addonutils import utils
+    from ..utils import addongroup
+    from ..utils import registerinfo
+    from ..utils import utils
 from .modalmanager import ModalHandlerManager
 
 

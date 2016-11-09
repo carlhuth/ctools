@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Region Ruler',
     'author': 'chromoly',
-    'version': (2, 4, 2),
+    'version': (2, 4, 3),
     'blender': (2, 78, 0),
     'location': 'View3D > Properties, ImageEditor > Properties',
     'description': '',
@@ -84,10 +84,10 @@ try:
     importlib.reload(vav)
     importlib.reload(vawm)
 except NameError:
-    from .addonutils import addongroup
-    from .addonutils import customproperty
-    from .addonutils import registerinfo
-    from .addonutils import utils
+    from ..utils import addongroup
+    from ..utils import customproperty
+    from ..utils import registerinfo
+    from ..utils import utils
     from . import unitsystem
     from . import vagl
     from . import vamath as vam

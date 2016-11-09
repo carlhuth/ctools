@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Quick Boolean',
     'author': 'chromoly',
-    'version': (1, 0, 1),
+    'version': (1, 0, 2),
     'blender': (2, 78, 0),
     'location': '',
     'description': '',
@@ -49,8 +49,8 @@ try:
     importlib.reload(vagl)
     importlib.reload(vaview3d)
 except NameError:
-    from .addonutils import addongroup
-    from .addonutils import registerinfo
+    from ..utils import addongroup
+    from ..utils import registerinfo
     from . import unitsystem
     from . import vagl
     from . import vaview3d

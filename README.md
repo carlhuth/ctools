@@ -4,53 +4,53 @@
 
 ## Edit Mesh Draw Nearest
 マウスクリックで次に選択するであろう要素を強調表示する。  
-![Image](images/drawnear.jpg)
+![Image](_images/drawnear.jpg)
 
 ## Lock Coordinates
 頂点の移動、選択を抑制する。  
-![Image](images/lockcoords.jpg)
+![Image](_images/lockcoords.jpg)
 
 ## Lock 3D Cursor
 マウスクリックでの3Dカーソル移動を禁止する。以前コミットされ、その後消されたものをアドオンで再現。  
-![Image](images/lockcursor.jpg)
+![Image](_images/lockcursor.jpg)
 
 ## Mouse Gesture
 マウスジェスチャー。  
-![Image](images/gesture.jpg)
+![Image](_images/gesture.jpg)
 
 ## Overwrite Builtin Images
 スプラッシュとアイコン画像を変更するアドオン(Linux専用)。  
 同梱のoverwrite_builtin_images.pyはバイナリに埋め込まれた画像を書き換えるスクリプト(Windows/Linux)。  
-![Image](images/splash.jpg)
+![Image](_images/splash.jpg)
 
 ## QuadView Move
 マウスドラッグでQuadView境界を移動する。  
-![Image](images/quad.jpg)
+![Image](_images/quad.jpg)
 
 ## Region Ruler
 3DView、ImageEditor、NodeEditorにRulerを表示する。  
-![Image](images/ruler.jpg))
+![Image](_images/ruler.jpg))
 
 ## Screencast Keys Mod
 [Screencast Key Status Tool](http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/3D_interaction/Screencast_Key_Status_Tool "Screencast Key Status Tool")をオペレータ実行中のイベントも取得出来るように勝手に改造したもの。  
-![Image](images/screencast.jpg)
+![Image](_images/screencast.jpg)
 
 ## Update Tag
 マテリアルやテクスチャのドライバーの値が変更された際に3DViewを更新する。
 
 ## List Valid Keys
 現在アクティブなAreaとRegionで有効なショートカットの一覧を標準出力かTextへ出力する。  
-![Image](images/listvalidkeys.jpg)
+![Image](_images/listvalidkeys.jpg)
 
 ## Quick Boolean
 四角形、円形等でメッシュを切り抜く。ObjctModeとEditModeで利用可。  
-![Image](images/quickboolean.jpg)
+![Image](_images/quickboolean.jpg)
 
 ## Splash Screen
 起動時のスプラッシュスクリーンを置換する。  
 履歴一覧はダブルクリックでファイルをロードする。画像の変更と、画像クリックで指定ディレクトリの音声ファイルを再生する機能あり。  
 ※ PyQt5のインストールが必要。  
-![Image](images/splashscreen.jpg)
+![Image](_images/splashscreen.jpg)
 
 ## Align Tools
 頂点やオブジェクト等を整列する。  
@@ -61,7 +61,7 @@
 ## Make UV Grid
 単純なUV Grid 画像を作成する。  
 ※ [Pillow](https://python-pillow.org)のインストールが必要。  
-![Image](images/uvgrid.jpg)
+![Image](_images/uvgrid.jpg)
 
 ## Region Panel Categories
 アクティブなタブの取得と切り替えの為、bpy.types.Regionにpanel_categoriesとactive_panel_category属性を追加する。  
@@ -71,12 +71,12 @@ linuxでのみ動作する。
 画像を上書きする時にダイアログを表示する。
 
 ## その他
-### patch/ui_layout_box.patch
+### _patch/ui_layout_box.patch
 alignが真の状態のUILayoutでbox描画に不具合が起こる問題を修正するパッチ。  
 適用前:  
-![Image](images/bug.jpg)  
+![Image](_images/bug.jpg)  
 適用後:  
-![Image](images/patch.jpg)
+![Image](_images/patch.jpg)
 
 ### 2.78/scripts
 既存のファイルを上書きして動作を変える。
@@ -114,4 +114,4 @@ UserPreferencesのaddonの検索ボックスで、パスの区切り文字(linux
 #### 2.78/scripts/modules/addon_utils.py, 2.78/scripts/modules/_addon_register_info.py  
 UserPreferencesでのaddon詳細表示で、addonが追加するショートカット・クラス・パネルを表示する。  
 ショートカットとパネルの属性の変更が可能。Write(Restore)を押した後に Save User Settings で保存される。
-![Image](images/keymaps.jpg)
+![Image](_images/keymaps.jpg)
