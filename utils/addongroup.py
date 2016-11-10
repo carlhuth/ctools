@@ -389,8 +389,19 @@ class AddonGroupPreferences:
             # zipの場合はどうなるんだろ
             return OrderedDict()
         addon_dir = os.path.dirname(mod.__file__)
+        module_names = bpy.path.module_names(addon_dir)
 
-        for mod_name, mod_path in bpy.path.module_names(addon_dir):
+        def sort_func(item):
+            name, path = item
+            if cls.sub_modules is not None:
+                if name in cls.sub_modules:
+                    return cls.sub_modules.index(name)
+                else:
+                    return len(cls.sub_modules) + module_names.index(item)
+            else:
+                return module_names.index(item)
+
+        for mod_name, mod_path in sorted(module_names, key=sort_func):
             # このファイルと同一な物は飛ばし、指定外のモジュールも無視する。
             if os.path.realpath(mod_path) == os.path.realpath(__file__):
                 continue

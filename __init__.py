@@ -25,7 +25,7 @@ bl_info = {
     'location': '',
     'description': 'Collection of add-ons',
     'warning': '',
-    'wiki_url': 'https://github.com/chromoly/blender_ctools',
+    'wiki_url': 'https://github.com/chromoly/ctools',
     'category': 'User Interface',
 }
 
@@ -78,6 +78,7 @@ class CToolsPreferences(addongroup.AddonGroupPreferences,
         'splashscreen',
         'updatetag',
         'uvgrid',
+        'private',
     ]
 
 
