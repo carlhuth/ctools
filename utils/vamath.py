@@ -43,7 +43,7 @@ import mathutils
 from mathutils import Euler, Matrix, Quaternion, Vector
 from mathutils import geometry as geom
 
-from .. import localutils
+import localutils
 
 from . import vautils as vau
 
@@ -909,7 +909,7 @@ def intersect_line_quad_2d(line_p1, line_p2,
         q1 = quad[i - 1]
         q2 = quad[i]
         if q1 == q2:
-            # TODO: 何かしらの処理が要るか？
+            # TODO: 何かしらの処理が要る？
             continue
 
         line = p2 - p1

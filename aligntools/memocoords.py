@@ -23,12 +23,11 @@ import bpy
 import bmesh
 from mathutils import Matrix
 
-from . import localutils
-from .localutils.checkargs import CheckArgs
+from ..localutils.checkargs import CheckArgs
 
-from .va import vaview3d as vav
-from .va import vaarmature as vaarm
-from .va import manipulatormatrix as vamanipul
+from ..utils import vaview3d as vav
+from ..utils import vaarmature as vaarm
+from ..utils import manipulatormatrix as vamanipul
 
 from . import tooldata
 from .enums import *

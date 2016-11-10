@@ -25,12 +25,12 @@ from mathutils import Matrix, Vector
 import mathutils.geometry as geom
 import bmesh
 
-from .va import vaprops as vap
-from .va import vamath as vam
-from .va import vabmesh as vabm
-from .va import vaoperator as vaop
-from .va import modalmouse
-from .va.looptris import LoopTris
+from ..utils import vaprops as vap
+from ..utils import vamath as vam
+from ..utils import vabmesh as vabm
+from ..utils import vaoperator as vaop
+from ..utils import modalmouse
+from ..utils.looptris import LoopTris
 
 from . import tooldata
 

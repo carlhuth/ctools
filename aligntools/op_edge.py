@@ -17,43 +17,18 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-from collections import OrderedDict
-import importlib
-import itertools
-import os
-import math
-import time
-
 import bpy
 import bpy.utils.previews
 import bmesh
-import bgl
-import mathutils
-from mathutils import Matrix, Vector
+from mathutils import Vector
 from mathutils import geometry as geom
 
-from . import utils
-from . import localutils
-from . import va
-from . import enums
-from . import funcs
-from . import grouping
-from . import memocoords
 from . import tooldata
 
-from .localutils.checkargs import CheckArgs
-from .va import vaoperator as vaop
-from .va import vaarmature as vaarm
-from .va import vamath as vam
-from .va import convexhull
-from .va import vagl
-from .va import unitsystem
-from .va import manipulatormatrix
-from .va import vaview3d as vav
-from .va import vabmesh as vabm
-from .enums import *
+from ..localutils.checkargs import CheckArgs
+from ..utils import vamath as vam
+from ..utils import vabmesh as vabm
 from .op_template import *
-from . import custom_icons
 
 tool_data = tooldata.tool_data
 memoize = tool_data.memoize

@@ -22,8 +22,7 @@ import math
 from mathutils import Vector
 import bgl
 
-from .. import localutils
-from ..localutils import units
+import localutils.units
 
 from . import vagl
 from . import vaview3d as vav

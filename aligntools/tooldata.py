@@ -19,9 +19,9 @@
 
 from mathutils import Matrix
 
-from .localutils.memoize import Memoize
+from ..localutils.memoize import Memoize
 
-from .va import vamath as vam
+from ..utils import vamath as vam
 
 
 class ToolData:

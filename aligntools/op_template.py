@@ -21,7 +21,7 @@ import bpy
 
 from . import grouping
 from . import tooldata
-from .va import vaoperator as vaop
+from ..utils import vaoperator as vaop
 from .enums import *
 from . import op_stubs
 

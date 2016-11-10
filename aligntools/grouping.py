@@ -27,16 +27,15 @@ import bpy
 from mathutils import Matrix, Vector
 import bmesh
 
-from . import localutils
-from .localutils import utils
-from .localutils.checkargs import CheckArgs
+from .. import localutils
+from ..localutils.checkargs import CheckArgs
 
-from .va import convexhull
-from .va import vabmesh as vabm
-from .va import vamath as vam
-from .va import vaview3d as vav
-from .va import vaarmature as vaarm
-from .va import vaobject as vaob
+from ..utils import convexhull
+from ..utils import vabmesh as vabm
+from ..utils import vamath as vam
+from ..utils import vaview3d as vav
+from ..utils import vaarmature as vaarm
+from ..utils import vaobject as vaob
 
 from . import tooldata
 from . import memocoords

@@ -56,7 +56,7 @@ except NameError:
     from ..utils import customproperty
     from ..utils import registerinfo
     from ..utils import structures
-    from . import vagl
+    from ..utils import vagl
 
 
 class LockCursorPreferences(

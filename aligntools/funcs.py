@@ -21,9 +21,9 @@ import bpy
 from mathutils import Matrix, Vector
 import bmesh
 
-from .localutils.checkargs import CheckArgs
+from ..localutils.checkargs import CheckArgs
 
-from .va import vaarmature as vaarm
+from ..utils import vaarmature as vaarm
 
 from . import tooldata
 from . import memocoords

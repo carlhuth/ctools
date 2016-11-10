@@ -26,7 +26,7 @@ from bpy.props import *
 import mathutils
 from mathutils import Matrix, Vector, Quaternion
 
-from ..localutils.checkargs import CheckArgs
+from localutils.checkargs import CheckArgs
 
 from . import vautils as vau
 from . import vawm as vawm
@@ -130,8 +130,11 @@ def quat_to_axis_view_context(context):
 
 
 def project(region, rv3d, vec):
-    """World Coords (3D) -> Window Coords (3D).
-    Window座標は左手系で、Zのクリッピング範囲は0~1。
+    """World Coords (3D) -> Region Coords (3D).
+    Region座標は左手系で、Zのクリッピング範囲は0~1。
+    :type region: bpy.types.Region
+    :type rv3d: bpy.types.RegionView3D
+    :type vec: mathutils.Vector | collections.abc.Sequence
     """
     v = rv3d.perspective_matrix * vec.to_4d()
     if abs(v[3]) > PROJECT_MIN_NUMBER:
@@ -143,8 +146,12 @@ def project(region, rv3d, vec):
 
 
 def unproject(region, rv3d, vec, depth_location:"world coords"=None):
-    """Window Coords (2D / 3D) -> World Coords (3D).
-    Window座標は左手系で、Zのクリッピング範囲は0~1。
+    """Region Coords (2D / 3D) -> World Coords (3D).
+    Region座標は左手系で、Zのクリッピング範囲は0~1。
+    :type region: bpy.types.Region
+    :type rv3d: bpy.types.RegionView3D
+    :type vec: mathutils.Vector | collections.abc.Sequence
+    :type depth_location: mathutils.Vector | collections.abc.Sequence
     """
     x = vec[0] * 2.0 / region.width - 1.0
     y = vec[1] * 2.0 / region.height - 1.0

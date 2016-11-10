@@ -19,10 +19,8 @@
 
 import bpy
 
-from . import grouping
 from . import tooldata
-from .va import vaoperator as vaop
-from .enums import *
+
 
 tool_data = tooldata.tool_data
 memoize = tool_data.memoize

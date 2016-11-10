@@ -60,22 +60,21 @@ try:
 except NameError:
     from ..utils import addongroup
     from ..utils import registerinfo
-    from . import localutils
-    from . import va
+    from .. import localutils
     from . import enums
     from . import funcs
     from . import grouping
     from . import memocoords
     from . import tooldata
-from .localutils.checkargs import CheckArgs
-from .va import vaoperator as vaop
-from .va import vaarmature as vaarm
-from .va import vamath as vam
-from .va import convexhull
-from .va import vagl
-from .va import unitsystem
-from .va import manipulatormatrix
-from .va import vaview3d as vav
+from ..localutils.checkargs import CheckArgs
+# from ..utils import vaoperator as vaop
+# from ..utils import vaarmature as vaarm
+# from ..utils import vamath as vam
+# from ..utils import convexhull
+# from ..utils import vagl
+# from ..utils import unitsystem
+# from ..utils import manipulatormatrix
+# from ..utils import vaview3d as vav
 from .enums import *
 
 from . import op_stubs

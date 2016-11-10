@@ -1023,8 +1023,18 @@ if (BPy_StructRNA_Check(obj)) {  # bpy_rna.h
     BPy_StructRNA *py_srna = (BPy_StructRNA *)obj;
     PointerRNA *ptr = &py_srna->ptr;
     StructRNA *srna = ptr->data;
+    if (RNA_struct_is_a(ptr->type, &RNA_Object)) {
+        Object *ob = ptr->data;
+        ...
+    }
     if (RNA_struct_is_ID(ptr->type)) {
         ID *id = ptr->id.data;
+        ...
     }
 }
+
+/* since this is least common case, handle it last */
+if (BPy_PropertyRNA_Check(self)) {
+    BPy_PropertyRNA *self_prop = (BPy_PropertyRNA *)self;
+    if (RNA_property_type(self_prop->prop) == PROP_COLLECTION) {
 """

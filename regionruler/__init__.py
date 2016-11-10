@@ -52,11 +52,7 @@ from decimal import Decimal
 import importlib
 import logging
 import math
-import os
-import platform
-# import pprint
 import string
-import time
 
 import bpy
 import bgl
@@ -65,13 +61,6 @@ from mathutils import Matrix, Vector
 import mathutils.geometry as geom
 from bpy.app.handlers import persistent
 
-# import va
-# import va.vaprops as vap
-# import va.vagl as vagl
-# import va.vaview3d as vav
-# import va.vawm as vawm
-# import va.vamath as vam
-# from va.unitsystem import UnitSystem
 try:
     importlib.reload(addongroup)
     importlib.reload(customproperty)
@@ -88,12 +77,12 @@ except NameError:
     from ..utils import customproperty
     from ..utils import registerinfo
     from ..utils import utils
-    from . import unitsystem
-    from . import vagl
-    from . import vamath as vam
-    from . import vaprops as vap
-    from . import vaview3d as vav
-    from . import vawm
+    from ..utils import unitsystem
+    from ..utils import vagl
+    from ..utils import vamath as vam
+    from ..utils import vaprops as vap
+    from ..utils import vaview3d as vav
+    from ..utils import vawm
 
 
 # 他のModalHandlerが開始する度にRulerを再起動する

@@ -27,11 +27,10 @@ from mathutils import Matrix, Quaternion, Vector
 from . import funcs
 from . import memocoords
 from . import tooldata
-from .va import manipulatormatrix
+from ..utils import manipulatormatrix
 from .op_template import *
 from .enums import *
-from .va import vaobject as vaob
-from .va import vaarmature as vaarm
+from ..utils import vaobject as vaob
 
 
 tool_data = tooldata.tool_data

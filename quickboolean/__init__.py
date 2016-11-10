@@ -51,9 +51,9 @@ try:
 except NameError:
     from ..utils import addongroup
     from ..utils import registerinfo
-    from . import unitsystem
-    from . import vagl
-    from . import vaview3d
+    from ..utils import unitsystem
+    from ..utils import vagl
+    from ..utils import vaview3d
 
 
 project = vaview3d.project
