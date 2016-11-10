@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'CTools',
     'author': 'chromoly',
-    'version': (1, 8, 1),
+    'version': (1, 8, 2),
     'blender': (2, 78, 0),
     'location': '',
     'description': 'Collection of add-ons',
@@ -60,25 +60,23 @@ class CToolsPreferences(addongroup.AddonGroupPreferences,
     bl_idname = __name__
 
     sub_modules = [
-        'quickboolean',
+        'aligntools',
         'drawnearest',
+        'emulatenumpad',
+        'filebrowserconfirm',
+        'listvalidkeys',
         'lockcoords',
         'lockcursor3d',
         'mousegesture',
         'overwrite_builtin_images',
-        'listvalidkeys',
         'quadview_move',
+        'quickboolean',
         'regionruler',
+        'renametool',
         'screencastkeys',
-        # 'searchmenu',
-        'updatetag',
-        # 'floating_window',
         'splashscreen',
-        'aligntools',
-        'emulatenumpad',
+        'updatetag',
         'uvgrid',
-        'panelcategories',
-        'filebrowserconfirm',
     ]
 
 
