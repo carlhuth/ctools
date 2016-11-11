@@ -95,7 +95,7 @@ class SCRIPT_OT_cutils_module_update(bpy.types.Operator):
     bl_description = 'Download and install addon. ' + \
         'Warning: remove all files under {}/'.format(ctools_dir)
 
-    url = 'https://github.com/chromoly/blender_ctools/archive/master.zip'
+    url = 'https://github.com/chromoly/ctools/archive/master.zip'
     log_name = 'ctools_update.log'  # name of bpy.types.Text
 
     dry_run = bpy.props.BoolProperty(
