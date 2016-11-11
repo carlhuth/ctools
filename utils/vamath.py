@@ -43,7 +43,7 @@ import mathutils
 from mathutils import Euler, Matrix, Quaternion, Vector
 from mathutils import geometry as geom
 
-import localutils
+from .. import localutils
 
 from . import vautils as vau
 

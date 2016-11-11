@@ -31,9 +31,8 @@ from itertools import chain as _chain, repeat as _repeat
 import sys as _sys
 import numpy as _np
 import multiprocessing as _mp
-import time
 
-import localutils.memoize as _memoize
+from . import memoize as _memoize
 
 
 __all__ = ['convex_hull', 'OBB']

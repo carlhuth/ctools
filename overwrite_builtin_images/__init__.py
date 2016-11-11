@@ -294,7 +294,7 @@ def register():
 @OverwriteSplashImagePreferences.unregister_addon
 def unregister():
     for cls in classes[::-1]:
-        bpy.utils.register_class(cls)
+        bpy.utils.unregister_class(cls)
     restore_all()
 
 

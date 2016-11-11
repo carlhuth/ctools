@@ -2457,9 +2457,6 @@ classes = [
 ]
 
 
-addon_keymap_items = []
-
-
 @PieMenuPreferences.register_addon
 def register():
     preferences.register()
@@ -2470,7 +2467,7 @@ def register():
     import_user_pie_menus()
 
     for cls in Menu.menus.values():
-        addon_keymap_items.extend(cls.register_keymap_items())
+        cls.register_keymap_items()
 
     # km = bpy.context.window_manager.keyconfigs.active.keymaps['3D View']
     #
@@ -2491,10 +2488,6 @@ def unregister():
     drawicon.unregister()
 
     user_modules.clear()
-
-    for km, kmi in addon_keymap_items:
-        km.keymap_items.remove(kmi)
-    addon_keymap_items.clear()
 
     for cls in classes[::-1]:
         bpy.utils.unregister_class(cls)

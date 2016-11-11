@@ -191,6 +191,13 @@ import traceback
 import bpy
 
 
+__all__ = [
+    'AddonGroupPreferences',
+    'register_module',
+    'unregister_module'
+]
+
+
 class AddonGroupPreferencesMiscellaneous(bpy.types.PropertyGroup):
     """bpy.types.AddonPreferencesを継承したクラスへ動的に属性を追加しても
     インスタンスへは反映されない為、代わりにこれへ属性を追加する。
@@ -439,8 +446,15 @@ class AddonGroupPreferences:
 
         fake_modules.sort(
             key=lambda mod: (mod.bl_info['category'], mod.bl_info['name']))
-        return OrderedDict([(mod.__name__.split('.')[-1], mod)
-                            for mod in fake_modules])
+        fake_modules = OrderedDict(
+            [(mod.__name__.split('.')[-1], mod) for mod in fake_modules])
+
+        if cls.sub_modules is not None:
+            for name in cls.sub_modules:
+                if name not in fake_modules:
+                    print("Submodule not found: {}.{}".format(
+                        cls.bl_idname, name))
+        return fake_modules
 
     @classmethod
     def __init_fake_sub_modules(cls):
@@ -912,17 +926,21 @@ class AddonGroupPreferences:
             print("done.\n")
 
 
-classes = [
-    AddonGroupPreferencesMiscellaneous,
-    AddonGroupPreferences,
-]
+register_module = AddonGroupPreferences.register_module
+unregister_module = AddonGroupPreferences.unregister_module
 
 
-def register():
-    for cls in classes:
-        bpy.utils.register_class(cls)
+# classes = [
+#     AddonGroupPreferencesMiscellaneous,
+#     AddonGroupPreferences,
+# ]
 
 
-def unregister():
-    for cls in classes[::-1]:
-        bpy.utils.unregister_class(cls)
+# def register():
+#     for cls in classes:
+#         bpy.utils.register_class(cls)
+#
+#
+# def unregister():
+#     for cls in classes[::-1]:
+#         bpy.utils.unregister_class(cls)

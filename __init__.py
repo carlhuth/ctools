@@ -78,10 +78,11 @@ class CToolsPreferences(addongroup.AddonGroupPreferences,
         '_space_view3d_localgrid',
         '_piemenu',
         '_mesh_fake_knife',
-        # '_mesh_vertex_slide0',
-        # '_space_view3d_snap_cursor',
-        # '_space_view3d_utility_menu',
-        # '_wm_add_keymaps',
+        '_mesh_vertex_slide',
+        '_space_view3d_snap_cursor',
+        '_space_view3d_utility_menu',
+        '_mesh_add_custom_menu_items',
+        '_wm_custom_keymap',
     ]
 
 

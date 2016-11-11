@@ -26,7 +26,7 @@ from bpy.props import *
 import mathutils
 from mathutils import Matrix, Vector, Quaternion
 
-from localutils.checkargs import CheckArgs
+from ..localutils.checkargs import CheckArgs
 
 from . import vautils as vau
 from . import vawm as vawm

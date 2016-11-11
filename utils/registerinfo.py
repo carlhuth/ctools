@@ -28,7 +28,10 @@ try:
 except:
     from _addon_customproperty import CustomProperty
 
-__all__ = ['AddonRegisterInfo']
+__all__ = [
+    'AddonRegisterInfo',
+    'get_keymap',
+]
 
 
 def name_mangling(class_name, attr):
@@ -2114,3 +2117,6 @@ class AddonRegisterInfo(  # _AddonRegisterInfo,
             module.register, module.__name__, instance=instance)
         module.unregister = new_cls.unregister_addon(
             module.unregister, instance=instance)
+
+
+get_keymap = AddonRegisterInfo.get_keymap

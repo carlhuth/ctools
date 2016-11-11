@@ -31,7 +31,7 @@ from bpy.props import *
 import mathutils as Math
 from mathutils import Matrix, Euler, Vector, Quaternion, geometry
 
-import localutils
+from .. import localutils
 
 from . import vaview3d as vav
 from . import vautils as vau

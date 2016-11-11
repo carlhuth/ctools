@@ -24,12 +24,6 @@ import decimal
 from decimal import Decimal
 D = Decimal
 from fractions import Fraction
-
-# if __name__ == '__main__':
-#     import utils as _utils
-# else:
-#     from . import utils as _utils
-# import localutils.utils as _utils
 from . import utils as _utils
 
 
