@@ -2,7 +2,7 @@
 
 モジュール`addongroup.py`を用いて、アドオン内にある別のアドオンを認識させる。
 
-![Image](../_images/addongroup.jpg)
+![Image](../__images/addongroup.jpg)
 
 ```
 例:
@@ -20,8 +20,7 @@
 
 ## アドオンの修正
 
-※ AddonPreferencesを持たず、かつ子を追加する予定の無いアドオンなら修正の必要は無い。
-
+AddonPreferencesを持たず、かつ子を追加する予定の無いアドオンなら修正の必要は無い。  
 単体ファイルからなるアドオンならパッケージに変更し、中に`addongroup.py`をコピーしておく。  
 
 import部分
@@ -73,12 +72,39 @@ class MyAddonPreferences(
 
 register関数の修正
 
-`module_register`クラスメソッドで`register`関数をデコレートする
+`register_addon`クラスメソッドで`register`関数をデコレートする
 
 ```
-@MyAddonPreferences.module_register
+classes = [
+    ...
+]
+
+@MyAddonPreferences.register_addon
 def register():
-    # (略)
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    
+    # bpy.utils.register_classではなく、bpy.utils.register_moduleを使っているなら
+    # 代わりにregister_moduleメソッドを使う。
+    # MyAddonPreferences.register_module()
+    #
+    # AddonPreferencesが無い場合はaddongroup.register_module関数を使う。
+    # addongroup.register_module(__name__)
+```
+
+unregister関数の修正
+
+```
+def unregister():
+    for cls in classes[::-1]:
+        bpy.utils.unregister_class(cls)
+    
+    # bpy.utils.unregister_classではなく、bpy.utils.unregister_moduleを使っているなら
+    # 代わりにunregister_moduleメソッドを使う。
+    # MyAddonPreferences.unregister_module()
+    #
+    # AddonPreferencesが無い場合はaddongroup.unregister_module関数を使う。
+    # addongroup.unregister_module(__name__)
 ```
 
 AddonPreferencesインスタンスの取得方法
@@ -139,6 +165,8 @@ class BaseAddonPreferences(
 
     bl_idname = __name__
 
+    # モジュール名が _ で始まっているなら初期状態では設定画面に表示されない。
+    # Show Hidden のチェックボックスを有効にすると表示される。
     sub_modules = [
         'my_addon',
         'space_view3d_other_addon'
@@ -148,7 +176,7 @@ classes = [
     BaseAddonPreferences,
 ]
 
-@BaseAddonPreferences.module_register
+@BaseAddonPreferences.register_addon
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)

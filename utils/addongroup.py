@@ -926,8 +926,12 @@ class AddonGroupPreferences:
             print("done.\n")
 
 
-register_module = AddonGroupPreferences.register_module
-unregister_module = AddonGroupPreferences.unregister_module
+def register_msdule(module, verbose=False):
+    AddonGroupPreferences.register_module(module, verbose)
+
+
+def unregister_msdule(module, verbose=False):
+    AddonGroupPreferences.unregister_module(module, verbose)
 
 
 # classes = [
