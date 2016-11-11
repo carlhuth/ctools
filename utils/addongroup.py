@@ -639,6 +639,23 @@ class AddonGroupPreferences:
 
         return new_func
 
+    @classmethod
+    def unregister_addon(cls, func, **kwargs):
+        """何もしないけどregister_addonと対になるものとして一応作成しておく"""
+        import functools
+
+        @functools.wraps(func)
+        def new_func():
+            func()
+
+        new_func._unregister = func
+
+        c = super()
+        if hasattr(c, 'unregister_addon'):
+            new_func = c.unregister_addon(new_func, **kwargs)
+
+        return new_func
+
     def __getattribute__(self, name):
         prefix, base = re.match('(use_|show_expanded_|)(.*)', name).groups()
         if base in super().__getattribute__('_fake_sub_modules'):
@@ -926,11 +943,11 @@ class AddonGroupPreferences:
             print("done.\n")
 
 
-def register_msdule(module, verbose=False):
+def register_module(module, verbose=False):
     AddonGroupPreferences.register_module(module, verbose)
 
 
-def unregister_msdule(module, verbose=False):
+def unregister_module(module, verbose=False):
     AddonGroupPreferences.unregister_module(module, verbose)
 
 

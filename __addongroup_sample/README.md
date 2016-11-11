@@ -185,3 +185,33 @@ def unregister():
     for cls in classes[::-1]:
         bpy.utils.unregister_class(cls)
 ```
+
+## registerinfo.AddonRegisterInfoとの連携
+
+```
+class MyAddonPreferences(
+        addongroup.AddonGroupPreferences,
+        registerinfo.AddonRegisterInfo,
+        bpy.types.AddonPreferences if '.' not in __name__ else
+        bpy.types.PropertyGroup):
+    ...
+
+@MyAddonPreferences.register_addon
+def register():
+    MyAddonPreferences.register_module()
+
+    # KeyMap を取得するには get_keymap メソッドを使う。
+    # これは bpy.context.window_manager.keyconfigs.addon.keymaps から取得している。
+    km = MyAddonPreferences.get_keymap('3D View')
+    """:type: bpy.types.KeyMap"""
+    if km:
+        kmi = km.keymap_items.new('view3d.numpad', 'A', 'PRESS')
+    ...
+
+@MyAddonPreferences.unregister_addon
+def unregister():
+    # AddonRegisterInfo の register_addon と unregister_addon で関数をラップした場合、
+    # register 関数内で追加した KeyMapItem の削除は自動で行ってくれる。
+
+    MyAddonPreferences.unregister_module()
+```

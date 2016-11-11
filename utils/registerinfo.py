@@ -1004,7 +1004,9 @@ class _AddonRegisterInfoKeyMap(_AddonRegisterInfo):
                     if kmi.id == kmi_id:
                         break
                 else:
-                    raise ValueError('KeyMapItem not fond')
+                    # raise ValueError('KeyMapItem not fond')
+                    print('KeyMapItem not fond. KeyMap: {}, ID: {}'.format(
+                          km_name, kmi_id))
                 if 'INVALID_MODAL_KEYMAP' and km.is_modal:
                     raise ValueError(
                         "not support modal keymap: '{}'".format(km.name))
@@ -2084,6 +2086,7 @@ class AddonRegisterInfo(  # _AddonRegisterInfo,
 
                 instance.unregister()
 
+            # TODO: funcを最初に呼んで、キーマップの削除を後回しにする
             func()
 
         _unregister._unregister = func
