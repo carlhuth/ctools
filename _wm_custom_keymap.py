@@ -29,6 +29,7 @@ bl_info = {
 
 
 import functools
+import traceback
 
 import bpy
 
@@ -201,8 +202,7 @@ classes = [
 
 def new_keymap_item(kmname, *args, **kwargs):
     km = registerinfo.AddonRegisterInfo.get_keymap(kmname)
-    kmi = km.keymap_items.new(*args, **kwargs)
-    return kmi
+    return km.keymap_items.new(*args, **kwargs)
 
 
 @CustomKeyMapPreferences.register_addon
@@ -217,8 +217,11 @@ def register():
     ## Screen
     add = functools.partial(new_keymap_item, 'Screen')
     # add('screen.redo_last', 'F6', 'PRESS')  # 何故か消えてたので
-    add('screen.redo_last', 'BUTTON14MOUSE', 'PRESS')
-    add('screen.redo_last', 'BUTTON13MOUSE', 'PRESS')
+    try:
+        add('screen.redo_last', 'BUTTON14MOUSE', 'PRESS')
+        add('screen.redo_last', 'BUTTON13MOUSE', 'PRESS')
+    except:
+        traceback.print_exc()
 
     add('screen.screen_full_area', 'F', 'PRESS', oskey=True)
 
@@ -322,10 +325,15 @@ def register():
     kmi.properties.value_1 = 'MEDIAN_POINT'
     kmi.properties.value_2 = 'ACTIVE_ELEMENT'
 
-    kmi = add('view3d.view_orbit', 'NUMPAD_6', 'PRESS', shift=True, ctrl=True)
-    kmi.properties.type = 'ORBITCCW'
-    kmi = add('view3d.view_orbit', 'NUMPAD_4', 'PRESS', shift=True, ctrl=True)
-    kmi.properties.type = 'ORBITCW'
+    try:
+        kmi = add('view3d.view_orbit', 'NUMPAD_6', 'PRESS', shift=True,
+                  ctrl=True)
+        kmi.properties.type = 'ORBITCCW'
+        kmi = add('view3d.view_orbit', 'NUMPAD_4', 'PRESS', shift=True,
+                  ctrl=True)
+        kmi.properties.type = 'ORBITCW'
+    except:
+        traceback.print_exc()
 
     ## Mesh
     add = functools.partial(new_keymap_item, 'Mesh')
@@ -343,7 +351,11 @@ def register():
     kmi = add('mesh.select_less', 'WHEELDOWNMOUSE', 'PRESS', ctrl=True,
               oskey=True)
 
-    ## Lキーに該当するもの
+    bl_rna = bpy.types.Event.bl_rna
+    if 'BUTTON16MOUSE' not in bl_rna.properties['type'].enum_items:
+        return
+
+    # Lキーに該当するもの
     add = functools.partial(new_keymap_item, 'Grease Pencil Stroke Edit Mode')
     kmi = add('gpencil.select_linked', 'BUTTON16MOUSE', 'PRESS')
     kmi = add('gpencil.select_linked', 'BUTTON16MOUSE', 'PRESS', ctrl=True)
