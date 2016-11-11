@@ -50,11 +50,6 @@ else:
 import bpy
 
 
-# def test_platform():
-#     return (platform.platform().split('-')[0].lower()
-#             not in {'darwin', 'windows'})
-
-
 class CToolsPreferences(addongroup.AddonGroupPreferences,
                         bpy.types.AddonPreferences):
     bl_idname = __name__
@@ -63,7 +58,7 @@ class CToolsPreferences(addongroup.AddonGroupPreferences,
         'aligntools',
         'drawnearest',
         'emulatenumpad',
-        'groupmanager',
+        '_groupmanager',
         'filebrowserconfirm',
         'listvalidkeys',
         'lockcoords',
@@ -73,12 +68,20 @@ class CToolsPreferences(addongroup.AddonGroupPreferences,
         'quadview_move',
         'quickboolean',
         'regionruler',
-        'renametool',
+        '_renametool',
         'screencastkeys',
         'splashscreen',
         'updatetag',
         'uvgrid',
-        'private',
+
+        '_space_view3d_colorwire',
+        '_space_view3d_localgrid',
+        '_piemenu',
+        '_mesh_fake_knife',
+        # '_mesh_vertex_slide0',
+        # '_space_view3d_snap_cursor',
+        # '_space_view3d_utility_menu',
+        # '_wm_add_keymaps',
     ]
 
 

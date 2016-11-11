@@ -737,16 +737,16 @@ class _AddonRegisterInfoKeyMap(_AddonRegisterInfo):
     __lock_default_keymap_items = False
 
     # [(km.name, kmi.id), ...]
-    keymap_items = []
+    keymap_items = ()
     """:type: list[(str, int)]"""
 
     # keymaps_set_default()の際に_keymap_itemsを複製
     # [(km.name, kmi.id), ...]
-    __default_keymap_items = []
+    __default_keymap_items = ()
     """:type: list[(str, int)]"""
 
     # keymap_items_get_attributes()の返り値。
-    __default_keymap_item_values = []
+    __default_keymap_item_values = ()
 
     @staticmethod
     def get_keymap(name):
@@ -1621,7 +1621,7 @@ class _AddonRegisterInfoPanel(_AddonRegisterInfo):
 
 
 class _AddonRegisterInfoClass(_AddonRegisterInfo):
-    addon_classes = []
+    addon_classes = ()
     """:type: list[T]"""
 
     @classmethod
@@ -1690,7 +1690,7 @@ class _AddonRegisterInfoClass(_AddonRegisterInfo):
 
 
 class _AddonRegisterInfoAttribute(_AddonRegisterInfo):
-    addon_attributes = []
+    addon_attributes = ()
     """:type: list[(str, str)]"""
 
     @classmethod
@@ -1730,17 +1730,18 @@ class AddonRegisterInfo(  # _AddonRegisterInfo,
 
     @classmethod
     def derive(cls, bl_idname=None, lock_default_keymap_items=None):
-        """クラス属性を変更した新しいクラスを生成して返す。__new__や__init__が
+        """クラス属性を初期化した新しいクラスを生成して返す。__new__や__init__が
         使えないので苦肉の策
         直接継承せずにこれで生成したクラスを使う
         :rtype: AddonRegisterInfo
         """
         attrs = {
             'keymap_items': [],
-            name_mangling(cls.__name__, '__default_keymap_items'): [],
-            name_mangling(cls.__name__, '__default_keymap_item_values'): [],
+            name_mangling(_AddonRegisterInfoKeyMap.__name__, '__default_keymap_items'): [],
+            name_mangling(_AddonRegisterInfoKeyMap.__name__, '__default_keymap_item_values'): [],
             'addon_classes': [],
             'addon_attributes': [],
+            'hoge': '############'
         }
         if bl_idname is not None:
             attrs['bl_idname'] = bl_idname
@@ -1827,6 +1828,17 @@ class AddonRegisterInfo(  # _AddonRegisterInfo,
         このメソッドを呼ぶ。
         super().register()
         """
+        # 属性初期化
+        cls.keymap_items = []
+        setattr(cls, name_mangling(_AddonRegisterInfoKeyMap.__name__,
+                                   '__default_keymap_items'), [])
+        setattr(cls, name_mangling(_AddonRegisterInfoKeyMap.__name__,
+                                   '__default_keymap_item_values'), [])
+        # cls.__default_keymap_items = []
+        # cls.__default_keymap_item_values = []
+        cls.addon_classes = []
+        cls.addon_attributes = []
+
         classes = [_OperatorKeymapItemAdd,
                    _OperatorKeymapItemRemove,
                    _OperatorKeymapsWrite,
