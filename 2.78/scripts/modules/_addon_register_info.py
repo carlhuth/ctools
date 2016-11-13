@@ -28,7 +28,10 @@ try:
 except:
     from _addon_customproperty import CustomProperty
 
-__all__ = ['AddonRegisterInfo']
+__all__ = [
+    'AddonRegisterInfo',
+    'get_keymap',
+]
 
 
 def name_mangling(class_name, attr):
@@ -126,15 +129,17 @@ class _Registerable(_Helper):
             if force:
                 other_cls._users = 0
             if other_cls._users == 0:
-                bpy.utils.unregister_class(other_cls)
-        else:
-            bpy.utils.unregister_class(cls)  # 例外を出させるため
+                if other_cls.is_registered:
+                    bpy.utils.unregister_class(other_cls)
+        # else:
+        #     bpy.utils.unregister_class(cls)  # 例外を出させるため
 
 
 class _OperatorKeymapItemAdd(_Registerable, bpy.types.Operator):
     bl_idname = 'wm.ari_keymap_item_add'
     bl_label = 'Add Key Map Item'
     bl_description = 'Add key map item'
+    bl_options = {'REGISTER', 'INTERNAL'}
 
     def _get_entries():
         import bpy_extras.keyconfig_utils
@@ -193,6 +198,7 @@ class _OperatorKeymapItemRemove(_Registerable, bpy.types.Operator):
     bl_idname = 'wm.ari_keymap_item_remove'
     bl_label = 'Remove Key Map Item'
     bl_description = 'Remove key map item'
+    bl_options = {'REGISTER', 'INTERNAL'}
 
     item_id = bpy.props.IntProperty()
 
@@ -211,6 +217,7 @@ class _OperatorKeymapsWrite(_Registerable, bpy.types.Operator):
     bl_label = 'Write KeyMaps'
     bl_description = 'Convert key map items into ID properties ' \
                      '(necessary for \'Save User Settings\')'
+    bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
         addon_prefs = context.addon_preferences
@@ -224,6 +231,7 @@ class _OperatorKeymapsRestore(_Registerable, bpy.types.Operator):
     bl_idname = 'wm.ari_keymaps_restore'
     bl_label = 'Restore KeyMaps'
     bl_description = 'Restore key map items and clear ID properties'
+    bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
         addon_prefs = context.addon_preferences
@@ -239,6 +247,7 @@ class _OperatorPanelSettingWrite(_Registerable, bpy.types.Operator):
     bl_idname = 'wm.ari_panel_settings_write'
     bl_label = 'Write Panel Settings'
     bl_description = ''
+    bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
         addon_prefs = context.addon_preferences
@@ -257,6 +266,7 @@ class _OperatorPanelSettingUnset(_Registerable, bpy.types.Operator):
     bl_label = 'Unset Panel Setting'
     bl_description = 'Convert panel settings into ID properties ' \
                      '(necessary for \'Save User Settings\')'
+    bl_options = {'REGISTER', 'INTERNAL'}
 
     attribute = bpy.props.StringProperty()
 
@@ -273,6 +283,7 @@ class _OperatorPanelSettingsRestore(_Registerable, bpy.types.Operator):
     bl_idname = 'wm.ari_panel_settings_restore'
     bl_label = 'Restore Panel Settings'
     bl_description = 'Restore panel settings and clear ID properties'
+    bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
         addon_prefs = context.addon_preferences
@@ -1001,7 +1012,9 @@ class _AddonRegisterInfoKeyMap(_AddonRegisterInfo):
                     if kmi.id == kmi_id:
                         break
                 else:
-                    raise ValueError('KeyMapItem not fond')
+                    # raise ValueError('KeyMapItem not fond')
+                    print('KeyMapItem not fond. KeyMap: {}, ID: {}'.format(
+                          km_name, kmi_id))
                 if 'INVALID_MODAL_KEYMAP' and km.is_modal:
                     raise ValueError(
                         "not support modal keymap: '{}'".format(km.name))
@@ -2081,6 +2094,7 @@ class AddonRegisterInfo(  # _AddonRegisterInfo,
 
                 instance.unregister()
 
+            # TODO: funcを最初に呼んで、キーマップの削除を後回しにする
             func()
 
         _unregister._unregister = func
@@ -2114,3 +2128,6 @@ class AddonRegisterInfo(  # _AddonRegisterInfo,
             module.register, module.__name__, instance=instance)
         module.unregister = new_cls.unregister_addon(
             module.unregister, instance=instance)
+
+
+get_keymap = AddonRegisterInfo.get_keymap

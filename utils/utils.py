@@ -20,6 +20,93 @@
 import bpy
 
 
+def register_class(cls):
+    if hasattr(cls, 'register_pre'):
+        cls.register_pre()
+    bpy.utils.register_class(cls)
+    if hasattr(cls, 'register_post'):
+        cls.register_post()
+
+
+def unregister_class(cls):
+    if hasattr(cls, 'unregister_pre'):
+        cls.unregister_pre()
+    bpy.utils.unregister_class(cls)
+    if hasattr(cls, 'unregister_post'):
+        cls.unregister_post()
+
+
+def register_module(module=None, verbose=False, ignore=()):
+    """
+    :type module: str
+    :type verbose: bool
+    :type ignore: list[str]
+    """
+    if verbose:
+        print("bpy.utils.register_module(%r): ..." % module)
+    root_module = module.split('.')[0]
+    is_registered = False
+    for cls in bpy.utils._bpy_module_classes(root_module, is_registered=False):
+        if not cls.__module__.startswith(module):
+            continue
+        is_submodule = False
+        for submodule in ignore:
+            if cls.__module__.startswith(module + '.' + submodule):
+                is_submodule = True
+                break
+        if is_submodule:
+            continue
+
+        if verbose:
+            print("    %r" % cls)
+        try:
+            register_class(cls)
+        except:
+            print("bpy.utils.register_module(): "
+                  "failed to registering class %r" % cls)
+            import traceback
+            traceback.print_exc()
+        is_registered = True
+    if verbose:
+        print("done.\n")
+    if not is_registered:
+        raise Exception("register_module(%r): defines no classes" % module)
+
+
+def unregister_module(module=None, verbose=False, ignore=()):
+    """bpy.utils.unregister_module()がそのままでは使えないのでその改変。
+    :type module: str
+    :type verbose: bool
+    :type ignore: list[str]
+    """
+    if verbose:
+        print("bpy.utils.unregister_module(%r): ..." % module)
+    root_module = module.split('.')[0]
+
+    for cls in bpy.utils._bpy_module_classes(root_module, is_registered=True):
+        if not cls.__module__.startswith(module):
+            continue
+        is_submodule = False
+        for submodule in ignore:
+            if cls.__module__.startswith(module + '.' + submodule):
+                is_submodule = True
+                break
+        if is_submodule:
+            continue
+
+        if verbose:
+            print("    %r" % cls)
+        try:
+            bpy.utils.unregister_class(cls)
+        except:
+            print("bpy.utils.unregister_module(): "
+                  "failed to unregistering class %r" % cls)
+            import traceback
+            traceback.print_exc()
+    if verbose:
+        print("done.\n")
+
+
 def py_idname(name):
     """WM_operator_py_idname
     SOME_OT_op -> some.op

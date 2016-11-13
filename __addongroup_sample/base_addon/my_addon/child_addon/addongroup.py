@@ -191,6 +191,13 @@ import traceback
 import bpy
 
 
+__all__ = [
+    'AddonGroupPreferences',
+    'register_module',
+    'unregister_module'
+]
+
+
 class AddonGroupPreferencesMiscellaneous(bpy.types.PropertyGroup):
     """bpy.types.AddonPreferencesを継承したクラスへ動的に属性を追加しても
     インスタンスへは反映されない為、代わりにこれへ属性を追加する。
@@ -201,7 +208,12 @@ class AddonGroupPreferencesMiscellaneous(bpy.types.PropertyGroup):
         'show_expanded_' + 置換したモジュール名
         '_show_expanded_' + 置換したモジュール名
     """
-    _users = 0
+
+    @classmethod
+    def new_class(cls):
+        return type('AddonGroupPreferencesMiscellaneous',
+                    (bpy.types.PropertyGroup,),
+                    {})
 
 
 class AddonGroupPreferences:
@@ -231,8 +243,12 @@ class AddonGroupPreferences:
     _fake_sub_modules = OrderedDict()
 
     # 末尾の _ は念の為に他と名前が被らないよう加えたもの
-    misc_ = bpy.props.PointerProperty(
-        type=AddonGroupPreferencesMiscellaneous)
+    # register_addonでプロパティを作り直す。
+    # 継承したクラスで上書きしてもregisterの時に参照されるっぽいのでコメントアウト
+    # misc_ = bpy.props.PointerProperty(
+    #     type=AddonGroupPreferencesMiscellaneous)
+    misc_ = None
+
     align_box_draw_ = bpy.props.BoolProperty(
         name='Box Draw',
         description='If applied patch: patch/ui_layout_box.patch',
@@ -243,6 +259,58 @@ class AddonGroupPreferences:
     show_hidden_ = bpy.props.BoolProperty(
         name='Show Hidden',
         default=False)
+
+    def __getattribute__(self, name):
+        prefix, base = re.match('(use_|show_expanded_|)(.*)', name).groups()
+        if base in super().__getattribute__('_fake_sub_modules'):
+            p = super().__getattribute__('misc_')
+            attr = prefix + self.__mod_to_attr(self._fake_sub_modules[base])
+            return getattr(p, attr)
+        else:
+            return super().__getattribute__(name)
+
+    def __setattr__(self, name, value):
+        def is_bpy_props(val):
+            """valueが (bpy.props.BoolProperty, {name='Name', default='True'})
+            といった形式の場合に真を返す。
+            """
+            try:
+                t, kwargs = val
+                props = [getattr(bpy.props, attr) for attr in dir(bpy.props)]
+                return t in props and isinstance(kwargs, dict)
+            except:
+                return False
+
+        prefix, base = re.match('(use_|show_expanded_|)(.*)', name).groups()
+        if base in self._fake_sub_modules:
+            p = self.misc_
+            attr = prefix + self.__mod_to_attr(self._fake_sub_modules[base])
+            if is_bpy_props(value):
+                setattr(p.__class__, attr, value)
+            else:
+                setattr(p, attr, value)
+        else:
+            super().__setattr__(name, value)
+
+    def __delattr__(self, name):
+        prefix, base = re.match('(use_|show_expanded_|)(.*)', name).groups()
+        if base in self._fake_sub_modules:
+            p = self.misc_
+            attr = prefix + self.__mod_to_attr(self._fake_sub_modules[base])
+            delattr(p.__class__, attr)
+        else:
+            super().__delattr__(name)
+
+    def __dir__(self):
+        attrs = list(super().__dir__())
+        p = self.misc_
+        for name in self._fake_sub_modules:
+            attr = self.__mod_to_attr(self._fake_sub_modules[name])
+            for pre in ('', 'use_', 'show_expanded_'):
+                n = pre + attr
+                if hasattr(p, n):
+                    attrs.append(pre + name)
+        return attrs
 
     @classmethod
     def __get_misc_type(cls):
@@ -439,8 +507,15 @@ class AddonGroupPreferences:
 
         fake_modules.sort(
             key=lambda mod: (mod.bl_info['category'], mod.bl_info['name']))
-        return OrderedDict([(mod.__name__.split('.')[-1], mod)
-                            for mod in fake_modules])
+        fake_modules = OrderedDict(
+            [(mod.__name__.split('.')[-1], mod) for mod in fake_modules])
+
+        if cls.sub_modules is not None:
+            for name in cls.sub_modules:
+                if name not in fake_modules:
+                    print("Submodule not found: {}.{}".format(
+                        cls.bl_idname, name))
+        return fake_modules
 
     @classmethod
     def __init_fake_sub_modules(cls):
@@ -563,9 +638,6 @@ class AddonGroupPreferences:
         cls.__init_attributes()
         cls.__register_sub_modules()
 
-        misc_type = cls.__get_misc_type()
-        misc_type._users += 1
-
         c = super()
         if hasattr(c, 'register'):
             c.register()
@@ -589,11 +661,6 @@ class AddonGroupPreferences:
                 base_prop = getattr(base_prop, attr)
             delattr(base_prop, attrs[-1])
 
-        misc_type = cls.__get_misc_type()
-        misc_type._users -= 1
-        if misc_type._users == 0:
-            bpy.utils.unregister_class(misc_type)
-
         c = super()
         if hasattr(c, 'unregister'):
             c.unregister()
@@ -604,7 +671,7 @@ class AddonGroupPreferences:
         このクラスはAddonGroupPreferencesMiscellaneousに依存するので
         それを先に登録する為のもの。
 
-        @AddonGroupPreferences.addon_register
+        @AddonGroupPreferences.register_addon
         def register():
             ...
         """
@@ -613,9 +680,9 @@ class AddonGroupPreferences:
 
         @functools.wraps(func)
         def new_func():
-            misc_type = cls.__get_misc_type()
-            if not misc_type.is_registered:
-                bpy.utils.register_class(misc_type)
+            misc_type = AddonGroupPreferencesMiscellaneous.new_class()
+            bpy.utils.register_class(misc_type)
+            cls.misc_ = bpy.props.PointerProperty(type=misc_type)
             func()
         new_func._register = func
 
@@ -625,57 +692,25 @@ class AddonGroupPreferences:
 
         return new_func
 
-    def __getattribute__(self, name):
-        prefix, base = re.match('(use_|show_expanded_|)(.*)', name).groups()
-        if base in super().__getattribute__('_fake_sub_modules'):
-            p = super().__getattribute__('misc_')
-            attr = prefix + self.__mod_to_attr(self._fake_sub_modules[base])
-            return getattr(p, attr)
-        else:
-            return super().__getattribute__(name)
+    @classmethod
+    def unregister_addon(cls, func, **kwargs):
+        """unregister関数用のデコレータ。"""
+        import functools
 
-    def __setattr__(self, name, value):
-        def is_bpy_props(val):
-            """valueが (bpy.props.BoolProperty, {name='Name', default='True'})
-            といった形式の場合に真を返す。
-            """
-            try:
-                t, kwargs = val
-                props = [getattr(bpy.props, attr) for attr in dir(bpy.props)]
-                return t in props and isinstance(kwargs, dict)
-            except:
-                return False
+        @functools.wraps(func)
+        def new_func():
+            misc_type = cls.__get_misc_type()
+            if misc_type.is_registered:
+                bpy.utils.unregister_class(misc_type)
+            func()
 
-        prefix, base = re.match('(use_|show_expanded_|)(.*)', name).groups()
-        if base in self._fake_sub_modules:
-            p = self.misc_
-            attr = prefix + self.__mod_to_attr(self._fake_sub_modules[base])
-            if is_bpy_props(value):
-                setattr(p.__class__, attr, value)
-            else:
-                setattr(p, attr, value)
-        else:
-            super().__setattr__(name, value)
+        new_func._unregister = func
 
-    def __delattr__(self, name):
-        prefix, base = re.match('(use_|show_expanded_|)(.*)', name).groups()
-        if base in self._fake_sub_modules:
-            p = self.misc_
-            attr = prefix + self.__mod_to_attr(self._fake_sub_modules[base])
-            delattr(p.__class__, attr)
-        else:
-            super().__delattr__(name)
+        c = super()
+        if hasattr(c, 'unregister_addon'):
+            new_func = c.unregister_addon(new_func, **kwargs)
 
-    def __dir__(self):
-        attrs = list(super().__dir__())
-        p = self.misc_
-        for name in self._fake_sub_modules:
-            attr = self.__mod_to_attr(self._fake_sub_modules[name])
-            for pre in ('', 'use_', 'show_expanded_'):
-                n = pre + attr
-                if hasattr(p, n):
-                    attrs.append(pre + name)
-        return attrs
+        return new_func
 
     def draw(self, context, **kwargs):
         """
@@ -912,17 +947,25 @@ class AddonGroupPreferences:
             print("done.\n")
 
 
-classes = [
-    AddonGroupPreferencesMiscellaneous,
-    AddonGroupPreferences,
-]
+def register_module(module, verbose=False):
+    AddonGroupPreferences.register_module(module, verbose)
 
 
-def register():
-    for cls in classes:
-        bpy.utils.register_class(cls)
+def unregister_module(module, verbose=False):
+    AddonGroupPreferences.unregister_module(module, verbose)
 
 
-def unregister():
-    for cls in classes[::-1]:
-        bpy.utils.unregister_class(cls)
+# classes = [
+#     AddonGroupPreferencesMiscellaneous,
+#     AddonGroupPreferences,
+# ]
+
+
+# def register():
+#     for cls in classes:
+#         bpy.utils.register_class(cls)
+#
+#
+# def unregister():
+#     for cls in classes[::-1]:
+#         bpy.utils.unregister_class(cls)
