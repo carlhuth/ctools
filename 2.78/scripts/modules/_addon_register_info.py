@@ -191,7 +191,7 @@ class _OperatorKeymapItemAdd(_Registerable, bpy.types.Operator):
         if self.properties.is_property_set('keymap'):
             return self.execute(context)
         else:
-            return bpy.ops.wm.call_menu(name='WM_MT_ari_keymap_item_add')
+            return bpy.ops.wm.call_menu(name=_MenuKeymapItemAdd.bl_idname)
 
 
 class _OperatorKeymapItemRemove(_Registerable, bpy.types.Operator):
@@ -395,7 +395,7 @@ class _MenuKeymapItemAdd(_Registerable, bpy.types.Menu):
                             icon = 'FILE_TICK'
                         else:
                             icon = 'NONE'
-                        op = row.operator('wm.ari_keymap_item_add',
+                        op = row.operator(_OperatorKeymapItemAdd.bl_idname,
                                           text=name, icon=icon)
                         op.keymap = name
                     j += 1
@@ -1183,7 +1183,8 @@ class _AddonRegisterInfoKeyMap(_AddonRegisterInfo):
             row.label()
 
         sub = row.row()
-        op = sub.operator("wm.ari_keymap_item_remove", text="", icon='X')
+        op = sub.operator(_OperatorKeymapItemRemove.bl_idname, text="",
+                          icon='X')
         op.item_id = kmi.id
         if self.__lock_default_keymap_items:
             if (km.name, kmi.id) in self.__default_keymap_items:
@@ -1417,7 +1418,7 @@ class _AddonRegisterInfoKeyMap(_AddonRegisterInfo):
             ok = True
 
         colsub = col.split(percentage=0.2).column()
-        colsub.operator("wm.ari_keymap_item_add", text="Add New",
+        colsub.operator(_OperatorKeymapItemAdd.bl_idname, text="Add New",
                         icon='ZOOMIN')
 
         # go back and fill in rowsub
@@ -1448,12 +1449,14 @@ class _AddonRegisterInfoKeyMap(_AddonRegisterInfo):
             subcolsplitrow_sub.enabled = False
         else:
             subcolsplitrow_sub.enabled = current_km != idp_km
-        subcolsplitrow_sub.operator('wm.ari_keymaps_write', text='Write')
+        subcolsplitrow_sub.operator(_OperatorKeymapsWrite.bl_idname,
+                                    text='Write')
         # Restore
         subcolsplitrow_sub = subcolsplitrow.row(align=True)
         if current_km == default_km and self.KM_IDPROP_NAME not in addon_prefs:
             subcolsplitrow_sub.enabled = False
-        subcolsplitrow_sub.operator('wm.ari_keymaps_restore', text='Restore')
+        subcolsplitrow_sub.operator(_OperatorKeymapsRestore.bl_idname,
+                                    text='Restore')
 
 
 class _AddonRegisterInfoPanel(_AddonRegisterInfo):
@@ -1568,13 +1571,13 @@ class _AddonRegisterInfoPanel(_AddonRegisterInfo):
             sub.enabled = current_settings != default_settings
         else:
             sub.enabled = current_settings != saved_settings
-        sub.operator('wm.ari_panel_settings_write', text='Write')
+        sub.operator(_OperatorPanelSettingWrite.bl_idname, text='Write')
         sub = sp.row(align=True)
         if saved_settings is None:
             sub.enabled = current_settings != default_settings
         else:
             sub.enabled = True
-        sub.operator('wm.ari_panel_settings_restore', text='Restore')
+        sub.operator(_OperatorPanelSettingsRestore.bl_idname, text='Restore')
 
         for prop in addon_prop.panel_settings:
             def is_changed(attr):
@@ -1594,16 +1597,16 @@ class _AddonRegisterInfoPanel(_AddonRegisterInfo):
             row.prop(prop, 'bl_label')
             if is_changed('bl_label'):
                 sub = row.row()
-                op = sub.operator('wm.ari_panel_setting_unset', text='',
-                                  icon='X', emboss=False)
+                op = sub.operator(_OperatorPanelSettingUnset.bl_idname,
+                                  text='', icon='X', emboss=False)
                 op.attribute = 'bl_label'
 
             row = col.box().row()
             row.prop(prop, 'bl_category')
             if is_changed('bl_category'):
                 sub = row.row()
-                op = sub.operator('wm.ari_panel_setting_unset', text='',
-                                  icon='X', emboss=False)
+                op = sub.operator(_OperatorPanelSettingUnset.bl_idname,
+                                  text='', icon='X', emboss=False)
                 op.attribute = 'bl_category'
 
             col = split.column()
@@ -1612,24 +1615,24 @@ class _AddonRegisterInfoPanel(_AddonRegisterInfo):
             row.prop(prop, 'bl_space_type')
             if is_changed('bl_space_type'):
                 sub = row.row()
-                op = sub.operator('wm.ari_panel_setting_unset', text='',
-                                  icon='X', emboss=False)
+                op = sub.operator(_OperatorPanelSettingUnset.bl_idname,
+                                  text='', icon='X', emboss=False)
                 op.attribute = 'bl_space_type'
 
             row = col.box().row()
             row.prop(prop, 'bl_region_type')
             if is_changed('bl_region_type'):
                 sub = row.row()
-                op = sub.operator('wm.ari_panel_setting_unset', text='',
-                                  icon='X', emboss=False)
+                op = sub.operator(_OperatorPanelSettingUnset.bl_idname,
+                                  text='', icon='X', emboss=False)
                 op.attribute = 'bl_region_type'
 
             row = col.box().row()
             row.prop(prop, 'bl_context')
             if is_changed('bl_context'):
                 sub = row.row()
-                op = sub.operator('wm.ari_panel_setting_unset', text='',
-                                  icon='X', emboss=False)
+                op = sub.operator(_OperatorPanelSettingUnset.bl_idname,
+                                  text='', icon='X', emboss=False)
                 op.attribute = 'bl_context'
 
 
