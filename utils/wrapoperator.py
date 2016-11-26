@@ -22,7 +22,6 @@ import ctypes as ct
 import bpy
 
 from . import structures as st
-from . import utils
 
 
 def get_operator_type(idname_py):
@@ -39,7 +38,7 @@ def get_operator_type(idname_py):
     return op.type.contents
 
 
-def convert_property(prop):
+def bl_prop_to_py_prop(prop):
     if prop.type == 'BOOLEAN':
         if prop.is_array:
             prop_type = bpy.props.BoolVectorProperty
@@ -125,13 +124,13 @@ def convert_property(prop):
     return prop_type(**attrs)
 
 
-def convert_properties(bl_rna):
+def bl_props_to_py_props(bl_rna):
     properties = {}
     invalid_properties = []
     for name, prop in bl_rna.properties.items():
         if name == 'rna_type':
             continue
-        p = convert_property(prop)
+        p = bl_prop_to_py_prop(prop)
         if p is not None:
             properties[name] = p
         else:
@@ -371,7 +370,7 @@ def convert_operator_attributes(idname_py):
     if draw:
         namespace['draw'] = draw
 
-    properties, invalid_properties = convert_properties(bl_rna)
+    properties, invalid_properties = bl_props_to_py_props(bl_rna)
     namespace.update(properties)
 
     return namespace, invalid_properties
