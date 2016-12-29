@@ -70,6 +70,10 @@ linuxでのみ動作する。
 ## File Browser Confirm
 画像を上書きする時にダイアログを表示する。
 
+## Edit Panel Category
+Panelのcategory(タブ名)を変更する。  
+![Image](__images/editpanelcategory.jpg)
+
 ## その他
 ### __patch/ui_layout_box.patch
 alignが真の状態のUILayoutでbox描画に不具合が起こる問題を修正するパッチ。  

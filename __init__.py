@@ -58,6 +58,7 @@ class CToolsPreferences(addongroup.AddonGroupPreferences,
         'aligntools',
         'boolutils',
         'drawnearest',
+        'editpanelcategory',
         'emulatenumpad',
         '_groupmanager',
         'filebrowserconfirm',
@@ -84,6 +85,9 @@ class CToolsPreferences(addongroup.AddonGroupPreferences,
         '_space_view3d_utility_menu',
         '_mesh_add_custom_menu_items',
         '_wm_custom_keymap',
+
+        # 作業中
+        '_groupinstance',
     ]
 
 
