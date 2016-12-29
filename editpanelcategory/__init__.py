@@ -90,6 +90,13 @@ class ToolPropsPanelPreferences(
         bpy.types.AddonPreferences):
     bl_idname = __name__
 
+    use_last_operator_panel_tools = bpy.props.BoolProperty(
+        name='Last Operator Panel (3D View - Tools)',
+    )
+    use_last_operator_panel_ui = bpy.props.BoolProperty(
+        name='Last Operator Panel (3D View - UI)',
+    )
+
     def draw(self, context):
         layout = self.layout
 
@@ -104,6 +111,11 @@ class ToolPropsPanelPreferences(
 
         col = split.column()
         col = split.column()
+
+        layout.separator()
+        row = layout.row()
+        row.prop(self, 'use_last_operator_panel_tools')
+        row.prop(self, 'use_last_operator_panel_ui')
 
         layout.separator()
         super().draw(context)
@@ -561,10 +573,20 @@ class LastOperatorPanelTools(LastOperatorPanel, bpy.types.Panel):
     bl_idname = 'VIEW3D_PT_last_operator_tools'
     bl_region_type = 'TOOLS'
 
+    @classmethod
+    def poll(self, context):
+        prefs = ToolPropsPanelPreferences.get_instance()
+        return prefs.use_last_operator_panel_tools
+
 
 class LastOperatorPanelUI(LastOperatorPanel, bpy.types.Panel):
     bl_idname = 'VIEW3D_PT_last_operator_ui'
     bl_region_type = 'UI'
+
+    @classmethod
+    def poll(self, context):
+        prefs = ToolPropsPanelPreferences.get_instance()
+        return prefs.use_last_operator_panel_ui
 
 
 ###############################################################################
