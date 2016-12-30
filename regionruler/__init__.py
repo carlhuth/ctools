@@ -362,6 +362,13 @@ class RegionRulerPreferences(
         default=(15, 0),
         min=0, size=2)
 
+    cache_size = bpy.props.IntProperty(
+        name='Cache Size',
+        default=500,
+        min=0,
+        max=2000
+    )
+
     auto_save = vap.BP(
         'Auto Save',
         "If a modal operator is running, don't autosave. "
@@ -411,6 +418,7 @@ class RegionRulerPreferences(
         # self.draw_property('image_editor_unit', col, row=True, expand=True)
         # self.draw_property('view_depth', col)
         self.draw_property('use_fill', col)
+        self.draw_property('cache_size', col)
         self.draw_property('auto_save', col)
 
         self.layout.separator()
@@ -464,6 +472,8 @@ def get_view_location(context):
 
 
 class Data:
+    CACHE_SIZE = 500
+
     def __init__(self):
         # RegionRuler_PG.enableをTrueとした際に、そのプロパティのupdate関数が
         # オペレータを呼び出すのを抑制する
@@ -513,6 +523,9 @@ class Data:
         self.shift = None
         self.alt = False
         self.alt_disable_count = 0
+
+        # Cache
+        self.cache = OrderedDict()
 
     def wm_sync(self):
         """WindowManagerに存在しない物をself.operatorsとself.spacesから削除。
@@ -701,6 +714,50 @@ class Data:
         self.is_inside = is_inside
         if is_inside:
             self.last_region_id = region.id
+
+    def make_cache_key(self, d):
+        """draw_free_ruler()のlocals()を引数に受け取る"""
+
+        prefs = d['prefs']
+        font = prefs.font
+        context = d['context']
+        region = context.region
+        unit_system = data.unit_system
+
+        return (
+            tuple(d['start']),
+            tuple(d['end']),
+            d['offset'],
+            d['negative'],
+            d['line_feed'],
+            d['rotate_text'],
+            d['number_upper_side'],
+            d['double_side_scale'],
+            d['base_line'],
+            tuple(d['draw_zero']),
+
+            tuple(prefs.number_min_px),
+            tuple(prefs.scale_size),
+            font.id,
+            font.size,
+            font.margin,
+            context.user_preferences.system.dpi,
+
+            (region.width, region.height),
+            (unit_system.system, unit_system.dpbu),
+        )
+
+    def get_cache(self, prefs, key):
+        if prefs.cache_size == 0:
+            return None
+        return self.cache.get(key)
+
+    def add_cache(self, prefs, key, value):
+        if prefs.cache_size == 0:
+            return
+        self.cache[key] = value
+        if len(self.cache) > prefs.cache_size:
+            self.cache.popitem(False)
 
 
 data = Data()
@@ -986,26 +1043,24 @@ def calc_relative_magnification(unit_system):
     return magnification
 
 
-def scale_label_interval(context, unit_system, cnt):
-    prefs = RegionRulerPreferences.get_instance()
-    magnification = calc_relative_magnification(unit_system)
+def scale_label_interval(number_min_px, unit_system, magnification, cnt):
     interval = 0
     if magnification and cnt % magnification == 0:
         interval = 10
     elif cnt % 5 == 0 and unit_system.system in ('NONE', 'METRIC'):
-        if unit_system.dpg >= prefs.number_min_px[0]:
+        if unit_system.dpg >= number_min_px[0]:
             interval = 5
-    elif unit_system.dpg >= prefs.number_min_px[1]:
+    elif unit_system.dpg >= number_min_px[1]:
         interval = 1
         if unit_system.system == 'NONE':
             interval = 1
-        elif unit_system.dpg >= prefs.number_min_px[1] * 2:
+        elif unit_system.dpg >= number_min_px[1] * 2:
             interval = 1
 
     return interval
 
 
-def make_scale_label(context, unit_system, cnt):
+def make_scale_label(number_min_px, unit_system, magnification, cnt):
     """
     :param unit_system:
     :type unit_system: unitsystem.UnitSystem
@@ -1020,7 +1075,8 @@ def make_scale_label(context, unit_system, cnt):
     if cnt == 0 and unit_system.system != 'NONE':
         return '0' + units.next_basic(unit.symbol)
 
-    interval = scale_label_interval(context, unit_system, cnt)
+    interval = scale_label_interval(number_min_px, unit_system,
+                                    magnification, cnt)
 
     if interval == 0:
         return ''
@@ -1219,91 +1275,101 @@ def draw_free_ruler(context, prefs, start, end, offset,
 
     magnification = calc_relative_magnification(unit_system)
 
-    lines = []
-    lines_bold = []
-    numbers = []
-    numbers_fill = []
-    triangles = []
+    number_min_px = list(prefs.number_min_px)
 
-    for count, p in generate_scale_points(
-            context, start, end, offset, negative):
-        # Scale
-        if not (count == 0 and 'scale' not in draw_zero):
-            if count % magnification == 0:
-                scale_size = ssmain
-                line_width = 3
-            else:
-                scale_size = sseven if count % 2 == 0 else ssodd
-                line_width = 1
+    cache_key = data.make_cache_key(locals())
+    cache = data.get_cache(prefs, cache_key)
+    if cache:
+        lines, lines_bold, numbers, numbers_fill, triangles = cache
+    else:
+        lines = []
+        lines_bold = []
+        numbers = []
+        numbers_fill = []
+        triangles = []
 
-            # 5-Triangles
-            if count % 5 == 0 and count % 10 != 0:
-                if unit_system.system != 'IMPERIAL':
-                    if ssmain >= 3:
-                        v1 = p + vvec * max(0, (ssodd - 3))  # top vertex
-                        v2 = vvec * 3
-                        v3 = hvec * 2
-                        triangles.append((v1 + v2 - v3, v1 + v2 + v3, v1))
-                        scale_size = max(0, scale_size - 3)
-
-            if double_side_scale:
-                val = (p + vvec * scale_size, p - vvec * scale_size)
-            else:
-                val = (p, p + vvec * scale_size)
-            if line_width == 1:
-                lines.append(val)
-            else:
-                lines_bold.append(val)
-
-        # 数値。複数行の場合は右揃え
-        if count == 0 and 'number' not in draw_zero:
-            text = ''
-        else:
-            text = make_scale_label(context, unit_system, count)
-        if line_feed:
-            text_lines = text.split(' ')
-            widths = [blf.dimensions(font.id, t)[0] for t in text_lines]
-        else:
-            text_lines = [text]
-            widths = [blf.dimensions(font.id, text)[0]]
-        box_width = max(widths) + margin * 2
-        box_height = len(widths) * th + (len(widths) + 1) * margin
-        if rotate_text:
-            vx = hvec
-            vy = -vvec
-            h = box_height
-        else:
-            vx = Vector((1, 0))
-            vy = Vector((0, 1))
-            rbox_width, h = rotated_bbox(box_width, box_height, -angle)
-        box_center = p + (ssmain + h / 2) * vvec
-        box_loc = box_center - box_width / 2 * vx - box_height / 2 * vy
-        if text:
-            for i in range(len(text_lines)):
-                txt = text_lines[-i - 1]
-                tw = widths[-i - 1]
-                fx = box_width - margin - tw
-                fy = margin + (th + margin) * i
-                v = box_loc + vx * fx + vy * fy
-                numbers.append((v[0], v[1], txt))
-                v -= (vx + vy) * margin
-                w = tw + margin * 2
-                h = th + margin * 2
-                numbers_fill.append((v[0], v[1], w, h))
-
-        # Origin Triangles
-        if count == 0:
-            if 'marker' in draw_zero:
-                if rotate_text:
-                    w = box_width / 2
+        for count, p in generate_scale_points(
+                context, start, end, offset, negative):
+            # Scale
+            if not (count == 0 and 'scale' not in draw_zero):
+                if count % magnification == 0:
+                    scale_size = ssmain
+                    line_width = 3
                 else:
-                    w = rbox_width / 2
-                triangles.append((box_center - hvec * w - vvec * (th / 2),
-                                  box_center - hvec * (w + 5),
-                                  box_center - hvec * w + vvec * (th / 2)))
-                triangles.append((box_center + hvec * w - vvec * (th / 2),
-                                  box_center + hvec * w + vvec * (th / 2),
-                                  box_center + hvec * (w + 5)))
+                    scale_size = sseven if count % 2 == 0 else ssodd
+                    line_width = 1
+
+                # 5-Triangles
+                if count % 5 == 0 and count % 10 != 0:
+                    if unit_system.system != 'IMPERIAL':
+                        if ssmain >= 3:
+                            v1 = p + vvec * max(0, (ssodd - 3))  # top vertex
+                            v2 = vvec * 3
+                            v3 = hvec * 2
+                            triangles.append((v1 + v2 - v3, v1 + v2 + v3, v1))
+                            scale_size = max(0, scale_size - 3)
+
+                if double_side_scale:
+                    val = (p + vvec * scale_size, p - vvec * scale_size)
+                else:
+                    val = (p, p + vvec * scale_size)
+                if line_width == 1:
+                    lines.append(val)
+                else:
+                    lines_bold.append(val)
+
+            # 数値。複数行の場合は右揃え
+            if count == 0 and 'number' not in draw_zero:
+                text = ''
+            else:
+                text = make_scale_label(number_min_px, unit_system,
+                                        magnification, count)
+            if line_feed:
+                text_lines = text.split(' ')
+                widths = [blf.dimensions(font.id, t)[0] for t in text_lines]
+            else:
+                text_lines = [text]
+                widths = [blf.dimensions(font.id, text)[0]]
+            box_width = max(widths) + margin * 2
+            box_height = len(widths) * th + (len(widths) + 1) * margin
+            if rotate_text:
+                vx = hvec
+                vy = -vvec
+                h = box_height
+            else:
+                vx = Vector((1, 0))
+                vy = Vector((0, 1))
+                rbox_width, h = rotated_bbox(box_width, box_height, -angle)
+            box_center = p + (ssmain + h / 2) * vvec
+            box_loc = box_center - box_width / 2 * vx - box_height / 2 * vy
+            if text:
+                for i in range(len(text_lines)):
+                    txt = text_lines[-i - 1]
+                    tw = widths[-i - 1]
+                    fx = box_width - margin - tw
+                    fy = margin + (th + margin) * i
+                    v = box_loc + vx * fx + vy * fy
+                    numbers.append((v[0], v[1], txt))
+                    v -= (vx + vy) * margin
+                    w = tw + margin * 2
+                    h = th + margin * 2
+                    numbers_fill.append((v[0], v[1], w, h))
+
+            # Origin Triangles
+            if count == 0:
+                if 'marker' in draw_zero:
+                    if rotate_text:
+                        w = box_width / 2
+                    else:
+                        w = rbox_width / 2
+                    triangles.append((box_center - hvec * w - vvec * (th / 2),
+                                      box_center - hvec * (w + 5),
+                                      box_center - hvec * w + vvec * (th / 2)))
+                    triangles.append((box_center + hvec * w - vvec * (th / 2),
+                                      box_center + hvec * w + vvec * (th / 2),
+                                      box_center + hvec * (w + 5)))
+        cache = lines, lines_bold, numbers, numbers_fill, triangles
+        data.add_cache(prefs, cache_key, cache)
 
     # 描画
     if base_line:
@@ -1317,13 +1383,19 @@ def draw_free_ruler(context, prefs, start, end, offset,
     bgl.glColor3f(*prefs.color.line)
 
     # 目盛
-    for line_width, lines in ((1.0, lines), (3.0, lines_bold)):
-        bgl.glLineWidth(line_width)
-        bgl.glBegin(bgl.GL_LINES)
-        for v1, v2 in lines:
-            bgl.glVertex2f(*v1)
-            bgl.glVertex2f(*v2)
-        bgl.glEnd()
+    bgl.glLineWidth(1.0)
+    bgl.glBegin(bgl.GL_LINES)
+    for v1, v2 in lines:
+        bgl.glVertex2f(*v1)
+        bgl.glVertex2f(*v2)
+    bgl.glEnd()
+    # 目盛(太)
+    bgl.glLineWidth(3.0)
+    bgl.glBegin(bgl.GL_LINES)
+    for v1, v2 in lines_bold:
+        bgl.glVertex2f(*v1)
+        bgl.glVertex2f(*v2)
+    bgl.glEnd()
     bgl.glLineWidth(1.0)
 
     # 三角形
