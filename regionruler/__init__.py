@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Region Ruler',
     'author': 'chromoly',
-    'version': (2, 4, 3),
+    'version': (2, 4, 4),
     'blender': (2, 78, 0),
     'location': 'View3D > Properties, ImageEditor > Properties',
     'description': '',
@@ -69,7 +69,6 @@ try:
     importlib.reload(utils)
     importlib.reload(vagl)
     importlib.reload(vam)
-    importlib.reload(vap)
     importlib.reload(vav)
     importlib.reload(vawm)
 except NameError:
@@ -80,7 +79,6 @@ except NameError:
     from ..utils import unitsystem
     from ..utils import vagl
     from ..utils import vamath as vam
-    from ..utils import vaprops as vap
     from ..utils import vaview3d as vav
     from ..utils import vawm
 
@@ -116,63 +114,80 @@ logger.addHandler(handler)
 # Property
 ###############################################################################
 class RegionRuler_PG_Font(bpy.types.PropertyGroup):
-    id = vap.IP(
-        'ID',
-        'Font ID',
+    id = bpy.props.IntProperty(
+        name='ID',
+        description='Font ID',
         default=0,
-        min=0, max=100, soft_min=0, soft_max=100)
-    margin = vap.IP(
-        'Margin',
+        min=0,
+        max=100)
+    margin = bpy.props.IntProperty(
+        name='Margin',
         default=3,
-        min=0, max=50, soft_min=0, soft_max=50)
-    size = vap.IP(
-        'Size',
-        'Font size',
+        min=0,
+        max=50)
+    size = bpy.props.IntProperty(
+        name='Size',
+        description='Font size',
         default=10,
-        min=1, max=100, soft_min=1, soft_max=100)
-    mcsize = vap.IP(
-        'MC-Size', 'Font size of mouse coordinate',
+        min=1,
+        max=100)
+    mcsize = bpy.props.IntProperty(
+        name='MC-Size',
+        description='Font size of mouse coordinate',
         default=12,
-        min=1, max=100, soft_min=1, soft_max=100)
-    measize = vap.IP(
-        'Mea-Size',
-        'Font size of measure',
+        min=1,
+        max=100)
+    measize = bpy.props.IntProperty(
+        name='Mea-Size',
+        description='Font size of measure',
         default=11,
-        min=1, max=100, soft_min=1, soft_max=100)
+        min=1,
+        max=100)
 
 
 class RegionRuler_PG_Color(bpy.types.PropertyGroup):
-    line = vap.FVP(
-        'Line',
+    line = bpy.props.FloatVectorProperty(
+        name='Line',
         default=(1.0, 1.0, 1.0),
-        min=0, max=1, soft_min=0, soft_max=1,
-        subtype='COLOR_GAMMA', size=3)
+        min=0,
+        max=1,
+        subtype='COLOR_GAMMA',
+        size=3)
     # 線と数字の色をわざわざ分ける必要は無さそうなので
     def number_getter(self):
         return self.line
     def number_setter(self, value):
         self.line = value
-    number = vap.FVP(
-        'Number',
+    number = bpy.props.FloatVectorProperty(
+        name='Number',
         default=(1.0, 1.0, 1.0),
-        min=0.0, max=1.0, soft_min=0.0, soft_max=1.0,
-        subtype='COLOR_GAMMA', size=3,
-        get=number_getter, set=number_setter)
-    number_outline = vap.FVP(
-        'Number Outline',
+        min=0.0,
+        max=1.0,
+        subtype='COLOR_GAMMA',
+        size=3,
+        get=number_getter,
+        set=number_setter)
+    number_outline = bpy.props.FloatVectorProperty(
+        name='Number Outline',
         default=(0.0, 0.0, 0.0, 1.0),
-        min=0.0, max=1.0, soft_min=0.0, soft_max=1.0,
-        subtype='COLOR_GAMMA', size=4)
-    cursor = vap.FVP(
-        'Cursor',
+        min=0.0,
+        max=1.0,
+        subtype='COLOR_GAMMA',
+        size=4)
+    cursor = bpy.props.FloatVectorProperty(
+        name='Cursor',
         default=(1.0, 1.0, 1.0, 0.3),
-        min=0.0, max=1.0, soft_min=0.0, soft_max=1.0,
-        subtype='COLOR_GAMMA', size=4)
-    cursor_bold = vap.FVP(
-        'Cursor Bold',
+        min=0.0,
+        max=1.0,
+        subtype='COLOR_GAMMA',
+        size=4)
+    cursor_bold = bpy.props.FloatVectorProperty(
+        name='Cursor Bold',
         default=(1.0, 1.0, 1.0, 1.0),
-        min=0.0, max=1.0, soft_min=0.0, soft_max=1.0,
-        subtype='COLOR_GAMMA', size=4)
+        min=0.0,
+        max=1.0,
+        subtype='COLOR_GAMMA',
+        size=4)
 
 
 class RegionRuler_PG(bpy.types.PropertyGroup):
@@ -184,9 +199,9 @@ class RegionRuler_PG(bpy.types.PropertyGroup):
                     bpy.ops.view3d.region_ruler('INVOKE_DEFAULT', False)
         redraw_regions(context)
 
-    enable = vap.BP('Enable',
-                    default=False,
-                    update=_enabled_update)
+    enable = bpy.props.BoolProperty(
+        name='Enable',
+        update=_enabled_update)
 
     def _update_redraw(self, context):
         redraw_regions(context)
@@ -199,11 +214,14 @@ class RegionRuler_PG(bpy.types.PropertyGroup):
     def _measure_set(self, value):
         self.__class__._measure = value
 
-    measure = vap.BP('Measure',get=_measure_get, set=_measure_set,
-                     update=_update_redraw)
+    measure = bpy.props.BoolProperty(
+        name='Measure',
+        get=_measure_get,
+        set=_measure_set,
+        update=_update_redraw)
 
-    origin_type = vap.EP(
-        'Origin Type',
+    origin_type = bpy.props.EnumProperty(
+        name='Origin Type',
         items=(('scene', 'Scene', 'Scene origin'),
                ('object', 'Active Object', 'Active object origin'),
                ('cursor', '3D Cursor', ''),
@@ -212,8 +230,8 @@ class RegionRuler_PG(bpy.types.PropertyGroup):
         default='scene',
         update=_update_redraw
     )
-    image_editor_origin_type = vap.EP(
-        'Origin Type',
+    image_editor_origin_type = bpy.props.EnumProperty(
+        name='Origin Type',
         items=(('uv', 'UV / Image', 'Lower left'),
                ('cursor', '2D Cursor', ''),
                ('view', 'View Center', 'View center'),
@@ -222,22 +240,23 @@ class RegionRuler_PG(bpy.types.PropertyGroup):
         update=_update_redraw
     )
 
-    origin_location = vap.FVP(
-        'Origin Location',
+    origin_location = bpy.props.FloatVectorProperty(
+        name='Origin Location',
         default=(0, 0, 0),
         subtype='XYZ',
         unit='LENGTH',
         update=_update_redraw)
 
-    image_editor_origin_location = vap.FVP(
-        'Origin Location',
+    image_editor_origin_location = bpy.props.FloatVectorProperty(
+        name='Origin Location',
         default=(0, 0),
         subtype='XYZ',
         unit='LENGTH',
+        size=2,
         update=_update_redraw)
 
-    unit = vap.EP(
-        'Unit',
+    unit = bpy.props.EnumProperty(
+        name='Unit',
         items=(('auto', 'Automatic', 'Use scene.unit_settings.system'),
                ('none', 'None', 'Blender unit'),
                ('metric', 'Metric', ''),
@@ -245,16 +264,16 @@ class RegionRuler_PG(bpy.types.PropertyGroup):
         default='auto',
         update=_update_redraw)
 
-    image_editor_unit = vap.EP(
-        'ImageEditor Unit',
+    image_editor_unit = bpy.props.EnumProperty(
+        name='ImageEditor Unit',
         items=(('pixel', 'Pixel', ''),
                ('uv', 'UV', '')),
         default='pixel',
         update=_update_redraw,
     )
 
-    node_editor_unit = vap.EP(
-        'NodeEditor Unit',
+    node_editor_unit = bpy.props.EnumProperty(
+        name='NodeEditor Unit',
         items=(('node', 'Node',
                 'used in Node.location and SpaceNodeEditor.cursor_location'),
                ('view2d', 'View2D', '')),
@@ -262,9 +281,9 @@ class RegionRuler_PG(bpy.types.PropertyGroup):
         update=_update_redraw,
     )
 
-    view_depth = vap.EP(
-        'View Depth',
-        "Used in 'PERSP' or 'CAMERA'",
+    view_depth = bpy.props.EnumProperty(
+        name='View Depth',
+        description="Used in 'PERSP' or 'CAMERA'",
         items=(('view', 'View', 'View or Camera'),
                ('cursor', '3D Cursor', '')),
         default='view',
@@ -307,58 +326,62 @@ class RegionRulerPreferences(
 
     bl_idname = __name__
 
-    font = vap.PP(
-        'Font',
+    font = bpy.props.PointerProperty(
+        name='Font',
         type=RegionRuler_PG_Font)
-    color = vap.PP(
-        'Color',
+    color = bpy.props.PointerProperty(
+        name='Color',
         type=RegionRuler_PG_Color)
 
-    scale_size = vap.IVP(
-        'Scale Size',
-        '[main, even, odd]',
+    scale_size = bpy.props.IntVectorProperty(
+        name='Scale Size',
+        description='[main, even, odd]',
         default=(6, 3, 3),
-        min=0, max=40, soft_min=0, soft_max=40, size=3)
-    number_min_px = vap.IVP(
-        'Number min px',
-        '[5, 1]. 最小グリッドの大きさ(dot)がこの値より大きくなると'
+        min=0,
+        max=40,
+        size=3)
+    number_min_px = bpy.props.IntVectorProperty(
+        name='Number min px',
+        description='[5, 1]. 最小グリッドの大きさ(dot)がこの値より大きくなると'
         '最小グリッド*5(or最小グリッド)の位置に数値を表示する。',
         default=(18, 90),  # (18, 36)
-        min=1, max=120, soft_min=6, soft_max=60, size=2)
-    draw_mouse_coordinates = vap.BP(
-        'Mouse Coordinates',
-        default=False)
-    mouse_coordinates_position = vap.EP(
-        'Mouse Coordinates Position',
+        min=1,
+        max=120,
+        soft_min=6,
+        soft_max=60,
+        size=2)
+    draw_mouse_coordinates = bpy.props.BoolProperty(
+        name='Mouse Coordinates')
+    mouse_coordinates_position = bpy.props.EnumProperty(
+        name='Mouse Coordinates Position',
         items=(('cursor', 'Cursor', ''),
                ('lower_right', 'Lower Right', '')),
         default='cursor')
-    autohide_mouse_coordinate = vap.BP(
-        'Auto Hide Mouse Coordinates',
+    autohide_mouse_coordinate = bpy.props.BoolProperty(
+        name='Auto Hide Mouse Coordinates',
         default=True)
-    autohide_MC_threshold = vap.IP(
-        'Threshold',
-        'Auto hide threshold',
+    autohide_MC_threshold = bpy.props.IntProperty(
+        name='Threshold',
+        description='Auto hide threshold',
         default=10,
-        min=0, max=100, soft_min=0, soft_max=100)
-    use_simple_measure = vap.BP(
-        'Use Simple Measure',
-        'Hold alt key',
-        default=False)
-    use_fill = vap.BP(
-        'Use Fill',
+        min=0,
+        max=100)
+    use_simple_measure = bpy.props.BoolProperty(
+        name='Use Simple Measure',
+        description='Hold alt key')
+    use_fill = bpy.props.BoolProperty(
+        name='Use Fill',
         description='Fill text box',
         default=True)
-    text_object_name = vap.SP(
-        'TextObject Name',
+    text_object_name = bpy.props.StringProperty(
+        name='TextObject Name',
         default='region_ruler.config')
 
-    draw_cross_cursor = vap.BP(
-        'Cross Cursor',
-        default=False)
-    cross_cursor = vap.IVP(
-        'Cross Cursor',
-        '[offset, size]',
+    draw_cross_cursor = bpy.props.BoolProperty(
+        name='Cross Cursor')
+    cross_cursor = bpy.props.IntVectorProperty(
+        name='Cross Cursor',
+        description='[offset, size]',
         default=(15, 0),
         min=0, size=2)
 
@@ -369,9 +392,9 @@ class RegionRulerPreferences(
         max=2000
     )
 
-    auto_save = vap.BP(
-        'Auto Save',
-        "If a modal operator is running, don't autosave. "
+    auto_save = bpy.props.BoolProperty(
+        name='Auto Save',
+        description="If a modal operator is running, don't autosave. "
         'So Use imitated automatic saving '
         '(Sculpt or edit mode data will be saved!)',
         default=True
@@ -2373,8 +2396,9 @@ class VIEW3D_OT_region_ruler(bpy.types.Operator):
 
     bl_options = {'REGISTER'}
 
-    get_event_only = vap.BP('get_event_only',
-                            default=False, options={'HIDDEN', 'SKIP_SAVE'})
+    get_event_only = bpy.props.BoolProperty(
+        name='get_event_only',
+        options={'HIDDEN', 'SKIP_SAVE'})
 
     def __init__(self):
         self.terminate = False

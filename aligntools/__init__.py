@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Align Tools',
     'author': 'chromoly',
-    'version': (0, 1, 2),
+    'version': (0, 1, 3),
     'blender': (2, 78, 0),
     'location': 'View3D > Toolshelf',
     'description': '',
