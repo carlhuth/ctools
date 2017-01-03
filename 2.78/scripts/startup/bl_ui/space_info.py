@@ -141,9 +141,12 @@ class INFO_HT_header(Header):
             layout.separator()
         else:
             layout.template_ID(context.window, "screen", new="screen.new", unlink="screen.delete")
-            layout.template_ID(context.screen, "scene", new="scene.new", unlink="scene.delete")
-
-        layout.separator()
+            row = layout.row(align=True)
+            row.template_ID(context.screen, "scene", new="scene.new", unlink="scene.delete")
+            scenes = list(bpy.data.scenes)
+            sub = row.row(align=True)
+            sub.scale_x = 0.7  # 後ろの余白が多いので
+            sub.label('{}/{}'.format(scenes.index(scene) + 1, len(scenes)))
 
         row = layout.row(align=True)
         ob = context.active_object

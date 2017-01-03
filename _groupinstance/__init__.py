@@ -78,17 +78,7 @@ class EditInstance(bpy.types.Operator):
         if not group:
             return False
 
-        # TODO
-        """
-        objectのバックアップ:
-        layer, sceneのリンク
-
-        groupのバックアップ:
-        dupli_offset
-
-        """
-
-        # IDPropertyへバックアップ
+        # IDPropertyへGroupのオフセット、レイヤー、シーンをバックアップ
         group['dupli_offset'] = list(group.dupli_offset)
         for ob in group.objects:
             ob['layers'] = list(ob.layers)
@@ -96,18 +86,18 @@ class EditInstance(bpy.types.Operator):
                       if isinstance(item, bpy.types.Scene)]
             ob['scenes'] = [scn.name for scn in scenes]
 
-
         # emptyを追加してグループのオブジェクトを全部子にする
         offset = group.dupli_offset
         bpy.ops.object.empty_add(type='PLAIN_AXES', view_align=False,
                                  location=offset, rotation=(0, 0, 0))
         group_parent = context.active_object
+        group_parent.layers = actob.layers
         for ob in group.objects:
             ob.select = True
+        # FIXME: parent階層
         bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
         group_parent.matrix_world = actob.matrix_world
         actob.dupli_group = None
-
 
         group.dupli_offset = group_parent.matrix_world.to_translation()
 
@@ -124,9 +114,10 @@ class EditInstance(bpy.types.Operator):
             empty.layers = ob.layers
             empty.dupli_type = 'GROUP'
             empty.dupli_group = group
-            # empty.hide_select = True
+            empty.hide_select = True
 
             empty.matrix_world = ob.matrix_world * actob.matrix_world.to_3x3().inverted().to_4x4()
+            empty.select = True
             ob.select = True
             scene.objects.active = ob
             bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
@@ -136,10 +127,7 @@ class EditInstance(bpy.types.Operator):
         for ob in group.objects:
             ob.select = True
 
-        # 原点にemptyを追加、groupのオブジェクトを子にする
-
-        # empty.matrix_world = ob.matrix_world * Matrix.Translation(group.offset)
-        pass
+        # FIXME groupの元あった場所に追加
 
     def exit(self, context):
         """

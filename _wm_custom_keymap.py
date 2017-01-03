@@ -352,6 +352,11 @@ def register():
               oskey=True)
 
     bl_rna = bpy.types.Event.bl_rna
+
+    if 'BUTTON9MOUSE' in bl_rna.properties['type'].enum_items:
+        add = functools.partial(new_keymap_item, 'Outliner')
+        kmi = add('outliner.show_active', 'BUTTON9MOUSE', 'PRESS')
+
     if 'BUTTON16MOUSE' not in bl_rna.properties['type'].enum_items:
         return
 

@@ -52,6 +52,7 @@ from decimal import Decimal
 import importlib
 import logging
 import math
+import re
 import string
 
 import bpy
@@ -766,8 +767,9 @@ class Data:
             font.margin,
             context.user_preferences.system.dpi,
 
-            (region.width, region.height),
-            (unit_system.system, unit_system.dpbu),
+            region.width, region.height,
+            unit_system.system, unit_system.dpbu, unit_system.use_separate,
+            unit_system.scale_length
         )
 
     def get_cache(self, prefs, key):
@@ -2051,7 +2053,6 @@ def make_mouse_coordinate_label(context, unit_system, value):
     else:
         units = unit_system.units
         start = end = calc_exp = ''
-        i = units.index(unit_system.unit)
         for base_unit in units:
             if base_unit.flag & units.UNIT_BASE:
                 break
@@ -2062,20 +2063,23 @@ def make_mouse_coordinate_label(context, unit_system, value):
             # 表記は'mm'迄とする
             if unit_system.system == 'METRIC':
                 if units.scalar(end) <= units.scalar('mm'):
-                    end = 'mm'
-                    calc_exp = end
+                    calc_exp = end = 'mm'
         else:
-            if unit_system.system == 'METRIC':
-                unit = unit_system.unit
-                start = units.next_basic(unit.symbol, False)
-                # 表記は'mm'迄とする
-                if unit.scalar <= units.scalar('mm'):
-                    start = 'mm'
-                calc_exp = start
+            # make_scale_label()と単位を揃える
+            unit = unit_system.unit
+            st = ed = ''
+            if unit_system.use_separate:
+                ed = unit.symbol
             else:
-                next_unit = units[min(i + 1, len(units) - 1)]
-                start = modify_imperial_symbol(next_unit.symbol)
-                calc_exp = start
+                if unit_system.system == 'IMPERIAL':
+                    st = modify_imperial_symbol(unit.symbol)
+            exp = unit.symbol
+            text = unit_system.num_to_unit(
+                value, start=st, end=ed, verbose=(False, True, True),
+                rounding_exp=exp)
+            ls = text.split(' ')
+            m = re.match('-?\d*\.?\d+(.+)', ls[-1])
+            calc_exp = start = end = m.group(1)
 
         if calc_exp:
             base_per_dot = unit_system.bupd * unit_system.scale_length
