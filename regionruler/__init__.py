@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Region Ruler',
     'author': 'chromoly',
-    'version': (2, 4, 4),
+    'version': (2, 4, 5),
     'blender': (2, 78, 0),
     'location': 'View3D > Properties, ImageEditor > Properties',
     'description': '',
@@ -36,8 +36,8 @@ View3D、ImageEditor、NodeEditorにRulerを表示。
 Measureボタンで簡易的な距離、角度の計測が出来る。Shift+左クリックでポインタ
 追加、右クリックで削除、Shift+右ドラッグで移動、Measureボタンをもう一度押すか
 ESCキーで終了。
-設定からSimpleMeasureを有効にしていると、Altキーを押している間この機能が有効に
-なる。
+設定からSimpleMeasureを有効にしていると、Alt+Shiftキーでこの機能が有効になり、
+Altキーを離すと終了する。
 
 各SpaceのUnit,Origin等の値はTextObjectへ保存される。
 
@@ -369,7 +369,7 @@ class RegionRulerPreferences(
         max=100)
     use_simple_measure = bpy.props.BoolProperty(
         name='Use Simple Measure',
-        description='Hold alt key')
+        description='Hold alt + shift key')
     use_fill = bpy.props.BoolProperty(
         name='Use Fill',
         description='Fill text box',
@@ -544,8 +544,7 @@ class Data:
         self.simple_measure = False
         self.measure_points = []  # 3D
         #self.active_point_index = None
-        self.shift = None
-        self.alt = False
+        self.hold_right = False  # measure用
         self.alt_disable_count = 0
 
         # Cache
@@ -748,6 +747,14 @@ class Data:
         region = context.region
         unit_system = data.unit_system
 
+        # measure対策
+        area = context.area
+        if area.type == 'VIEW_3D':
+            pmat = tuple([tuple(row) for row in
+                         context.region_data.perspective_matrix])
+        else:
+            pmat = None
+
         return (
             tuple(d['start']),
             tuple(d['end']),
@@ -769,7 +776,9 @@ class Data:
 
             region.width, region.height,
             unit_system.system, unit_system.dpbu, unit_system.use_separate,
-            unit_system.scale_length
+            unit_system.scale_length,
+
+            pmat
         )
 
     def get_cache(self, prefs, key):
@@ -794,7 +803,6 @@ data = Data()
 def is_modal_needed(context):
     """偽を返すならmodalオペレータを終了してもいい。
     """
-    wm = context.window_manager
     prefs = RegionRulerPreferences.get_instance()
     if data.simple_measure or RegionRuler_PG._measure:
         return True
@@ -1304,6 +1312,7 @@ def draw_free_ruler(context, prefs, start, end, offset,
 
     cache_key = data.make_cache_key(locals())
     cache = data.get_cache(prefs, cache_key)
+    running_measure = data.simple_measure or RegionRuler_PG._measure
     if cache:
         lines, lines_bold, numbers, numbers_fill, triangles = cache
     else:
@@ -2292,11 +2301,10 @@ def draw_callback(context):
     event = data.events[ptr]
 
     # simpleMeasure表示を消す。ここでのEvent.typeは当てにならない
-    if data.alt and not event.alt:
+    if not event.alt:
         if event.mco != event.mco_prev:
-            data.alt = False
             if data.simple_measure:
-                if not prop.measure and not data.alt:
+                if not prop.measure:
                     data.simple_measure = False
                     data.measure_points.clear()
 
@@ -2432,26 +2440,34 @@ class VIEW3D_OT_region_ruler(bpy.types.Operator):
         else:
             rv3d = None
 
+        if not (running_measure or data.simple_measure):
+            data.hold_right = False
+        else:
+            if event.type == 'RIGHTMOUSE':
+                if event.value == 'PRESS':
+                    data.hold_right = True
+                elif event.value == 'RELEASE':
+                    data.hold_right = False
+
+        alt = event.alt
+        shift = event.shift
         if event.type in ('LEFT_ALT', 'RIGHT_ALT'):
             if event.value == 'PRESS':
-                data.alt = True
+                alt = True
             elif event.value == 'RELEASE':
-                data.alt = False
-        if event.type == 'MOUSEMOVE':
-            if data.alt and not event.alt:
-                if (event.mouse_x != event.mouse_prev_x or
-                        event.mouse_y != event.mouse_prev_y):
-                    data.alt = False
+                alt = False
+        if event.type in ('LEFT_SHIFT', 'RIGHT_SHIFT'):
+            if event.value == 'PRESS':
+                shift = True
+            elif event.value == 'RELEASE':
+                shift = False
 
         if data.simple_measure:
-            if not running_measure and not data.alt:
+            if not running_measure and not alt:
                 data.simple_measure = False
                 data.measure_points.clear()
                 retval = {'RUNNING_MODAL'}
                 do_redraw = True
-        if not event.shift or \
-           event.type not in ('MOUSEMOVE', 'INBETWEEN_MOUSEMOVE'):
-            data.shift = None
 
         if region and rv3d:
             mco = (event.mouse_x - region.x, event.mouse_y - region.y)
@@ -2477,14 +2493,12 @@ class VIEW3D_OT_region_ruler(bpy.types.Operator):
                 elif event.type == 'RIGHTMOUSE' and event.value == 'PRESS':
                     if data.simple_measure and data.measure_points or \
                        running_measure:
-                        if event.shift:
-                            data.shift = True
-                        else:
+                        if not shift:
                             data.measure_points[-1:] = []
                             do_redraw = True
                         retval = {'RUNNING_MODAL'}
                 elif event.type in ('MOUSEMOVE', 'INBETWEEN_MOUSEMOVE'):
-                    if data.shift and data.measure_points:
+                    if data.hold_right and shift and data.measure_points:
                         dvec = data.measure_points[-1]
                         vec1 = vav.unproject(region, rv3d, self.mco_prev, dvec)
                         vec2 = vav.unproject(region, rv3d, mco, dvec)
@@ -2493,13 +2507,18 @@ class VIEW3D_OT_region_ruler(bpy.types.Operator):
 
             if not running_measure:
                 enable = None
-                if event.type in ('LEFT_ALT', 'RIGHT_ALT'):
-                    if (event.value == 'PRESS' and not data.simple_measure and
-                            prefs.use_simple_measure):
-                        enable = True
-                    elif (event.value == 'RELEASE' or
-                              not prefs.use_simple_measure):
-                        enable = False
+                if prefs.use_simple_measure:
+                    if not data.simple_measure:
+                        if event.type in ('LEFT_ALT', 'RIGHT_ALT'):
+                            if event.value == 'PRESS':
+                                if event.shift:
+                                    enable = True
+                            elif event.value == 'RELEASE':
+                                enable = False
+                        elif event.type in ('LEFT_SHIFT', 'RIGHT_SHIFT'):
+                            if event.value == 'PRESS':
+                                if event.alt:
+                                    enable = True
                 if enable is not None:
                     if enable:
                         data.simple_measure = True
@@ -2848,6 +2867,7 @@ def scene_update_post_handler(dummy):
     """他のModalOperatorが開始され、マウスが動いたのに再描画がされない状況に
     対応する為、Rulerを再起動しハンドラの先頭に登録し直す。
     """
+    # TODO: 対応できていないオペレータがある
     window = bpy.context.window
     if not window:
         return

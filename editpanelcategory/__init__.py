@@ -132,17 +132,11 @@ draw_header_func = None
 # void (*draw)(const struct bContext *, struct Panel *);
 draw_func = None
 
-RGN_TYPE_WINDOW = 0
-RGN_TYPE_HEADER = 1
-RGN_TYPE_CHANNELS = 2
-RGN_TYPE_TEMPORARY = 3
-RGN_TYPE_UI = 4
-RGN_TYPE_TOOLS = 5
-RGN_TYPE_TOOL_PROPS = 6
-RGN_TYPE_PREVIEW = 7
-
 
 def get_space_types():
+    """
+    :rtype: dict[str, T]
+    """
     screen = bpy.context.screen
     area = screen.areas[0]
     sa = ct.cast(area.as_pointer(), ct.POINTER(structures.ScrArea)).contents
@@ -169,8 +163,11 @@ def get_space_types():
 
 
 def get_region_types():
+    """
+    :return: {'VIEW_3D': {'TOOLS': rt, 'TOOL_PROPS': rt, ...}, ...}
+    :rtype: dict[str, dict[str, T]]
+    """
     result = {}
-    """:type: dict[str, dict[str, T]]"""
     for name, st in get_space_types().items():
         d = result[name] = {}
         region_types = st.regiontypes.to_list(structures.ARegionType)
