@@ -465,7 +465,6 @@ def get_widget_unit(context):
 
 
 def get_view_location(context):
-    prefs = RegionRulerPreferences.get_instance()
     ruler_settings = context.space_data.region_ruler
     region = context.region
     rv3d = context.region_data
@@ -475,15 +474,20 @@ def get_view_location(context):
         if rv3d.view_perspective == 'CAMERA':
             obj = context.scene.camera
             camera = obj.data
-            if camera.dof_object:
+            if obj.type == 'CAMERA' and camera.dof_object:
                 view_location = camera.dof_object.matrix_world.to_translation()
             else:
                 mat = obj.matrix_world
                 vec = -mat.col[2].to_3d().normalized()  # カメラ視線方向
-                if camera.dof_distance != 0.0:
-                    f = camera.dof_distance
+                if obj.type == 'CAMERA':
+                    if camera.dof_distance != 0.0:
+                        f = camera.dof_distance
+                    else:
+                        f = (camera.clip_start + camera.clip_end) / 2
                 else:
-                    f = (camera.clip_start + camera.clip_end) / 2
+                    # BKE_camera_params_init()参照
+                    # clip_start = 0.1, clip_end = 100.0
+                    f = (0.1 + 100.0) / 2
                 view_location = mat.to_translation() + f * vec
         else:
             view_location = rv3d.view_location
