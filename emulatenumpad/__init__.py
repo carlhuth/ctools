@@ -20,11 +20,10 @@
 bl_info = {
     'name': 'Emulate Numpad',
     'author': 'chromoly',
-    'version': (0, 2, 0),
+    'version': (0, 2, 1),
     'blender': (2, 78, 0),
     'location': 'Screen > Space',
-    'description': 'スペースキーと特定キーの組み合わせで、'
-                   'テンキーに割り当てられたオペレーターを実行する',
+    'description': 'Space + any key -> Numpad key',
     'warning': '',
     'wiki_url': '',
     'tracker_url': '',
@@ -47,72 +46,91 @@ try:
     importlib.reload(listvalidkeys)
     importlib.reload(addongroup)
     importlib.reload(registerinfo)
-    importlib.reload(structures)
+    importlib.reload(st)
 except NameError:
     from .. import listvalidkeys
     from ..utils import addongroup
     from ..utils import registerinfo
-    from ..utils import structures
+    from ..utils import structures as st
 
 
-keypad = [
-    ('kp0', 'V', 'NUMPAD_0', '0'),
-    ('kp1', 'Z', 'NUMPAD_1', '1'),
-    ('kp2', 'X', 'NUMPAD_2', '2'),
-    ('kp3', 'C', 'NUMPAD_3', '3'),
-    ('kp4', 'A', 'NUMPAD_4', '4'),
-    ('kp5', 'S', 'NUMPAD_5', '5'),
-    ('kp6', 'D', 'NUMPAD_6', '6'),
-    ('kp7', 'Q', 'NUMPAD_7', '7'),
-    ('kp8', 'W', 'NUMPAD_8', '8'),
-    ('kp9', 'E', 'NUMPAD_9', '9'),
-    ('kpdl', 'B', 'NUMPAD_PERIOD', '.'),
-    ('kpad', 'F', 'NUMPAD_PLUS', '+'),
-    ('kpsu', 'R', 'NUMPAD_MINUS', '-'),
-    ('kpmu', 'G', 'NUMPAD_ASTERIX', '*'),
-    ('kpdv', 'T', 'NUMPAD_SLASH', '/'),
-    ('kpen', 'N', 'NUMPAD_ENTER', 'Enter'),
-    ('space', 'TAB', 'SPACE', 'Space'),
-]
-
-keypad_alt = [
-    ('kp0', 'Z', 'NUMPAD_0', '0'),
-    ('kp1', 'A', 'NUMPAD_1', '1'),
-    ('kp2', 'S', 'NUMPAD_2', '2'),
-    ('kp3', 'D', 'NUMPAD_3', '3'),
-    ('kp4', 'Q', 'NUMPAD_4', '4'),
-    ('kp5', 'W', 'NUMPAD_5', '5'),
-    ('kp6', 'E', 'NUMPAD_6', '6'),
-    ('kp7', 'ONE', 'NUMPAD_7', '7'),
-    ('kp8', 'TWO', 'NUMPAD_8', '8'),
-    ('kp9', 'THREE', 'NUMPAD_9', '9'),
-    ('kpdl', 'C', 'NUMPAD_PERIOD', '.'),
-    ('kpad', 'V', 'NUMPAD_PLUS', '+'),
-    ('kpsu', 'F', 'NUMPAD_MINUS', '-'),
-    ('kpmu', 'R', 'NUMPAD_ASTERIX', '*'),
-    ('kpdv', 'FOUR', 'NUMPAD_SLASH', '/'),
-    ('kpen', 'B', 'NUMPAD_ENTER', 'Enter'),
-    ('space', 'TAB', 'SPACE', 'Space'),
-]
-
+keypad = {
+    'TYPE1': [
+        ('kp0', 'V', 'NUMPAD_0', '0'),
+        ('kp1', 'Z', 'NUMPAD_1', '1'),
+        ('kp2', 'X', 'NUMPAD_2', '2'),
+        ('kp3', 'C', 'NUMPAD_3', '3'),
+        ('kp4', 'A', 'NUMPAD_4', '4'),
+        ('kp5', 'S', 'NUMPAD_5', '5'),
+        ('kp6', 'D', 'NUMPAD_6', '6'),
+        ('kp7', 'Q', 'NUMPAD_7', '7'),
+        ('kp8', 'W', 'NUMPAD_8', '8'),
+        ('kp9', 'E', 'NUMPAD_9', '9'),
+        ('kpdl', 'B', 'NUMPAD_PERIOD', '.'),
+        ('kpad', 'F', 'NUMPAD_PLUS', '+'),
+        ('kpsu', 'R', 'NUMPAD_MINUS', '-'),
+        ('kpmu', 'G', 'NUMPAD_ASTERIX', '*'),
+        ('kpdv', 'T', 'NUMPAD_SLASH', '/'),
+        ('kpen', 'N', 'NUMPAD_ENTER', 'Enter'),
+        ('space', 'TAB', 'SPACE', 'Space'),
+    ],
+    'TYPE2': [
+        ('kp0', 'Z', 'NUMPAD_0', '0'),
+        ('kp1', 'A', 'NUMPAD_1', '1'),
+        ('kp2', 'S', 'NUMPAD_2', '2'),
+        ('kp3', 'D', 'NUMPAD_3', '3'),
+        ('kp4', 'Q', 'NUMPAD_4', '4'),
+        ('kp5', 'W', 'NUMPAD_5', '5'),
+        ('kp6', 'E', 'NUMPAD_6', '6'),
+        ('kp7', 'ONE', 'NUMPAD_7', '7'),
+        ('kp8', 'TWO', 'NUMPAD_8', '8'),
+        ('kp9', 'THREE', 'NUMPAD_9', '9'),
+        ('kpdl', 'C', 'NUMPAD_PERIOD', '.'),
+        ('kpad', 'V', 'NUMPAD_PLUS', '+'),
+        ('kpsu', 'F', 'NUMPAD_MINUS', '-'),
+        ('kpmu', 'R', 'NUMPAD_ASTERIX', '*'),
+        ('kpdv', 'FOUR', 'NUMPAD_SLASH', '/'),
+        ('kpen', 'B', 'NUMPAD_ENTER', 'Enter'),
+        ('space', 'TAB', 'SPACE', 'Space'),
+    ],
+    'TYPE3': [
+        ('kp0', 'Z', 'NUMPAD_0', '0'),
+        ('kp1', 'X', 'NUMPAD_1', '1'),
+        ('kp2', 'C', 'NUMPAD_2', '2'),
+        ('kp3', 'V', 'NUMPAD_3', '3'),
+        ('kp4', 'S', 'NUMPAD_4', '4'),
+        ('kp5', 'D', 'NUMPAD_5', '5'),
+        ('kp6', 'F', 'NUMPAD_6', '6'),
+        ('kp7', 'W', 'NUMPAD_7', '7'),
+        ('kp8', 'E', 'NUMPAD_8', '8'),
+        ('kp9', 'R', 'NUMPAD_9', '9'),
+        ('kpdl', 'A', 'NUMPAD_PERIOD', '.'),
+        ('kpad', 'G', 'NUMPAD_PLUS', '+'),
+        ('kpsu', 'T', 'NUMPAD_MINUS', '-'),
+        ('kpmu', 'FOUR', 'NUMPAD_ASTERIX', '*'),
+        ('kpdv', 'THREE', 'NUMPAD_SLASH', '/'),
+        ('kpen', 'B', 'NUMPAD_ENTER', 'Enter'),
+        ('space', 'TAB', 'SPACE', 'Space'),
+    ]
+}
 
 name_space = \
     {attr: bpy.props.StringProperty(
         name=name, description=type_, default=default)
-     for attr, default, type_, name in keypad}
+     for attr, default, type_, name in keypad['TYPE1']}
 
 
-def keymap_update(self, context):
-    keymap = keypad if self.keymap == 'TYPE1' else keypad_alt
-    for attr, rcv, snd, name in keymap:
+def keybind_update(self, context):
+    for attr, rcv, snd, name in keypad[self.keybind_preset]:
         setattr(self, attr, rcv)
 
 
-name_space['keymap'] = bpy.props.EnumProperty(
-    name='KeyMap',
+name_space['keybind_preset'] = bpy.props.EnumProperty(
+    name='Keybind',
     items=(('TYPE1', 'Type1', ''),
-           ('TYPE2', 'Type2', '')),
-    update=keymap_update,
+           ('TYPE2', 'Type2', ''),
+           ('TYPE3', 'Type3', '')),
+    update=keybind_update,
 )
 KeyPad = type('KeyPad', (), name_space)
 
@@ -128,8 +146,15 @@ class EmulateNumpadPreferences(
     def draw(self, context):
         layout = self.layout
 
-        row = layout.split(0.3).row()
-        row.prop(self, 'keymap', text='Preset')
+        sp = layout.split(0.3)
+        row = sp.row()
+        row.prop(self, 'keybind_preset', text='Preset')
+        row = sp.row()
+        row.alignment = 'RIGHT'
+        op = row.operator('wm.url_open', text='Valid Strings', icon='URL')
+        op.url = 'https://www.blender.org/api/' \
+                 'blender_python_api_2_78a_release/bpy.types.Event.html' \
+                 '#bpy.types.Event.type'
 
         def draw_column(layout, attrs):
             column = layout.column()
@@ -229,6 +254,7 @@ def get_operator_from_keymap_item(kmi):
 
 
 def operator_call(context, event_attrs, keymaps):
+    """イベントに一致するオペレーターを実行する。"""
     called = False
     pass_through = False
     running_modal = False
@@ -257,6 +283,75 @@ def operator_call(context, event_attrs, keymaps):
     return called, running_modal, pass_through, interface
 
 
+def get_active_area_region(context, event):
+    """マウスカーソル位置のAreaとRegionを取得する。
+    :type context: bpy.types.Context
+    :type event: bpy.types.Event
+    :rtype: (bpy.types.Area, bpy.types.Region)
+    """
+    x, y = event.mouse_x, event.mouse_y
+    for area in context.screen.areas:
+        if area.x <= x < area.x + area.width:
+            if area.y <= y < area.y + area.height:
+                for region in area.regions:
+                    if region.x <= x < region.x + region.width:
+                        if region.y <= y < region.y + region.height:
+                            return area, region
+    return None, None
+
+
+def find_window_form_region(region):
+    for wm in bpy.data.window_managers:
+        for window in wm.windows:
+            for area in window.screen.areas:
+                for region_ in area.regions:
+                    if region_ == region:
+                        return window
+
+
+def set_active_area_region(context, area, region):
+    """ContextのAreaとRegionを設定する。py_contextを無効化した状態で処理をする。
+    返り値は変更前のAreaとRegion。これは bContext.wm.area,
+    bContext.wm.region に当たるもの。
+    :type context: bpy.types.Context
+    :type area: bpy.types.Area
+    :type region: bpy.types.Region
+    :rtype: (bpy.types.Area, bpy.types.Region)
+    """
+    py_dict_bak = st.context_py_dict_set(context, None)
+    area_bak = context.area  # bContext.wm.area
+    region_bak = context.region  # bContext.wm.region
+
+    ctx_p = ct.cast(context.as_pointer(), ct.POINTER(st.bContext))
+    ctx = ctx_p.contents
+    if area:
+        # CTX_wm_area_set()
+        ctx.wm.area = ct.cast(area.as_pointer(), ct.POINTER(st.ScrArea))
+        # ctx.wm.region = None
+    else:
+        ctx.wm.area = None
+    if region:
+        # CTX_wm_region_set()
+        ctx.wm.region = ct.cast(region.as_pointer(), ct.POINTER(st.ARegion))
+    else:
+        ctx.wm.region = None
+
+    if region:
+        window = find_window_form_region(region)
+        if window:
+            win_p = ct.cast(window.as_pointer(), ct.POINTER(st.wmWindow))
+        else:
+            win_p = ctx.wm.window  # context.window
+        if win_p:
+            win = win_p.contents
+            event = win.eventstate.contents
+            event.mval[0] = event.x - region.x
+            event.mval[1] = event.y - region.y
+
+    st.context_py_dict_set(context, py_dict_bak)
+    return area_bak, region_bak
+
+
 class SCREEN_OT_emulate_numpad(bpy.types.Operator):
     bl_idname = 'screen.emulate_numpad'
     bl_label = 'Emulate Numpad'
@@ -264,22 +359,23 @@ class SCREEN_OT_emulate_numpad(bpy.types.Operator):
 
     def __init__(self):
         self.event_type = ''
+        self.finish = False
 
     def modal(self, context, event):
         prefs = EmulateNumpadPreferences.get_instance()
         ret = {'RUNNING_MODAL'}
 
-        event_attrs = {
+        event_attributes = {
             attr: getattr(event, attr)
             for attr in ['type', 'value', 'shift', 'ctrl', 'alt', 'oskey']}
         # event.key_modifierに当たるものはpythonAPIでは提供されていない
         ev = ct.cast(ct.c_void_p(event.as_pointer()),
-                     ct.POINTER(structures.wmEvent)).contents
+                     ct.POINTER(st.wmEvent)).contents
         value = ev.keymodifier
         prop = bpy.types.KeyMapItem.bl_rna.properties['key_modifier']
         for enum_item in prop.enum_items:
             if enum_item.value == value:
-                event_attrs['key_modifier'] = enum_item.identifier
+                event_attributes['key_modifier'] = enum_item.identifier
                 break
 
         if self.finish:
@@ -292,17 +388,23 @@ class SCREEN_OT_emulate_numpad(bpy.types.Operator):
             ret = {'FINISHED'}
 
         else:
+            # area, regionと有効なキーマップの更新
+            area, region = get_active_area_region(context, event)
+            set_active_area_region(context, area, region)
+            self.keymaps = [km for km in listvalidkeys.context_keymaps(context)
+                            if listvalidkeys.keymap_poll(context, km)]
+
             match = False
             if event.value == 'PRESS':
-                for attr, _, kmi_type, _ in keypad:
+                for attr, _, kmi_type, _ in keypad['TYPE1']:
                     if event.type == getattr(prefs, attr):
                         match = True
                         break
             if match:
-                event_attrs_ = {**event_attrs,
-                                'type': kmi_type, 'value': 'PRESS'}
+                event_attrs = {
+                    **event_attributes, 'type': kmi_type, 'value': 'PRESS'}
                 _called, running_modal, _pass_through, is_interface = \
-                    operator_call(context, event_attrs_, self.keymaps)
+                    operator_call(context, event_attrs, self.keymaps)
                 if running_modal:
                     self.finish = True
                 if is_interface:
@@ -321,6 +423,7 @@ class SCREEN_OT_emulate_numpad(bpy.types.Operator):
                 return area
 
     def invoke(self, context, event):
+        # CONSOLEとTEXT_EDITORではSpaceキーのみでの呼び出しは無視する。
         if context.area.type in {'CONSOLE', 'TEXT_EDITOR'}:
             if event.type == 'SPACE':
                 if (not event.shift and not event.ctrl and not event.alt and
@@ -328,29 +431,13 @@ class SCREEN_OT_emulate_numpad(bpy.types.Operator):
                     return {'CANCELLED', 'PASS_THROUGH'}
 
         self.event_type = event.type
-        self.mouse_x = event.mouse_x
-        self.mouse_y = event.mouse_y
-        self.finish = False
 
+        # これはmodal中にも更新する
         self.keymaps = [km for km in listvalidkeys.context_keymaps(context)
                         if listvalidkeys.keymap_poll(context, km)]
 
-        # numpadを使うオペレータが無いなら終了。
-        found = False
-        for km in self.keymaps:
-            for kmi in km.keymap_items:
-                if kmi.active or (km, kmi) in disabled_keymap_items:
-                    if kmi.type.startswith('NUMPAD_') or kmi.type == 'SPACE':
-                        op, kwargs = get_operator_from_keymap_item(kmi)
-                        if op and op.poll():
-                            found = True
-                            break
-            if found:
-                break
-        if not found:
-            return {'CANCELLED', 'PASS_THROUGH'}
-
         context.window_manager.modal_handler_add(self)
+
         area = self.get_info_area(context)
         if area:
             area.header_text_set('Emulate Numpad')
