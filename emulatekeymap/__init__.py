@@ -339,6 +339,7 @@ class EmulateKeyMapsPreferences(
             op.data_path = 'addon_prefs.emulation_keymap'
             op.index = i
         row = column.row()
+        row.row()
         sub = row.row()
         sub.alignment = 'RIGHT'
         op = sub.operator(CollectionOperator.Add.bl_idname, text='Add',
@@ -382,16 +383,16 @@ class EmulateKeyMapsPreferences(
 
             column.separator()
 
-            split = column.split(0.5)
-            col = split.column()
-            col.label('Config File:')
-            file_path = os.path.join(bpy.utils.user_resource('CONFIG'),
-                                     CONFIG_FILE_NAME)
-            column.label(file_path)
-            split = column.split(0.25)
-            col = split.column()
-            text = 'Edit' if os.path.exists(file_path) else 'New'
-            col.operator(SCREEN_OT_edit_keymap.bl_idname, text=text)
+        split = column.split(0.5)
+        col = split.column()
+        col.label('Config File:')
+        file_path = os.path.join(bpy.utils.user_resource('CONFIG'),
+                                 CONFIG_FILE_NAME)
+        column.label(file_path)
+        split = column.split(0.25)
+        col = split.column()
+        text = 'Edit' if os.path.exists(file_path) else 'New'
+        col.operator(SCREEN_OT_edit_keymap.bl_idname, text=text)
 
         self.layout.separator()
 
