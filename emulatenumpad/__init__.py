@@ -88,7 +88,7 @@ numpad_preset = {
         ('HOME', 'FIVE'),
         ('END', 'T'),
 
-        ('LOCK', 'G'),
+        ('HOLD', 'G'),
     ],
 
     'TYPE2': [
@@ -112,7 +112,7 @@ numpad_preset = {
         ('END', 'TWO'),
         ('SPACE', 'TAB'),
 
-        ('LOCK', 'Q'),
+        ('HOLD', 'Q'),
     ]
 }
 
@@ -224,18 +224,18 @@ class EmulateKeyMapsPreferences(
     )
     emulation_keymap = bpy.props.CollectionProperty(
         type=EmulationKeyMapItem)
-    emulation_keymap_lock = bpy.props.StringProperty(
-        name='Lock',
+    emulation_keymap_hold = bpy.props.StringProperty(
+        name='Hold',
         description='Hold space key'
     )
 
     def _numpad_preset_update(self, context):
         prefs = EmulateKeyMapsPreferences.get_instance()
         prefs.emulation_keymap.clear()
-        prefs.property_unset('emulation_keymap_lock')
+        prefs.property_unset('emulation_keymap_hold')
         for bind_to, bind_from in numpad_preset[self.numpad_preset]:
-            if bind_to == 'LOCK':
-                prefs.emulation_keymap_lock = bind_from
+            if bind_to == 'HOLD':
+                prefs.emulation_keymap_hold = bind_from
                 continue
             item = prefs.emulation_keymap.add()
             item.bind_from = bind_from
@@ -285,10 +285,10 @@ class EmulateKeyMapsPreferences(
         row = sp.row()
         row = sp.row(align=True)
         # row.alignment = 'RIGHT'
-        row.prop(self, 'emulation_keymap_lock', text='Lock')
+        row.prop(self, 'emulation_keymap_hold', text='Hold')
         op = row.operator(WM_OT_event_type_search_popup.bl_idname, text='',
                           icon='VIEWZOOM')
-        op.data_path = 'addon_prefs.emulation_keymap_lock'
+        op.data_path = 'addon_prefs.emulation_keymap_hold'
 
         column.separator()
 
@@ -534,7 +534,7 @@ class SCREEN_OT_emulate_keymap(bpy.types.Operator):
 
     def __init__(self):
         self.event_type = ''
-        self.lock = False
+        self.hold = False
         self.terminate = False
         self.header_text = ''
 
@@ -545,7 +545,7 @@ class SCREEN_OT_emulate_keymap(bpy.types.Operator):
         if self.terminate:
             ret = {'FINISHED'}
         elif event.type == self.event_type and event.value == 'RELEASE':
-            if not self.lock:
+            if not self.hold:
                 ret = {'FINISHED'}
         elif event.type == 'ESC':
             ret = {'FINISHED'}
@@ -554,9 +554,9 @@ class SCREEN_OT_emulate_keymap(bpy.types.Operator):
         elif event.type in {'MOUSEMOVE', 'INBETWEEN_MOUSEMOVE'}:
             ret = {'PASS_THROUGH'}
 
-        if (event.type == prefs.emulation_keymap_lock and
+        if (event.type == prefs.emulation_keymap_hold and
                 event.value == 'PRESS'):
-            self.lock ^= True
+            self.hold ^= True
 
         # area, regionと有効なキーマップの更新
         area, region = get_active_area_region(context, event)
@@ -592,7 +592,7 @@ class SCREEN_OT_emulate_keymap(bpy.types.Operator):
                 context.area.tag_redraw()
             if running_modal:
                 self.terminate = True
-            elif self.lock:
+            elif self.hold:
                 ret = {'FINISHED'}
             elif is_interface:
                 ret = {'FINISHED'}
@@ -616,8 +616,8 @@ class SCREEN_OT_emulate_keymap(bpy.types.Operator):
     def redraw_info(self, context):
         area = self.get_info_area(context)
         if area:
-            if self.lock:
-                text = 'Emulate Key Map: (Lock)' + self.header_text
+            if self.hold:
+                text = 'Emulate Key Map: (Hold)' + self.header_text
             else:
                 text = 'Emulate Key Map: ' + self.header_text
             area.header_text_set(text)
