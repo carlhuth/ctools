@@ -55,8 +55,9 @@
 ## Align Tools
 頂点やオブジェクト等を整列する。  
 
-## Emulate Numpad
+## Emulate Key Map
 スペースキーと特定キーの組み合わせで、テンキーに割り当てられたオペレーターを実行する。  
+Shift + Space の後、入力されたキーに対応したオペレーターを実行する。  
 
 ## Make UV Grid
 単純なUV Grid 画像を作成する。  

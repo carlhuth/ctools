@@ -33,8 +33,8 @@ def get_operator_type(idname_py):
     mod, func = idname_py.split('.')
     pyop = getattr(getattr(bpy.ops, mod), func)
     opinst = pyop.get_instance()
-    pyrna = ct.cast(id(opinst), ct.POINTER(st.BPy_StructRNA)).contents
-    op = ct.cast(pyrna.ptr.data, ct.POINTER(st.wmOperator)).contents
+    pyrna = st.BPy_StructRNA.cast(id(opinst))
+    op = st.wmOperator.cast(pyrna.ptr.data)
     return op.type.contents
 
 

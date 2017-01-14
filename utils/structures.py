@@ -95,6 +95,23 @@ def set_fields(cls, *field_items):
     cls._fields_ = fields(*field_items)
 
 
+class Cast:
+    @classmethod
+    def cast(cls, obj, contents=True):
+        if not obj:
+            return None
+        if isinstance(obj, int):
+            addr = obj
+        elif hasattr(obj, 'as_pointer'):
+            addr = obj.as_pointer()
+        else:
+            addr = obj
+        if contents:
+            return ct.cast(addr, ct.POINTER(cls)).contents
+        else:
+            return ct.cast(addr, ct.POINTER(cls))
+
+
 ###############################################################################
 # Python Header
 ###############################################################################
@@ -430,7 +447,7 @@ class _PointerRNA_id(Structure):
     )
 
 
-class PointerRNA(Structure):
+class PointerRNA(Cast, Structure):
     """makesrna/RNA_types.h"""
     _fields_ = fields(
         _PointerRNA_id, 'id',
@@ -541,7 +558,7 @@ FloatPropertyRNA._fields_ = fields(
 )
 
 
-class BPy_StructRNA(Structure):
+class BPy_StructRNA(Cast, Structure):
     """python/intern/bpy_rna.h"""
     _fields_ = fields(
         PyObject_HEAD, 'head',
@@ -558,7 +575,7 @@ class BPy_PropertyRNA(Structure):
     )
 
 
-class BPy_PropertyArrayRNA(Structure):
+class BPy_PropertyArrayRNA(Cast, Structure):
     """python/intern/bpy_rna.h"""
     _fields_ = fields(
         PyObject_HEAD, 'head',
@@ -954,7 +971,22 @@ class RNAEnumSpaceTypeItems(enum.IntEnum):
     CONSOLE = eSpace_Type.SPACE_CONSOLE
 
 
-class ScrArea(Structure):
+class bScreen(Cast, Structure):
+    """DNA_screen_types.h: 48"""
+
+bScreen._fields_ = fields(
+    ID, 'id',
+
+    ListBase, 'vertbase',
+    ListBase, 'edgebase',
+    ListBase, 'areabase',
+    ListBase, 'regionbase',
+
+    c_void_p, '*scene',
+)
+
+
+class ScrArea(Cast, Structure):
     """DNA_screen_types.h: 202"""
 
 ScrArea._fields_ = fields(
@@ -986,7 +1018,7 @@ ScrArea._fields_ = fields(
 )
 
 
-class ARegion(Structure):
+class ARegion(Cast, Structure):
     """DNA_screen_types.h: 229"""
 
 ARegion._fields_ = fields(
@@ -1054,7 +1086,7 @@ class RNAEnumRegionTypeItems(enum.IntEnum):
     PREVIEW = eRegion_Type.RGN_TYPE_PREVIEW
 
 
-class Panel(Structure):
+class Panel(Cast, Structure):
     """DNA_screen_types.h: 96"""
 
 Panel._fields_ = fields(
@@ -1101,7 +1133,7 @@ Panel._fields_ = fields(
 # )
 #
 #
-# class SpaceButs(Structure):
+# class SpaceButs(Cast, Structure):
 #     """DNA_space_types.h: 114"""
 #
 # SpaceButs._fields_ = fields(
@@ -1129,7 +1161,7 @@ Panel._fields_ = fields(
 # )
 
 
-class RegionView3D(Structure):
+class RegionView3D(Cast, Structure):
     """DNA_view3d_types.h: 86"""
 
 RegionView3D._fields_ = fields(
@@ -1303,7 +1335,7 @@ View3D._fields_ = fields(
 )
 
 
-class wmSubWindow(Structure):
+class wmSubWindow(Cast, Structure):
     """windowmanager/intern/wm_subwindow.c: 67"""
 
 wmSubWindow._fields_ = fields(
@@ -1313,7 +1345,7 @@ wmSubWindow._fields_ = fields(
 )
 
 
-class wmEvent(Structure):
+class wmEvent(Cast, Structure):
     """windowmanager/WM_types.h: 431"""
 
 wmEvent._fields_ = fields(
@@ -1454,7 +1486,7 @@ wmOperatorType_fields += fields(
 wmOperatorType._fields_ = wmOperatorType_fields
 
 
-class wmOperator(Structure):
+class wmOperator(Cast, Structure):
     """source/blender/makesdna/DNA_windowmanager_types.h: 344
 
     pythonインスタンスからの取得方法:
@@ -1489,7 +1521,7 @@ wmOperator._fields_ = fields(
 )
 
 
-class wmEventHandler(Structure):
+class wmEventHandler(Cast, Structure):
     """source/blender/windowmanager/wm_event_system.h: 45"""
 
 wmEventHandler._fields_ = fields(
@@ -1524,7 +1556,7 @@ wmEventHandler._fields_ = fields(
 WM_HANDLER_DO_FREE = 1 << 7
 
 
-class wmWindow(Structure):
+class wmWindow(Cast, Structure):
     """source/blender/makesdna/DNA_windowmanager_types.h: 175"""
 
     @classmethod
@@ -1542,7 +1574,7 @@ class wmWindow(Structure):
 
         handlers = []
 
-        ptr = cast(win.modalhandlers.first, POINTER(wmEventHandler))
+        ptr = wmEventHandler.cast(win.modalhandlers.first, contents=False)
         while ptr:
             # http://docs.python.jp/3/library/ctypes.html#surprises
             # この辺りの事には注意する事
@@ -1568,8 +1600,8 @@ wmWindow._fields_ = fields(
 
     c_void_p, 'ghostwin',
 
-    c_void_p, 'screen',  # struct bScreen
-    c_void_p, 'newscreen',  # struct bScreen
+    bScreen, '*screen',
+    bScreen, '*newscreen',
     c_char, 'screenname[64]',
 
     c_short, 'posx', 'posy', 'sizex', 'sizey',
@@ -1614,7 +1646,7 @@ wmWindow._fields_ = fields(
 )
 
 
-class SpaceText(Structure):
+class SpaceText(Cast, Structure):
     """source/blender/makesdna/DNA_space_types.h: 981"""
 
 SpaceText._fields_ = fields(
@@ -1658,13 +1690,13 @@ SpaceText._fields_ = fields(
 )
 
 
-class bContext(Structure):
+class bContext(Cast, Structure):
     """source/blender/blenkernel/intern/context.c:61"""
     class bContext_wm(Structure):
         _fields_ = fields(
             c_void_p, 'manager',  # struct wmWindowManager
             wmWindow, '*window',
-            c_void_p, 'screen',  # struct bScreen
+            bScreen, '*screen',
             ScrArea, '*area',
             ARegion, '*region',
             ARegion, '*menu',
@@ -1692,8 +1724,78 @@ class bContext(Structure):
         bContext_data, 'data',
     )
 
+    @classmethod
+    def wm_window_set(cls, window):
+        """CTX_wm_window_set"""
+        ctx = cls.cast(bpy.context)
 
-class Text(Structure):
+        if window:
+            ctx.wm.window = wmWindow.cast(window, False)
+        else:
+            ctx.wm.window = None
+        if window and window.screen:
+            ctx.wm.screen = window.screen.as_pointer()
+        else:
+            ctx.wm.screen = None
+        if ctx.wm.screen:
+            ctx.data.scene = ctx.wm.screen.scene
+        ctx.wm.area = None
+        ctx.wm.region = None
+
+    @classmethod
+    def wm_screen_set(cls, screen):
+        """CTX_wm_screen_set"""
+        ctx = cls.cast(bpy.context)
+
+        if screen:
+            ctx.wm.screen = bScreen.cast(screen, False)
+        else:
+            ctx.wm.screen = None
+        if ctx.wm.screen:
+            ctx.data.scene = ctx.wm.screen.scene
+        ctx.wm.area = None
+        ctx.wm.region = None
+
+    @classmethod
+    def wm_area_set(cls, area):
+        """CTX_wm_area_set"""
+        ctx = cls.cast(bpy.context)
+
+        if area:
+            ctx.wm.area = ScrArea.cast(area, False)
+        else:
+            ctx.wm.area = None
+        ctx.wm.region = None
+
+    @classmethod
+    def wm_region_set(cls, region, calc_mouse=False):
+        """CTX_wm_region_set"""
+        ctx = cls.cast(bpy.context)
+
+        if region:
+            ctx.wm.region = ARegion.cast(region, False)
+        else:
+            ctx.wm.region = None
+        if calc_mouse:
+            cls.calc_mouse()
+
+    @classmethod
+    def calc_mouse(cls):
+        context = bpy.context
+        ctx = cls.cast(context)
+        win_p = ctx.wm.window
+        if win_p:
+            win = win_p.contents
+            event = win.eventstate.contents
+            region = context.region
+            if region:
+                event.mval[0] = event.x - region.x
+                event.mval[1] = event.y - region.y
+            else:
+                event.mval[0] = event.mval[1] = 0
+
+
+class Text(Cast, Structure):
     """makesdna/DNA_text_types.h: 50"""
     _fields_ = fields(
         ID, 'id',
@@ -2321,7 +2423,7 @@ def image_pixels_get(image):
 
     image_pixels = image.pixels  # インスタンスは終わるまで残しとかないと駄目
     addr = id(image_pixels)
-    bpy_prop = cast(addr, POINTER(BPy_PropertyArrayRNA)).contents
+    bpy_prop = BPy_PropertyArrayRNA.cast(addr)
     ptr = cast(addressof(bpy_prop.ptr), POINTER(PointerRNA))
     prop = bpy_prop.prop
     pixels = np.zeros(len(image.pixels), dtype=np.float32)

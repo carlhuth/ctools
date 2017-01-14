@@ -221,8 +221,7 @@ class VIEW3D_OT_cursor3d(bpy.types.Operator):
         rv3d = context.region_data
         """:type: bpy.types.RegionView3D"""
 
-        c_rv3d = ct.cast(rv3d.as_pointer(),
-                         ct.POINTER(structures.RegionView3D)).contents
+        c_rv3d = structures.RegionView3D.cast(rv3d)
         bupg = c_rv3d.gridview
         if precision:
             if context.scene.unit_settings.system == 'NONE':
@@ -609,9 +608,8 @@ def register():
     # オリジナルのwmOperatorTypeを確保しておく
     pyop = bpy.ops.view3d.cursor3d
     opinst = pyop.get_instance()
-    pyrna = ct.cast(id(opinst), ct.POINTER(structures.BPy_StructRNA)).contents
-    op = ct.cast(pyrna.ptr.data,
-                 ct.POINTER(structures.wmOperator)).contents
+    pyrna = structures.BPy_StructRNA.cast(id(opinst))
+    op = structures.wmOperator.cast(pyrna.ptr.data)
     VIEW3D_OT_cursor3d.operator_type = op.type.contents
 
     for cls in classes:

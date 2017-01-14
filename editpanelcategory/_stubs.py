@@ -32,12 +32,11 @@ SPACE_USERPREF = 19
 
 
 def panel_aligned(area, region):
-    sa = ct.cast(area.as_pointer(), ct.POINTER(structures.ScrArea)).contents
-    ar = ct.cast(region.as_pointer(), ct.POINTER(structures.ARegion)).contents
+    sa = structures.ScrArea.cast(area)
+    ar = structures.ScrArea.cast(region)
 
     if sa.spacetype == SPACE_BUTS and ar.regiontype == RGN_TYPE_WINDOW:
-        sbuts = ct.cast(sa.spacedata.first,
-                        ct.POINTER(structures.SpaceButs)).contents
+        sbuts = structures.SpaceButs.cast(sa.spacedata.first)
         return sbuts.align
     elif sa.spacetype == SPACE_USERPREF and ar.regiontype == RGN_TYPE_WINDOW:
         return BUT_VERTICAL
@@ -63,7 +62,7 @@ def toggle_panel_close(area, region, idname):
 
     align = panel_aligned(area, region)
 
-    ar = ct.cast(region.as_pointer(), ct.POINTER(structures.ARegion)).contents
+    ar = structures.ARegion.cast(region)
 
     for block in ar.uiblocks.to_list(structures.uiBlock):
         pa_p = block.panel

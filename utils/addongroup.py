@@ -833,8 +833,14 @@ class AddonGroupPreferences:
                         except:
                             traceback.print_exc()
                             has_error = True
-                        introspect = eval(col_body.introspect())
-                        if introspect[0] or has_error:
+                        has_introspect_error = False
+                        try:
+                            # " や ' の問題でSyntaxErrorが発生する場合あり
+                            introspect = eval(col_body.introspect())
+                        except:
+                            # traceback.print_exc()
+                            has_introspect_error = True
+                        if has_introspect_error or introspect[0] or has_error:
                             if not align_box_draw:
                                 sub = col_head.row()
                                 sub.active = False  # 色を薄くする為

@@ -2307,8 +2307,7 @@ class WM_OT_pie_menu(bpy.types.Operator):
         items = bpy.types.Event.bl_rna.properties['type'].enum_items
         # get(name)はEnumPropertyItemを、find(name)はインデックスを得る
         value = items.get(event_type).value
-        addr = context.window.as_pointer()
-        win = cast(c_void_p(addr), POINTER(wmWindow)).contents
+        win = wmWindow.cast(context.window)
         win.lock_pie_event = value
 
     # 未使用
@@ -2324,12 +2323,11 @@ class WM_OT_pie_menu(bpy.types.Operator):
         if not window:
             return []
 
-        addr = window.as_pointer()
-        win = cast(c_void_p(addr), POINTER(wmWindow)).contents
+        win = wmWindow.cast(window)
 
         handlers = []
 
-        ptr = cast(win.modalhandlers.first, POINTER(wmEventHandler))
+        ptr = wmEventHandler.cast(win.modalhandlers.first, contents=False)
         while ptr:
             # http://docs.python.jp/3/library/ctypes.html#surprises
             # この辺りの事には注意する事
