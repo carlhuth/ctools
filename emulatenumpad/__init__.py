@@ -218,6 +218,10 @@ class EmulateKeyMapsPreferences(
         bpy.types.AddonPreferences):
     bl_idname = __name__
 
+    use_emulation_keymap = bpy.props.BoolProperty(
+        name='Emulation Keymap',
+        default=True
+    )
     emulation_keymap = bpy.props.CollectionProperty(
         type=EmulationKeyMapItem)
     emulation_keymap_lock = bpy.props.StringProperty(
@@ -248,6 +252,11 @@ class EmulateKeyMapsPreferences(
     def _special_keymap_modifier_update(self, context):
         replace_keymap_items()
 
+    use_special_keymap = bpy.props.BoolProperty(
+        name='Special Keymap',
+        update=_special_keymap_modifier_update,
+    )
+
     special_keymap_modifier = bpy.props.EnumProperty(
         items=[('SHIFT', 'Shift + Space', 'Shift + Space'),
                ('CTRL', 'Ctrl + Space', 'Ctrl + Space')],
@@ -260,52 +269,15 @@ class EmulateKeyMapsPreferences(
         layout = self.layout
         layout.context_pointer_set('addon_prefs', self)
 
-        # Special Key Maps
-
-        layout.label('Special Key Map:')
-        box = layout.box()
-        column = box.column()
-
-        split = column.split(0.5)
-        col = split.column()
-        row = col.row()
-        row.label('Key: ')
-        row = col.row()
-        row.prop(self, 'special_keymap_modifier', expand=True)
-        if self.special_keymap_modifier == 'CTRL':
-            if edited_keymap_items:
-                column.label('Ctrl + Space -> Shift + Space', icon='ERROR')
-            split = column.split(0.02)
-            split.column()
-            col = split.column()
-            for km, kmi in edited_keymap_items:
-                text = '* {}: {}'.format(km.name, kmi.name)
-                if hasattr(kmi.properties, 'data_path'):
-                    text += ": data_path='{}'".format(kmi.properties.data_path)
-                elif kmi.idname == 'wm.call_menu':
-                    text += ": name='{}'".format(kmi.properties.name)
-                col.label(text, translate=False)
-
-        column.separator()
-
-        split = column.split(0.5)
-        col = split.column()
-        col.label('Config File:')
-        file_path = os.path.join(bpy.utils.user_resource('CONFIG'),
-                                 CONFIG_FILE_NAME)
-        column.label(file_path)
-        split = column.split(0.25)
-        col = split.column()
-        text = 'Edit' if os.path.exists(file_path) else 'New'
-        col.operator(SCREEN_OT_edit_keymap.bl_idname, text=text)
-
-        self.layout.separator()
-
         # Emulation Key Map
 
-        layout.label('Emulation Key Map:')
+        row = layout.row(align=True)
+        row.prop(self, 'use_emulation_keymap', text='')
+        row.label('Emulation Key Map:')
         box = layout.box()
+
         column = box.column()
+        column.active = self.use_emulation_keymap
 
         sp = column.split(0.33)
         row = sp.row()
@@ -349,6 +321,52 @@ class EmulateKeyMapsPreferences(
         op.data_path = 'addon_prefs.emulation_keymap'
         op = sub.operator(CollectionOperator.Clear.bl_idname, text='Clear')
         op.data_path = 'addon_prefs.emulation_keymap'
+
+        self.layout.separator()
+
+        # Special Key Maps
+
+        row = layout.row(align=True)
+        row.prop(self, 'use_special_keymap', text='')
+        row.label('Special Key Map:')
+        box = layout.box()
+
+        column = box.column()
+        column.active = self.use_special_keymap
+
+        split = column.split(0.5)
+        col = split.column()
+        row = col.row()
+        row.label('Key: ')
+        row = col.row()
+        row.prop(self, 'special_keymap_modifier', expand=True)
+        if self.special_keymap_modifier == 'CTRL':
+            if edited_keymap_items:
+                column.label('Ctrl + Space -> Shift + Space', icon='ERROR')
+            split = column.split(0.02)
+            split.column()
+            col = split.column()
+            for km, kmi in edited_keymap_items:
+                text = '* {}: {}'.format(km.name, kmi.name)
+                if hasattr(kmi.properties, 'data_path'):
+                    text += ": data_path='{}'".format(
+                        kmi.properties.data_path)
+                elif kmi.idname == 'wm.call_menu':
+                    text += ": name='{}'".format(kmi.properties.name)
+                col.label(text, translate=False)
+
+            column.separator()
+
+            split = column.split(0.5)
+            col = split.column()
+            col.label('Config File:')
+            file_path = os.path.join(bpy.utils.user_resource('CONFIG'),
+                                     CONFIG_FILE_NAME)
+            column.label(file_path)
+            split = column.split(0.25)
+            col = split.column()
+            text = 'Edit' if os.path.exists(file_path) else 'New'
+            col.operator(SCREEN_OT_edit_keymap.bl_idname, text=text)
 
         self.layout.separator()
 
@@ -508,6 +526,11 @@ def set_active_area_region(context, area, region):
 class SCREEN_OT_emulate_keymap(bpy.types.Operator):
     bl_idname = 'screen.emulate_keymap'
     bl_label = 'Emulate Key Map'
+
+    @classmethod
+    def poll(self, context):
+        prefs = EmulateKeyMapsPreferences.get_instance()
+        return prefs.use_emulation_keymap
 
     def __init__(self):
         self.event_type = ''
@@ -683,6 +706,11 @@ class SCREEN_OT_special_keymap(bpy.types.Operator):
     operators = {}
 
     @classmethod
+    def poll(self, context):
+        prefs = EmulateKeyMapsPreferences.get_instance()
+        return prefs.use_special_keymap
+
+    @classmethod
     def kill(cls):
         for op in cls.operators.values():
             op.terminate = True
@@ -769,7 +797,10 @@ class SCREEN_OT_special_keymap(bpy.types.Operator):
         if current_key == self.op_key:
             self.cancel(context)
 
-        self.key_history.append(current_key)
+        if event.type == 'BACK_SPACE' and event.value == 'PRESS':
+            self.key_history[-1:] = []
+        else:
+            self.key_history.append(current_key)
 
         self.redraw_info(context)
 
@@ -934,6 +965,9 @@ def replace_keymap_items():
     prefs = EmulateKeyMapsPreferences.get_instance()
 
     restore_replaced_keymap_items()
+
+    if not prefs.use_special_keymap:
+        return
 
     keyconfigs = bpy.context.window_manager.keyconfigs
     for kc in [keyconfigs.active, keyconfigs.addon]:
