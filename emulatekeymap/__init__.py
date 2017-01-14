@@ -68,6 +68,30 @@ except NameError:
 
 numpad_preset = {
     'TYPE1': [
+        ('NUMPAD_0', 'Z'),
+        ('NUMPAD_1', 'X'),
+        ('NUMPAD_2', 'C'),
+        ('NUMPAD_3', 'V'),
+        ('NUMPAD_4', 'S'),
+        ('NUMPAD_5', 'D'),
+        ('NUMPAD_6', 'F'),
+        ('NUMPAD_7', 'W'),
+        ('NUMPAD_8', 'E'),
+        ('NUMPAD_9', 'R'),
+        ('NUMPAD_PERIOD', 'A'),
+        ('NUMPAD_PLUS', 'G'),
+        ('NUMPAD_MINUS', 'T'),
+        ('NUMPAD_ASTERIX', 'FOUR'),
+        ('NUMPAD_SLASH', 'THREE'),
+        ('NUMPAD_ENTER', 'B'),
+        ('SPACE', 'TAB'),
+        ('HOME', 'ONE'),
+        ('END', 'TWO'),
+
+        ('HOLD', 'Q'),
+    ],
+
+    'TYPE2': [
         ('NUMPAD_0', 'V'),
         ('NUMPAD_1', 'Z'),
         ('NUMPAD_2', 'X'),
@@ -91,28 +115,28 @@ numpad_preset = {
         ('HOLD', 'G'),
     ],
 
-    'TYPE2': [
+    'TYPE3': [
         ('NUMPAD_0', 'Z'),
-        ('NUMPAD_1', 'X'),
-        ('NUMPAD_2', 'C'),
-        ('NUMPAD_3', 'V'),
-        ('NUMPAD_4', 'S'),
-        ('NUMPAD_5', 'D'),
-        ('NUMPAD_6', 'F'),
-        ('NUMPAD_7', 'W'),
-        ('NUMPAD_8', 'E'),
-        ('NUMPAD_9', 'R'),
-        ('NUMPAD_PERIOD', 'A'),
-        ('NUMPAD_PLUS', 'G'),
-        ('NUMPAD_MINUS', 'T'),
-        ('NUMPAD_ASTERIX', 'FOUR'),
-        ('NUMPAD_SLASH', 'THREE'),
+        ('NUMPAD_1', 'A'),
+        ('NUMPAD_2', 'S'),
+        ('NUMPAD_3', 'D'),
+        ('NUMPAD_4', 'Q'),
+        ('NUMPAD_5', 'W'),
+        ('NUMPAD_6', 'E'),
+        ('NUMPAD_7', 'ONE'),
+        ('NUMPAD_8', 'TWO'),
+        ('NUMPAD_9', 'THREE'),
+        ('NUMPAD_PERIOD', 'C'),
+        ('NUMPAD_PLUS', 'V'),
+        ('NUMPAD_MINUS', 'F'),
+        ('NUMPAD_ASTERIX', 'R'),
+        ('NUMPAD_SLASH', 'FOUR'),
         ('NUMPAD_ENTER', 'B'),
-        ('HOME', 'ONE'),
-        ('END', 'TWO'),
+        ('HOME', 'T'),
+        ('END', 'G'),
         ('SPACE', 'TAB'),
 
-        ('HOLD', 'Q'),
+        ('HOLD', 'X'),
     ]
 }
 
@@ -244,7 +268,8 @@ class EmulateKeyMapsPreferences(
     numpad_preset = bpy.props.EnumProperty(
         name='Numpad Preset',
         items=(('TYPE1', 'Type1', ''),
-               ('TYPE2', 'Type2', '')),
+               ('TYPE2', 'Type2', ''),
+               ('TYPE3', 'Type3', '')),
         update=_numpad_preset_update,
     )
     del _numpad_preset_update

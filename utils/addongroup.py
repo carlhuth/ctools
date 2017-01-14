@@ -759,6 +759,7 @@ class AddonGroupPreferences:
                               emboss=False)
             op.data_path = 'addon_prefs.show_expanded_' + mod_name
             sub.label('{}: {}'.format(info['category'], info['name']))
+            sub = row.row()  # 本体を更新したらレイアウトが崩れたのでその対策
             sub = row.row()
             sub.alignment = 'RIGHT'
             if mod_name.startswith('_'):
