@@ -2535,6 +2535,7 @@ class VIEW3D_OT_region_ruler(bpy.types.Operator):
         return retval, do_redraw, do_redraw_panel
 
     def modal(self, context, event):
+        # import time
         # event = data.events[context.window.as_pointer()]
         # print(event.type, event.value,
         #       time.time(),
@@ -2559,23 +2560,10 @@ class VIEW3D_OT_region_ruler(bpy.types.Operator):
                 logger.debug(msg.format(context.window.as_pointer()))
                 return {'FINISHED', 'PASS_THROUGH'}
 
-        data.mouse_coords[context.window.as_pointer()] = event.mco
+        data.mouse_coords[context.window.as_pointer()] = data.events[ptr].mco
 
         if event.type == 'INBETWEEN_MOUSEMOVE':
             return {'PASS_THROUGH'}
-        elif event.type == 'MOUSEMOVE':
-            # commit 53a3850a8a05249942a0c4a16060e9491456af02
-            # source/blender/editors/interface/interface_handlers.c:9200
-            # let's make sure we are really not hovering a button by adding
-            # a mousemove!
-            # XXX some WM_event_add_mousemove calls may become unnecessary
-            # with this and can be removed
-            #
-            # パネル上のボタン類が無い所にマウスを置くと絶えず'MOUSEMOVE'
-            # イベントが発生し続ける。
-            if (event.mouse_x == event.mouse_prev_x and
-                    event.mouse_y == event.mouse_prev_y):
-                return {'PASS_THROUGH'}
         elif event.type.startswith('TIMER'):
             return {'PASS_THROUGH'}
 

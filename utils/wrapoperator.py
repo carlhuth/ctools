@@ -337,7 +337,8 @@ def convert_operator_attributes(idname_py):
     namespace['bl_idname'] = idname_py
     namespace['bl_label'] = bl_rna.name
     namespace['bl_description'] = bl_rna.description
-    namespace['bl_translation_context'] = bl_rna.translation_context
+    # ↓Debugビルドだとこれを指定していた場合にassertで落とされる。
+    # namespace['bl_translation_context'] = bl_rna.translation_context
     namespace['bl_options'] = convert_ot_flag(ot)
     if ot.prop:
         namespace['bl_property'] = ot.prop.contents.identifier.decode()
