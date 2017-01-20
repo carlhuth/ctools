@@ -75,6 +75,11 @@ linuxでのみ動作する。
 Panelのcategory(タブ名)を変更する。  
 ![Image](__images/editpanelcategory.jpg)
 
+## Dolly Zoom
+カメラの焦点距離変更時にカメラを前後に移動して表示領域を維持する。3D Cursorが基準となる。  
+3DViewの場合はViewLocationが基準となり、Distanceを変更する。  
+![Image](__images/dollyzoom.jpg)
+
 ## その他
 ### __patch/ui_layout_box.patch
 alignが真の状態のUILayoutでbox描画に不具合が起こる問題を修正するパッチ。  

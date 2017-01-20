@@ -2444,6 +2444,11 @@ def import_user_pie_menus():
         except:
             traceback.print_exc()
             continue
+        try:  # F8でのリロード後にSnapメニューで問題が起こったので
+            importlib.reload(mod)
+        except:
+            traceback.print_exc()
+            continue
         register_user_moudle(mod)
     sys.path.pop(0)
 

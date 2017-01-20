@@ -96,7 +96,7 @@ def bl_prop_to_py_prop(prop):
             attrs['type'] = prop.fixed_type.__class__
         else:
             return None
-    if prop.type == 'ENUM':
+    elif prop.type == 'ENUM':
         items = attrs['items'] = []
         for enum_item in prop.enum_items:
             items.append((enum_item.identifier,
@@ -104,7 +104,7 @@ def bl_prop_to_py_prop(prop):
                           enum_item.description,
                           enum_item.icon,
                           enum_item.value))
-    if prop_type == 'STIRNG':
+    elif prop.type == 'STRING':
         attrs['maxlen'] = prop.length_max
 
     table = {

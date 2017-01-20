@@ -57,6 +57,7 @@ class CToolsPreferences(addongroup.AddonGroupPreferences,
     sub_modules = [
         'aligntools',
         'boolutils',
+        'dollyzoom',
         'drawnearest',
         'editpanelcategory',
         'emulatekeymap',

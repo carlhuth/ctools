@@ -1056,7 +1056,7 @@ ARegion._fields_ = fields(
 
     c_void_p, 'regiontimer',  # <struct wmTimer>  # blend in/out
 
-    c_char_p, 'headerstr',  # use this string to draw info
+    c_char_p, 'headerstr',  # use this string to draw info  最大:UI_MAX_DRAW_STR:400
     c_void_p, 'regiondata',  # XXX 2.50, need spacedata equivalent?
 )
 

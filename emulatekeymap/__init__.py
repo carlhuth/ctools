@@ -402,6 +402,83 @@ class EmulateKeyMapsPreferences(
 ###############################################################################
 # Emulate Key Map
 ###############################################################################
+"""
+NOTE:
+modalkeymapの場合はevent.typeがEVT_MODAL_MAPになる
+wm_event_modalkeymap(), wm_event_modalmap_end()参照
+event->prevtype = event->type;
+event->prevval = event->val;
+event->type = EVT_MODAL_MAP;
+event->val = kmi->propvalue;
+"""
+
+
+# 未使用
+def is_matched_keymap_item(context, event, kmi):
+    if not kmi.active:
+        return False
+
+    if context.user_preferences.inputs.select_mouse == 'RIGHT':
+        action_select = {
+            'ACTIONMOUSE': 'LEFTMOUSE',
+            'SELECTMOUSE': 'RIGHTMOUSE',
+            'EVT_TWEAK_A': 'EVT_TWEAK_L',
+            'EVT_TWEAK_S': 'EVT_TWEAK_R',
+        }
+    else:
+        action_select = {
+            'ACTIONMOUSE': 'RIGHTMOUSE',
+            'SELECTMOUSE': 'LEFTMOUSE',
+            'EVT_TWEAK_A': 'EVT_TWEAK_R',
+            'EVT_TWEAK_S': 'EVT_TWEAK_L',
+        }
+    if context.user_preferences.inputs.invert_zoom_wheel:
+        zoom_in_out = {
+            'WHEELINMOUSE': 'WHEELDOWNMOUSE',
+            'WHEELOUTMOUSE': 'WHEELUPMOUSE',
+        }
+    else:
+        zoom_in_out = {
+            'WHEELINMOUSE': 'WHEELUPMOUSE',
+            'WHEELOUTMOUSE': 'WHEELDOWNMOUSE',
+        }
+
+    if kmi.type == event.type:
+        match = True
+    elif kmi.type in action_select:
+        match = action_select[kmi.type] == event.type
+    elif kmi.type in zoom_in_out:
+        match = zoom_in_out[kmi.type] == event.type
+    else:
+        match = False
+
+    if not match:
+        return False
+
+    if not (kmi.value == event.value or kmi.value == 'ANY'):
+        return False
+
+    if kmi.any:
+        match = True
+    else:
+        mods = ['shift', 'ctrl', 'alt', 'oskey']
+        match = all([getattr(kmi, m) == getattr(event, m) for m in mods])
+    if match and kmi.key_modifier != 'NONE':
+        # event.key_modifierに当たるものはpythonAPIでは提供されていない
+        ev = st.wmEvent.cast(event)
+        value = ev.keymodifier
+        prop = bpy.types.KeyMapItem.bl_rna.properties['key_modifier']
+        key_modifier = 'NONE'
+        for enum_item in prop.enum_items:
+            if enum_item.value == value:
+                key_modifier = enum_item.identifier
+                break
+        if kmi.key_modifier != key_modifier:
+            match = False
+
+    return match
+
+
 def find_event_keymap_items(context, event):
     keymap_items = []
 
@@ -523,6 +600,8 @@ def get_active_area_region(context, event):
         if area.x <= x < area.x + area.width:
             if area.y <= y < area.y + area.height:
                 for region in area.regions:
+                    if region.id == 0:
+                        continue
                     if region.x <= x < region.x + region.width:
                         if region.y <= y < region.y + region.height:
                             return area, region
