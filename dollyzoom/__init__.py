@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Dolly Zoom',
     'author': 'chromoly',
-    'version': (0, 1, 1),
+    'version': (0, 1, 2),
     'blender': (2, 78, 0),
     'location': '3DView > UI > Dolly Zoom, 3DView > Ctrl + Shift + F',
     'description': '',
@@ -581,6 +581,11 @@ class CAMERA_OT_focus_from_cursor(bpy.types.Operator):
     bl_description = ''
     bl_options = {'REGISTER', 'UNDO'}
 
+    @classmethod
+    def poll(self, context):
+        ob = context.scene.camera
+        return ob and ob.type == 'CAMERA'
+
     def execute(self, context):
         scene = context.scene
         area = context.area
@@ -624,15 +629,18 @@ class VIEW3D_PT_dolly_zoom(bpy.types.Panel):
         column = layout.column()
         if getattr(scene, PROP_MODE_ATTR) == 'CAMERA' or is_camera:
             col = column.column()
-            col.enabled = scene.camera and scene.camera.type == 'CAMERA'
-            camera = scene.camera.data
-            if camera.lens_unit == 'MILLIMETERS':
-                col.prop(scene, PROP_LENS_ATTR)
-            else:
+            is_camera = scene.camera and scene.camera.type == 'CAMERA'
+            col.enabled = is_camera
+            if (scene.camera and scene.camera.type == 'CAMERA' and
+                    scene.camera.data.lens_unit == 'FOV'):
                 col.prop(scene, PROP_ANGLE_ATTR)
-            column.prop(scene, PROP_ADJUST_ATTR)
-            column.operator(CAMERA_OT_focus_from_cursor.bl_idname,
-                            text='Set Focus from 3D Cursor')
+            else:
+                col.prop(scene, PROP_LENS_ATTR)
+            col = column.column()
+            col.active = is_camera
+            col.prop(scene, PROP_ADJUST_ATTR)
+            col.operator(CAMERA_OT_focus_from_cursor.bl_idname,
+                         text='Set Focus from 3D Cursor')
         else:
             col = column.column()
             # col.active = rv3d.view_perspective == 'PERSP'
