@@ -20,9 +20,9 @@
 bl_info = {
     'name': 'Dolly Zoom',
     'author': 'chromoly',
-    'version': (0, 0, 9),
+    'version': (0, 1, 0),
     'blender': (2, 78, 0),
-    'location': '3DView > UI, 3DView > Space > "View Navigation EX"',
+    'location': '3DView > UI > Dolly Zoom, 3DView > Ctrl + Shift + F',
     'description': '',
     'warning': '',
     'wiki_url': '',
@@ -39,14 +39,12 @@ import bpy
 from mathutils import Matrix, Vector
 
 try:
-    importlib.reload(listvalidkeys)
     importlib.reload(addongroup)
     importlib.reload(customproperty)
     importlib.reload(registerinfo)
     importlib.reload(st)
     importlib.reload(wrapoperator)
 except NameError:
-    from .. import listvalidkeys
     from ..utils import addongroup
     from ..utils import customproperty
     from ..utils import registerinfo
@@ -59,6 +57,7 @@ PROP_LENS_ATTR = 'ct_dz_camera_lens'
 PROP_ANGLE_ATTR = 'ct_dz_camera_angle'
 PROP_ADJUST_ATTR = 'ct_dz_dof_adjust'
 PROP_V3D_LENS_ATTR = 'ct_dz_v3d_lens'
+PROP_USE_VIEW_LOCATION = 'ct_dz_use_view_location'
 
 
 ###############################################################################
@@ -294,9 +293,18 @@ _VIEW3D_OT_walk_ex = type('_VIEW3D_OT_walk_ex', (), walk_ot_attrs)
 
 def distance_from_camera(camera_obj, loc):
     mat = camera_obj.matrix_world
-    camera_loc = mat.to_translation()
     ray = -mat.col[2].to_3d().normalized()
-    v = (loc - camera_loc).project(ray)
+    v = (loc - mat.to_translation()).project(ray)
+    dist = v.length
+    if ray.dot(v) < 0.0:
+        dist *= -1
+    return dist
+
+
+def distance_from_view(rv3d, loc):
+    mat = rv3d.view_matrix.inverted()
+    ray = -mat.col[2].to_3d().normalized()
+    v = (loc - mat.to_translation()).project(ray)
     dist = v.length
     if ray.dot(v) < 0.0:
         dist *= -1
@@ -338,14 +346,28 @@ def camera_screen_size(scene, area, camera_obj, use_dof=False):
         return 0.0
 
 
+def rv3d_screen_size(v3d, rv3d):
+    dist = distance_from_view(rv3d, v3d.cursor_location)
+    if dist > 0.0:
+        # sensorはDEFAULT_SENSOR_WIDTHで合ってるのか？
+        angle = focallength_to_fov(v3d.lens, DEFAULT_SENSOR_WIDTH)
+        return dist * math.tan(angle / 2) * 2
+    else:
+        return 0.0
+
+
 class _Navigate:
     bl_idname = ''
     bl_label = ''
 
     def __init__(self):
         self.dolly_zoom = False
-        self.lens = 35.0
-        self.size = 0.0  # dolly_zoom有効時に計算
+        self.camera_lens_bak = 35.0
+        self.screen_size = 0.0  # dolly_zoom有効時に計算
+        self.rv3d_view_distance_bak = self.rv3d_view_distance = 0.0
+        self.v3d_lens_bak = self.v3d_lens = 35.0  # degrees
+        self.rv3d_view_location = Vector()
+        # self.projected_view_location = Vector([0.0, 0.0, 0.0, 1.0])
 
     def cancel(self, context):
         super().cancel(context)
@@ -374,17 +396,22 @@ class _Navigate:
             s += ', {}:lens ({})'.format(event_type, value)
             context.area.header_text_set(s)
 
-    def calc_camera_screen_size(self, context):
-        self.size = 0.0
+    def calc_screen_size(self, context):
+        self.screen_size = 0.0
         rv3d = context.region_data
         if rv3d.view_perspective == 'CAMERA':
             camera_obj = context.scene.camera
             if camera_obj and camera_obj.type == 'CAMERA':
-                self.size = camera_screen_size(context.scene, context.area,
-                                               camera_obj)
+                self.screen_size = camera_screen_size(
+                    context.scene, context.area, camera_obj)
+        else:
+            self.screen_size = rv3d_screen_size(context.space_data, rv3d)
 
     def modal(self, context, event):
         addon_prefs = AddonDollyZoomPreferences.get_instance()
+        v3d = context.space_data
+        rv3d = context.region_data
+
         if self.__class__.bl_idname == 'view3d.walk_ex':
             event_type = addon_prefs.walk_key
         else:
@@ -393,7 +420,9 @@ class _Navigate:
         if event.type == event_type and event.value == 'PRESS':
             self.dolly_zoom ^= True
             if self.dolly_zoom:
-                self.calc_camera_screen_size(context)
+                self.rv3d_view_location = rv3d.view_location.copy()
+                self.v3d_lens = v3d.lens
+                self.calc_screen_size(context)
 
         r = super().modal(context, event)
 
@@ -405,17 +434,35 @@ class _Navigate:
             walk_fly = FlyInfo.cast(op.customdata)
 
         camera_obj = camera = None
-        rv3d = context.region_data
         if rv3d.view_perspective == 'CAMERA':
             camera_obj = context.scene.camera
             if camera_obj and camera_obj.type == 'CAMERA':
                 camera = camera_obj.data
 
-        if event.type == 'TIMER' and ev.customdata == walk_fly.timer:
-            if camera and self.dolly_zoom:
-                cursor = context.space_data.cursor_location
+        if (event.type == 'TIMER' and ev.customdata == walk_fly.timer and
+                self.dolly_zoom):
+            cursor = context.space_data.cursor_location
+            if rv3d.view_perspective == 'CAMERA':
+                if camera:
+                    mat = camera_obj.matrix_world
+                    ray = -mat.col[2].to_3d().normalized()
+                    loc = mat.col[3].to_3d()
+                    v = cursor - loc
+                    dist = v.project(ray).length
+                    if v.dot(ray) < 0:
+                        dist *= -1
 
-                mat = camera_obj.matrix_world
+                    if self.screen_size > 0.0 and dist > 0.0:
+                        f = math.atan(self.screen_size / 2 / dist)
+                        angle = f * 2
+                        size = BKE_camera_sensor_size(camera)
+                        lens = fov_to_focallength(angle, size)
+                        camera.lens = max(1.0, lens)
+                    else:
+                        camera.lens = self.camera_lens_bak
+                    # TODO: dof_distanceの扱い
+            else:
+                mat = rv3d.view_matrix.inverted()
                 ray = -mat.col[2].to_3d().normalized()
                 loc = mat.col[3].to_3d()
                 v = cursor - loc
@@ -423,18 +470,20 @@ class _Navigate:
                 if v.dot(ray) < 0:
                     dist *= -1
 
-                if self.size > 0.0 and dist > 0.0:
-                    angle = math.atan(self.size / 2 / dist) * 2
-                    size = BKE_camera_sensor_size(camera)
-                    lens = fov_to_focallength(angle, size)
-                    camera.lens = max(1.0, lens)
+                if self.screen_size > 0.0 and dist > 0.0:
+                    f = math.atan(self.screen_size / 2 / dist)
+                    angle = f * 2
+                    lens = fov_to_focallength(angle, DEFAULT_SENSOR_WIDTH)
+                    v3d.lens = min(max(1.0, lens), 250.0)
                 else:
-                    camera.lens = self.lens
-                # TODO: dof_distanceの扱い
+                    v3d.lens = self.v3d_lens_bak
+                rv3d.update()  # recalc matrices
 
         if 'CANCELLED' in r:
             if camera:
-                camera.lens = self.lens
+                camera.lens = self.camera_lens_bak
+            v3d.lens = self.v3d_lens_bak
+            rv3d.view_distance = self.rv3d_view_distance_bak
 
         self.header_text_set(context)
         return r
@@ -450,14 +499,20 @@ class _Navigate:
         ex_ot = wrapoperator.get_operator_type(self.__class__.bl_idname)
         ex_ot.modalkeymap = ot.modalkeymap
 
+        v3d = context.space_data
         rv3d = context.region_data
+        self.rv3d_view_distance_bak = rv3d.view_distance
+        self.v3d_lens_bak = v3d.lens
+        self.rv3d_view_location = rv3d.view_location.copy()
+        self.rv3d_view_distance = rv3d.view_distance  # modal中では0.0になる
+        self.v3d_lens = v3d.lens
         if rv3d.view_perspective == 'CAMERA':
             camera_obj = context.scene.camera
             if camera_obj and camera_obj.type == 'CAMERA':
                 camera = camera_obj.data
-                self.lens = camera.lens
-                if self.dolly_zoom:
-                    self.calc_camera_screen_size(context)
+                self.camera_lens_bak = camera.lens
+        if self.dolly_zoom:
+            self.calc_screen_size(context)
 
         return super().invoke(context, event)
 
@@ -582,6 +637,7 @@ class VIEW3D_PT_dolly_zoom(bpy.types.Panel):
             col = column.column()
             # col.active = rv3d.view_perspective == 'PERSP'
             col.prop(scene, PROP_V3D_LENS_ATTR)
+            col.prop(scene, PROP_USE_VIEW_LOCATION)
 
     @classmethod
     def world_to_basis(cls, obj, loc):
@@ -592,34 +648,21 @@ class VIEW3D_PT_dolly_zoom(bpy.types.Panel):
             obj.location = loc
 
     @classmethod
-    def set_params_v3d(cls, context, angle):
-        """rv3d.view_locationへズーム"""
-        # v3d.lensのsubtypeは'ANGLE'じゃないので注意
+    def set_params_v3d(cls, context, lens):
         v3d = context.area.spaces.active
         if v3d.region_quadviews:
             rv3d = v3d.region_quadviews[-1]
         else:
             rv3d = v3d.region_3d
-
-        pmat = rv3d.perspective_matrix
-        v = pmat * rv3d.view_location.to_4d()
-        if v.w != 0.0:
-            v /= v.w
-        loc = pmat.inverted() * Vector((1.0, 1.0, v.z, 1.0))
-        if loc.w != 0.0:
-            loc /= loc.w
+        if getattr(context.scene, PROP_USE_VIEW_LOCATION):
+            rv3d.view_distance *= lens / v3d.lens
+            v3d.lens = lens
         else:
-            loc.w = 1.0
-
-        v3d.lens = angle
+            dist = distance_from_view(rv3d, v3d.cursor_location)
+            if rv3d.view_distance != 0.0 and dist > 0.0:
+                rv3d.view_distance += dist * lens / v3d.lens - dist
+            v3d.lens = lens
         rv3d.update()  # recalc matrices
-
-        pmat = rv3d.perspective_matrix
-        v = pmat * loc.to_4d()
-        if v.w != 0.0:
-            v /= v.w
-        if v.x != 0.0:
-            rv3d.view_distance *= v.x
 
     @classmethod
     def set_params(cls, context, lens=None, angle=None, use_dof=False):
@@ -670,6 +713,13 @@ class VIEW3D_PT_dolly_zoom(bpy.types.Panel):
 
     @classmethod
     def register(cls):
+        def update(self, context):
+            for area in context.screen.areas:
+                if area.type == 'VIEW_3D':
+                    for region in area.regions:
+                        if region.type == 'UI':
+                            region.tag_redraw()
+
         # camera lens -----------------------------------------------
         prop = wrapoperator.bl_prop_to_py_prop(
             bpy.types.Camera.bl_rna.properties['lens'])
@@ -689,6 +739,7 @@ class VIEW3D_PT_dolly_zoom(bpy.types.Panel):
 
         prop[1]['get'] = fget
         prop[1]['set'] = fset
+        prop[1]['update'] = update
         setattr(bpy.types.Scene, PROP_LENS_ATTR, prop)
 
         # camera angle ----------------------------------------------
@@ -710,16 +761,25 @@ class VIEW3D_PT_dolly_zoom(bpy.types.Panel):
 
         prop[1]['get'] = fget
         prop[1]['set'] = fset
+        prop[1]['update'] = update
         setattr(bpy.types.Scene, PROP_ANGLE_ATTR, prop)
 
         # adjust dof distance ---------------------------------------
+        def fget(self):
+            return getattr(VIEW3D_PT_dolly_zoom, PROP_ADJUST_ATTR, False)
+
+        def fset(self, value):
+            return setattr(VIEW3D_PT_dolly_zoom, PROP_ADJUST_ATTR, value)
+
         prop = bpy.props.BoolProperty(
             name='Adjust DOF Distance',
-            default=False
+            get=fget,  # Sceneにゴミを追加しないようにget,set関数を設定する
+            set=fset,
+            update=update,
         )
         setattr(bpy.types.Scene, PROP_ADJUST_ATTR, prop)
 
-        # v3d lens -----------------------------------------------:::
+        # v3d lens --------------------------------------------------
         prop = wrapoperator.bl_prop_to_py_prop(
             bpy.types.SpaceView3D.bl_rna.properties['lens'])
 
@@ -737,18 +797,43 @@ class VIEW3D_PT_dolly_zoom(bpy.types.Panel):
 
         prop[1]['get'] = fget
         prop[1]['set'] = fset
+        prop[1]['update'] = update
         setattr(bpy.types.Scene, PROP_V3D_LENS_ATTR, prop)
 
+        # use view_location -----------------------------------------
+        def fget(self):
+            return getattr(VIEW3D_PT_dolly_zoom, PROP_USE_VIEW_LOCATION, False)
+
+        def fset(self, value):
+            return setattr(VIEW3D_PT_dolly_zoom, PROP_USE_VIEW_LOCATION, value)
+
+        prop = bpy.props.BoolProperty(
+            name='View Location',
+            description='Use view location instead of 3D cursor',
+            get=fget,
+            set=fset,
+            update=update,
+        )
+        setattr(bpy.types.Scene, PROP_USE_VIEW_LOCATION, prop)
+
         # mode ------------------------------------------------------
+        def fget(self):
+            return getattr(VIEW3D_PT_dolly_zoom, PROP_MODE_ATTR, 0)
+
+        def fset(self, value):
+            return setattr(VIEW3D_PT_dolly_zoom, PROP_MODE_ATTR, value)
+
         prop = bpy.props.EnumProperty(
             name='Mode',
-            items=[('VIEW_3D', 'View 3D', 'Depth: View Location'),
-                   ('CAMERA', 'Camera', 'Depth: 3D Cursor')
+            items=[('VIEW_3D', '3D View', 'Depth: 3D cursor / view location'),
+                   ('CAMERA', 'Camera', 'Depth: 3D cursor')
                    ],
-            default='VIEW_3D'
+            default='VIEW_3D',
+            get=fget,
+            set=fset,
+            update=update,
         )
         setattr(bpy.types.Scene, PROP_MODE_ATTR, prop)
-
 
     @classmethod
     def unregister(cls):

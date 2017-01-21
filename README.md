@@ -76,8 +76,9 @@ Panelのcategory(タブ名)を変更する。
 ![Image](__images/editpanelcategory.jpg)
 
 ## Dolly Zoom
-カメラの焦点距離変更時にカメラを前後に移動して表示領域を維持する。3D Cursorが基準となる。  
-3DViewの場合はViewLocationが基準となり、Distanceを変更する。  
+CAMERA表示の際、焦点距離変更時に表示領域を維持するようにカメラを前後にする。  
+ORTHO,PERSPの場合はSpaceView3D.view_distanceを調整する。  
+View Navigation にこの機能を追加したもの -> View Navigation EX (Ctrl + Shift + F)。  
 ![Image](__images/dollyzoom.jpg)
 
 ## その他
