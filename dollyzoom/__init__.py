@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Dolly Zoom',
     'author': 'chromoly',
-    'version': (0, 1, 0),
+    'version': (0, 1, 1),
     'blender': (2, 78, 0),
     'location': '3DView > UI > Dolly Zoom, 3DView > Ctrl + Shift + F',
     'description': '',
@@ -464,7 +464,7 @@ class _Navigate:
             else:
                 mat = rv3d.view_matrix.inverted()
                 ray = -mat.col[2].to_3d().normalized()
-                loc = mat.col[3].to_3d()
+                loc = mat.to_translation()
                 v = cursor - loc
                 dist = v.project(ray).length
                 if v.dot(ray) < 0:
@@ -650,19 +650,22 @@ class VIEW3D_PT_dolly_zoom(bpy.types.Panel):
     @classmethod
     def set_params_v3d(cls, context, lens):
         v3d = context.area.spaces.active
+
         if v3d.region_quadviews:
-            rv3d = v3d.region_quadviews[-1]
+            rv3ds = v3d.region_quadviews
         else:
-            rv3d = v3d.region_3d
-        if getattr(context.scene, PROP_USE_VIEW_LOCATION):
-            rv3d.view_distance *= lens / v3d.lens
-            v3d.lens = lens
-        else:
-            dist = distance_from_view(rv3d, v3d.cursor_location)
-            if rv3d.view_distance != 0.0 and dist > 0.0:
-                rv3d.view_distance += dist * lens / v3d.lens - dist
-            v3d.lens = lens
-        rv3d.update()  # recalc matrices
+            rv3ds = [v3d.region_3d]
+        for rv3d in rv3ds:
+            if (rv3d.view_perspective == 'ORTHO' or
+                    getattr(context.scene, PROP_USE_VIEW_LOCATION)):
+                rv3d.view_distance *= lens / v3d.lens
+            else:
+                dist = distance_from_view(rv3d, v3d.cursor_location)
+                if rv3d.view_distance != 0.0 and dist > 0.0:
+                    rv3d.view_distance += dist * lens / v3d.lens - dist
+        v3d.lens = lens
+        for rv3d in rv3ds:
+            rv3d.update()  # recalc matrices
 
     @classmethod
     def set_params(cls, context, lens=None, angle=None, use_dof=False):
@@ -713,12 +716,15 @@ class VIEW3D_PT_dolly_zoom(bpy.types.Panel):
 
     @classmethod
     def register(cls):
-        def update(self, context):
+        def redraw_v3d_ui(self, context):
             for area in context.screen.areas:
                 if area.type == 'VIEW_3D':
                     for region in area.regions:
                         if region.type == 'UI':
                             region.tag_redraw()
+
+        def redraw_v3d(self, context):
+            context.area.tag_redraw()
 
         # camera lens -----------------------------------------------
         prop = wrapoperator.bl_prop_to_py_prop(
@@ -739,7 +745,7 @@ class VIEW3D_PT_dolly_zoom(bpy.types.Panel):
 
         prop[1]['get'] = fget
         prop[1]['set'] = fset
-        prop[1]['update'] = update
+        prop[1]['update'] = redraw_v3d
         setattr(bpy.types.Scene, PROP_LENS_ATTR, prop)
 
         # camera angle ----------------------------------------------
@@ -761,7 +767,7 @@ class VIEW3D_PT_dolly_zoom(bpy.types.Panel):
 
         prop[1]['get'] = fget
         prop[1]['set'] = fset
-        prop[1]['update'] = update
+        prop[1]['update'] = redraw_v3d
         setattr(bpy.types.Scene, PROP_ANGLE_ATTR, prop)
 
         # adjust dof distance ---------------------------------------
@@ -775,7 +781,7 @@ class VIEW3D_PT_dolly_zoom(bpy.types.Panel):
             name='Adjust DOF Distance',
             get=fget,  # Sceneにゴミを追加しないようにget,set関数を設定する
             set=fset,
-            update=update,
+            update=redraw_v3d_ui,
         )
         setattr(bpy.types.Scene, PROP_ADJUST_ATTR, prop)
 
@@ -797,7 +803,7 @@ class VIEW3D_PT_dolly_zoom(bpy.types.Panel):
 
         prop[1]['get'] = fget
         prop[1]['set'] = fset
-        prop[1]['update'] = update
+        prop[1]['update'] = redraw_v3d
         setattr(bpy.types.Scene, PROP_V3D_LENS_ATTR, prop)
 
         # use view_location -----------------------------------------
@@ -812,7 +818,7 @@ class VIEW3D_PT_dolly_zoom(bpy.types.Panel):
             description='Use view location instead of 3D cursor',
             get=fget,
             set=fset,
-            update=update,
+            update=redraw_v3d_ui,
         )
         setattr(bpy.types.Scene, PROP_USE_VIEW_LOCATION, prop)
 
@@ -831,7 +837,7 @@ class VIEW3D_PT_dolly_zoom(bpy.types.Panel):
             default='VIEW_3D',
             get=fget,
             set=fset,
-            update=update,
+            update=redraw_v3d_ui,
         )
         setattr(bpy.types.Scene, PROP_MODE_ATTR, prop)
 
