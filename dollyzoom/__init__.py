@@ -885,6 +885,8 @@ def register():
 def unregister():
     walk_ex_ot = wrapoperator.get_operator_type('view3d.walk_ex')
     walk_ex_ot.modalkeymap = None
+    fly_ex_ot = wrapoperator.get_operator_type('view3d.fly_ex')
+    fly_ex_ot.modalkeymap = None
 
     for cls in classes[::-1]:
         bpy.utils.unregister_class(cls)

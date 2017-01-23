@@ -81,6 +81,17 @@ ORTHO,PERSPの場合はSpaceView3D.view_distanceを調整する。
 View Navigation にこの機能を追加したもの -> View Navigation EX (Ctrl + Shift + F)。  
 ![Image](__images/dollyzoom.jpg)
 
+## System Sound
+特定のアクションの時に、UserPreferencesで設定したフォルダにある音声ファイルをランダムで一つ選んで再生する。  
+* 起動
+* 終了
+* blendファイルの読み込み
+* blendファイルの保存(AutoSaveを含む)
+* スタートアップファイルの再読み込み(Ctrl+N)
+* UserPreferences画面の表示(Ctrl+Alt+U)
+
+終了時の音声(Power Off Post)は再生終了までユーザーからの入力を一切受け付けなくなるので注意。
+
 ## その他
 ### __patch/ui_layout_box.patch
 alignが真の状態のUILayoutでbox描画に不具合が起こる問題を修正するパッチ。  
