@@ -26,6 +26,7 @@
 >>> eve = EDBM_vert_find_nearest_ex(ctypes.byref(vc), ctypes.byref(dist), \
                                     ctypes.c_bool(1), use_cycle)
 >>> # address -> function
+>>> # WARNING! wrong code -> addr = ctypes.addressof(EDBM_vert_find_nearest_ex)
 >>> addr = ctypes.cast(EDBM_vert_find_nearest_ex, ctypes.c_void_p).value
 >>> functype = ctypes.CFUNCTYPE(POINTER(BMVert), POINTER(ViewContext),
                    POINTER(ctypes.c_float), ctypes.c_bool, ctypes.c_bool)

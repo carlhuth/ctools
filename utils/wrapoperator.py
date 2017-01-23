@@ -60,6 +60,8 @@ def bl_prop_to_py_prop(prop):
     elif prop.type == 'COLLECTION':
         prop_type = bpy.props.CollectionProperty
 
+    elif prop.type == 'STRING':
+        prop_type = bpy.props.StringProperty
     else:
         return None
 

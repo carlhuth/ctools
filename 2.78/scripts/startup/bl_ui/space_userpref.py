@@ -1348,22 +1348,24 @@ class USERPREF_PT_addons(Panel):
                 ):
 
                 if search:
-                    match = True
-                    for word in search.split(' '):
-                        if not word:
-                            continue
-                        if word.startswith(os.path.sep):
-                            if not re.search(word, mod.__file__):
-                                match = False
-                                break
-                        elif word.lower() in info["name"].lower():
-                            pass
-                        elif (info["author"] and
-                              word.lower() in info["author"].lower()):
-                            pass
+                    if search.startswith('//'):
+                        if re.search(search.lstrip('//'), mod.__file__):
+                            match = True
                         else:
                             match = False
-                            break
+                    else:
+                        match = True
+                        for word in search.split(' '):
+                            if not word:
+                                continue
+                            if word.lower() in info["name"].lower():
+                                pass
+                            elif (info["author"] and
+                                  word.lower() in info["author"].lower()):
+                                pass
+                            else:
+                                match = False
+                                break
                     if not match:
                         continue
 
