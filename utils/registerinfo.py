@@ -478,6 +478,9 @@ def _panel_prop_bl_context_items(self, context):
                  ('bone_constraint', 'bone_constraint', ''),
                  )
     else:
+        # view3d_tools_region_draw()より
+        # これが有効なのはbl_space_typeが'VIEW_3D'でbl_region_typeが
+        # 'TOOLS'の場合のみ
         items = (('empty', '', ''),
                  ('mesh_edit', 'Mesh Edit', ''),
                  ('curve_edit', 'Curve Edit', ''),
