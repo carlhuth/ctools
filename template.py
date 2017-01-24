@@ -18,7 +18,7 @@
 
 
 bl_info = {
-    'name': 'Bool Tool',
+    'name': '',
     'author': 'chromoly',
     'version': (0, 0, 1),
     'blender': (2, 78, 0),
@@ -55,9 +55,47 @@ class Preferences(
         bpy.types.AddonPreferences):
     bl_idname = __name__
 
+    def draw(self, context):
+        layout = self.layout
+
+        layout.separator()
+        super().draw(context)
+
+
+class Operator(bpy.types.Operator):
+    bl_idname = ''
+    bl_label = ''
+    bl_description = ''
+    bl_options = {'REGISTER'}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def check(self, context):
+        return True
+
+    def cancel(self, context):
+        pass
+
+    def modal(self, context, event):
+        if event.type in {'INBETWEEN_MOUSEMOVE', 'MOUSEMOVE'}:
+            return {'PASS_THROUGH'}
+        elif event.type.startswith('TIMER'):
+            return {'PASS_THROUGH'}
+        else:
+            return {'RUNNING_MODAL'}
+
+    def execute(self, context):
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        return {'FINISHED'}
+
 
 classes = [
     Preferences,
+    Operator,
 ]
 
 
@@ -72,8 +110,7 @@ def register():
     kc = wm.keyconfigs.addon
     if kc:
         km = Preferences.get_keymap('Mesh')
-        # kmi = km.keymap_items.new('mesh.intersect_cutoff', 'B', 'PRESS',
-        #                           shift=True, ctrl=True, alt=True, oskey=True)
+        # kmi = km.keymap_items.new('foo.bar', 'B', 'PRESS')
 
 
 @Preferences.unregister_addon
