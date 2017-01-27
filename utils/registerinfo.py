@@ -490,14 +490,13 @@ bl_context_view3d = OrderedDict([
 
 # Context.modeとの対応
 bl_context_view3d_mode = OrderedDict([
-    ('empty', ''),
     ('mesh_edit', 'EDIT_MESH'),  # 0
     ('curve_edit', 'EDIT_CURVE'),  # 1
     ('surface_edit', 'EDIT_SURFACE'),  # 2
     ('text_edit', 'EDIT_TEXT'),  # 3
     ('armature_edit', 'EDIT_ARMATURE'),  # 4
     ('mball_edit', 'EDIT_METABALL'),  # 5
-    ('lattice_edit', 'LEDIT_LATTICE'),  # 6
+    ('lattice_edit', 'EDIT_LATTICE'),  # 6
     ('posemode', 'POSE'),  # 7
     ('sculpt_mode', 'SCULPT'),  # 8
     ('weightpaint', 'PAINT_WEIGHT'),  # 9

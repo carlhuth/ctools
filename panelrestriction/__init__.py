@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Panel Restriction',
     'author': 'chromoly',
-    'version': (0, 1, 0),
+    'version': (0, 1, 1),
     'blender': (2, 78, 0),
     'location': 'TOOLS > Panel Restriction, UI > Panel Restriction, '
                 'SpaceProperties > WINDOW > Panel Restriction',
@@ -485,7 +485,8 @@ class _SCREEN_PT_panel_restriction:
         if space_key not in wm_prop.spaces:
             SCREEN_PG_panel_restriction.ensure_space(space)
         prop = wm_prop.spaces[space_key]
-        attr = 'restrict_' + SCREEN_PG_panel_restriction_space.key(space, region)
+        attr = 'restrict_' + SCREEN_PG_panel_restriction_space.key(
+            space, region)
 
         row = layout.row(align=True)
         if PANEL_HEADER_BASIC_STYLE:
@@ -509,6 +510,9 @@ class _SCREEN_PT_panel_restriction:
         region = context.region
         ar = structures.ARegion.cast(region)
 
+        space_key = str(space.as_pointer())
+        space_prop = wm_prop.spaces[space_key]
+
         context_p = context.as_pointer()
         art = all_region_types[cls.bl_space_type][cls.bl_region_type]
 
@@ -522,11 +526,6 @@ class _SCREEN_PT_panel_restriction:
                     ctx = 'particle'
                 if panel_context != ctx:
                     continue
-            else:
-                if panel_context:
-                    mode = registerinfo.bl_context_view3d_mode[panel_context]
-                    if context.mode != mode:
-                        continue
 
             if pt.flag & PNL_NO_HEADER:
                 continue
@@ -541,6 +540,11 @@ class _SCREEN_PT_panel_restriction:
             if idname in original_attributes:
                 active_panel_types.append(pt)
 
+        # active_panel_types.sort(key=lambda pt: pt.label.decode('utf-8'))
+
+        enum_items = bpy.types.Context.bl_rna.properties['mode'].enum_items
+        enum_items = {e.identifier: e.name for e in enum_items}
+
         # TOOLS, UIはカテゴリー分け、PROPERTIESはbl_context分け
         def draw_item(layout, pt):
             row = layout.row()
@@ -549,20 +553,45 @@ class _SCREEN_PT_panel_restriction:
 
             if idname not in wm_prop.panels:
                 SCREEN_PG_panel_restriction.ensure_panel(idname)
-            row.prop(wm_prop.panels[idname], 'show_always',
+
+            visible = True
+            is_context_fail = False
+            panel_context = pt.context.decode('utf-8')
+            panel_context_label = panel_context
+            if space.type == 'VIEW_3D' and region.type == 'TOOLS':
+                if panel_context:
+                    if panel_context in registerinfo.bl_context_view3d_mode:
+                        mode = registerinfo.bl_context_view3d_mode[
+                            panel_context]
+                        if context.mode != mode:
+                            visible = False
+                            is_context_fail = True
+                        panel_context_label = enum_items[mode]
+                    else:
+                        visible = False
+                        is_context_fail = True
+            if visible:
+                if idname in original_attributes:
+                    attrs = original_attributes[idname]
+                    poll = attrs['poll']
+                    if poll:
+                        visible = poll(context_p, ct.addressof(pt))
+
+            if not space_prop.show_all and is_context_fail:
+                return
+
+            sub = row.row()
+            sub.active = not is_context_fail
+            sub.prop(wm_prop.panels[idname], 'show_always',
                      text=pt.label.decode('utf-8'))
 
-            active = True
-            if idname in original_attributes:
-                attrs = original_attributes[idname]
-                poll = attrs['poll']
-                if poll:
-                    active = poll(context_p, ct.addressof(pt))
-            if active:
-                icon = 'RESTRICT_VIEW_OFF'
-            else:
-                icon = 'RESTRICT_VIEW_ON'
-            row.label(icon=icon)
+            sub = row.row()
+            sub.alignment = 'RIGHT'
+            if space.type == 'VIEW_3D' and region.type == 'TOOLS':
+                if space_prop.show_mode:
+                    sub.label(panel_context_label)
+            icon = 'RESTRICT_VIEW_OFF' if visible else 'RESTRICT_VIEW_ON'
+            sub.label(icon=icon)
 
         layout = self.layout.column()
         if space.type == 'PROPERTIES':
@@ -570,6 +599,10 @@ class _SCREEN_PT_panel_restriction:
                 row = layout.row()
                 draw_item(row, pt)
         else:
+            if space.type == 'VIEW_3D' and region.type == 'TOOLS':
+                row = layout.row()
+                row.prop(space_prop, 'show_all', text='All')
+                row.prop(space_prop, 'show_mode', text='Mode')
             categories = region_panel_categories(art, ar, all=True)
             if len(categories) > 1:
                 d = defaultdict(list)
@@ -581,7 +614,6 @@ class _SCREEN_PT_panel_restriction:
                     layout.label(iface(category) + ':')
                     for pt in d[category]:
                         draw_item(layout, pt)
-
             else:
                 for pt in active_panel_types:
                     draw_item(layout, pt)
@@ -657,7 +689,7 @@ _SCREEN_PG_panel_restriction_space = type(
 
 
 class SCREEN_PG_panel_restriction_space(_SCREEN_PG_panel_restriction_space,
-                                     bpy.types.PropertyGroup):
+                                        bpy.types.PropertyGroup):
     restrict_tools = bpy.props.BoolProperty(
         name='Restrict',
         description='Hide panels'
@@ -665,6 +697,14 @@ class SCREEN_PG_panel_restriction_space(_SCREEN_PG_panel_restriction_space,
     restrict_ui = bpy.props.BoolProperty(
         name='Restrict',
         description='Hide panels'
+    )
+
+    # bl_contextが一致しないものも表示する。VIEW_3D-TOOLSのみ
+    show_all = bpy.props.BoolProperty(
+        name='Show All',
+    )
+    show_mode = bpy.props.BoolProperty(
+        name='Show Mode',
     )
 
     @classmethod
