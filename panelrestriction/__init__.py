@@ -547,8 +547,6 @@ class _SCREEN_PT_panel_restriction:
 
         # TOOLS, UIはカテゴリー分け、PROPERTIESはbl_context分け
         def draw_item(layout, pt):
-            row = layout.row()
-
             idname = pt.idname.decode('utf-8')
 
             if idname not in wm_prop.panels:
@@ -580,15 +578,20 @@ class _SCREEN_PT_panel_restriction:
             if not space_prop.show_all and is_context_fail:
                 return
 
+            row = layout.row()
             sub = row.row()
+            version = (bpy.app.version[0] * 1000 + bpy.app.version[1] * 10
+                       + bpy.app.version[2])
+            if version < 2784:
+                sub.alignment = 'LEFT'
             sub.active = not is_context_fail
             sub.prop(wm_prop.panels[idname], 'show_always',
                      text=pt.label.decode('utf-8'))
 
-            sub = row.row()
+            sub = row.row(align=True)
             sub.alignment = 'RIGHT'
             if space.type == 'VIEW_3D' and region.type == 'TOOLS':
-                if space_prop.show_mode:
+                if space_prop.show_mode and panel_context_label:
                     sub.label(panel_context_label)
             icon = 'RESTRICT_VIEW_OFF' if visible else 'RESTRICT_VIEW_ON'
             sub.label(icon=icon)
@@ -747,13 +750,6 @@ class SCREEN_PG_panel_restriction(bpy.types.PropertyGroup):
 
     add_space = bpy.props.BoolProperty(get=_fget, set=_fset_space)
     add_panel = bpy.props.BoolProperty(get=_fget, set=_fset_panel)
-
-    # @classmethod
-    # def key(cls, space, region=None):
-    #     if space.type == 'PROPERTIES':
-    #         return str(space.as_pointer()) + '_' * space.context
-    #     else:
-    #         return str(space.as_pointer()) + '_' * region.type
 
     @classmethod
     def ensure_space(cls, space):
