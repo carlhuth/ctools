@@ -858,8 +858,8 @@ class AddonGroupPreferences:
             op = sub.operator('wm.context_toggle', text='', icon=icon,
                               emboss=False)
             op.data_path = 'addon_prefs.show_expanded_' + mod_name
+            sub = row.row()
             sub.label('{}: {}'.format(info['category'], info['name']))
-            sub = row.row()  # 本体を更新したらレイアウトが崩れたのでその対策
             sub = row.row()
             sub.alignment = 'RIGHT'
             if mod_name.startswith('_'):

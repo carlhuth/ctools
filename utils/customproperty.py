@@ -307,8 +307,12 @@ class _CustomProperty:
                 raise ValueError()
 
             cls = self._cls
-
-            cls.dynamic_property(obj, attr, prop)
+            if obj == bpy.types.Space:
+                for ob in set(self.space_types.values()):
+                    if ob != bpy.types.Space:
+                        cls.dynamic_property(ob, attr, prop)
+            else:
+                cls.dynamic_property(obj, attr, prop)
 
             idprop_key = self._space_porperty_id_prop_key(obj, attr)
 
@@ -372,7 +376,12 @@ class _CustomProperty:
 
             idprop_key = self._space_porperty_id_prop_key(obj, attr)
 
-            cls.dynamic_property_delete(obj, attr)
+            if obj == bpy.types.Space:
+                for ob in set(self.space_types.values()):
+                    if ob != bpy.types.Space:
+                        cls.dynamic_property_delete(ob, attr)
+            else:
+                cls.dynamic_property_delete(obj, attr)
 
             for func in bpy.app.handlers.save_pre:
                 if getattr(func, 'key', None) == idprop_key:

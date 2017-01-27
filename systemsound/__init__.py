@@ -406,6 +406,9 @@ def register():
     if is_startup:
         bpy.app.handlers.scene_update_pre.append(scene_update_pre)
 
+    addon_prefs = AddonSystemSoundPreferences.get_instance()
+    device.volume = addon_prefs.volume / 100.0
+
     replace_functions()
 
 

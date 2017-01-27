@@ -112,6 +112,12 @@ class Cast:
         else:
             return ct.cast(addr, ct.POINTER(cls))
 
+    def to_pointer(self):
+        return cast(addressof(self), POINTER(self.__class__))
+
+    def recast(self):
+        return cast(addressof(self), POINTER(self.__class__)).contents
+
 
 ###############################################################################
 # Python Header
@@ -673,6 +679,64 @@ StructRNA._fields_ = fields(
 )
 
 
+class ExtensionRNA(Structure):
+    _fields_ = fields(
+        c_void, '*data',
+        StructRNA, '*srna',
+        c_void_p,'call',  # <StructCallbackFunc>
+        c_void_p,'free'  # <StructFreeFunc>
+    )
+
+
+class FunctionRNA(Structure):
+    """rna_internal_types.h: 135
+
+    func = bpy.types.UILayout.bl_rna.functions['label']
+    function_rna = ct.cast(func.as_pointer(), ct.POINTER(st.FunctionRNA)).contents
+
+    UILayout.label()を取得する場合:
+    コンパイル時のrna_ui_gen.cのUILayout_label_callとか参照
+    uiLayout *_self = ptr->data
+    char *_data = _parms->data
+    # ↓_dataの中身
+    # text, text_ctxt, translate, icon, icon_value
+    # 8, 8, 4, 4, 4, (char *, char *, int, int, int)
+
+    ptr = PointerRNA()
+    ptr.data = layout.as_pointer()
+    params = ParameterList()
+    data = c_char * (8 + 8 + 4 + 4 + 4)
+
+    function_rna.call(context.as_pointer(), None, ct.byref(ptr), ct.byref(params))
+
+    """
+    _fields_ = fields(
+        ContainerRNA, 'cont',
+        c_char_p, 'identifier',
+        c_int, 'flag',
+        c_char_p, 'description',
+        # typedef void (*CallFunc)(struct bContext *C, struct ReportList *reports, PointerRNA *ptr, ParameterList *parms);
+        CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p, c_void_p), 'call',
+        PropertyRNA, '*c_ret'
+    )
+
+
+class ParameterList(Structure):
+    _fields_ = fields(
+        # storage for parameters
+        c_void, '*data',
+
+        # function passed at creation time
+        FunctionRNA, '*func',
+
+        # store the parameter size
+        c_int, 'alloc_size',
+
+        c_int, 'arg_count', 'ret_count'
+    )
+
+
+
 ###############################################################################
 # blenkernel / makesdna / windowmanager/ editors
 ###############################################################################
@@ -745,6 +809,85 @@ View2D._fields_ = fields(
 )
 
 
+# DNA_space_types.h: 1350: typedef enum eSpace_Type
+# SpaceType.spaceid
+class eSpace_Type(enum.IntEnum):
+    SPACE_EMPTY = 0
+    SPACE_VIEW3D = 1
+    SPACE_IPO = 2
+    SPACE_OUTLINER = 3
+    SPACE_BUTS = 4
+    SPACE_FILE = 5
+    SPACE_IMAGE = 6
+    SPACE_INFO = 7
+    SPACE_SEQ = 8
+    SPACE_TEXT = 9
+    # ifdef DNA_DEPRECATED
+    SPACE_IMASEL = 10  # deprecated
+    SPACE_SOUND = 11  # Deprecated
+    # endif
+    SPACE_ACTION = 12
+    SPACE_NLA = 13
+    # TO DO: fully deprecate
+    SPACE_SCRIPT = 14  # Deprecated
+    SPACE_TIME = 15
+    SPACE_NODE = 16
+    SPACE_LOGIC = 17
+    SPACE_CONSOLE = 18
+    SPACE_USERPREF = 19
+    SPACE_CLIP = 20
+    SPACEICONMAX = SPACE_CLIP
+
+
+class RNAEnumSpaceTypeItems(enum.IntEnum):
+    """EnumPropertyItem rna_enum_space_type_items
+    bpy.types.Area.typeで使われる名前と値
+    """
+    EMPTY = eSpace_Type.SPACE_EMPTY
+    VIEW_3D = eSpace_Type.SPACE_VIEW3D
+    TIMELINE = eSpace_Type.SPACE_TIME
+    GRAPH_EDITOR = eSpace_Type.SPACE_IPO
+    DOPESHEET_EDITOR = eSpace_Type.SPACE_ACTION
+    NLA_EDITOR = eSpace_Type.SPACE_NLA
+    IMAGE_EDITOR = eSpace_Type.SPACE_IMAGE
+    SEQUENCE_EDITOR = eSpace_Type.SPACE_SEQ
+    CLIP_EDITOR = eSpace_Type.SPACE_CLIP
+    TEXT_EDITOR = eSpace_Type.SPACE_TEXT
+    NODE_EDITOR = eSpace_Type.SPACE_NODE
+    LOGIC_EDITOR = eSpace_Type.SPACE_LOGIC
+    PROPERTIES = eSpace_Type.SPACE_BUTS
+    OUTLINER = eSpace_Type.SPACE_OUTLINER
+    USER_PREFERENCES = eSpace_Type.SPACE_USERPREF
+    INFO = eSpace_Type.SPACE_INFO
+    FILE_BROWSER = eSpace_Type.SPACE_FILE
+    CONSOLE = eSpace_Type.SPACE_CONSOLE
+
+
+# DNA_screen_types.h: 376:
+class eRegion_Type(enum.IntEnum):
+    RGN_TYPE_WINDOW = 0
+    RGN_TYPE_HEADER = 1
+    RGN_TYPE_CHANNELS = 2
+    RGN_TYPE_TEMPORARY = 3
+    RGN_TYPE_UI = 4
+    RGN_TYPE_TOOLS = 5
+    RGN_TYPE_TOOL_PROPS = 6
+    RGN_TYPE_PREVIEW = 7
+
+
+class RNAEnumRegionTypeItems(enum.IntEnum):
+    """EnumPropertyItem rna_enum_region_type_items
+    """
+    WINDOW = eRegion_Type.RGN_TYPE_WINDOW
+    HEADER = eRegion_Type.RGN_TYPE_HEADER
+    CHANNELS = eRegion_Type.RGN_TYPE_CHANNELS
+    TEMPORARY = eRegion_Type.RGN_TYPE_TEMPORARY
+    UI = eRegion_Type.RGN_TYPE_UI
+    TOOLS = eRegion_Type.RGN_TYPE_TOOLS
+    TOOL_PROPS = eRegion_Type.RGN_TYPE_TOOL_PROPS
+    PREVIEW = eRegion_Type.RGN_TYPE_PREVIEW
+
+
 class ARegionType(Structure):
     """BKE_screen.h: 116"""
 
@@ -802,7 +945,7 @@ ARegionType._fields_ = fields(
 BKE_ST_MAXNAME = 64
 
 
-class PanelType(Structure):
+class PanelType(Cast, Structure):
     """BKE_screen.h: 173"""
 
 PanelType._fields_ = fields(
@@ -828,7 +971,29 @@ PanelType._fields_ = fields(
     # void (*draw)(const struct bContext *, struct Panel *);
     CFUNCTYPE(c_int, c_void_p, c_void_p), 'draw',
 
-    # ExtensionRNA ext;
+    ExtensionRNA, 'ext',
+)
+
+
+class Panel(Cast, Structure):
+    """DNA_screen_types.h: 96"""
+
+Panel._fields_ = fields(
+    Panel, '*next', '*prev',
+
+    PanelType, '*type',
+    c_void, '*layout',  # uiLayout
+
+    c_char, 'panelname[64]', 'tabname[64]',
+    c_char, 'drawname[64]',
+    c_int, 'ofsx', 'ofsy', 'sizex', 'sizey',
+    c_short, 'labelofs', 'pad',
+    c_short, 'flag', 'runtime_flag',
+    c_short, 'control',
+    c_short, 'snap',
+    c_int, 'sortorder',  # panels are aligned according to increasing sortorder
+    Panel, '*paneltab',  # this panel is tabbed in *paneltab
+    c_void, '*activedata',  # runtime for panel manipulation
 )
 
 
@@ -918,60 +1083,6 @@ SpaceType._fields_ = fields(
 )
 
 
-# DNA_space_types.h: 1350: typedef enum eSpace_Type
-# SpaceType.spaceid
-class eSpace_Type(enum.IntEnum):
-    SPACE_EMPTY = 0
-    SPACE_VIEW3D = 1
-    SPACE_IPO = 2
-    SPACE_OUTLINER = 3
-    SPACE_BUTS = 4
-    SPACE_FILE = 5
-    SPACE_IMAGE = 6
-    SPACE_INFO = 7
-    SPACE_SEQ = 8
-    SPACE_TEXT = 9
-    # ifdef DNA_DEPRECATED
-    SPACE_IMASEL = 10  # deprecated
-    SPACE_SOUND = 11  # Deprecated
-    # endif
-    SPACE_ACTION = 12
-    SPACE_NLA = 13
-    # TO DO: fully deprecate
-    SPACE_SCRIPT = 14  # Deprecated
-    SPACE_TIME = 15
-    SPACE_NODE = 16
-    SPACE_LOGIC = 17
-    SPACE_CONSOLE = 18
-    SPACE_USERPREF = 19
-    SPACE_CLIP = 20
-    SPACEICONMAX = SPACE_CLIP
-
-
-class RNAEnumSpaceTypeItems(enum.IntEnum):
-    """EnumPropertyItem rna_enum_space_type_items
-    bpy.types.Area.typeで使われる名前と値
-    """
-    EMPTY = eSpace_Type.SPACE_EMPTY
-    VIEW_3D = eSpace_Type.SPACE_VIEW3D
-    TIMELINE = eSpace_Type.SPACE_TIME
-    GRAPH_EDITOR = eSpace_Type.SPACE_IPO
-    DOPESHEET_EDITOR = eSpace_Type.SPACE_ACTION
-    NLA_EDITOR = eSpace_Type.SPACE_NLA
-    IMAGE_EDITOR = eSpace_Type.SPACE_IMAGE
-    SEQUENCE_EDITOR = eSpace_Type.SPACE_SEQ
-    CLIP_EDITOR = eSpace_Type.SPACE_CLIP
-    TEXT_EDITOR = eSpace_Type.SPACE_TEXT
-    NODE_EDITOR = eSpace_Type.SPACE_NODE
-    LOGIC_EDITOR = eSpace_Type.SPACE_LOGIC
-    PROPERTIES = eSpace_Type.SPACE_BUTS
-    OUTLINER = eSpace_Type.SPACE_OUTLINER
-    USER_PREFERENCES = eSpace_Type.SPACE_USERPREF
-    INFO = eSpace_Type.SPACE_INFO
-    FILE_BROWSER = eSpace_Type.SPACE_FILE
-    CONSOLE = eSpace_Type.SPACE_CONSOLE
-
-
 class bScreen(Cast, Structure):
     """DNA_screen_types.h: 48"""
 
@@ -1059,53 +1170,6 @@ ARegion._fields_ = fields(
 
     c_char_p, 'headerstr',  # use this string to draw info  最大:UI_MAX_DRAW_STR:400
     c_void_p, 'regiondata',  # XXX 2.50, need spacedata equivalent?
-)
-
-
-# DNA_screen_types.h: 376:
-class eRegion_Type(enum.IntEnum):
-    RGN_TYPE_WINDOW = 0
-    RGN_TYPE_HEADER = 1
-    RGN_TYPE_CHANNELS = 2
-    RGN_TYPE_TEMPORARY = 3
-    RGN_TYPE_UI = 4
-    RGN_TYPE_TOOLS = 5
-    RGN_TYPE_TOOL_PROPS = 6
-    RGN_TYPE_PREVIEW = 7
-
-
-class RNAEnumRegionTypeItems(enum.IntEnum):
-    """EnumPropertyItem rna_enum_region_type_items
-    """
-    WINDOW = eRegion_Type.RGN_TYPE_WINDOW
-    HEADER = eRegion_Type.RGN_TYPE_HEADER
-    CHANNELS = eRegion_Type.RGN_TYPE_CHANNELS
-    TEMPORARY = eRegion_Type.RGN_TYPE_TEMPORARY
-    UI = eRegion_Type.RGN_TYPE_UI
-    TOOLS = eRegion_Type.RGN_TYPE_TOOLS
-    TOOL_PROPS = eRegion_Type.RGN_TYPE_TOOL_PROPS
-    PREVIEW = eRegion_Type.RGN_TYPE_PREVIEW
-
-
-class Panel(Cast, Structure):
-    """DNA_screen_types.h: 96"""
-
-Panel._fields_ = fields(
-    Panel, '*next', '*prev',
-
-    PanelType, '*type',
-    c_void, '*layout',  # uiLayout
-
-    c_char, 'panelname[64]', 'tabname[64]',
-    c_char, 'drawname[64]',
-    c_int, 'ofsx', 'ofsy', 'sizex', 'sizey',
-    c_short, 'labelofs', 'pad',
-    c_short, 'flag', 'runtime_flag',
-    c_short, 'control',
-    c_short, 'snap',
-    c_int, 'sortorder',  # panels are aligned according to increasing sortorder
-    Panel, '*paneltab',  # this panel is tabbed in *paneltab
-    c_void, '*activedata',  # runtime for panel manipulation
 )
 
 
@@ -1422,15 +1486,6 @@ OPTYPE_INTERNAL = (1 << 6)
 OPTYPE_LOCK_BYPASS = (1 << 7)  # Allow operator to run when interface is locked
 PTYPE_UNDO_GROUPED = (1 << 8)  # Special type of undo which doesn't store
                                #  itself multiple times
-
-
-class ExtensionRNA(Structure):
-    _fields_ = fields(
-        c_void, '*data',
-        StructRNA, '*srna',
-        c_void_p,'call',  # <StructCallbackFunc>
-        c_void_p,'free'  # <StructFreeFunc>
-    )
 
 
 class wmOperatorType(Structure):

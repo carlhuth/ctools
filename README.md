@@ -92,6 +92,11 @@ View Navigation にこの機能を追加したもの -> View Navigation EX (Ctrl
 
 終了時の音声(Power Off Post)は再生終了までユーザーからの入力を一切受け付けなくなるので注意。
 
+## Panel Restriction
+任意のパネルを非表示にする。  
+設定はファイルに保存される。  
+![Image](__images/panelrestriction.jpg)
+
 ## その他
 ### __patch/ui_layout_box.patch
 alignが真の状態のUILayoutでbox描画に不具合が起こる問題を修正するパッチ。  

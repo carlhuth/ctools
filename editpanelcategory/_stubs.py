@@ -33,7 +33,7 @@ SPACE_USERPREF = 19
 
 def panel_aligned(area, region):
     sa = structures.ScrArea.cast(area)
-    ar = structures.ScrArea.cast(region)
+    ar = structures.ARegion.cast(region)
 
     if sa.spacetype == SPACE_BUTS and ar.regiontype == RGN_TYPE_WINDOW:
         sbuts = structures.SpaceButs.cast(sa.spacedata.first)
@@ -119,7 +119,12 @@ class TogglePanelClose(bpy.types.Operator):
         default='TOOLS'
     )
 
-    def execute(self, context):
+    def modal(self, context, event):
+        bpy.context.user_preferences.system.dpi += 1
+        context.window_manager.event_timer_remove(self.timer)
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
         area = context.area
         for region in area.regions:
             if region.type == self.region_type:
@@ -134,4 +139,9 @@ class TogglePanelClose(bpy.types.Operator):
         ctx['region'] = region
         # bpy.ops.view2d.zoom_in(ctx, 'INVOKE_DEFAULT')
         # bpy.ops.view2d.zoom_out(ctx, 'INVOKE_DEFAULT')
-        return {'FINISHED'}
+
+        bpy.context.user_preferences.system.dpi -= 1
+
+        context.window_manager.modal_handler_add(self)
+        self.timer = context.window_manager.event_timer_add(0.0, context.window)
+        return {'RUNNING_MODAL'}
