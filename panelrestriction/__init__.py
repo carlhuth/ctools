@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Panel Restriction',
     'author': 'chromoly',
-    'version': (0, 1, 1),
+    'version': (0, 1, 2),
     'blender': (2, 78, 0),
     'location': 'TOOLS > Panel Restriction, UI > Panel Restriction, '
                 'SpaceProperties > WINDOW > Panel Restriction',
@@ -39,6 +39,7 @@ from collections import defaultdict, OrderedDict
 import ctypes as ct
 import sys
 import traceback
+from types import SimpleNamespace
 
 import bpy
 
@@ -79,34 +80,46 @@ translation_dict = {
 addon_preferences = None
 
 
-def gen_addon_prefs_name_space():
-    def key(space_type, region_type, space_context):
-        # これを修正する場合は AddonPreferencesPanelRestriction.key も修正すること
-        if space_type == 'PROPERTIES':
-            return space_type.lower() + '_' + space_context
-        else:
-            return space_type.lower() + '_' + region_type.lower()
+class Temp(SimpleNamespace):
+    """必要に応じて addon_prefs_key と panel_header_key の引数に使用する"""
 
+
+def addon_prefs_key(space, region):
+    key = 'use_panel_' + space.type.lower() + '_' + region.type.lower()
+    if space.type == 'PROPERTIES':
+        ctx = space.context.lower()
+        if ctx == 'particles':
+            ctx = 'particle'
+        key += '_' + ctx
+    return key
+
+
+def panel_header_key(space, region):
+    key = 'restrict_' + region.type.lower()
+    if space.type == 'PROPERTIES':
+        ctx = space.context.lower()
+        if ctx == 'particles':
+            ctx = 'particle'
+        key += '_' + ctx
+    return key
+
+
+def gen_addon_prefs_name_space():
     name_space = OrderedDict()
 
     prop = bpy.types.Space.bl_rna.properties['type']
     space_names = {e.identifier: e.name for e in prop.enum_items}
     prop = bpy.types.Region.bl_rna.properties['type']
     region_names = {e.identifier: e.name for e in prop.enum_items}
-    prop = bpy.types.SpaceProperties.bl_rna.properties['context']
-    context_names = {e.identifier: e.name for e in prop.enum_items}
     for space_type, region_types in registerinfo.area_region_types.items():
-        if space_type == 'EMPTY':
-            continue
         if space_type == 'PROPERTIES':
-            for bl_context in registerinfo.bl_context_properties:
-                attr = 'use_panel_' + key(space_type, '', bl_context)
-                if bl_context == 'particle':
-                    ctx = 'PARTICLES'
-                else:
-                    ctx = bl_context.upper()
+            for bl_context, (_, space_context_name) in \
+                    registerinfo.bl_context_properties.items():
+                space = Temp(type=space_type, context=bl_context)
+                region = Temp(type='WINDOW')
+                attr = addon_prefs_key(space, region)
                 name = '{}: {}'.format(space_names[space_type],
-                                       context_names[ctx])
+                                       space_context_name)
                 if bl_context in {'constraint', 'bone_constraint', 'modifier'}:
                     default = False
                 else:
@@ -117,7 +130,9 @@ def gen_addon_prefs_name_space():
         else:
             for region_type in region_types:
                 if region_type in {'UI', 'TOOLS'}:
-                    attr = 'use_panel_' + key(space_type, region_type, '')
+                    space = Temp(type=space_type, context='')
+                    region = Temp(type=region_type)
+                    attr = addon_prefs_key(space, region)
                     name = '{}: {}'.format(space_names[space_type],
                                            region_names[region_type])
                     if space_type in {'VIEW_3D'}:
@@ -145,18 +160,6 @@ class AddonPreferencesResrictPanels(
         bpy.types.PropertyGroup if '.' in __name__ else
         bpy.types.AddonPreferences):
     bl_idname = __name__
-
-    @classmethod
-    def key(cls, space, region=None):
-        # これを修正する場合は gen_addon_prefs_name_space関数の中のkey関数も
-        # 修正すること
-        if space.type == 'PROPERTIES':
-            ctx = space.context.lower()
-            if ctx == 'particles':
-                ctx = 'particle'
-            return space.type.lower() + '_' + ctx
-        else:
-            return space.type.lower() + '_' + region.type.lower()
 
     def draw(self, context):
         layout = self.layout
@@ -279,7 +282,7 @@ def get_space_types():
 
 def get_region_types():
     """
-    :return: {'VIEW_3D': {'TOOLS': rt, 'TOOL_PROPS': rt, ...}, ...}
+    :return: {'VIEW_3D': {'TOOLS': art, 'TOOL_PROPS': art, ...}, ...}
     :rtype: dict[str, dict[str, T]]
     """
     result = {}
@@ -305,6 +308,10 @@ PNL_DEFAULT_CLOSED = 1
 PNL_NO_HEADER = 2
 
 # panel->flag & PNL_PIN
+PNL_SELECT = 1
+PNL_CLOSEX = 1 << 1
+PNL_CLOSEY = 1 << 2
+PNL_CLOSED = PNL_CLOSEX | PNL_CLOSEY
 PNL_PIN = 1 << 5
 
 
@@ -331,7 +338,7 @@ def is_visible(space, region, idname):
             if region.type == 'WINDOW':
                 test_status = True
     if test_status:
-        key = 'use_panel_' + AddonPreferencesResrictPanels.key(space, region)
+        key = addon_prefs_key(space, region)
         if not getattr(addon_preferences, key):
             return True
 
@@ -345,8 +352,7 @@ def is_visible(space, region, idname):
         if space_key not in wm_prop.spaces:
             SCREEN_PG_panel_restriction.ensure_space(space)
         prop = wm_prop.spaces[space_key]
-        attr = 'restrict_' + SCREEN_PG_panel_restriction_space.key(
-            space, region)
+        attr = panel_header_key(space, region)
         if not getattr(prop, attr):
             return True
 
@@ -446,11 +452,6 @@ def restore_attributes():
 panel_classes = []
 
 
-# def UI_panel_category_is_visible(ar):
-#     categories = ar.panels_category.to_list(structures.PanelCategoryDyn)
-#     return len(categories) > 1
-
-
 def region_panel_categories(art, ar, all=False):
     if all:
         names = []
@@ -472,24 +473,21 @@ class _SCREEN_PT_panel_restriction:
 
     @classmethod
     def poll(cls, context):
-        key = 'use_panel_' + AddonPreferencesResrictPanels.key(
-            context.space_data, context.region)
+        key = addon_prefs_key(context.space_data, context.region)
         return getattr(addon_preferences, key)
 
     def draw_header(self, context):
-        layout = self.layout
-        wm_prop = getattr(context.window_manager,
-                          SCREEN_PG_panel_restriction.WM_ATTRIBUTE)
         space = context.space_data
         region = context.region
+        wm_prop = getattr(context.window_manager,
+                          SCREEN_PG_panel_restriction.WM_ATTRIBUTE)
         space_key = str(space.as_pointer())
         if space_key not in wm_prop.spaces:
             SCREEN_PG_panel_restriction.ensure_space(space)
         prop = wm_prop.spaces[space_key]
-        attr = 'restrict_' + SCREEN_PG_panel_restriction_space.key(
-            space, region)
+        attr = panel_header_key(space, region)
 
-        row = layout.row(align=True)
+        row = self.layout.row(align=True)
         if PANEL_HEADER_BASIC_STYLE:
             row.prop(prop, attr, text='')
             if SHOW_EYE_ICON:
@@ -502,26 +500,24 @@ class _SCREEN_PT_panel_restriction:
             row.prop(prop, attr, text=PANEL_NAME)
 
     def draw(self, context):
-        cls = self.__class__
-
+        space = context.space_data
+        region = context.region
         wm_prop = getattr(context.window_manager,
                           SCREEN_PG_panel_restriction.WM_ATTRIBUTE)
 
-        space = context.space_data
-        region = context.region
         ar = structures.ARegion.cast(region)
 
         space_key = str(space.as_pointer())
         space_prop = wm_prop.spaces[space_key]
 
         context_p = context.as_pointer()
-        art = all_region_types[cls.bl_space_type][cls.bl_region_type]
+        art = all_region_types[space.type][region.type]
 
         active_panel_types = []
         for pt in art.paneltypes.to_list(structures.PanelType):
             panel_context = pt.context.decode('utf-8')
-            if space.type == 'PROPERTIES':
-                # lower()メソッドが必要な点に注意、あとperticle<>PARTICLESにも
+            if space.type == 'PROPERTIES' and panel_context:
+                # lower()メソッドが必要な点に注意、あとparticle<>PARTICLESにも
                 ctx = space.context.lower()
                 if ctx == 'particles':
                     ctx = 'particle'
@@ -559,9 +555,9 @@ class _SCREEN_PT_panel_restriction:
             panel_context_label = panel_context
             if space.type == 'VIEW_3D' and region.type == 'TOOLS':
                 if panel_context:
-                    if panel_context in registerinfo.bl_context_view3d_mode:
-                        mode = registerinfo.bl_context_view3d_mode[
-                            panel_context]
+                    if panel_context in registerinfo.bl_context_view3d:
+                        mode = registerinfo.bl_context_view3d[
+                            panel_context][0]
                         if context.mode != mode:
                             visible = False
                             is_context_fail = True
@@ -598,15 +594,38 @@ class _SCREEN_PT_panel_restriction:
             sub.label(icon=icon)
 
         layout = self.layout.column()
+
+        if space.type == 'VIEW_3D' and region.type == 'TOOLS':
+            row = layout.row()
+            row.prop(space_prop, 'show_all', text='All')
+            row.prop(space_prop, 'show_mode', text='Mode')
+
+            sub = row.row(align=True)
+        else:
+            sub = layout.row(align=True)
+        sub.alignment = 'RIGHT'
+        op = sub.operator(SCREEN_OT_panal_restriction_move.bl_idname,
+                          text='', icon='TRIA_UP')
+        op.region_type = region.type
+        if space.type == 'PROPERTIES':
+            op.space_context = space.context
+        else:
+            op.space_context = ''
+        op.tail = False
+        op = sub.operator(SCREEN_OT_panal_restriction_move.bl_idname,
+                          text='', icon='TRIA_DOWN')
+        op.region_type = region.type
+        if space.type == 'PROPERTIES':
+            op.space_context = space.context
+        else:
+            op.space_context = ''
+        op.tail = True
+
         if space.type == 'PROPERTIES':
             for pt in active_panel_types:
                 row = layout.row()
                 draw_item(row, pt)
         else:
-            if space.type == 'VIEW_3D' and region.type == 'TOOLS':
-                row = layout.row()
-                row.prop(space_prop, 'show_all', text='All')
-                row.prop(space_prop, 'show_mode', text='Mode')
             categories = region_panel_categories(art, ar, all=True)
             if len(categories) > 1:
                 d = defaultdict(list)
@@ -622,22 +641,17 @@ class _SCREEN_PT_panel_restriction:
                 for pt in active_panel_types:
                     draw_item(layout, pt)
 
-        # layout.operator(SCREEN_OT_panal_restriction_move_head.bl_idname,
-        #                 text='Move Head')
-
 
 def generate_panel_classes():
     panel_classes.clear()
 
     for space_type, region_types in registerinfo.area_region_types.items():
-        if space_type == 'EMPTY':
-            continue
         spacetype = space_type.replace('_', '')
         for region_type in region_types:
             if space_type == 'PROPERTIES' and region_type == 'WINDOW':
                 for bl_context in registerinfo.bl_context_properties:
-                    name = '{}_PT_panel_restriction_{}'.format(
-                        spacetype, bl_context)
+                    name = '{}_PT_panel_restriction_{}_{}'.format(
+                        spacetype, region_type.lower(), bl_context)
                     attrs = {
                         'bl_idname': name,
                         'bl_space_type': space_type,
@@ -648,6 +662,7 @@ def generate_panel_classes():
                         name, (_SCREEN_PT_panel_restriction, bpy.types.Panel),
                         attrs)
                     panel_classes.append(panel_class)
+
             elif region_type in {'UI', 'TOOLS'}:
                 name = '{}_PT_panel_restriction_{}'.format(
                     spacetype, region_type.lower())
@@ -673,12 +688,10 @@ def gen_name_space():
     name_space = OrderedDict()
     bl_rna = bpy.types.SpaceProperties.bl_rna
     for enum_item in bl_rna.properties['context'].enum_items:
-        ctx = enum_item.identifier
-        if ctx == 'PARTICLES':
-            name = 'restrict_' + 'particle'
-        else:
-            name = 'restrict_' + ctx.lower()
-        name_space[name] = bpy.props.BoolProperty(
+        space = Temp(type='PROPERTIES', context=enum_item.identifier)
+        region = Temp(type='WINDOW')
+        attr = panel_header_key(space, region)
+        name_space[attr] = bpy.props.BoolProperty(
             name='Restrict',
             description='Hide panels'
         )
@@ -710,17 +723,6 @@ class SCREEN_PG_panel_restriction_space(_SCREEN_PG_panel_restriction_space,
     show_mode = bpy.props.BoolProperty(
         name='Show Mode',
     )
-
-    @classmethod
-    def key(cls, space, region=None):
-        if space.type == 'PROPERTIES':
-            ctx = space.context
-            if ctx == 'PARTICLES':
-                return 'particle'
-            else:
-                return ctx.lower()
-        else:
-            return region.type.lower()
 
 
 class SCREEN_PG_panel_restriction_panel(bpy.types.PropertyGroup):
@@ -868,30 +870,151 @@ def scene_update_pre(scene):
 ###############################################################################
 # Sort Operator
 ###############################################################################
-# class SCREEN_OT_panal_restriction_move_head(bpy.types.Operator):
-#     bl_idname = 'screen.panal_restriction_move_head'
-#     bl_label = 'Move Head'
-#
-#     def execute(self, context):
-#         def is_generated(idname):
-#             return '_panel_restriction_' in idname
-#
-#         for area in context.screen.areas:
-#             for region in area.regions:
-#                 ar = structures.ARegion.cast(region)
-#                 panels = ar.panels.to_list(structures.Panel)
-#                 panels.sort(key=lambda pa: pa.sortorder)
-#                 self_pa = None
-#                 for pa in panels:
-#                     if is_generated(pa.panelname.decode('utf-8')):
-#                         self_pa = pa
-#                 if not self_pa:
-#                     continue
-#                 # self_pa.ofsy = 0
-#                 # self_pa.sortorder = 0
-#                 region.tag_redraw()
-#
-#         return {'FINISHED'}
+class SCREEN_OT_panal_restriction_move(bpy.types.Operator):
+    bl_idname = 'screen.panal_restriction_move'
+    bl_label = 'Move Head or Tail'
+    bl_description = 'Move panel to tom or bottom'
+                     # 'If any modifier key is hold, close panel'
+
+    region_type = bpy.props.StringProperty()
+    space_context = bpy.props.StringProperty()  # SpaceProperties.context
+    tail = bpy.props.BoolProperty()
+    close = bpy.props.BoolProperty()
+
+    def move_head(self, area, region, space_context='', close=False):
+        if space_context:
+            d = {v[0]: k for k, v in
+                 registerinfo.bl_context_properties.items()}
+            space_context = d[space_context]
+
+        region_types = get_region_types()
+
+        ar = structures.ARegion.cast(region)
+
+        # sort PanelType
+        art = region_types[area.type][region.type]
+        panel_types = art.paneltypes.to_list(structures.PanelType)
+        pt_list = []
+        for pt in panel_types:
+            if is_addon_panel(pt.idname.decode('utf-8')):
+                if not space_context or \
+                        pt.context.decode('utf-8') == space_context:
+                    pt_list.append(pt)
+        if not pt_list:
+            return
+        if self.tail:
+            for pt in pt_list:
+                art.paneltypes.remove(pt)
+                art.paneltypes.append(pt)
+        else:
+            insert_index = 0
+            for i, pt in enumerate(panel_types):
+                if pt.flag & PNL_NO_HEADER:
+                    insert_index = i + 1
+            for pt in pt_list[::-1]:
+                art.paneltypes.remove(pt)
+                art.paneltypes.insert(insert_index, pt)
+
+        # sort Panel
+        blocks = ar.uiblocks.to_list(structures.uiBlock)
+        panels = [bl.panel.contents for bl in blocks if bl.panel]
+        panels.sort(key=lambda pa: pa.sortorder)
+        panels = [[pa, 0, 0] for pa in panels]
+        last_offset = 0
+        panel_index = 0
+        insert_index = 0
+        prev_panel = None
+
+        for i, elem in enumerate(panels):
+            pa = elem[0]
+            pt = pa.type.contents
+
+            if is_addon_panel(pt.idname.decode('utf-8')):
+                panel_index = i
+                panel = pa
+            if pt.flag & PNL_NO_HEADER:
+                insert_index = i + 1
+                prev_panel = pa
+
+            elem[1] = last_offset
+            if pt.flag & PNL_NO_HEADER or not pa.flag & PNL_CLOSEY:
+                last_offset = pa.ofsy
+            else:  # close
+                last_offset = pa.ofsy + pa.sizey
+            elem[2] = last_offset
+
+        if not panel:
+            return
+        if insert_index == len(panels):  # 並び替えの必要なし
+            return
+
+        # panel remove and insert
+        if self.tail:
+            panels.append(panels.pop(panel_index))
+        else:
+            elem = panels.pop(panel_index)
+            panels.insert(panel_index, None)
+            panels.insert(insert_index, elem)
+            panels.remove(None)
+
+        # calc offset
+        offset = 0
+        for i, elem in enumerate(panels):
+            pa, top, bottom = elem
+            draw_size = top - bottom
+            pt = pa.type.contents
+
+            if pt.flag & PNL_NO_HEADER or not pa.flag & PNL_CLOSEY:
+                pa.ofsy = offset - draw_size
+            else:  # close
+                pa.ofsy = offset - (top - pa.ofsy)
+            offset -= draw_size
+
+        # update sortorder (all panels)
+        if self.tail:
+            for pa in ar.panels.to_list(structures.Panel):
+                if pa.sortorder < panel.sortorder:
+                    continue
+                if pa == panel:
+                    continue
+                if pa.sortorder >= panel.sortorder:
+                    pa.sortorder -= 1
+            panel.sortorder = len(ar.panels) - 1
+        else:
+            for pa in ar.panels.to_list(structures.Panel):
+                if prev_panel:
+                    if pa.sortorder <= prev_panel.sortorder:
+                        continue
+                if pa == panel:
+                    continue
+                if not prev_panel or pa.sortorder >= prev_panel.sortorder:
+                    if pa.sortorder < panel.sortorder:
+                        pa.sortorder += 1
+            if prev_panel:
+                panel.sortorder = prev_panel.sortorder + 1
+            else:
+                panel.sortorder = 0
+
+    def execute(self, context):
+        if 0:
+            for area in context.screen.areas:
+                for region in area.regions:
+                    self.move_head(area, region, '')
+                area.tag_redraw()
+
+        area = context.area
+        for region in area.regions:
+            if region.type == self.region_type:
+                self.move_head(area, region, self.space_context, self.close)
+        context.area.tag_redraw()
+
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        if not self.properties.is_property_set('close'):
+            close = event.shift or event.ctrl or event.alt or event.oskey
+            self.close = close
+        return self.execute(context)
 
 
 ###############################################################################
@@ -900,7 +1023,7 @@ def scene_update_pre(scene):
 classes = [
     AddonPreferencesResrictPanels,
 
-    # SCREEN_OT_panal_restriction_move_head,
+    SCREEN_OT_panal_restriction_move,
 
     SCREEN_PG_panel_restriction_space,
     SCREEN_PG_panel_restriction_panel,

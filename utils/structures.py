@@ -388,10 +388,15 @@ class ListBase(Structure):
         newlink.prev = gen_ptr(prevlink)
         prevlink.next = gen_ptr(newlink)
         if newlink.next:
-            newlink.next.prev = gen_ptr(newlink)
+            newlink.next.contents.prev = gen_ptr(newlink)
 
     def insert(self, i, vlink):
+        if i < 0:
+            i = len(self) - i
         self.insert_after(self.find(i - 1), vlink)
+
+    def append(self, vlink):
+        self.insert_after(self.find(len(self) - 1), vlink)
 
     def find_string(self, identifier, offset):
         """
@@ -772,6 +777,97 @@ class rctf(Structure):
         c_float, 'ymin', 'ymax',
     )
 
+
+"""
+typedef struct UserDef {
+    /* UserDef has separate do-version handling, and can be read from other files */
+    int versionfile, subversionfile',
+
+    int flag, dupflag',
+    int savetime',
+    char tempdir[768]',    /* FILE_MAXDIR length */
+    char fontdir[768]',
+    char renderdir[1024]', /* FILE_MAX length */
+    /* EXR cache path */
+    char render_cachedir[768]',  /* 768 = FILE_MAXDIR */
+    char textudir[768]',
+    char pythondir[768]',
+    char sounddir[768]',
+    char i18ndir[768]',
+    char image_editor[1024]',    /* 1024 = FILE_MAX */
+    char anim_player[1024]',        /* 1024 = FILE_MAX */
+    int anim_player_preset',
+
+    short v2d_min_gridsize',        /* minimum spacing between gridlines in View2D grids */
+    short timecode_style',        /* style of timecode display */
+
+    short versions',
+    short dbl_click_time',
+
+    short gameflags',
+    short wheellinescroll',
+    int uiflag, uiflag2',
+    int language',
+    short userpref, viewzoom',
+
+    int mixbufsize',
+    int audiodevice',
+    int audiorate',
+    int audioformat',
+    int audiochannels',
+
+    int scrollback', /* console scrollback limit */
+    int dpi',        /* range 48-128? */
+    char node_margin', /* node insert offset (aka auto-offset) margin, but might be useful for later stuff as well */
+    char pad2',
+    short transopts',
+    short menuthreshold1, menuthreshold2',
+
+    struct ListBase themes',
+    struct ListBase uifonts',
+    struct ListBase uistyles',
+    struct ListBase keymaps  DNA_DEPRECATED', /* deprecated in favor of user_keymaps */
+    struct ListBase user_keymaps',
+    struct ListBase addons',
+    struct ListBase autoexec_paths',
+    char keyconfigstr[64]',
+
+    short undosteps',
+    short undomemory',
+    short gp_manhattendist, gp_euclideandist, gp_eraser',
+    short gp_settings',
+    short tb_leftmouse, tb_rightmouse',
+    struct SolidLight light[3]',
+    short tw_hotspot, tw_flag, tw_handlesize, tw_size',
+    short textimeout, texcollectrate',
+    short wmdrawmethod', /* removed wmpad */
+    short dragthreshold',
+    int memcachelimit',
+    int prefetchframes',
+    float pad_rot_angle', /* control the rotation step of the view when PAD2, PAD4, PAD6&PAD8 is use */
+    short frameserverport',
+    short pad4',
+    short obcenter_dia',
+    short rvisize',            /* rotating view icon size */
+    short rvibright',        /* rotating view icon brightness */
+    short recent_files',        /* maximum number of recently used files to remember  */
+    short smooth_viewtx',    /* miliseconds to spend spinning the view */
+    short glreslimit',
+    short curssize',
+    short color_picker_type',
+    char  ipo_new',            /* interpolation mode for newly added F-Curves */
+    char  keyhandles_new',    /* handle types for newly added keyframes */
+    char  gpu_select_method',
+    char  view_frame_type',
+
+    int view_frame_keyframes', /* number of keyframes to zoom around current frame */
+    float view_frame_seconds', /* seconds to zoom around current frame */
+
+    short scrcastfps',        /* frame rate for screencast to be played back */
+    short scrcastwait',        /* milliseconds between screencast snapshots */
+
+    short widget_unit',        /* private, defaults to 20 for 72 DPI setting */
+"""
 
 class View2D(Structure):
     """DNA_view2d_types.h: 40"""
@@ -1174,16 +1270,79 @@ ARegion._fields_ = fields(
 
 
 #未使用
-# class uiBlock(Structure):
-#     """interface_intern.h: 355"""
-#
-# uiBlock._fields_ = fields(
-#     uiBlock, '*next', '*prev',
-#
-#     ListBase, 'buttons',
-#     Panel, '*panel'
-#     # 以下略
-# )
+UI_MAX_DRAW_STR = 400  # UI_interface.h
+UI_MAX_NAME_STR = 128
+UI_MAX_SHORTCUT_STR = 16
+
+class uiBlock(Structure):
+    """interface_intern.h: 355"""
+
+uiBlock._fields_ = fields(
+    uiBlock, '*next', '*prev',
+
+    ListBase, 'buttons',
+    Panel, '*panel',
+    uiBlock, '*oldblock',
+
+    ListBase, 'butstore',  # UI_butstore_* runtime function
+
+    ListBase, 'layouts',
+    c_void, '*curlayout',  # struct uiLayout
+
+    ListBase, 'contexts',
+
+    c_char * UI_MAX_NAME_STR, 'name',
+
+    c_float, 'winmat[4][4]',
+
+    rctf, 'rect',
+    c_float, 'aspect',
+
+    c_uint, 'puphash',  # popup menu hash for memory
+
+    c_void_p, 'func',  # uiButHandleFunc
+    c_void, '*func_arg1',
+    c_void, '*func_arg2',
+
+    c_void_p, 'funcN',  # uiButHandleNFunc
+    c_void, '*func_argN',
+
+    c_void_p, 'butm_func',  # uiMenuHandleFunc
+    c_void, '*butm_func_arg',
+
+    c_void_p, 'handle_func',  # uiBlockHandleFunc
+    c_void, '*handle_func_arg',
+
+    # custom extra handling
+    # int (*block_event_func)(const struct bContext *C, struct uiBlock *, const struct wmEvent *)
+    c_void, '*block_event_func',
+
+    # extra draw function for custom blocks
+    # void (*drawextra)(const struct bContext *C, void *idv, void *arg1, void *arg2, rcti *rect);
+    c_void, '*drawextra',
+    c_void, '*drawextra_arg1',
+    c_void, '*drawextra_arg2',
+
+    c_int, 'flag',
+    c_short, 'alignnr',
+
+    c_char, 'direction',
+    c_char, 'dt',  # drawtype: UI_EMBOSS, UI_EMBOSS_NONE ... etc, copied to buttons
+    c_bool, 'auto_open',
+    c_char, '_pad[7]',
+    c_double, 'auto_open_last',
+
+    c_char_p, 'lockstr',
+
+    c_char, 'lock',
+    c_uint8, 'active',  # c_char # to keep blocks while drawing and free them afterwards
+    c_char, 'tooltipdisabled',  # to avoid tooltip after click
+    c_char, 'endblock',  # UI_block_end done?
+
+    c_int, 'bounds_type',  # enum eBlockBoundsCalc
+    c_int, 'mx', 'my',
+    c_int, 'bounds', 'minbounds',
+)
 #
 #
 # class SpaceLink(Structure):
@@ -1262,7 +1421,7 @@ RegionView3D._fields_ = fields(
     c_float, 'dist',  # distance from 'ofs' along -viewinv[2] vector, where result is negative as is 'ofs'
     c_float, 'camdx', 'camdy',  # camera view offsets, 1.0 = viewplane moves entire width/height
     c_float, 'pixsize',  # runtime only
-    c_float, 'ofs[3]',  # view center & orbit pivot, negative of worldspace location, also matches -viewinv[3][0:3] in ortho mode. 
+    c_float, 'ofs[3]',  # view center & orbit pivot, negative of worldspace location, also matches -viewinv[3][0:3] in ortho mode.
     c_float, 'camzoom',  # viewport zoom on the camera frame, see BKE_screen_view3d_zoom_to_fac
     c_char, 'is_persp',   # check if persp/ortho view, since 'persp' cant be used for this since
                             # it can have cameras assigned as well. (only set in view3d_winmatrix_set)
@@ -1382,9 +1541,9 @@ View3D._fields_ = fields(
 
     # # XXX deprecated?
     # struct bGPdata *gpd  DNA_DEPRECATED        # Grease-Pencil Data (annotation layers)
-    # 
+    #
     # short usewcol, dummy3[3]
-    # 
+    #
     #  # multiview - stereo 3d
     # short stereo3d_flag
     # char stereo3d_camera
@@ -1392,7 +1551,7 @@ View3D._fields_ = fields(
     # float stereo3d_convergence_factor
     # float stereo3d_volume_alpha
     # float stereo3d_convergence_alpha
-    # 
+    #
     # # local grid
     # char localgrid, cursor_snap_grid, dummy[2]
     # float lg_loc[3], dummy2[2] // orign(x,y,z)
@@ -1947,9 +2106,9 @@ class MCol(Structure):
 # new face structure, replaces MFace, which is now only used for storing tessellations.
 class MPoly(Structure):
     _fields_ = fields(
-        # offset into loop array and number of loops in the face 
+        # offset into loop array and number of loops in the face
         c_int, 'loopstart',
-        c_int, 'totloop',  # keep signed since we need to subtract when getting the previous loop 
+        c_int, 'totloop',  # keep signed since we need to subtract when getting the previous loop
         c_short, 'mat_nr',
         c_char, 'flag', 'pad',
     )
@@ -1992,7 +2151,7 @@ class Mesh(Structure):
         # END BMESH ONLY
 
         # mface stores the tessellation (triangulation) of the mesh,
-        # real faces are now stored in nface. 
+        # real faces are now stored in nface.
         c_void, '*mface',  # struct MFace  # array of mesh object mode faces for tessellation
         c_void, '*mtface',  # struct MTFace  # store tessellation face UV's and texture here
         c_void, '*tface',  # struct TFace  # DNA_DEPRECATED   # deprecated, use mtface
