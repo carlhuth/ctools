@@ -873,7 +873,7 @@ def scene_update_pre(scene):
 class SCREEN_OT_panal_restriction_move(bpy.types.Operator):
     bl_idname = 'screen.panal_restriction_move'
     bl_label = 'Move Head or Tail'
-    bl_description = 'Move panel to tom or bottom'
+    bl_description = 'Move to top or bottom'
                      # 'If any modifier key is hold, close panel'
 
     region_type = bpy.props.StringProperty()
