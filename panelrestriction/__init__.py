@@ -20,10 +20,10 @@
 bl_info = {
     'name': 'Panel Restriction',
     'author': 'chromoly',
-    'version': (0, 1, 2),
+    'version': (0, 2, 0),
     'blender': (2, 78, 0),
-    'location': 'TOOLS > Panel Restriction, UI > Panel Restriction, '
-                'SpaceProperties > WINDOW > Panel Restriction',
+    'location': 'TOOLS/UI/WINDOW Panel > Panel Restriction, '
+                'H, Shift+H, Alt+H, Ctrl+H, Ctrl+Alt+H',
     'description': 'Hide panels',
     'wiki_url': '',
     'category': 'User Interface',
@@ -68,6 +68,19 @@ translation_dict = {
         ('*', 'Hide panels'):
             '任意のパネルを非表示にする。但しヘッダ無しのパネルは対象外',
         ('*', 'Show always'): '常に表示',
+        ('*', 'Leave panel displayed even when panel restriction is '
+              'disabled'): '機能が無効の場合でもこのパネルを隠さない',
+
+        ('*', 'Hide panel'): 'パネルを隠す',
+        ('*', 'Hide unselected panels'): '非選択のパネルを隠す',
+        ('*', 'Reveal panels'): '隠したパネルを表示',
+        ('*', 'Disable restriction'): '無効化',
+        ('*', 'Enable restriction'): '有効化',
+        ('*', 'Reset all settings'): '全てのパネルの設定を初期化',
+        ('*', 'Menu'): 'メニュー',
+        ('*', 'Show Panel'): 'パネルを表示する',
+        ('*', 'Show restriction panel if restriction is enabled'):
+            '有効状態の時に設定用のパネルを表示する',
     }
 }
 
@@ -96,6 +109,16 @@ def addon_prefs_key(space, region):
 
 def panel_header_key(space, region):
     key = 'restrict_' + region.type.lower()
+    if space.type == 'PROPERTIES':
+        ctx = space.context.lower()
+        if ctx == 'particles':
+            ctx = 'particle'
+        key += '_' + ctx
+    return key
+
+
+def panel_pin_key(space, region):
+    key = 'pin_' + region.type.lower()
     if space.type == 'PROPERTIES':
         ctx = space.context.lower()
         if ctx == 'particles':
@@ -161,6 +184,20 @@ class AddonPreferencesResrictPanels(
         bpy.types.AddonPreferences):
     bl_idname = __name__
 
+    # use_global_settings = bpy.props.BoolProperty(
+    #     name='Global Settings',
+    #     default=True,
+    # )
+    use_report = bpy.props.BoolProperty(
+        name='Show Info',
+        default=False)
+
+    show_panel = bpy.props.BoolProperty(
+        name='Show Panel',
+        description='Show restriction panel if restriction is enabled',
+        default=False
+    )
+
     def draw(self, context):
         layout = self.layout
 
@@ -180,6 +217,23 @@ class AddonPreferencesResrictPanels(
             else:
                 row = column1.row()
             row.prop(self, attr)
+
+        # layout.separator()
+        # layout.prop(self, 'use_report')
+
+        layout.separator()
+        layout.prop(self, 'show_panel')
+
+        layout.separator()
+        layout.row().label('Shortcut:')
+        sp = layout.split(0.025)
+        sp.column()
+        col = sp.column()
+        col.row().label('H: ' + iface('Hide panel'))
+        col.row().label('Shift + H: ' + iface('Hide unselected panels'))
+        col.row().label('Alt + H: ' + iface('Reveal panels'))
+        col.row().label('Ctrl + H: ' + iface('Menu'))
+        col.row().label('Ctrl + Alt + H: ' + iface('Reset all settings'))
 
         layout.separator()
         super().draw(context)
@@ -348,15 +402,15 @@ def is_visible(space, region, idname):
         except:  # 無いとは思うけど
             traceback.print_exc()
             return True
-        space_key = str(space.as_pointer())
-        if space_key not in wm_prop.spaces:
+        space_prop_name = str(space.as_pointer())
+        if space_prop_name not in wm_prop.spaces:
             SCREEN_PG_panel_restriction.ensure_space(space)
-        prop = wm_prop.spaces[space_key]
+        space_prop = wm_prop.spaces[space_prop_name]
         attr = panel_header_key(space, region)
-        if not getattr(prop, attr):
+        if not getattr(space_prop, attr):
             return True
 
-        prop = wm_prop.panels.get(idname)
+        prop = space_prop.panels.get(idname)
         if prop:
             return prop.show_always
     return True
@@ -447,6 +501,124 @@ def restore_attributes():
 
 
 ###############################################################################
+# Hoge
+###############################################################################
+# Panel.flau
+PNL_CLOSEDX = 1 << 1
+PNL_CLOSEDY = 1 << 2
+PNL_CLOSED = PNL_CLOSEDX | PNL_CLOSEDY
+
+# uenum iPanelMouseState
+PANEL_MOUSE_OUTSIDE = 0  # mouse is not in the panel
+PANEL_MOUSE_INSIDE_CONTENT = 1  # mouse is in the actual panel content
+PANEL_MOUSE_INSIDE_HEADER = 2  # mouse is in the panel header
+PANEL_MOUSE_INSIDE_SCALE = 3  # mouse is inside panel scale widget
+
+# Panel.control
+
+UI_PNL_SCALE = 1 << 9
+
+def widget_unit():
+    U = bpy.context.user_preferences
+    return int((U.system.pixel_size * U.system.dpi * 20 + 36) / 72)
+
+
+def UI_UNIT_Y():
+    return widget_unit()
+
+
+def PNL_HEADER():
+    return UI_UNIT_Y() + 4  # 24 default
+
+
+def ui_window_to_block_fl(ar, block, x, y):  # for mouse cursor
+    """editors/interface/interface.c: 164"""
+    def BLI_rcti_size_x(rct):
+        return rct.xmax - rct.xmin
+
+    def BLI_rcti_size_y(rct):
+        return rct.ymax - rct.ymin
+
+    getsizex = BLI_rcti_size_x(ar.winrct) + 1
+    getsizey = BLI_rcti_size_y(ar.winrct) + 1
+    sx = ar.winrct.xmin
+    sy = ar.winrct.ymin
+
+    a = 0.5 * getsizex * block.winmat[0][0]
+    b = 0.5 * getsizex * block.winmat[1][0]
+    c = 0.5 * getsizex * (1.0 + block.winmat[3][0])
+
+    d = 0.5 * getsizey * block.winmat[0][1]
+    e = 0.5 * getsizey * block.winmat[1][1]
+    f = 0.5 * getsizey * (1.0 + block.winmat[3][1])
+
+    px = x - sx
+    py = y - sy
+
+    y = (a * (py - f) + d * (c - px)) / (a * e - d * b)
+    x = (px - b * (y) - c) / a
+
+    if block.panel:
+        pa = block.panel.contents
+        x -= pa.ofsx
+        y -= pa.ofsy
+
+    return x, y
+
+
+def ui_window_to_block(ar, block, x, y):
+    """editors/interface/interface.c: 194"""
+    fx, fy = ui_window_to_block_fl(ar, block, x, y)
+
+    x = int(fx + 0.5)
+    y = int(fy + 0.5)
+    return x, y
+
+
+def ui_panel_mouse_state_get(block, pa, mx, my):
+    HEADER = PNL_HEADER()
+    if pa.flag & PNL_CLOSEDX:
+        if block.rect.xmin <= mx <= block.rect.xmin + HEADER:
+            return PANEL_MOUSE_INSIDE_HEADER
+    elif block.rect.xmin > mx or block.rect.xmax < mx:
+        pass
+    elif block.rect.ymax <= my <= block.rect.ymax + HEADER:
+        return PANEL_MOUSE_INSIDE_HEADER
+    elif not pa.flag & PNL_CLOSEDY:
+        if pa.control & UI_PNL_SCALE:
+            if block.rect.xmax - HEADER <= mx:
+                if block.rect.ymin + HEADER >= my:
+                    return PANEL_MOUSE_INSIDE_SCALE
+        if block.rect.xmin <= mx <= block.rect.xmax:
+            if block.rect.ymin <= my <= block.rect.ymax + HEADER:
+                return PANEL_MOUSE_INSIDE_CONTENT
+    return PANEL_MOUSE_OUTSIDE
+
+
+def ui_panels_mouse_state_get(context, region):
+    # 描画中には使えない
+    win = structures.wmWindow.cast(context.window)
+    event = win.eventstate.contents
+    ar = structures.ARegion.cast(region)
+    for block in ar.uiblocks.to_list(structures.uiBlock):
+        mx, my = event.x, event.y
+        mx, my = ui_window_to_block(ar, block, mx, my)
+        pa_p = block.panel
+        if not pa_p:
+            continue
+        pa = pa_p.contents
+        if pa.paneltab:
+            continue
+        if pa.type and pa.type.contents.flag & PNL_NO_HEADER:
+            continue
+        mouse_state = ui_panel_mouse_state_get(block, pa, mx, my)
+        if mouse_state in {PANEL_MOUSE_INSIDE_HEADER,
+                           PANEL_MOUSE_INSIDE_CONTENT}:
+            return pa, mouse_state
+    return None, 0
+
+
+###############################################################################
 # Panel
 ###############################################################################
 panel_classes = []
@@ -464,6 +636,36 @@ def region_panel_categories(art, ar, all=False):
         return [c.idname.decode('utf-8') for c in categories]
 
 
+def get_active_panel_types(space, region):
+    panel_types = []
+
+    art = all_region_types[space.type][region.type]
+    for pt in art.paneltypes.to_list(structures.PanelType):
+        panel_context = pt.context.decode('utf-8')
+        if space.type == 'PROPERTIES' and panel_context:
+            # lower()メソッドが必要な点に注意、あとparticle<>PARTICLESにも
+            ctx = space.context.lower()
+            if ctx == 'particles':
+                ctx = 'particle'
+            if panel_context != ctx:
+                continue
+
+        if pt.flag & PNL_NO_HEADER:
+            continue
+
+        idname = pt.idname.decode('utf-8')
+
+        # ここでやるべきか？
+        if idname not in original_attributes:
+            get_original_attributes(pt)
+            replace_attributes(pt)
+
+        if idname in original_attributes:
+            panel_types.append(pt)
+
+    return panel_types
+
+
 class _SCREEN_PT_panel_restriction:
     bl_idname = ''
     bl_space_type = ''
@@ -473,18 +675,36 @@ class _SCREEN_PT_panel_restriction:
 
     @classmethod
     def poll(cls, context):
+        if not addon_preferences:
+            return False
         key = addon_prefs_key(context.space_data, context.region)
-        return getattr(addon_preferences, key)
+        enable = getattr(addon_preferences, key)
+        if not enable:
+            return False
+
+        space = context.space_data
+        region = context.region
+        wm_prop = getattr(context.window_manager,
+                          SCREEN_PG_panel_restriction.WM_ATTRIBUTE)
+        space_prop_name = str(space.as_pointer())
+        if space_prop_name not in wm_prop.spaces:
+            SCREEN_PG_panel_restriction.ensure_space(space)
+        prop_space = wm_prop.spaces[space_prop_name]
+        attr = panel_header_key(space, region)
+        show_panel = addon_preferences.show_panel
+        attr_pin = panel_pin_key(space, region)
+        return (show_panel and getattr(prop_space, attr) or
+                getattr(prop_space, attr_pin))
 
     def draw_header(self, context):
         space = context.space_data
         region = context.region
         wm_prop = getattr(context.window_manager,
                           SCREEN_PG_panel_restriction.WM_ATTRIBUTE)
-        space_key = str(space.as_pointer())
-        if space_key not in wm_prop.spaces:
+        space_prop_name = str(space.as_pointer())
+        if space_prop_name not in wm_prop.spaces:
             SCREEN_PG_panel_restriction.ensure_space(space)
-        prop = wm_prop.spaces[space_key]
+        prop = wm_prop.spaces[space_prop_name]
         attr = panel_header_key(space, region)
 
         row = self.layout.row(align=True)
@@ -507,35 +727,13 @@ class _SCREEN_PT_panel_restriction:
 
         ar = structures.ARegion.cast(region)
 
-        space_key = str(space.as_pointer())
-        space_prop = wm_prop.spaces[space_key]
+        space_prop_name = str(space.as_pointer())
+        space_prop = wm_prop.spaces[space_prop_name]
 
         context_p = context.as_pointer()
         art = all_region_types[space.type][region.type]
 
-        active_panel_types = []
-        for pt in art.paneltypes.to_list(structures.PanelType):
-            panel_context = pt.context.decode('utf-8')
-            if space.type == 'PROPERTIES' and panel_context:
-                # lower()メソッドが必要な点に注意、あとparticle<>PARTICLESにも
-                ctx = space.context.lower()
-                if ctx == 'particles':
-                    ctx = 'particle'
-                if panel_context != ctx:
-                    continue
-
-            if pt.flag & PNL_NO_HEADER:
-                continue
-
-            idname = pt.idname.decode('utf-8')
-
-            # ここでやるべきか？
-            if idname not in original_attributes:
-                get_original_attributes(pt)
-                replace_attributes(pt)
-
-            if idname in original_attributes:
-                active_panel_types.append(pt)
+        active_panel_types = get_active_panel_types(space, region)
 
         # active_panel_types.sort(key=lambda pt: pt.label.decode('utf-8'))
 
@@ -546,8 +744,8 @@ class _SCREEN_PT_panel_restriction:
         def draw_item(layout, pt):
             idname = pt.idname.decode('utf-8')
 
-            if idname not in wm_prop.panels:
-                SCREEN_PG_panel_restriction.ensure_panel(idname)
+            if idname not in space_prop.panels:
+                SCREEN_PG_panel_restriction.ensure_panel(space, pt)
 
             visible = True
             is_context_fail = False
@@ -582,7 +780,7 @@ class _SCREEN_PT_panel_restriction:
             if version < 2784:
                 sub.alignment = 'LEFT'
             sub.active = not is_context_fail
-            sub.prop(wm_prop.panels[idname], 'show_always',
+            sub.prop(space_prop.panels[idname], 'show_always',
                      text=pt.label.decode('utf-8'))
 
             sub = row.row(align=True)
@@ -594,15 +792,24 @@ class _SCREEN_PT_panel_restriction:
             sub.label(icon=icon)
 
         layout = self.layout.column()
+        layout.context_pointer_set('space_prop', space_prop)
+
+        top_row = layout.row()
 
         if space.type == 'VIEW_3D' and region.type == 'TOOLS':
-            row = layout.row()
-            row.prop(space_prop, 'show_all', text='All')
-            row.prop(space_prop, 'show_mode', text='Mode')
-
-            sub = row.row(align=True)
+            sub = top_row.row(align=True)
+            sub.prop(space_prop, 'show_all', text='All')
+            sub.prop(space_prop, 'show_mode', text='Mode')
         else:
-            sub = layout.row(align=True)
+            top_row.row()
+
+        sub = top_row.row()
+        sub.alignment = 'RIGHT'
+        pin_key = panel_pin_key(space, region)
+        icon = 'PINNED' if getattr(space_prop, pin_key) else 'UNPINNED'
+        sub.prop(space_prop, pin_key, text='', icon=icon)
+
+        sub = top_row.row(align=True)
         sub.alignment = 'RIGHT'
         op = sub.operator(SCREEN_OT_panal_restriction_move.bl_idname,
                           text='', icon='TRIA_UP')
@@ -623,8 +830,8 @@ class _SCREEN_PT_panel_restriction:
 
         if space.type == 'PROPERTIES':
             for pt in active_panel_types:
-                row = layout.row()
-                draw_item(row, pt)
+                top_row = layout.row()
+                draw_item(top_row, pt)
         else:
             categories = region_panel_categories(art, ar, all=True)
             if len(categories) > 1:
@@ -682,6 +889,11 @@ def generate_panel_classes():
 ###############################################################################
 # PropertyGroup: WindowManager.panel_restriction
 ###############################################################################
+def update_space_restrict(self, context):
+    if context.area:
+        context.area.tag_redraw()
+
+
 def gen_name_space():
     """SpaceProperties用のプロパティーを作る
     """
@@ -693,7 +905,14 @@ def gen_name_space():
         attr = panel_header_key(space, region)
         name_space[attr] = bpy.props.BoolProperty(
             name='Restrict',
-            description='Hide panels'
+            description='Hide panels',
+            update=update_space_restrict,
+        )
+        attr = panel_pin_key(space, region)
+        name_space[attr] = bpy.props.BoolProperty(
+            name='Pin',
+            description='Leave panel displayed even when panel restriction is'
+                        ' disabled'
         )
     return name_space
 
@@ -705,16 +924,33 @@ _SCREEN_PG_panel_restriction_space = type(
 )
 
 
+class SCREEN_PG_panel_restriction_panel(bpy.types.PropertyGroup):
+    show_always = bpy.props.BoolProperty(
+        name='Show Always',
+        description='Show always',
+        default=True)
+
+
 class SCREEN_PG_panel_restriction_space(_SCREEN_PG_panel_restriction_space,
                                         bpy.types.PropertyGroup):
+    type = bpy.props.StringProperty(
+        name='Type',
+        description='Space.type'
+    )
+
     restrict_tools = bpy.props.BoolProperty(
         name='Restrict',
-        description='Hide panels'
+        description='Hide panels',
+        update = update_space_restrict,
     )
     restrict_ui = bpy.props.BoolProperty(
         name='Restrict',
-        description='Hide panels'
+        description='Hide panels',
+        update=update_space_restrict,
     )
+
+    panels = bpy.props.CollectionProperty(
+        type=SCREEN_PG_panel_restriction_panel)
 
     # bl_contextが一致しないものも表示する。VIEW_3D-TOOLSのみ
     show_all = bpy.props.BoolProperty(
@@ -724,12 +960,17 @@ class SCREEN_PG_panel_restriction_space(_SCREEN_PG_panel_restriction_space,
         name='Show Mode',
     )
 
-
-class SCREEN_PG_panel_restriction_panel(bpy.types.PropertyGroup):
-    show_always = bpy.props.BoolProperty(
-        name='Show Always',
-        description='Show always',
-        default=True)
+    # restrict_*** がFalseの場合でもパネルを表示する
+    pin_tools = bpy.props.BoolProperty(
+        name='Pin',
+        description='Leave panel displayed even when panel restriction is'
+                    ' disabled'
+    )
+    pin_ui = bpy.props.BoolProperty(
+        name='Pin',
+        description='Leave panel displayed even when panel restriction is'
+                    ' disabled'
+    )
 
 
 class SCREEN_PG_panel_restriction(bpy.types.PropertyGroup):
@@ -737,19 +978,24 @@ class SCREEN_PG_panel_restriction(bpy.types.PropertyGroup):
 
     spaces = bpy.props.CollectionProperty(
         type=SCREEN_PG_panel_restriction_space)
-    panels = bpy.props.CollectionProperty(
-        type=SCREEN_PG_panel_restriction_panel)
 
-    item_name = ''
+    space = None
+    pt = None
 
     def _fget(self):
         return False
 
     def _fset_space(self, value):
-        self.spaces.add().name = self.__class__.item_name
+        cls = self.__class__
+        space_prop = self.spaces.add()
+        space_prop.name = str(cls.space.as_pointer())
+        space_prop.type = cls.space.type
 
     def _fset_panel(self, value):
-        self.panels.add().name = self.__class__.item_name
+        cls = self.__class__
+        space_prop = self.spaces[str(cls.space.as_pointer())]
+        panel_prop = space_prop.panels.add()
+        panel_prop.name = cls.pt.idname.decode('utf-8')
 
     add_space = bpy.props.BoolProperty(get=_fget, set=_fset_space)
     add_panel = bpy.props.BoolProperty(get=_fget, set=_fset_panel)
@@ -757,16 +1003,26 @@ class SCREEN_PG_panel_restriction(bpy.types.PropertyGroup):
     @classmethod
     def ensure_space(cls, space):
         wm_prop = getattr(bpy.context.window_manager, cls.WM_ATTRIBUTE)
-        item_name = str(space.as_pointer())
-        if item_name not in wm_prop.spaces:
-            cls.item_name = item_name
+        space_prop_name = str(space.as_pointer())
+        if space_prop_name not in wm_prop.spaces:
+            cls.space = space
             wm_prop.add_space = True
 
     @classmethod
-    def ensure_panel(cls, idname):
+    def ensure_panel(cls, space, pt):
         wm_prop = getattr(bpy.context.window_manager, cls.WM_ATTRIBUTE)
-        if idname not in wm_prop.panels:
-            cls.item_name = idname
+
+        idname = pt.idname.decode('utf-8')
+        if idname not in original_attributes:
+            get_original_attributes(pt)
+            replace_attributes(pt)
+
+        cls.ensure_space(space)
+        space_prop_name = str(space.as_pointer())
+        space_prop = wm_prop.spaces[space_prop_name]
+        if idname not in space_prop.panels:
+            cls.space = space
+            cls.pt = pt
             wm_prop.add_panel = True
 
     @classmethod
@@ -780,94 +1036,6 @@ class SCREEN_PG_panel_restriction(bpy.types.PropertyGroup):
 
 
 ###############################################################################
-# Handlers
-###############################################################################
-ID_PROP_SPACE_KEY = 'panel_restriction_spaces'
-ID_PROP_PANEL_KEY = 'panel_restriction_panels'
-
-
-@bpy.app.handlers.persistent
-def save_pre(scene):
-    wm = bpy.context.window_manager
-    wm_prop = getattr(wm, SCREEN_PG_panel_restriction.WM_ATTRIBUTE)
-
-    for screen in bpy.data.screens:
-        screen_data = []
-        for area in screen.areas:
-            for space in area.spaces:
-                key = str(space.as_pointer())
-                if key in wm_prop.spaces:
-                    prop = wm_prop.spaces[key]
-                    data = dict(prop.items())
-                    if 'name' in data:
-                        del data['name']
-                    screen_data.append(data)
-                else:
-                    screen_data.append({'a': 1})
-        screen[ID_PROP_SPACE_KEY] = screen_data
-
-    data = {prop.name: prop.show_always for prop in wm_prop.panels}
-    bpy.data.screens[0][ID_PROP_PANEL_KEY] = data
-
-
-@bpy.app.handlers.persistent
-def save_post(scene):
-    for screen in bpy.data.screens:
-        if ID_PROP_SPACE_KEY in screen:
-            del screen[ID_PROP_SPACE_KEY]
-        if ID_PROP_PANEL_KEY in screen:
-            del screen[ID_PROP_PANEL_KEY]
-
-
-@bpy.app.handlers.persistent
-def load_post(dummy):
-    global addon_preferences
-    addon_preferences = AddonPreferencesResrictPanels.get_instance()
-
-    wm = bpy.context.window_manager
-    wm_prop = getattr(wm, SCREEN_PG_panel_restriction.WM_ATTRIBUTE)
-    wm_prop.spaces.clear()
-    wm_prop.panels.clear()
-
-    for screen in bpy.data.screens:
-        if ID_PROP_SPACE_KEY in screen:
-            screen_data = screen[ID_PROP_SPACE_KEY]
-            i = 0
-            for area in screen.areas:
-                for space in area.spaces:
-                    if i < len(screen_data):
-                        item = wm_prop.spaces.add()
-                        item.name = str(space.as_pointer())
-                        for k, v in screen_data[i].items():
-                            item[k] = v
-                        i += 1
-                    else:
-                        # fullscreenでsaveすると元のscreenのspaceの数が一個多い
-                        pass
-            del screen[ID_PROP_SPACE_KEY]
-    screen = bpy.data.screens[0]
-    if ID_PROP_PANEL_KEY in screen:
-        for name, show_always in screen[ID_PROP_PANEL_KEY].items():
-            item = wm_prop.panels.add()
-            item.name = name
-            item.show_always = show_always
-
-
-@bpy.app.handlers.persistent
-def scene_update_pre(scene):
-    global all_space_types, all_region_types
-    if all_space_types is None:
-        all_space_types = get_space_types()
-    if all_region_types is None:
-        all_region_types = get_region_types()
-
-    get_original_attributes()
-    replace_attributes()
-
-    bpy.app.handlers.scene_update_pre.remove(scene_update_pre)
-
-
-###############################################################################
 # Sort Operator
 ###############################################################################
 class SCREEN_OT_panal_restriction_move(bpy.types.Operator):
@@ -875,6 +1043,7 @@ class SCREEN_OT_panal_restriction_move(bpy.types.Operator):
     bl_label = 'Move Head or Tail'
     bl_description = 'Move to top or bottom'
                      # 'If any modifier key is hold, close panel'
+    bl_options = {'REGISTER', 'INTERNAL'}
 
     region_type = bpy.props.StringProperty()
     space_context = bpy.props.StringProperty()  # SpaceProperties.context
@@ -1018,15 +1187,305 @@ class SCREEN_OT_panal_restriction_move(bpy.types.Operator):
 
 
 ###############################################################################
+# Hide Operator
+###############################################################################
+class _SCREEN_OT_panel_hide:
+    @classmethod
+    def poll(cls, context):
+        area = context.area
+        region = context.region
+        space = context.space_data
+        if not area or not region:
+            return False
+
+        if not (space.type == 'PROPERTIES' and region.type == 'WINDOW' or
+                region.type in {'TOOLS', 'UI'}):
+            return False
+
+        key = addon_prefs_key(space, region)
+        if not getattr(addon_preferences, key):
+            return False
+
+        return True
+
+    def ensure_space(self, context):
+        SCREEN_PG_panel_restriction.ensure_space(context.space_data)
+
+    def ensure_panel(self, context, pt):
+        SCREEN_PG_panel_restriction.ensure_panel(context.space_data, pt)
+
+
+class SCREEN_OT_panel_hide(_SCREEN_OT_panel_hide, bpy.types.Operator):
+    bl_idname = 'screen.panel_hide'
+    bl_label = 'Hide Panel'
+
+    unselected = bpy.props.BoolProperty(name='Unselected')
+
+    def execute(self, context):
+        region = context.region
+        space = context.space_data
+
+        wm_prop = getattr(context.window_manager,
+                          SCREEN_PG_panel_restriction.WM_ATTRIBUTE)
+        self.ensure_space(context)
+        space_prop = wm_prop.spaces[str(space.as_pointer())]
+
+        pa, status = ui_panels_mouse_state_get(context, region)
+        if not pa:
+            return {'CANCELLED', 'PASS_THROUGH'}
+            # return {'FINISHED'}
+
+        pt = pa.type.contents
+        selected_idname = pt.idname.decode('utf-8')
+
+        if self.unselected:
+            if not is_addon_panel(selected_idname):
+                self.ensure_panel(context, pt)
+                prop = space_prop.panels[selected_idname]
+                prop.show_always = True
+
+            active_panel_types = get_active_panel_types(space, region)
+            for pt in active_panel_types:
+                idname = pt.idname.decode('utf-8')
+                if is_addon_panel(idname) or idname == selected_idname:
+                    continue
+                self.ensure_panel(context, pt)
+                prop = space_prop.panels[idname]
+                prop.show_always = False
+
+        else:
+            if is_addon_panel(selected_idname):
+                return {'FINISHED'}
+            self.ensure_panel(context, pt)
+            prop = space_prop.panels[selected_idname]
+            prop.show_always = False
+
+        space_prop_name = str(space.as_pointer())
+        space_prop = wm_prop.spaces[space_prop_name]
+        attr = panel_header_key(space, region)
+        setattr(space_prop, attr, True)
+
+        context.area.tag_redraw()
+
+        return {'FINISHED'}
+
+
+class SCREEN_OT_panel_reveal(_SCREEN_OT_panel_hide, bpy.types.Operator):
+    bl_idname = 'screen.panel_reveal'
+    bl_label = 'Reveal Panel'
+
+    def execute(self, context):
+        region = context.region
+        space = context.space_data
+
+        wm_prop = getattr(context.window_manager,
+                          SCREEN_PG_panel_restriction.WM_ATTRIBUTE)
+        self.ensure_space(context)
+        space_prop = wm_prop.spaces[str(space.as_pointer())]
+
+        active_panel_types = get_active_panel_types(space, region)
+
+        for pt in active_panel_types:
+            idname = pt.idname.decode('utf-8')
+            if is_addon_panel(idname):
+                continue
+            self.ensure_panel(context, pt)
+            prop = space_prop.panels[idname]
+            prop.show_always = True
+
+        space_prop_name = str(space.as_pointer())
+        space_prop = wm_prop.spaces[space_prop_name]
+        attr = panel_header_key(space, region)
+        setattr(space_prop, attr, False)
+
+        context.area.tag_redraw()
+        return {'FINISHED'}
+
+
+class SCREEN_OT_panel_clear_all(_SCREEN_OT_panel_hide, bpy.types.Operator):
+    bl_idname = 'screen.panel_clear_all'
+    bl_label = 'Clear All Settings'
+
+    def execute(self, context):
+        wm_prop = getattr(context.window_manager,
+                          SCREEN_PG_panel_restriction.WM_ATTRIBUTE)
+        wm_prop.spaces.clear()
+        for window in context.window_manager.windows:
+            for area in window.screen.areas:
+                area.tag_redraw()
+        return {'FINISHED'}
+
+
+# class SCREEN_OT_panel_toggle_restriction(_SCREEN_OT_panel_hide,
+#                                          bpy.types.Operator):
+#     bl_idname = 'screen.panel_toggle_restriction'
+#     bl_label = 'Toggle Panel Restriction'
+#
+#     mode = bpy.props.EnumProperty(
+#         name='Mode',
+#         items=(('ENABLE', 'Enable', ''),
+#                ('DISABLE', 'Disable', ''),
+#                ('TOGGLE', 'Toggle', '')),
+#         default='TOGGLE',
+#     )
+#
+#     def execute(self, context):
+#         region = context.region
+#         space = context.space_data
+#
+#         wm_prop = getattr(context.window_manager,
+#                           SCREEN_PG_panel_restriction.WM_ATTRIBUTE)
+#         self.ensure_space(context)
+#
+#         space_prop_name = str(space.as_pointer())
+#         space_prop = wm_prop.spaces[space_prop_name]
+#         attr = panel_header_key(space, region)
+#         if self.mode == 'TOGGLE':
+#             setattr(space_prop, attr, getattr(space_prop, attr) ^ True)
+#             if addon_preferences.use_report:
+#                 self.report({'INFO'}, 'Toggle Panel Restriction')
+#         elif self.mode == 'ENABLE':
+#             setattr(space_prop, attr, True)
+#             if addon_preferences.use_report:
+#                 self.report({'INFO'}, 'Enable Panel Restriction')
+#         else:
+#             setattr(space_prop, attr, False)
+#             if addon_preferences.use_report:
+#                 self.report({'INFO'}, 'Disable Panel Restriction')
+#
+#         context.area.tag_redraw()
+#         return {'FINISHED'}
+
+
+class SCREEN_MT_panel_restriction(bpy.types.Menu):
+    bl_idname = 'SCREEN_MT_panel_restriction'
+    bl_label = 'Panel Restriction'
+
+    @classmethod
+    def poll(cls, context):
+        return _SCREEN_OT_panel_hide.poll(context)
+
+    def draw(self, context):
+        region = context.region
+        space = context.space_data
+
+        wm_prop = getattr(context.window_manager,
+                          SCREEN_PG_panel_restriction.WM_ATTRIBUTE)
+        SCREEN_PG_panel_restriction.ensure_space(space)
+
+        space_prop_name = str(space.as_pointer())
+        space_prop = wm_prop.spaces[space_prop_name]
+        attr = panel_header_key(space, region)
+
+        layout = self.layout
+        layout.operator_context = 'INVOKE_DEFAULT'
+
+        layout.prop(space_prop, attr, text='Restriction')
+
+        op = layout.operator(SCREEN_OT_panel_hide.bl_idname, text='Hide')
+        op.unselected = False
+        op = layout.operator(SCREEN_OT_panel_hide.bl_idname,
+                             text='Hide Unselected')
+        op.unselected = True
+        layout.operator(SCREEN_OT_panel_reveal.bl_idname, text='Reveal')
+        layout.operator(SCREEN_OT_panel_clear_all.bl_idname, text='Reset All')
+
+        layout.separator()
+        layout.prop(addon_preferences, 'show_panel', text='Panel')
+
+
+###############################################################################
+# Handlers
+###############################################################################
+ID_PROP_SPACE_KEY = 'panel_restriction_spaces'
+
+
+@bpy.app.handlers.persistent
+def save_pre(scene):
+    wm = bpy.context.window_manager
+    wm_prop = getattr(wm, SCREEN_PG_panel_restriction.WM_ATTRIBUTE)
+
+    for screen in bpy.data.screens:
+        screen_data = []
+        for area in screen.areas:
+            for space in area.spaces:
+                space_prop_name = str(space.as_pointer())
+                if space_prop_name in wm_prop.spaces:
+                    space_prop = wm_prop.spaces[space_prop_name]
+                    data = dict(space_prop.items())
+                    if 'name' in data:
+                        del data['name']
+                    screen_data.append(data)
+                else:
+                    screen_data.append({'a': 1})
+        screen[ID_PROP_SPACE_KEY] = screen_data
+
+
+@bpy.app.handlers.persistent
+def save_post(scene):
+    for screen in bpy.data.screens:
+        if ID_PROP_SPACE_KEY in screen:
+            del screen[ID_PROP_SPACE_KEY]
+
+
+@bpy.app.handlers.persistent
+def load_post(dummy):
+    global addon_preferences
+    addon_preferences = AddonPreferencesResrictPanels.get_instance()
+
+    wm = bpy.context.window_manager
+    wm_prop = getattr(wm, SCREEN_PG_panel_restriction.WM_ATTRIBUTE)
+    wm_prop.spaces.clear()
+
+    for screen in bpy.data.screens:
+        if ID_PROP_SPACE_KEY in screen:
+            screen_data = screen[ID_PROP_SPACE_KEY]
+            i = 0
+            for area in screen.areas:
+                for space in area.spaces:
+                    if i < len(screen_data):
+                        item = wm_prop.spaces.add()
+                        item.name = str(space.as_pointer())
+                        for k, v in screen_data[i].items():
+                            item[k] = v
+                        i += 1
+                    else:
+                        # fullscreenでsaveすると元のscreenのspaceの数が一個多い
+                        # 要検証
+                        pass
+            del screen[ID_PROP_SPACE_KEY]
+
+
+@bpy.app.handlers.persistent
+def scene_update_pre(scene):
+    global all_space_types, all_region_types
+    if all_space_types is None:
+        all_space_types = get_space_types()
+    if all_region_types is None:
+        all_region_types = get_region_types()
+
+    get_original_attributes()
+    replace_attributes()
+
+    bpy.app.handlers.scene_update_pre.remove(scene_update_pre)
+
+
+###############################################################################
 # Register, Unregister
 ###############################################################################
 classes = [
     AddonPreferencesResrictPanels,
 
     SCREEN_OT_panal_restriction_move,
+    SCREEN_OT_panel_hide,
+    SCREEN_OT_panel_reveal,
+    # SCREEN_OT_panel_toggle_restriction,
+    SCREEN_OT_panel_clear_all,
 
-    SCREEN_PG_panel_restriction_space,
+    SCREEN_MT_panel_restriction,
+
     SCREEN_PG_panel_restriction_panel,
+    SCREEN_PG_panel_restriction_space,
     SCREEN_PG_panel_restriction,
 ]
 
@@ -1051,11 +1510,22 @@ def register():
 
     bpy.app.translations.register(__name__, translation_dict)
 
-    # wm = bpy.context.window_manager
-    # kc = wm.keyconfigs.addon
-    # if kc:
-    #     km = Preferences.get_keymap('Mesh')
-    #     # kmi = km.keymap_items.new('foo.bar', 'B', 'PRESS')
+    wm = bpy.context.window_manager
+    kc = wm.keyconfigs.addon
+    if kc:
+        km = AddonPreferencesResrictPanels.get_keymap('View2D Buttons List')
+        kmi = km.keymap_items.new(SCREEN_OT_panel_hide.bl_idname, 'H', 'PRESS')
+        kmi.properties.unselected = False
+        kmi = km.keymap_items.new(SCREEN_OT_panel_hide.bl_idname, 'H', 'PRESS',
+                                  shift=True)
+        kmi.properties.unselected = True
+
+        km.keymap_items.new(SCREEN_OT_panel_reveal.bl_idname, 'H', 'PRESS',
+                            alt=True)
+        km.keymap_items.new(SCREEN_OT_panel_clear_all.bl_idname,
+                            'H', 'PRESS', ctrl=True, alt=True)
+        kmi = km.keymap_items.new('wm.call_menu', 'H', 'PRESS', ctrl=True)
+        kmi.properties.name = SCREEN_MT_panel_restriction.bl_idname
 
 
 @AddonPreferencesResrictPanels.unregister_addon
