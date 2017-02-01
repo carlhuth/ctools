@@ -61,6 +61,7 @@ PANEL_NAME = 'Panel Restriction'
 # PANEL_HEADER_BASIC_STYLE: Falseだと名前部分でも有効・無効の切り替えが出来る
 PANEL_HEADER_BASIC_STYLE = True
 SHOW_EYE_ICON = False
+USE_PIN = False
 
 translation_dict = {
     'ja_JP': {
@@ -192,9 +193,13 @@ class AddonPreferencesResrictPanels(
         name='Show Info',
         default=False)
 
+    if USE_PIN:
+        description = 'Show restriction panel if restriction is enabled'
+    else:
+        description = 'Show restriction panel'
     show_panel = bpy.props.BoolProperty(
         name='Show Panel',
-        description='Show restriction panel if restriction is enabled',
+        description=description,
         default=False
     )
 
@@ -689,12 +694,15 @@ class _SCREEN_PT_panel_restriction:
         space_prop_name = str(space.as_pointer())
         if space_prop_name not in wm_prop.spaces:
             SCREEN_PG_panel_restriction.ensure_space(space)
-        prop_space = wm_prop.spaces[space_prop_name]
-        attr = panel_header_key(space, region)
-        show_panel = addon_preferences.show_panel
-        attr_pin = panel_pin_key(space, region)
-        return (show_panel and getattr(prop_space, attr) or
-                getattr(prop_space, attr_pin))
+        if USE_PIN:
+            prop_space = wm_prop.spaces[space_prop_name]
+            attr = panel_header_key(space, region)
+            show_panel = addon_preferences.show_panel
+            attr_pin = panel_pin_key(space, region)
+            return (show_panel and getattr(prop_space, attr) or
+                    getattr(prop_space, attr_pin))
+        else:
+            return addon_preferences.show_panel
 
     def draw_header(self, context):
         space = context.space_data
@@ -803,11 +811,12 @@ class _SCREEN_PT_panel_restriction:
         else:
             top_row.row()
 
-        sub = top_row.row()
-        sub.alignment = 'RIGHT'
-        pin_key = panel_pin_key(space, region)
-        icon = 'PINNED' if getattr(space_prop, pin_key) else 'UNPINNED'
-        sub.prop(space_prop, pin_key, text='', icon=icon)
+        if USE_PIN:
+            sub = top_row.row()
+            sub.alignment = 'RIGHT'
+            pin_key = panel_pin_key(space, region)
+            icon = 'PINNED' if getattr(space_prop, pin_key) else 'UNPINNED'
+            sub.prop(space_prop, pin_key, text='', icon=icon)
 
         sub = top_row.row(align=True)
         sub.alignment = 'RIGHT'
@@ -908,12 +917,13 @@ def gen_name_space():
             description='Hide panels',
             update=update_space_restrict,
         )
-        attr = panel_pin_key(space, region)
-        name_space[attr] = bpy.props.BoolProperty(
-            name='Pin',
-            description='Leave panel displayed even when panel restriction is'
-                        ' disabled'
-        )
+        if USE_PIN:
+            attr = panel_pin_key(space, region)
+            name_space[attr] = bpy.props.BoolProperty(
+                name='Pin',
+                description='Leave panel displayed even when panel restriction is'
+                            ' disabled'
+            )
     return name_space
 
 
