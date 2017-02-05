@@ -210,6 +210,7 @@ def play_sound(kind):
     if handle and handle.status:
         handle.stop()
     try:
+        device.volume = addon_prefs.volume / 100.0
         handle = device.play(factory)
     except:
         # aud.error: AUD_OpenALDevice: Buffer couldn't be generated.
