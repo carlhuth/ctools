@@ -173,402 +173,402 @@ def _convert_arguments(function):
     return _prop
 
 
-def BP(name='', description='', default=False, options={'ANIMATABLE'},
-       subtype='NONE', update=None, get=None, set=None):
-    """Returns a new boolean property definition.
-    :arg name: Name used in the user interface.
-    :type name: string
-    :arg description: Text used for the tooltip and api documentation.
-    :type description: string
-    :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
-        'LIBRARY_EDITABLE', 'PROPORTIONAL'].
-    :type options: set
-    :arg subtype: Enumerator in ['PIXEL', 'UNSIGNED', 'PERCENTAGE', 'FACTOR',
-        'ANGLE', 'TIME', 'DISTANCE', 'NONE'].
-    :type subtype: string
-    :arg update: Function to be called when this value is modified,
-        This function must take 2 values (self, context) and return None.
-        *Warning* there are no safety checks to avoid infinite recursion.
-    :type update: types.FunctionType
-    :arg get: Function to be called when this value is 'read',
-        This function must take 1 value (self) and return the value of the
-        property.
-    :type get: types.FunctionType
-    :arg set: Function to be called when this value is 'written',
-        This function must take 2 values (self, value) and return None.
-    :type set: types.FunctionType
-    """
-    return _bpy.props.BoolProperty(**locals())
-
-
-@_convert_arguments
-def BVP(name='', description='', default=(False, False, False),
-        options={'ANIMATABLE'}, subtype='NONE', size=3, update=None, get=None,
-        set=None):
-    """Returns a new vector boolean property definition.
-    :arg name: Name used in the user interface.
-    :type name: string
-    :arg description: Text used for the tooltip and api documentation.
-    :type description: string
-    :arg default: sequence of booleans the length of *size*.
-    :type default: sequence
-    :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
-        'LIBRARY_EDITABLE', 'PROPORTIONAL'].
-    :type options: set
-    :arg subtype: Enumerator in ['COLOR', 'TRANSLATION', 'DIRECTION',
-        'VELOCITY', 'ACCELERATION', 'MATRIX', 'EULER', 'QUATERNION',
-        'AXISANGLE', 'XYZ', 'COLOR_GAMMA', 'LAYER', 'LAYER_MEMBER', 'NONE'].
-    :type subtype: string
-    :arg size: Vector dimensions in [1, 32].
-    :type size: int
-    :arg update: Function to be called when this value is modified,
-        This function must take 2 values (self, context) and return None.
-        *Warning* there are no safety checks to avoid infinite recursion.
-    :type update: types.FunctionType
-    :arg get: Function to be called when this value is 'read',
-        This function must take 1 value (self) and return the value of the
-        property.
-    :type get: types.FunctionType
-    :arg set: Function to be called when this value is 'written',
-        This function must take 2 values (self, value) and return None.
-    :type set: types.FunctionType
-    """
-    return _bpy.props.BoolVectorProperty(**locals())
-
-
-@_convert_arguments
-def IP(name='', description='', default=0, min=INT_MIN, max=INT_MAX,
-       soft_min: -10000=None, soft_max: 10000=None, step=1,
-       options={'ANIMATABLE'}, subtype='NONE',
-       update=None, get=None, set=None):
-    """Returns a new int property definition.
-    :arg name: Name used in the user interface.
-    :type name: string
-    :arg description: Text used for the tooltip and api documentation.
-    :type description: string
-    :arg min: Hard minimum, trying to assign a value below will silently assign
-        this minimum instead.
-    :type min: int
-    :arg max: Hard maximum, trying to assign a value above will silently assign
-        this maximum instead.
-    :type max: int
-    :arg soft_max: Soft maximum (<= *max*), user won't be able to drag the
-        widget above this value in the UI.
-    :type soft_min: int
-    :arg soft_min: Soft minimum (>= *min*), user won't be able to drag the
-        widget below this value in the UI.
-    :type soft_max: int
-    :arg step: Step of increment/decrement in UI, in [1, 100], defaults to 1
-        (WARNING: unused currently!).
-    :type step: int
-    :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
-        'LIBRARY_EDITABLE', 'PROPORTIONAL'].
-    :type options: set
-    :arg subtype: Enumerator in ['PIXEL', 'UNSIGNED', 'PERCENTAGE', 'FACTOR',
-        'ANGLE', 'TIME', 'DISTANCE', 'NONE'].
-    :type subtype: string
-    :arg update: Function to be called when this value is modified,
-        This function must take 2 values (self, context) and return None.
-        *Warning* there are no safety checks to avoid infinite recursion.
-    :type update: types.FunctionType
-    :arg get: Function to be called when this value is 'read',
-        This function must take 1 value (self) and return the value of the
-        property.
-    :type get: types.FunctionType
-    :arg set: Function to be called when this value is 'written',
-        This function must take 2 values (self, value) and return None.
-    :type set: types.FunctionType
-    """
-    return _bpy.props.IntProperty(**locals())
-
-
-@_convert_arguments
-def IVP(name='', description='', default=(0, 0, 0), min=INT_MIN, max=INT_MAX,
-        soft_min: -10000=None, soft_max: 10000=None, step=1,
-        options={'ANIMATABLE'}, subtype='NONE', size=3,
-        update=None, get=None, set=None):
-    """Returns a new vector int property definition.
-    :arg name: Name used in the user interface.
-    :type name: string
-    :arg description: Text used for the tooltip and api documentation.
-    :type description: string
-    :arg default: sequence of ints the length of *size*.
-    :type default: sequence
-    :arg min: Hard minimum, trying to assign a value below will silently assign
-        this minimum instead.
-    :type min: int
-    :arg max: Hard maximum, trying to assign a value above will silently assign
-        this maximum instead.
-    :type max: int
-    :arg soft_min: Soft minimum (>= *min*), user won't be able to drag the
-        widget below this value in the UI.
-    :type soft_min: int
-    :arg soft_max: Soft maximum (<= *max*), user won't be able to drag the
-        widget above this value in the UI.
-    :type soft_max: int
-    :arg step: Step of increment/decrement in UI, in [1, 100], defaults to 1
-        (WARNING: unused currently!).
-    :type step: int
-    :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
-        'LIBRARY_EDITABLE', 'PROPORTIONAL'].
-    :type options: set
-    :arg subtype: Enumerator in ['COLOR', 'TRANSLATION', 'DIRECTION',
-        'VELOCITY', 'ACCELERATION', 'MATRIX', 'EULER', 'QUATERNION',
-        'AXISANGLE', 'XYZ', 'COLOR_GAMMA', 'LAYER', 'LAYER_MEMBER', 'NONE'].
-    :type subtype: string
-    :arg size: Vector dimensions in [1, 32].
-    :type size: int
-    :arg update: Function to be called when this value is modified,
-        This function must take 2 values (self, context) and return None.
-        *Warning* there are no safety checks to avoid infinite recursion.
-    :type update: function
-    :arg get: Function to be called when this value is 'read',
-        This function must take 1 value (self) and return the value of the
-        property.
-    :type get: function
-    :arg set: Function to be called when this value is 'written',
-        This function must take 2 values (self, value) and return None.
-    :type set: function
-    """
-    return _bpy.props.IntVectorProperty(**locals())
-
-
-@_convert_arguments
-def FP(name='', description='', default=0.0, min=-FLT_MAX, max=FLT_MAX,
-       soft_min: -10000=None, soft_max: 10000=None, step=10, precision=3,
-       options={'ANIMATABLE'}, subtype='NONE', unit='NONE',
-       update=None, get=None, set=None):
-    """Returns a new float property definition.
-    :arg name: Name used in the user interface.
-    :type name: string
-    :arg description: Text used for the tooltip and api documentation.
-    :type description: string
-    :arg min: Hard minimum, trying to assign a value below will silently assign
-        this minimum instead.
-    :type min: float
-    :arg max: Hard maximum, trying to assign a value above will silently assign
-        this maximum instead.
-    :type max: float
-    :arg soft_min: Soft minimum (>= *min*), user won't be able to drag the
-        widget below this value in the UI.
-    :type soft_min: float
-    :arg soft_max: Soft maximum (<= *max*), user won't be able to drag the
-        widget above this value in the UI.
-    :type soft_max: float
-    :arg step: Step of increment/decrement in UI, in [1, 100], defaults to 3
-        (WARNING: actual value is /100).
-    :type step: float
-    :arg precision: Maximum number of decimal digits to display, in [0, 6].
-    :type precision: int
-    :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
-        'LIBRARY_EDITABLE', 'PROPORTIONAL'].
-    :type options: set
-    :arg subtype: Enumerator in ['PIXEL', 'UNSIGNED', 'PERCENTAGE', 'FACTOR',
-        'ANGLE', 'TIME', 'DISTANCE', 'NONE'].
-    :type subtype: string
-    :arg unit: Enumerator in ['NONE', 'LENGTH', 'AREA', 'VOLUME', 'ROTATION',
-        'TIME', 'VELOCITY', 'ACCELERATION'].
-    :type unit: string
-    :arg update: Function to be called when this value is modified,
-        This function must take 2 values (self, context) and return None.
-        *Warning* there are no safety checks to avoid infinite recursion.
-    :type update: types.FunctionType
-    :arg get: Function to be called when this value is 'read',
-        This function must take 1 value (self) and return the value of the
-        property.
-    :type get: types.FunctionType
-    :arg set: Function to be called when this value is 'written',
-        This function must take 2 values (self, value) and return None.
-    :type set: types.FunctionType
-    """
-    return _bpy.props.FloatProperty(**locals())
-
-
-@_convert_arguments
-def FVP(name='', description='', default=(0, 0, 0), min=-FLT_MAX, max=FLT_MAX,
-        soft_min: -10000=None, soft_max: 10000=None, step=10,
-        precision=3, options={'ANIMATABLE'}, subtype='NONE', unit='NONE',
-        size=3,
-        update=None, get=None, set=None):
-    """Returns a new vector float property definition.
-    :arg name: Name used in the user interface.
-    :type name: string
-    :arg description: Text used for the tooltip and api documentation.
-    :type description: string
-    :arg default: sequence of floats the length of *size*.
-    :type default: sequence
-    :arg min: Hard minimum, trying to assign a value below will silently assign
-        this minimum instead.
-    :type min: float
-    :arg max: Hard maximum, trying to assign a value above will silently assign
-        this maximum instead.
-    :type max: float
-    :arg soft_min: Soft minimum (>= *min*), user won't be able to drag the
-        widget below this value in the UI.
-    :type soft_min: float
-    :arg soft_max: Soft maximum (<= *max*), user won't be able to drag the
-        widget above this value in the UI.
-    :type soft_max: float
-    :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
-        'LIBRARY_EDITABLE', 'PROPORTIONAL'].
-    :type options: set
-    :arg step: Step of increment/decrement in UI, in [1, 100], defaults to 3
-        (WARNING: actual value is /100).
-    :type step: float
-    :arg precision: Maximum number of decimal digits to display, in [0, 6].
-    :type precision: int
-    :arg subtype: Enumerator in ['COLOR', 'TRANSLATION', 'DIRECTION',
-        'VELOCITY', 'ACCELERATION', 'MATRIX', 'EULER', 'QUATERNION',
-        'AXISANGLE', 'XYZ', 'COLOR_GAMMA', 'LAYER', 'LAYER_MEMBER', 'NONE'].
-    :type subtype: string
-    :arg unit: Enumerator in ['NONE', 'LENGTH', 'AREA', 'VOLUME', 'ROTATION',
-        'TIME', 'VELOCITY', 'ACCELERATION'].
-    :type unit: string
-    :arg size: Vector dimensions in [1, 32].
-    :type size: int
-    :arg update: Function to be called when this value is modified,
-        This function must take 2 values (self, context) and return None.
-        *Warning* there are no safety checks to avoid infinite recursion.
-    :type update: types.FunctionType
-    :arg get: Function to be called when this value is 'read',
-        This function must take 1 value (self) and return the value of the
-        property.
-    :type get: types.FunctionType
-    :arg set: Function to be called when this value is 'written',
-        This function must take 2 values (self, value) and return None.
-    :type set: types.FunctionType
-    """
-    return _bpy.props.FloatVectorProperty(**locals())
-
-
-def SP(name='', description='', default='', maxlen=0, options={'ANIMATABLE'},
-       subtype='NONE', update=None, get=None, set=None):
-    """Returns a new string property definition.
-    :arg name: Name used in the user interface.
-    :type name: string
-    :arg description: Text used for the tooltip and api documentation.
-    :type description: string
-    :arg default: initializer string.
-    :type default: string
-    :arg maxlen: maximum length of the string.
-    :type maxlen: int
-    :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
-        'LIBRARY_EDITABLE', 'PROPORTIONAL'].
-    :type options: set
-    :arg subtype: Enumerator in ['FILE_PATH', 'DIR_PATH', 'FILE_NAME',
-        'BYTE_STRING', 'PASSWORD', 'NONE'].
-    :type subtype: string
-    :arg update: Function to be called when this value is modified,
-        This function must take 2 values (self, context) and return None.
-        *Warning* there are no safety checks to avoid infinite recursion.
-    :type update: types.FunctionType
-    :arg get: Function to be called when this value is 'read',
-        This function must take 1 value (self) and return the value of the
-        property.
-    :type get: types.FunctionType
-    :arg set: Function to be called when this value is 'written',
-        This function must take 2 values (self, value) and return None.
-    :type set: types.FunctionType
-    """
-    return _bpy.props.StringProperty(**locals())
-
-
-def EP(name='', description='', items=(), default='', options={'ANIMATABLE'},
-       update=None, get=None, set=None):
-    """Returns a new enumerator property definition.
-    :arg name: Name used in the user interface.
-    :type name: string
-    :arg description: Text used for the tooltip and api documentation.
-    :type description: string
-    :arg items: sequence of enum items formatted:
-        [(identifier, name, description, icon, number), ...] where the
-        identifier is used for python access and other values are used for the
-        interface.
-        The three first elements of the tuples are mandatory.
-        The forth one is either the (unique!) number id of the item or, if
-        followed by a fith element (which must be the numid), an icon string
-        identifier or integer icon value (e.g. returned by icon()...).
-        Note the item is optional.
-        For dynamic values a callback can be passed which returns a list in
-        the same format as the static list.
-        This function must take 2 arguments (self, context)
-        WARNING: There is a known bug with using a callback,
-        Python must keep a reference to the strings returned or Blender will
-        crash.
-    :type items: sequence of string tuples or a function
-    :arg default: The default value for this enum, a string from the
-        identifiers used in *items*.
-        If the *ENUM_FLAG* option is used this must be a set of such string
-        identifiers instead.
-    :type default: string or set
-    :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
-        'ENUM_FLAG', 'LIBRARY_EDITABLE'].
-    :type options: set
-    :arg update: Function to be called when this value is modified,
-        This function must take 2 values (self, context) and return None.
-        *Warning* there are no safety checks to avoid infinite recursion.
-    :type update: types.FunctionType
-    :arg get: Function to be called when this value is 'read',
-        This function must take 1 value (self) and return the value of the
-        property.
-    :type get: types.FunctionType
-    :arg set: Function to be called when this value is 'written',
-        This function must take 2 values (self, value) and return None.
-    :type set: types.FunctionType
-    """
-    kwargs = dict(locals())
-    if not default:
-        del kwargs['default']
-    return _bpy.props.EnumProperty(**kwargs)
-
-
-def PP(name='', description='', type=None, options={'ANIMATABLE'},
-       update=None):
-    """Returns a new pointer property definition.
-    :arg name: Name used in the user interface.
-    :type name: string
-    :arg description: Text used for the tooltip and api documentation.
-    :type description: string
-    :arg type: A subclass of :class:`bpy.types.PropertyGroup`.
-    :type type: class
-    :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
-        'LIBRARY_EDITABLE', 'PROPORTIONAL'].
-    :type options: set
-    :arg update: Function to be called when this value is modified,
-        This function must take 2 values (self, context) and return None.
-        *Warning* there are no safety checks to avoid infinite recursion.
-    :type update: function
-    """
-    return _bpy.props.PointerProperty(**locals())
-
-
-def CP(name='', description='', type=None, options={'ANIMATABLE'}):
-    """Returns a new collection property definition.
-    :arg name: Name used in the user interface.
-    :type name: string
-    :arg description: Text used for the tooltip and api documentation.
-    :type description: string
-    :arg type: A subclass of :class:`bpy.types.PropertyGroup`.
-    :type type: class
-    :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
-        'LIBRARY_EDITABLE', 'PROPORTIONAL'].
-    :type options: set
-    """
-    return _bpy.props.CollectionProperty(**locals())
-
-
-def RP(cls, attr=''):
-    """Removes a dynamically defined property.
-    :param cls: The class containing the property (must be a positional
-        argument).
-    :type cls: class
-    :param attr: Property name (must be passed as a keyword).
-    :type attr: str
-
-    NOTE: Typically this function doesn't need to be accessed directly.
-        Instead use ``del cls.attr``
-    """
-    return _bpy.props.RemoveProperty(cls, attr=attr)
+# def BP(name='', description='', default=False, options={'ANIMATABLE'},
+#        subtype='NONE', update=None, get=None, set=None):
+#     """Returns a new boolean property definition.
+#     :arg name: Name used in the user interface.
+#     :type name: string
+#     :arg description: Text used for the tooltip and api documentation.
+#     :type description: string
+#     :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
+#         'LIBRARY_EDITABLE', 'PROPORTIONAL'].
+#     :type options: set
+#     :arg subtype: Enumerator in ['PIXEL', 'UNSIGNED', 'PERCENTAGE', 'FACTOR',
+#         'ANGLE', 'TIME', 'DISTANCE', 'NONE'].
+#     :type subtype: string
+#     :arg update: Function to be called when this value is modified,
+#         This function must take 2 values (self, context) and return None.
+#         *Warning* there are no safety checks to avoid infinite recursion.
+#     :type update: types.FunctionType
+#     :arg get: Function to be called when this value is 'read',
+#         This function must take 1 value (self) and return the value of the
+#         property.
+#     :type get: types.FunctionType
+#     :arg set: Function to be called when this value is 'written',
+#         This function must take 2 values (self, value) and return None.
+#     :type set: types.FunctionType
+#     """
+#     return _bpy.props.BoolProperty(**locals())
+#
+#
+# @_convert_arguments
+# def BVP(name='', description='', default=(False, False, False),
+#         options={'ANIMATABLE'}, subtype='NONE', size=3, update=None, get=None,
+#         set=None):
+#     """Returns a new vector boolean property definition.
+#     :arg name: Name used in the user interface.
+#     :type name: string
+#     :arg description: Text used for the tooltip and api documentation.
+#     :type description: string
+#     :arg default: sequence of booleans the length of *size*.
+#     :type default: sequence
+#     :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
+#         'LIBRARY_EDITABLE', 'PROPORTIONAL'].
+#     :type options: set
+#     :arg subtype: Enumerator in ['COLOR', 'TRANSLATION', 'DIRECTION',
+#         'VELOCITY', 'ACCELERATION', 'MATRIX', 'EULER', 'QUATERNION',
+#         'AXISANGLE', 'XYZ', 'COLOR_GAMMA', 'LAYER', 'LAYER_MEMBER', 'NONE'].
+#     :type subtype: string
+#     :arg size: Vector dimensions in [1, 32].
+#     :type size: int
+#     :arg update: Function to be called when this value is modified,
+#         This function must take 2 values (self, context) and return None.
+#         *Warning* there are no safety checks to avoid infinite recursion.
+#     :type update: types.FunctionType
+#     :arg get: Function to be called when this value is 'read',
+#         This function must take 1 value (self) and return the value of the
+#         property.
+#     :type get: types.FunctionType
+#     :arg set: Function to be called when this value is 'written',
+#         This function must take 2 values (self, value) and return None.
+#     :type set: types.FunctionType
+#     """
+#     return _bpy.props.BoolVectorProperty(**locals())
+#
+#
+# @_convert_arguments
+# def IP(name='', description='', default=0, min=INT_MIN, max=INT_MAX,
+#        soft_min: -10000=None, soft_max: 10000=None, step=1,
+#        options={'ANIMATABLE'}, subtype='NONE',
+#        update=None, get=None, set=None):
+#     """Returns a new int property definition.
+#     :arg name: Name used in the user interface.
+#     :type name: string
+#     :arg description: Text used for the tooltip and api documentation.
+#     :type description: string
+#     :arg min: Hard minimum, trying to assign a value below will silently assign
+#         this minimum instead.
+#     :type min: int
+#     :arg max: Hard maximum, trying to assign a value above will silently assign
+#         this maximum instead.
+#     :type max: int
+#     :arg soft_max: Soft maximum (<= *max*), user won't be able to drag the
+#         widget above this value in the UI.
+#     :type soft_min: int
+#     :arg soft_min: Soft minimum (>= *min*), user won't be able to drag the
+#         widget below this value in the UI.
+#     :type soft_max: int
+#     :arg step: Step of increment/decrement in UI, in [1, 100], defaults to 1
+#         (WARNING: unused currently!).
+#     :type step: int
+#     :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
+#         'LIBRARY_EDITABLE', 'PROPORTIONAL'].
+#     :type options: set
+#     :arg subtype: Enumerator in ['PIXEL', 'UNSIGNED', 'PERCENTAGE', 'FACTOR',
+#         'ANGLE', 'TIME', 'DISTANCE', 'NONE'].
+#     :type subtype: string
+#     :arg update: Function to be called when this value is modified,
+#         This function must take 2 values (self, context) and return None.
+#         *Warning* there are no safety checks to avoid infinite recursion.
+#     :type update: types.FunctionType
+#     :arg get: Function to be called when this value is 'read',
+#         This function must take 1 value (self) and return the value of the
+#         property.
+#     :type get: types.FunctionType
+#     :arg set: Function to be called when this value is 'written',
+#         This function must take 2 values (self, value) and return None.
+#     :type set: types.FunctionType
+#     """
+#     return _bpy.props.IntProperty(**locals())
+#
+#
+# @_convert_arguments
+# def IVP(name='', description='', default=(0, 0, 0), min=INT_MIN, max=INT_MAX,
+#         soft_min: -10000=None, soft_max: 10000=None, step=1,
+#         options={'ANIMATABLE'}, subtype='NONE', size=3,
+#         update=None, get=None, set=None):
+#     """Returns a new vector int property definition.
+#     :arg name: Name used in the user interface.
+#     :type name: string
+#     :arg description: Text used for the tooltip and api documentation.
+#     :type description: string
+#     :arg default: sequence of ints the length of *size*.
+#     :type default: sequence
+#     :arg min: Hard minimum, trying to assign a value below will silently assign
+#         this minimum instead.
+#     :type min: int
+#     :arg max: Hard maximum, trying to assign a value above will silently assign
+#         this maximum instead.
+#     :type max: int
+#     :arg soft_min: Soft minimum (>= *min*), user won't be able to drag the
+#         widget below this value in the UI.
+#     :type soft_min: int
+#     :arg soft_max: Soft maximum (<= *max*), user won't be able to drag the
+#         widget above this value in the UI.
+#     :type soft_max: int
+#     :arg step: Step of increment/decrement in UI, in [1, 100], defaults to 1
+#         (WARNING: unused currently!).
+#     :type step: int
+#     :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
+#         'LIBRARY_EDITABLE', 'PROPORTIONAL'].
+#     :type options: set
+#     :arg subtype: Enumerator in ['COLOR', 'TRANSLATION', 'DIRECTION',
+#         'VELOCITY', 'ACCELERATION', 'MATRIX', 'EULER', 'QUATERNION',
+#         'AXISANGLE', 'XYZ', 'COLOR_GAMMA', 'LAYER', 'LAYER_MEMBER', 'NONE'].
+#     :type subtype: string
+#     :arg size: Vector dimensions in [1, 32].
+#     :type size: int
+#     :arg update: Function to be called when this value is modified,
+#         This function must take 2 values (self, context) and return None.
+#         *Warning* there are no safety checks to avoid infinite recursion.
+#     :type update: function
+#     :arg get: Function to be called when this value is 'read',
+#         This function must take 1 value (self) and return the value of the
+#         property.
+#     :type get: function
+#     :arg set: Function to be called when this value is 'written',
+#         This function must take 2 values (self, value) and return None.
+#     :type set: function
+#     """
+#     return _bpy.props.IntVectorProperty(**locals())
+#
+#
+# @_convert_arguments
+# def FP(name='', description='', default=0.0, min=-FLT_MAX, max=FLT_MAX,
+#        soft_min: -10000=None, soft_max: 10000=None, step=10, precision=3,
+#        options={'ANIMATABLE'}, subtype='NONE', unit='NONE',
+#        update=None, get=None, set=None):
+#     """Returns a new float property definition.
+#     :arg name: Name used in the user interface.
+#     :type name: string
+#     :arg description: Text used for the tooltip and api documentation.
+#     :type description: string
+#     :arg min: Hard minimum, trying to assign a value below will silently assign
+#         this minimum instead.
+#     :type min: float
+#     :arg max: Hard maximum, trying to assign a value above will silently assign
+#         this maximum instead.
+#     :type max: float
+#     :arg soft_min: Soft minimum (>= *min*), user won't be able to drag the
+#         widget below this value in the UI.
+#     :type soft_min: float
+#     :arg soft_max: Soft maximum (<= *max*), user won't be able to drag the
+#         widget above this value in the UI.
+#     :type soft_max: float
+#     :arg step: Step of increment/decrement in UI, in [1, 100], defaults to 3
+#         (WARNING: actual value is /100).
+#     :type step: float
+#     :arg precision: Maximum number of decimal digits to display, in [0, 6].
+#     :type precision: int
+#     :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
+#         'LIBRARY_EDITABLE', 'PROPORTIONAL'].
+#     :type options: set
+#     :arg subtype: Enumerator in ['PIXEL', 'UNSIGNED', 'PERCENTAGE', 'FACTOR',
+#         'ANGLE', 'TIME', 'DISTANCE', 'NONE'].
+#     :type subtype: string
+#     :arg unit: Enumerator in ['NONE', 'LENGTH', 'AREA', 'VOLUME', 'ROTATION',
+#         'TIME', 'VELOCITY', 'ACCELERATION'].
+#     :type unit: string
+#     :arg update: Function to be called when this value is modified,
+#         This function must take 2 values (self, context) and return None.
+#         *Warning* there are no safety checks to avoid infinite recursion.
+#     :type update: types.FunctionType
+#     :arg get: Function to be called when this value is 'read',
+#         This function must take 1 value (self) and return the value of the
+#         property.
+#     :type get: types.FunctionType
+#     :arg set: Function to be called when this value is 'written',
+#         This function must take 2 values (self, value) and return None.
+#     :type set: types.FunctionType
+#     """
+#     return _bpy.props.FloatProperty(**locals())
+#
+#
+# @_convert_arguments
+# def FVP(name='', description='', default=(0, 0, 0), min=-FLT_MAX, max=FLT_MAX,
+#         soft_min: -10000=None, soft_max: 10000=None, step=10,
+#         precision=3, options={'ANIMATABLE'}, subtype='NONE', unit='NONE',
+#         size=3,
+#         update=None, get=None, set=None):
+#     """Returns a new vector float property definition.
+#     :arg name: Name used in the user interface.
+#     :type name: string
+#     :arg description: Text used for the tooltip and api documentation.
+#     :type description: string
+#     :arg default: sequence of floats the length of *size*.
+#     :type default: sequence
+#     :arg min: Hard minimum, trying to assign a value below will silently assign
+#         this minimum instead.
+#     :type min: float
+#     :arg max: Hard maximum, trying to assign a value above will silently assign
+#         this maximum instead.
+#     :type max: float
+#     :arg soft_min: Soft minimum (>= *min*), user won't be able to drag the
+#         widget below this value in the UI.
+#     :type soft_min: float
+#     :arg soft_max: Soft maximum (<= *max*), user won't be able to drag the
+#         widget above this value in the UI.
+#     :type soft_max: float
+#     :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
+#         'LIBRARY_EDITABLE', 'PROPORTIONAL'].
+#     :type options: set
+#     :arg step: Step of increment/decrement in UI, in [1, 100], defaults to 3
+#         (WARNING: actual value is /100).
+#     :type step: float
+#     :arg precision: Maximum number of decimal digits to display, in [0, 6].
+#     :type precision: int
+#     :arg subtype: Enumerator in ['COLOR', 'TRANSLATION', 'DIRECTION',
+#         'VELOCITY', 'ACCELERATION', 'MATRIX', 'EULER', 'QUATERNION',
+#         'AXISANGLE', 'XYZ', 'COLOR_GAMMA', 'LAYER', 'LAYER_MEMBER', 'NONE'].
+#     :type subtype: string
+#     :arg unit: Enumerator in ['NONE', 'LENGTH', 'AREA', 'VOLUME', 'ROTATION',
+#         'TIME', 'VELOCITY', 'ACCELERATION'].
+#     :type unit: string
+#     :arg size: Vector dimensions in [1, 32].
+#     :type size: int
+#     :arg update: Function to be called when this value is modified,
+#         This function must take 2 values (self, context) and return None.
+#         *Warning* there are no safety checks to avoid infinite recursion.
+#     :type update: types.FunctionType
+#     :arg get: Function to be called when this value is 'read',
+#         This function must take 1 value (self) and return the value of the
+#         property.
+#     :type get: types.FunctionType
+#     :arg set: Function to be called when this value is 'written',
+#         This function must take 2 values (self, value) and return None.
+#     :type set: types.FunctionType
+#     """
+#     return _bpy.props.FloatVectorProperty(**locals())
+#
+#
+# def SP(name='', description='', default='', maxlen=0, options={'ANIMATABLE'},
+#        subtype='NONE', update=None, get=None, set=None):
+#     """Returns a new string property definition.
+#     :arg name: Name used in the user interface.
+#     :type name: string
+#     :arg description: Text used for the tooltip and api documentation.
+#     :type description: string
+#     :arg default: initializer string.
+#     :type default: string
+#     :arg maxlen: maximum length of the string.
+#     :type maxlen: int
+#     :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
+#         'LIBRARY_EDITABLE', 'PROPORTIONAL'].
+#     :type options: set
+#     :arg subtype: Enumerator in ['FILE_PATH', 'DIR_PATH', 'FILE_NAME',
+#         'BYTE_STRING', 'PASSWORD', 'NONE'].
+#     :type subtype: string
+#     :arg update: Function to be called when this value is modified,
+#         This function must take 2 values (self, context) and return None.
+#         *Warning* there are no safety checks to avoid infinite recursion.
+#     :type update: types.FunctionType
+#     :arg get: Function to be called when this value is 'read',
+#         This function must take 1 value (self) and return the value of the
+#         property.
+#     :type get: types.FunctionType
+#     :arg set: Function to be called when this value is 'written',
+#         This function must take 2 values (self, value) and return None.
+#     :type set: types.FunctionType
+#     """
+#     return _bpy.props.StringProperty(**locals())
+#
+#
+# def EP(name='', description='', items=(), default='', options={'ANIMATABLE'},
+#        update=None, get=None, set=None):
+#     """Returns a new enumerator property definition.
+#     :arg name: Name used in the user interface.
+#     :type name: string
+#     :arg description: Text used for the tooltip and api documentation.
+#     :type description: string
+#     :arg items: sequence of enum items formatted:
+#         [(identifier, name, description, icon, number), ...] where the
+#         identifier is used for python access and other values are used for the
+#         interface.
+#         The three first elements of the tuples are mandatory.
+#         The forth one is either the (unique!) number id of the item or, if
+#         followed by a fith element (which must be the numid), an icon string
+#         identifier or integer icon value (e.g. returned by icon()...).
+#         Note the item is optional.
+#         For dynamic values a callback can be passed which returns a list in
+#         the same format as the static list.
+#         This function must take 2 arguments (self, context)
+#         WARNING: There is a known bug with using a callback,
+#         Python must keep a reference to the strings returned or Blender will
+#         crash.
+#     :type items: sequence of string tuples or a function
+#     :arg default: The default value for this enum, a string from the
+#         identifiers used in *items*.
+#         If the *ENUM_FLAG* option is used this must be a set of such string
+#         identifiers instead.
+#     :type default: string or set
+#     :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
+#         'ENUM_FLAG', 'LIBRARY_EDITABLE'].
+#     :type options: set
+#     :arg update: Function to be called when this value is modified,
+#         This function must take 2 values (self, context) and return None.
+#         *Warning* there are no safety checks to avoid infinite recursion.
+#     :type update: types.FunctionType
+#     :arg get: Function to be called when this value is 'read',
+#         This function must take 1 value (self) and return the value of the
+#         property.
+#     :type get: types.FunctionType
+#     :arg set: Function to be called when this value is 'written',
+#         This function must take 2 values (self, value) and return None.
+#     :type set: types.FunctionType
+#     """
+#     kwargs = dict(locals())
+#     if not default:
+#         del kwargs['default']
+#     return _bpy.props.EnumProperty(**kwargs)
+#
+#
+# def PP(name='', description='', type=None, options={'ANIMATABLE'},
+#        update=None):
+#     """Returns a new pointer property definition.
+#     :arg name: Name used in the user interface.
+#     :type name: string
+#     :arg description: Text used for the tooltip and api documentation.
+#     :type description: string
+#     :arg type: A subclass of :class:`bpy.types.PropertyGroup`.
+#     :type type: class
+#     :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
+#         'LIBRARY_EDITABLE', 'PROPORTIONAL'].
+#     :type options: set
+#     :arg update: Function to be called when this value is modified,
+#         This function must take 2 values (self, context) and return None.
+#         *Warning* there are no safety checks to avoid infinite recursion.
+#     :type update: function
+#     """
+#     return _bpy.props.PointerProperty(**locals())
+#
+#
+# def CP(name='', description='', type=None, options={'ANIMATABLE'}):
+#     """Returns a new collection property definition.
+#     :arg name: Name used in the user interface.
+#     :type name: string
+#     :arg description: Text used for the tooltip and api documentation.
+#     :type description: string
+#     :arg type: A subclass of :class:`bpy.types.PropertyGroup`.
+#     :type type: class
+#     :arg options: Enumerator in ['HIDDEN', 'SKIP_SAVE', 'ANIMATABLE',
+#         'LIBRARY_EDITABLE', 'PROPORTIONAL'].
+#     :type options: set
+#     """
+#     return _bpy.props.CollectionProperty(**locals())
+#
+#
+# def RP(cls, attr=''):
+#     """Removes a dynamically defined property.
+#     :param cls: The class containing the property (must be a positional
+#         argument).
+#     :type cls: class
+#     :param attr: Property name (must be passed as a keyword).
+#     :type attr: str
+#
+#     NOTE: Typically this function doesn't need to be accessed directly.
+#         Instead use ``del cls.attr``
+#     """
+#     return _bpy.props.RemoveProperty(cls, attr=attr)
 
 
 ###############################################################################

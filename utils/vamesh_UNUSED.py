@@ -16,25 +16,15 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-'''import time
-import copy
-import multiprocessing
-from multiprocessing import Process, Value, Array
-import queue
-'''
-import math
-from functools import reduce
-from collections import OrderedDict, Counter, defaultdict
+
+from collections import OrderedDict, defaultdict
 
 import bpy
-from bpy.props import *
-import mathutils as Math
-from mathutils import Matrix, Euler, Vector, Quaternion, geometry
+from mathutils import Vector
 
 from .. import localutils
 
 from . import vaview3d as vav
-from . import vautils as vau
 
 
 class Vert():
@@ -75,11 +65,10 @@ class Vert():
             vert.original = self
         return vert
 
-    '''
-    def get_edge(self, vert):
-        key = tuple(sorted((self.index, vert.index)))
-        return self.pymesh.key_edge.get(key, None)
-    '''
+    # def get_edge(self, vert):
+    #     key = tuple(sorted((self.index, vert.index)))
+    #     return self.pymesh.key_edge.get(key, None)
+
 
 class Edge():
     def __init__(self, edge=None, vertices=None):
@@ -179,34 +168,32 @@ class Face():
             face.original = self
         return face
 
-    '''
-    def vertices_other(self, vertices, force=False):
-        ret_vertices = self.vertices[:]
-        if force:
-            for v in vertices:
-                try:
-                    ret_vertices.remove(v)
-                except:
-                    pass
-        else:
-            for v in vertices:
-                try:
-                    ret_vertices.remove(v)
-                except:
-                    return None
-        return ret_vertices
-
-    def shared_edges(self, vertices=[], edges=[]):
-        verts = set()
-        for edge in edges:
-            verts.add(edge.vertices[0])
-            verts.add(edge.vertices[1])
-        for vert in vertices:
-            verts.add(vert)
-        return (e for e in self.edges if e.vertices[0] in verts and \
-                                         e.vertices[1] in verts and \
-                                         e not in edges)
-    '''
+    # def vertices_other(self, vertices, force=False):
+    #     ret_vertices = self.vertices[:]
+    #     if force:
+    #         for v in vertices:
+    #             try:
+    #                 ret_vertices.remove(v)
+    #             except:
+    #                 pass
+    #     else:
+    #         for v in vertices:
+    #             try:
+    #                 ret_vertices.remove(v)
+    #             except:
+    #                 return None
+    #     return ret_vertices
+    #
+    # def shared_edges(self, vertices=[], edges=[]):
+    #     verts = set()
+    #     for edge in edges:
+    #         verts.add(edge.vertices[0])
+    #         verts.add(edge.vertices[1])
+    #     for vert in vertices:
+    #         verts.add(vert)
+    #     return (e for e in self.edges if e.vertices[0] in verts and \
+    #                                      e.vertices[1] in verts and \
+    #                                      e not in edges)
 
 
 class PyMesh():
@@ -266,70 +253,69 @@ class PyMesh():
     def find_edge(self, v1, v2):
         return self.key_edge.get(tuple(sorted(v1.index, v2.index)), None)
 
-    '''
-    def find_vertices(self, elements, mode='and', remove=True):
-        faces = [f for f in elements if isinstance(f, Face)]
-        edges = [e for e in elements if isinstance(e, Edge)]
-        vertices = [v for v in elements if isinstance(v, Vert)]
-        l = []
-        for f in faces:
-            l.extend(f.vertices)
-        for e in edges:
-            l.extend(e.vertices)
-        l.extend(vertices)
-        c = Counter(l)
-        if mode == 'and':
-            if len(elements) == 1:
-                ret = list(c.keys())
-            else:
-                ret = [k for k, i in c.items() if i > 1]
-        else:
-            ret = list(c.keys())
-        if remove:
-            for v in vertices:
-                ret.remove(v)
-        return ret
+    # def find_vertices(self, elements, mode='and', remove=True):
+    #     faces = [f for f in elements if isinstance(f, Face)]
+    #     edges = [e for e in elements if isinstance(e, Edge)]
+    #     vertices = [v for v in elements if isinstance(v, Vert)]
+    #     l = []
+    #     for f in faces:
+    #         l.extend(f.vertices)
+    #     for e in edges:
+    #         l.extend(e.vertices)
+    #     l.extend(vertices)
+    #     c = Counter(l)
+    #     if mode == 'and':
+    #         if len(elements) == 1:
+    #             ret = list(c.keys())
+    #         else:
+    #             ret = [k for k, i in c.items() if i > 1]
+    #     else:
+    #         ret = list(c.keys())
+    #     if remove:
+    #         for v in vertices:
+    #             ret.remove(v)
+    #     return ret
+    #
+    # def find_edges(self, elements, mode='and', remove=True):
+    #     faces = [f for f in elements if isinstance(f, Face)]
+    #     edges = [e for e in elements if isinstance(e, Edge)]
+    #     vertices = [v for v in elements if isinstance(v, Vert)]
+    #     l = []
+    #     for f in faces:
+    #         l.extend(f.edges)
+    #     l.extend(edges)
+    #     c = Counter(l)
+    #     if mode == 'and':
+    #         if len(elements) == 1:
+    #             ret = list(c.keys())
+    #         else:
+    #             ret = [k for k, i in c.items() if i > 1]
+    #     else:
+    #         ret = list(c.keys())
+    #     if remove:
+    #         for e in edges:
+    #             ret.remove(e)
+    #     return ret
+    #
+    # def find_faces(self, elements, mode='and', remove=True):
+    #     faces = [f for f in elements if isinstance(f, Face)]
+    #     edges = [e for e in elements if isinstance(e, Edge)]
+    #     vertices = [v for v in elements if isinstance(v, Vert)]
+    #     l = []
+    #     l.extend(faces)
+    #     c = Counter(l)
+    #     if mode == 'and':
+    #         if len(elements) == 1:
+    #             ret = list(c.keys())
+    #         else:
+    #             ret = [k for k, i in c.items() if i > 1]
+    #     else:
+    #         ret = list(c.keys())
+    #     if remove:
+    #         for e in edges:
+    #             ret.remove(e)
+    #     return ret
 
-    def find_edges(self, elements, mode='and', remove=True):
-        faces = [f for f in elements if isinstance(f, Face)]
-        edges = [e for e in elements if isinstance(e, Edge)]
-        vertices = [v for v in elements if isinstance(v, Vert)]
-        l = []
-        for f in faces:
-            l.extend(f.edges)
-        l.extend(edges)
-        c = Counter(l)
-        if mode == 'and':
-            if len(elements) == 1:
-                ret = list(c.keys())
-            else:
-                ret = [k for k, i in c.items() if i > 1]
-        else:
-            ret = list(c.keys())
-        if remove:
-            for e in edges:
-                ret.remove(e)
-        return ret
-
-    def find_faces(self, elements, mode='and', remove=True):
-        faces = [f for f in elements if isinstance(f, Face)]
-        edges = [e for e in elements if isinstance(e, Edge)]
-        vertices = [v for v in elements if isinstance(v, Vert)]
-        l = []
-        l.extend(faces)
-        c = Counter(l)
-        if mode == 'and':
-            if len(elements) == 1:
-                ret = list(c.keys())
-            else:
-                ret = [k for k, i in c.items() if i > 1]
-        else:
-            ret = list(c.keys())
-        if remove:
-            for e in edges:
-                ret.remove(e)
-        return ret
-    '''
 
 """
 ### bpy.typesに追加
@@ -497,22 +483,22 @@ class CPyMesh(bpy.types.PropertyGroup):
 #bpy.types.Scene.pymesh = CollectionProperty(name='CPyMesh', type=CPyMesh)
 """
 
-#==============================================================================
+###############################################################################
 # Dict
-#==============================================================================
-'''def make_checked_dict(items, select=None, hide=None):
-    return {item.index: [] for item in items
-            if (select is None or item.select is select) and
-               (hide is None or item.hide is hide)}
-'''
+###############################################################################
+# def make_checked_dict(items, select=None, hide=None):
+#     return {item.index: [] for item in items
+#             if (select is None or item.select is select) and
+#                (hide is None or item.hide is hide)}
+
 
 class KeyEdgeDict(dict):
-    '''def get(self, *key):
-        if len(key) == 2:  # v1, v2
-            return super(KeyEdgeDict, self).get(tuple(sorted(key)))
-        else:
-            return super(KeyEdgeDict, self).get(key[0])
-    '''
+    # def get(self, *key):
+    #     if len(key) == 2:  # v1, v2
+    #         return super(KeyEdgeDict, self).get(tuple(sorted(key)))
+    #     else:
+    #         return super(KeyEdgeDict, self).get(key[0])
+
     def get2(self, v1, v2):
         return self.get(tuple(sorted((v1, v2))))
 
@@ -520,25 +506,25 @@ class KeyEdgeDict(dict):
 def key_edge_dict(me, select=None, hide=None):
     check = lambda item: (select is None or item.select == select) and \
                          (hide is None or item.hide == hide)
-    #key_edge = {e.key: e.index for e in me.edges if check(e)}
+    # key_edge = {e.key: e.index for e in me.edges if check(e)}
     key_edge = KeyEdgeDict(((e.key, e.index) for e in me.edges if check(e)))
     return key_edge
 
 
 def vert_verts_dict(me=None, select=None, hide=None, edge_keys=None):
-    '''
+    """
     select: True:選択中, False:非選択, None:全て
     edge_keys: 指定すると、この中の頂点のみを処理した辞書を返す。
     return: type:dict. key:頂点インデックス value:接続する頂点インデックスのリスト。
-    '''
+    """
     check = lambda item: (select is None or item.select == select) and \
                          (hide is None or item.hide == hide)
     if edge_keys is None:
         #vert_verts = {v.index: [] for v in me.vertices if check(v)}
-        '''
+        """
         バグ: エッジ選択モードでエッジを非選択した場合、接続する辺の選択状態に関わらず、
         両端の頂点が非選択になる。
-        '''
+        """
         vert_verts = defaultdict(list)
         vert_verts.update({v.index: [] for v in me.vertices if check(v)})
         for edge in (e for e in me.edges if check(e)):  # edgeで接続判定
@@ -559,7 +545,7 @@ def vert_verts_dict(me=None, select=None, hide=None, edge_keys=None):
 def vert_edges_dict(me, select=None, hide=None):
     check = lambda item: (select is None or item.select == select) and \
                          (hide is None or item.hide == hide)
-    #vert_edges = {v.index: [] for v in me.vertices if check(v)}
+    # vert_edges = {v.index: [] for v in me.vertices if check(v)}
     vert_edges = defaultdict(list)
     vert_edges.update({v.index: [] for v in me.vertices if check(v)})
     for edge in (e for e in me.edges if check(e)):
@@ -571,7 +557,7 @@ def vert_edges_dict(me, select=None, hide=None):
 def vert_faces_dict(me, select=None, hide=None):
     check = lambda item: (select is None or item.select == select) and \
                          (hide is None or item.hide == hide)
-    #vert_faces = {v.index: [] for v in me.vertices if check(v)}
+    # vert_faces = {v.index: [] for v in me.vertices if check(v)}
     vert_faces = defaultdict(list)
     vert_faces.update({v.index: [] for v in me.vertices if check(v)})
     for face in (f for f in me.faces if check(f)):
@@ -586,7 +572,7 @@ def vert_faces_dict(me, select=None, hide=None):
 def edge_faces_dict(me, select=None, hide=None, key_edge={}):
     check = lambda item: (select is None or item.select == select) and \
                          (hide is None or item.hide == hide)
-    #edge_faces = {e.index: [] for e in me.edges if check(e)}
+    # edge_faces = {e.index: [] for e in me.edges if check(e)}
     edge_faces = defaultdict(list)
     edge_faces.update({e.index: [] for e in me.edges if check(e)})
     if isinstance(me, bpy.types.Mesh):
@@ -605,10 +591,10 @@ def edge_faces_dict(me, select=None, hide=None, key_edge={}):
 
 def face_faces_dict(me, select=None, hide=None, edge_faces={}, key_edge={},
                     vert_faces={}, connect_vert=False):
-    '''
+    """
     connect_vert: Trueなら頂点を共有している面同士は隣接しているとみなす。
                   Falseなら辺を共有している面のみ対象。
-    '''
+    """
     check = lambda item: (select is None or item.select == select) and \
                          (hide is None or item.hide == hide)
     #face_faces = {f.index: [] for f in me.faces if check(f)}
@@ -630,9 +616,9 @@ def face_faces_dict(me, select=None, hide=None, edge_faces={}, key_edge={},
     return face_faces
 
 
-#==============================================================================
+###############################################################################
 # Connect
-#==============================================================================
+###############################################################################
 def linked_vertices_list(me, select=None, hide=None):
     """辺で繋がった頂点インデックスのリストを返す"""
     vert_verts = vert_verts_dict(me, select=select, hide=hide)
@@ -651,7 +637,7 @@ def linked_faces_list(me, select=None, hide=None, connect_vert=False):
     return localutils.utils.groupwith(face_faces.keys(), key, face_faces)
 
 
-'''
+"""
 def split_faces_re(me, edkey, efdict, fdict):
     # 旧
     for findex in efdict[edkey]:
@@ -694,11 +680,12 @@ def split_faces(me, indexlist=None):
             del indexdict[findex]
 
     return returnlist
-'''
+"""
 
-#==============================================================================
+
+###############################################################################
 # Path
-#==============================================================================
+###############################################################################
 class Path(list):
         def __init__(self, arg=[], cyclic=False):
             super(Path, self).__init__(arg)
@@ -708,11 +695,12 @@ class Path(list):
 
 def path_vertices_list(me=None, select=None, hide=None,
                        vert_verts=None, edge_keys=None):
-    '''pathのリストを返す
+    """pathのリストを返す
     vert_vertsの辞書か、edge_keys(keyのリスト)を指定すると、それのみ処理。
     [i1, i2, i3, i4, i1].cyclic = False  # 四角形、i1に別の辺が接続
     [i1, i2, i3, i4, i1].cyclic = True  # 四角形
-    '''
+    """
+
     if vert_verts is None:
         if edge_keys is None:
             vert_verts = vert_verts_dict(me, select=select, hide=hide)
@@ -775,13 +763,13 @@ def path_vertices_list(me=None, select=None, hide=None,
 
 
 def faces_outline_path(faces:'list of MeshFace', irregular_edges=False):
-    '''
+    """
     linked_faces_listで面を分割した後、この関数を呼び出す。
     faces: 辺を共有する面のリスト。 (ジェネレータでも可)
     irregular_edges: 面を三つ以上持つ辺をoutlineとみなして、pathに含める
     return: 外周の頂点インデックスのリスト(=Path)のリスト。
             通常は[path]を返すが、ループ物や不正な構造な場合(irregular_edges) len(paths) > 1となる
-    '''
+    """
     # 辺が所有する面の数を示す辞書を作成
     key_count = defaultdict(int)
     for face in faces:
@@ -795,10 +783,10 @@ def faces_outline_path(faces:'list of MeshFace', irregular_edges=False):
 
 def face_outline_paths(me, select=None, hide=None, connect_vert=False,
                         irregular_edges=False):
-    '''
+    """
     return: Pathの二次元リスト [[Path, Path], [Path], [Path], ...]
     場合によって、一つの面の塊から複数のPathが生成される。
-    '''
+    """
     paths_list = []
     face_blocks = linked_faces_list(me, select, hide,
                                     connect_vert=connect_vert)
@@ -810,11 +798,11 @@ def face_outline_paths(me, select=None, hide=None, connect_vert=False,
     return paths_list
 
 
-#==============================================================================
+###############################################################################
 # Convert
-#==============================================================================
+###############################################################################
 def mesh_convert_to_curve(context, me, mat, threshold):
-    '''
+    """
     meshデータからcurveObjectを生成、sceneにリンクした状態で返す。
     mat: ob.matrix_world
     threshold: smooth angle
@@ -822,7 +810,7 @@ def mesh_convert_to_curve(context, me, mat, threshold):
     消去したい場合は、context.scene.objects.unlink(newob)
                     bpy.data.objects.remove(newob)
                     bpy.data.curves.remove(curve)
-    '''
+    """
 
     cu = bpy.data.curves.new(name='CU_mesh_convert_data', type='CURVE')
     newob = bpy.data.objects.new(name='OB_mesh_convert_data',
@@ -913,9 +901,9 @@ def mesh_convert_to_curve(context, me, mat, threshold):
     return newob
 
 
-#==============================================================================
+###############################################################################
 # Other
-#==============================================================================
+###############################################################################
 def get_mirrored_mesh(scene, ob):
     # apply MirrorModifier only
     mods = ob.modifiers

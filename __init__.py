@@ -89,7 +89,7 @@ class CToolsPreferences(addongroup.AddonGroupPreferences,
         '_wm_custom_keymap',
 
         # 作業中
-        '_groupinstance',
+        '_groupeditor',
     ]
 
 

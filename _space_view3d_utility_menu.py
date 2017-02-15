@@ -475,7 +475,8 @@ def register():
 
     km = registerinfo.AddonRegisterInfo.get_keymap('3D View')
     if km:
-        kmi = km.keymap_items.new('wm.call_menu', 'D', 'PRESS', ctrl=True)
+        kmi = km.keymap_items.new('wm.call_menu', 'D', 'PRESS', shift=True,
+                                  ctrl=True)
         kmi.properties.name = 'VIEW3D_MT_utilities'
         addon_keymaps.append((km, kmi))
 

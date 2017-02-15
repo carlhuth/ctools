@@ -24,13 +24,10 @@ import ctypes
 
 import bpy
 from mathutils import Vector
-import bpy_extras.keyconfig_utils
 
 from .. import localutils
-from ..localutils import utils
 
 from . import vaoperator
-
 
 
 """

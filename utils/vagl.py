@@ -391,8 +391,9 @@ class GLSettings:
 
 
 def gluProject(vec):
-    '''bgl.gluProjectを呼ぶ。
-    返り値は左手系の座標系になり、Z値は0.0~1.0にクリッピングされる'''
+    """bgl.gluProjectを呼ぶ。
+    返り値は左手系の座標系になり、Z値は0.0~1.0にクリッピングされる
+    """
     modelview = Buffer('double', 16, bgl.GL_MODELVIEW_MATRIX)
     projection = Buffer('double', 16, bgl.GL_PROJECTION_MATRIX)
     # viewport = Buffer('int', 4, bgl.GL_VIEWPORT)
@@ -562,23 +563,23 @@ def draw_arc(x, y, radius, start_angle, end_angle, edgenum=16):
     bgl.glEnd()
 
 
-def draw_arrow(nockx, nocky, headx, heady, headlength=10, \
+def draw_arrow(nockx, nocky, headx, heady, headlength=10,
                headangle=math.radians(70), headonly=False):
-    '''
+    """
     nockx, nocky: 筈
     headx, heady: 鏃
     headangle: 0 <= headangle <= 180
     headlength: nockとhead上での距離
-    '''
+    """
     if nockx == headx and nocky == heady or headonly and headlength == 0:
         return
     angle = max(min(math.pi / 2, headangle / 2), 0)  # 箆との角度
     vn = Vector((nockx, nocky))
     vh = Vector((headx, heady))
-    '''if headonly:
-        vh = vh + (vh - vn).normalized() * headlength
-        headx, heady = vh
-    '''
+    # if headonly:
+    #     vh = vh + (vh - vn).normalized() * headlength
+    #     headx, heady = vh
+
     bgl.glBegin(bgl.GL_LINES)
     # shaft
     if not headonly:
@@ -601,7 +602,7 @@ def draw_arrow(nockx, nocky, headx, heady, headlength=10, \
     bgl.glEnd()
 
 
-def draw_sun(x, y, radius, subdivide=16, raydirections=[],
+def draw_sun(x, y, radius, subdivide=16, raydirections=(),
              raylength=10, raystartoffset=0):
     draw_circle(x, y, radius, subdivide)
     bgl.glBegin(bgl.GL_LINES)
@@ -770,7 +771,7 @@ def screenshot_image(x, y, w, h, name=''):
     return img
 
 
-### blf #######################################################################
+# blf #########################################################################
 def blf_draw(fontid, txt):
     """GL_BLENDとGL_TEXTURE_2Dが描画前に有効になり、描画後に無効になる。
     source/blender/blenfont/internblf.c: 557

@@ -18,7 +18,7 @@
 
 
 bl_info = {
-    'name': 'Group Instance Editor',
+    'name': 'Group Editor',
     'author': 'chromoly',
     'version': (0, 0, 1),
     'blender': (2, 78, 0),
@@ -51,7 +51,7 @@ translation_dict = {
 }
 
 
-class Preferences(
+class AddonPreferencesGroupEditor(
         addongroup.AddonGroupPreferences,
         registerinfo.AddonRegisterInfo,
         bpy.types.PropertyGroup if '.' in __name__ else
@@ -69,6 +69,7 @@ class EditInstance(bpy.types.Operator):
         :type context: bpy.types.Context
         """
 
+        # 確認
         scene = context.scene
         actob = context.active_object
         if actob.dupli_type == 'GROUP':
@@ -90,16 +91,16 @@ class EditInstance(bpy.types.Operator):
         offset = group.dupli_offset
         bpy.ops.object.empty_add(type='PLAIN_AXES', view_align=False,
                                  location=offset, rotation=(0, 0, 0))
-        group_parent = context.active_object
-        group_parent.layers = actob.layers
+        empty_extracted_group = context.active_object
+        empty_extracted_group.layers = actob.layers
         for ob in group.objects:
             ob.select = True
         # FIXME: parent階層
         bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
-        group_parent.matrix_world = actob.matrix_world
+        empty_extracted_group.matrix_world = actob.matrix_world
         actob.dupli_group = None
 
-        group.dupli_offset = group_parent.matrix_world.to_translation()
+        group.dupli_offset = empty_extracted_group.matrix_world.to_translation()
 
         # groupを利用しているオブジェクトに対して修正を行う
         for ob in context.selected_objects:
@@ -158,12 +159,12 @@ class EditInstance(bpy.types.Operator):
 
 
 classes = [
-    Preferences,
+    AddonPreferencesGroupEditor,
     EditInstance,
 ]
 
 
-@Preferences.register_addon
+@AddonPreferencesGroupEditor.register_addon
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -173,12 +174,12 @@ def register():
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     if kc:
-        km = Preferences.get_keymap('Mesh')
+        km = AddonPreferencesGroupEditor.get_keymap('Mesh')
         # kmi = km.keymap_items.new('mesh.intersect_cutoff', 'B', 'PRESS',
         #                           shift=True, ctrl=True, alt=True, oskey=True)
 
 
-@Preferences.unregister_addon
+@AddonPreferencesGroupEditor.unregister_addon
 def unregister():
     for cls in classes[::-1]:
         bpy.utils.unregister_class(cls)

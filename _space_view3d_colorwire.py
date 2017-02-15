@@ -134,7 +134,7 @@ def register():
     km = registerinfo.AddonRegisterInfo.get_keymap('3D View')
     if km:
         kmi = km.keymap_items.new('wm.call_menu', 'D', 'PRESS',
-                                  shift=True, ctrl=True)
+                                  shift=True, ctrl=True, alt=True)
         kmi.properties.name = 'VIEW3D_MT_color_wire'
         addon_keymaps.append((km, kmi))
 
