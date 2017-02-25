@@ -426,6 +426,30 @@ class AreaExist:
 # U.pixelsize = wm_window_pixelsize(win);  # @ wm_window_add_ghostwindow() 通常は1
 
 
+def widget_unit():
+    """
+    blender/makesdna/DNA_userdef_types.h:518:
+        short widget_unit;  /* private, defaults to 20 for 72 DPI setting */
+
+    # #define UI_UNIT_X               ((void)0, U.widget_unit)
+    # #define UI_UNIT_Y               ((void)0, U.widget_unit)
+    # blender/blenkernel/intern/blender.c:507:
+    #     U.widget_unit = (U.pixelsize * U.dpi * 20 + 36) / 72;
+
+    dpi = context.user_preferences.system.dpi
+    PIXEL_SIZE = 1.0
+    widget_unit = int((PIXEL_SIZE * dpi * 20 + 36) / 72)
+    """
+    # dpi: 72 -> 20.5, 96: 27.2
+
+    U = bpy.context.user_preferences
+    return int((U.system.pixel_size * U.system.dpi * 20 + 36) / 72)
+
+
+UI_UNIT_X = widget_unit
+UI_UNIT_Y = widget_unit
+
+
 ###############################################################################
 # Get Keymap
 ###############################################################################

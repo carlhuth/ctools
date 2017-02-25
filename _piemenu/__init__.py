@@ -55,12 +55,21 @@ from ..utils import addongroup
 from ..utils import registerinfo
 from ..utils import vagl as vagl
 from ..utils.structures import *
+from ..utils import vawm
 
-from . import drawicon
-from . import preferences
-from .preferences import PieMenuPreferences
-
-from . import oputils
+# from . import drawicon
+# from . import preferences
+# from .preferences import PieMenuPreferences
+#
+# from . import oputils
+try:
+    importlib.reload(drawicon)
+    importlib.reload(preferences)
+    importlib.reload(oputils)
+except NameError:
+    from . import drawicon
+    from . import preferences
+    from . import oputils
 
 
 config_dir_name = 'piemenus'
@@ -80,30 +89,8 @@ def is_instance(obj):
 
 
 def get_addon_preferences():
-    """:rtype: PieMenuPreferences"""
+    """:rtype: preferences.PieMenuPreferences"""
     return preferences.PieMenuPreferences.get_instance()
-
-
-def get_widget_unit(dpi=None):
-    """
-    blender/makesdna/DNA_userdef_types.h:518:
-        short widget_unit;  /* private, defaults to 20 for 72 DPI setting */
-
-    # #define UI_UNIT_X               ((void)0, U.widget_unit)
-    # #define UI_UNIT_Y               ((void)0, U.widget_unit)
-    # blender/blenkernel/intern/blender.c:507:
-    #     U.widget_unit = (U.pixelsize * U.dpi * 20 + 36) / 72;
-
-    dpi = context.user_preferences.system.dpi
-    PIXEL_SIZE = 1.0
-    widget_unit = int((PIXEL_SIZE * dpi * 20 + 36) / 72)
-    """
-
-    # dpi: 72 -> 20.5, 96: 27.2
-
-    if dpi is None:
-        dpi = bpy.context.user_preferences.system.dpi
-    return int((PIXEL_SIZE * dpi * 20 + 36) / 72)
 
 
 def get_event():
@@ -435,7 +422,7 @@ class Menu:
             else:
                 pie_angle = math.pi * 2 / num
 
-            widget_unit = get_widget_unit()
+            widget_unit = vawm.widget_unit()
             if self.icon_size > 0:
                 # icon_box_w = max(widget_unit, self.icon_size + 2)
                 icon_box_w = max(widget_unit, self.icon_size)
@@ -525,6 +512,8 @@ class Menu:
         import bpy_extras.keyconfig_utils
 
         kc = bpy.context.window_manager.keyconfigs.addon
+        if not kc:
+            return
 
         modal_keymaps = [
             'View3D Gesture Circle',
@@ -639,7 +628,7 @@ class DrawingManager:
         U = context.user_preferences
         self.op = op
 
-        self.widget_unit = get_widget_unit()
+        self.widget_unit = vawm.widget_unit()
         self.dpi = context.user_preferences.system.dpi
         f = PIXEL_SIZE * self.dpi / 72
         # フォントの高さ。blf.dimensionsでは一定にならないのでこれを使う
@@ -2460,7 +2449,7 @@ classes = [
 ]
 
 
-@PieMenuPreferences.register_addon
+@preferences.PieMenuPreferences.register_addon
 def register():
     preferences.register()
     drawicon.register()
@@ -2485,7 +2474,7 @@ def register():
     # pie_keymap_items.append((km, kmi))
 
 
-@PieMenuPreferences.unregister_addon
+@preferences.PieMenuPreferences.unregister_addon
 def unregister():
     preferences.unregister()
     drawicon.unregister()

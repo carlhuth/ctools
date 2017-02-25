@@ -44,9 +44,11 @@ from mathutils import Vector
 try:
     importlib.reload(addongroup)
     importlib.reload(registerinfo)
+    importlib.reload(vawm)
 except NameError:
     from ..utils import addongroup
     from ..utils import registerinfo
+    from ..utils import vawm
 
 
 PIXEL_SIZE = 1.0
@@ -1002,8 +1004,7 @@ class WM_OT_mouse_gesture(bpy.types.Operator):
         if context.area.type == 'IMAGE_EDITOR':
             image = context.area.spaces.active.image
             if image and image.type == 'RENDER_RESULT':
-                dpi = context.user_preferences.system.dpi
-                ymax -= int((PIXEL_SIZE * dpi * 20 + 36) / 72)  # # widget_unit
+                ymax -= vawm.widget_unit()
 
         if not context.user_preferences.system.use_region_overlap:
             return 0, ymin, region.width - 1, ymax
@@ -1063,7 +1064,7 @@ class WM_OT_mouse_gesture(bpy.types.Operator):
         U = context.user_preferences
         prefs = MouseGesturePreferences.get_instance()
         dpi = U.system.dpi
-        widget_unit = int((PIXEL_SIZE * dpi * 20 + 36) / 72)
+        widget_unit = vawm.widget_unit()
 
         font_id = 0
         theme_style = U.ui_styles[0]

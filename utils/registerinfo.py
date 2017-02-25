@@ -1090,8 +1090,9 @@ class _AddonRegisterInfoKeyMap(_AddonRegisterInfo):
     def keymap_items_set_default(cls):
         """現在登録しているKeyMapItemを初期値(restore時の値)とする"""
         cls.__default_keymap_item_values.clear()
-        cls.__default_keymap_item_values[:] = \
-            cls.keymap_items_get_attributes()
+        values = cls.keymap_items_get_attributes()
+        if values:
+            cls.__default_keymap_item_values[:] = values
         cls.__default_keymap_items = cls.keymap_items[:]
 
     @classmethod

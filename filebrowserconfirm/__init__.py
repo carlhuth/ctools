@@ -102,7 +102,7 @@ class SaveConfirmPreferences(
         super().draw(context)
 
 
-attributes, _ = wrapoperator.convert_operator_attributes('file.execute')
+attributes = wrapoperator.convert_operator_attributes('file.execute')
 execute_internal = attributes['execute']
 
 

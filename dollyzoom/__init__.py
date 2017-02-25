@@ -44,12 +44,14 @@ try:
     importlib.reload(registerinfo)
     importlib.reload(st)
     importlib.reload(wrapoperator)
+    importlib.reload(vaprops)
 except NameError:
     from ..utils import addongroup
     from ..utils import customproperty
     from ..utils import registerinfo
     from ..utils import structures as st
     from ..utils import wrapoperator
+    from ..utils import vaprops
 
 
 PROP_MODE_ATTR = 'ct_dz_mode'
@@ -287,7 +289,7 @@ class WalkInfo(st.Cast, ct.Structure):
 try:
     _ = walk_ot_attrs
 except NameError:
-    walk_ot_attrs, _ = wrapoperator.convert_operator_attributes('view3d.walk')
+    walk_ot_attrs = wrapoperator.convert_operator_attributes('view3d.walk')
 _VIEW3D_OT_walk_ex = type('_VIEW3D_OT_walk_ex', (), walk_ot_attrs)
 
 
@@ -538,7 +540,7 @@ class FlyInfo(st.Cast, ct.Structure):
 try:
     _ = fly_ot_attrs
 except NameError:
-    fly_ot_attrs, _ = wrapoperator.convert_operator_attributes('view3d.fly')
+    fly_ot_attrs = wrapoperator.convert_operator_attributes('view3d.fly')
 _VIEW3D_OT_fly_ex = type('_VIEW3D_OT_fly_ex', (), fly_ot_attrs)
 
 
@@ -553,7 +555,7 @@ class VIEW3D_OT_fly_ex(_Navigate, _VIEW3D_OT_fly_ex, bpy.types.Operator):
 try:
     _ = navigate_ot_attrs
 except NameError:
-    navigate_ot_attrs, _ = wrapoperator.convert_operator_attributes(
+    navigate_ot_attrs = wrapoperator.convert_operator_attributes(
         'view3d.navigate')
 _VIEW3D_OT_navigate_ex = type('_VIEW3D_OT_navigate_ex', (),
                               navigate_ot_attrs)
@@ -735,7 +737,7 @@ class VIEW3D_PT_dolly_zoom(bpy.types.Panel):
             context.area.tag_redraw()
 
         # camera lens -----------------------------------------------
-        prop = wrapoperator.bl_prop_to_py_prop(
+        prop = vaprops.bl_prop_to_py_prop(
             bpy.types.Camera.bl_rna.properties['lens'])
 
         def fget(self):
@@ -757,7 +759,7 @@ class VIEW3D_PT_dolly_zoom(bpy.types.Panel):
         setattr(bpy.types.Scene, PROP_LENS_ATTR, prop)
 
         # camera angle ----------------------------------------------
-        prop = wrapoperator.bl_prop_to_py_prop(
+        prop = vaprops.bl_prop_to_py_prop(
             bpy.types.Camera.bl_rna.properties['angle'])
 
         def fget(self):
@@ -794,7 +796,7 @@ class VIEW3D_PT_dolly_zoom(bpy.types.Panel):
         setattr(bpy.types.Scene, PROP_ADJUST_ATTR, prop)
 
         # v3d lens --------------------------------------------------
-        prop = wrapoperator.bl_prop_to_py_prop(
+        prop = vaprops.bl_prop_to_py_prop(
             bpy.types.SpaceView3D.bl_rna.properties['lens'])
 
         def fget(self):

@@ -19,7 +19,6 @@
 
 from collections import OrderedDict
 import contextlib
-import enum
 import traceback
 
 import bpy
@@ -35,8 +34,7 @@ __all__ = [
     'area_region_types',
     'bl_context_properties',
     'bl_context_view3d',
-    'bl_context_view3d_mode',
-
+    'space_type_class_name',
 ]
 
 
@@ -413,8 +411,8 @@ class _MenuKeymapItemAdd(_Registerable, bpy.types.Menu):
 # panel
 #####################################################################
 area_region_types = OrderedDict([
-    # EMPTY: 0
-    ('EMPTY', []),
+    # # EMPTY: 0
+    # ('EMPTY', []),
     # VIEW_3D: 1
     ('VIEW_3D', ['WINDOW', 'UI', 'TOOLS', 'TOOL_PROPS', 'HEADER']),
     # TIMELINE: 15
@@ -452,59 +450,64 @@ area_region_types = OrderedDict([
     ('CONSOLE', ['WINDOW', 'HEADER']),
 ])
 
-# bpy.types.SpaceProperties.contextの値は大文字になっているので注意
-# 'particle' に限り 対応する値が 'PARTICLES' となっている
+# Panel.bL_space_typeがPROPERTIESの場合のPanel.bl_contextと
+# SpaceProperties.contextの対応。値はSpaceProperties.contextのidentifierとname
 bl_context_properties = OrderedDict([
-    ('scene', 'scene'),
-    ('render', 'render'),
-    ('render_layer', 'render_layer'),
-    ('world', 'world'),
-    ('object', 'object'),
-    ('data', 'data'),
-    ('material', 'material'),
-    ('texture', 'texture'),
-    ('particle', 'particle'),
-    ('physics', 'physics'),
-    ('bone', 'bone'),
-    ('modifier', 'modifier'),
-    ('constraint', 'constraint'),
-    ('bone_constraint', 'bone_constraint'),
+    ('scene', ('SCENE', 'Scene')),
+    ('render', ('RENDER', 'Render')),
+    ('render_layer', ('RENDER_LAYER', 'Render Layers')),
+    ('world', ('WORLD', 'World')),
+    ('object', ('OBJECT', 'Object')),
+    ('data', ('DATA', 'Data')),
+    ('material', ('MATERIAL', 'Material')),
+    ('texture', ('TEXTURE', 'Texture')),
+    ('particle', ('PARTICLES', 'Particles')),
+    ('physics', ('PHYSICS', 'Physics')),
+    ('bone', ('BONE', 'Bone')),
+    ('modifier', ('MODIFIER', 'Modifiers')),
+    ('constraint', ('CONSTRAINT', 'Constraints')),
+    ('bone_constraint', ('BONE_CONSTRAINT', 'Bone Constraints')),
 ])
 
+# Panel.bl_space_typeがVIEW_3Dの場合のPanel.bl_contextと
+# Context.modeの対応。値はContext.modeのidentifierとname
 bl_context_view3d = OrderedDict([
-    ('mesh_edit', 'Mesh Edit'),
-    ('curve_edit', 'Curve Edit'),
-    ('surface_edit', 'Surface Edit'),
-    ('text_edit', 'Text Edit'),
-    ('armature_edit', 'Armature Edit'),
-    ('mball_edit', 'Metaball Edit'),
-    ('lattice_edit', 'Lattice Edit'),
-    ('posemode', 'Pose'),
-    ('sculpt_mode', 'Sculpt'),
-    ('weightpaint', 'Weight Paint'),
-    ('vertexpaint', 'Vertex Paint'),
-    ('imagepaint', 'Texture Paint'),
-    ('particlemode', 'Particle'),
-    ('objectmode', 'Object'),
+    ('mesh_edit', ('EDIT_MESH', 'Mesh Edit')),  # 0
+    ('curve_edit', ('EDIT_CURVE', 'Curve Edit')),  # 1
+    ('surface_edit', ('EDIT_SURFACE', 'Surface Edit')),  # 2
+    ('text_edit', ('EDIT_TEXT', 'Text Edit')),  # 3
+    ('armature_edit', ('EDIT_ARMATURE', 'Armature Edit')),  # 4
+    ('mball_edit', ('EDIT_METABALL', 'Metaball Edit')),  # 5
+    ('lattice_edit', ('EDIT_LATTICE', 'Lattice Edit')),  # 6
+    ('posemode', ('POSE', 'Pose')),  # 7
+    ('sculpt_mode', ('SCULPT', 'Sculpt')),  # 8
+    ('weightpaint', ('PAINT_WEIGHT', 'Weight Paint')),  # 9
+    ('vertexpaint', ('PAINT_VERTEX', 'Vertex Paint')),  # 10
+    ('imagepaint', ('PAINT_TEXTURE', 'Texture Paint')),  # 11
+    ('particlemode', ('PARTICLE', 'Particle')),  # 12
+    ('objectmode', ('OBJECT', 'Object')),  # 13
 ])
 
-# Context.modeとの対応
-bl_context_view3d_mode = OrderedDict([
-    ('empty', ''),
-    ('mesh_edit', 'EDIT_MESH'),  # 0
-    ('curve_edit', 'EDIT_CURVE'),  # 1
-    ('surface_edit', 'EDIT_SURFACE'),  # 2
-    ('text_edit', 'EDIT_TEXT'),  # 3
-    ('armature_edit', 'EDIT_ARMATURE'),  # 4
-    ('mball_edit', 'EDIT_METABALL'),  # 5
-    ('lattice_edit', 'LEDIT_LATTICE'),  # 6
-    ('posemode', 'POSE'),  # 7
-    ('sculpt_mode', 'SCULPT'),  # 8
-    ('weightpaint', 'PAINT_WEIGHT'),  # 9
-    ('vertexpaint', 'PAINT_VERTEX'),  # 10
-    ('imagepaint', 'PAINT_TEXTURE'),  # 11
-    ('particlemode', 'PARTICLE'),  # 12
-    ('objectmode', 'OBJECT'),  # 13
+
+# Space.typeとクラス名の先頭の文字列との対応。例: bpy.types.USERPREF_HT_header
+space_type_class_name = OrderedDict([
+    ('VIEW_3D', 'VIEW3D'),
+    ('TIMELINE', 'TIME'),
+    ('GRAPH_EDITOR', 'GRAPH'),
+    ('DOPESHEET_EDITOR', 'DOPESHEET'),
+    ('NLA_EDITOR', 'NLA'),
+    ('IMAGE_EDITOR', 'IMAGE'),
+    ('SEQUENCE_EDITOR', 'SEQUENCER'),
+    ('CLIP_EDITOR', 'CLIP'),
+    ('TEXT_EDITOR', 'TEXT'),
+    ('NODE_EDITOR', 'NODE'),
+    ('LOGIC_EDITOR', 'LOGIC'),
+    ('PROPERTIES', 'PROPERTIES'),
+    ('OUTLINER', 'OUTLINER'),
+    ('USER_PREFERENCES', 'USERPREF'),
+    ('INFO', 'INFO'),
+    ('FILE_BROWSER', 'FILEBROWSER'),
+    ('CONSOLE', 'CONSOLE'),
 ])
 
 
@@ -528,13 +531,13 @@ def _panel_prop_bl_context_items(self, context):
     if self.bl_space_type == 'PROPERTIES':
         # buttons_main_region_draw()より
         # bl_space_typeが'PROPERTIES'の場合に使う
-        items = [(k, v, '') for k, v in bl_context_properties.items()]
+        items = [(k, k, '') for k in bl_context_properties]
         items = [('empty', '', '')] + items
     else:
         # view3d_tools_region_draw()より
         # これが有効なのはbl_space_typeが'VIEW_3D'でbl_region_typeが
         # 'TOOLS'の場合のみ
-        items = [(k, v, '') for k, v in bl_context_view3d.items()]
+        items = [(k, v[1], '') for k, v in bl_context_view3d.items()]
         items = [('empty', '', '')] + items
     _panel_prop_bl_context_items.items = items
     return items
@@ -1087,8 +1090,9 @@ class _AddonRegisterInfoKeyMap(_AddonRegisterInfo):
     def keymap_items_set_default(cls):
         """現在登録しているKeyMapItemを初期値(restore時の値)とする"""
         cls.__default_keymap_item_values.clear()
-        cls.__default_keymap_item_values[:] = \
-            cls.keymap_items_get_attributes()
+        values = cls.keymap_items_get_attributes()
+        if values:
+            cls.__default_keymap_item_values[:] = values
         cls.__default_keymap_items = cls.keymap_items[:]
 
     @classmethod

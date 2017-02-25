@@ -741,7 +741,6 @@ class ParameterList(Structure):
     )
 
 
-
 ###############################################################################
 # blenkernel / makesdna / windowmanager/ editors
 ###############################################################################
@@ -2621,6 +2620,111 @@ class BMWalker(Structure):
 
         c_int, 'dummy[4]',  # enumのサイズが不明な為
     )
+
+
+###############################################################################
+# Node
+###############################################################################
+class bNodeSocket(Cast, Structure):
+    """DNA_node_types.h: 86"""
+    # 選択状態は flag & SELECT
+
+bNodeSocket._fields_ = fields(
+    bNodeSocket, '*next', '*prev', '*new_sock',
+    c_void, '*prop',  # IDProperty
+
+    c_char, 'identifier[64]',
+
+    c_char, 'name[64]',
+
+    c_void, '*storage',
+
+    c_short, 'type', 'flag',
+    c_short, 'limit',
+    c_short, 'in_out',
+    c_void, '*typeinfo',  # struct bNodeSocketType
+    c_char, 'idname[64]',
+
+    c_float, 'locx', 'locy',
+
+    # 以下略
+)
+
+
+class bNode(Cast, Structure):
+    """DNA_node_types.h: 86"""
+    # 選択状態は flag & SELECT
+
+
+bNode._fields_ = fields(
+    bNode, '*next', '*prev', '*new_node',
+
+    c_void, '*prop',  # IDProperty  # user-defined properties
+
+    c_void, '*typeinfo',  # struct bNodeType  # runtime type information
+    c_char, 'idname[64]',  # runtime type identifier
+
+    c_char, 'name[64]',  # MAX_NAME
+    c_int, 'flag',
+    c_short, 'type', 'pad',
+    c_short, 'done', 'level',  # both for dependency and sorting
+    c_short, 'lasty', 'menunr',  # lasty: check preview render status, menunr: browse ID blocks
+    c_short, 'stack_index',  # for groupnode, offset in global caller stack
+    c_short, 'nr',  # number of this node in list, used for UI exec events
+    c_float, 'color[3]',  # custom user-defined color
+
+    ListBase, 'inputs', 'outputs',
+    bNode, '*parent',  # parent node
+    ID, '*id',  # optional link to libdata
+    c_void, '*storage',  # custom data, must be struct, for storage in file
+    bNode, '*original',  # the original node in the tree (for localized tree)
+    ListBase, 'internal_links',  # list of cached internal links (input to output), for muted nodes and operators
+
+    c_float, 'locx', 'locy',  # root offset for drawing (parent space)
+    c_float, 'width', 'height',  # node custom width and height
+    c_float, 'miniwidth',  # node width if hidden
+    c_float, 'offsetx', 'offsety',  # additional offset from loc
+    c_float, 'anim_init_locx',  # initial locx for insert offset animation
+    c_float, 'anim_ofsx',  # offset that will be added to locx for insert offset animation
+
+    c_int, 'update',  # update flags
+
+    c_char, 'label[64]',  # custom user-defined label, MAX_NAME
+    c_short, 'custom1', 'custom2',  # to be abused for buttons
+    c_float, 'custom3', 'custom4',
+
+    c_short, 'need_exec', 'exec',  # need_exec is set as UI execution event, exec is flag during exec
+    c_void, '*threaddata',  # optional extra storage for use in thread (read only then!)
+    rctf, 'totr',  # entire boundbox (worldspace)
+    rctf, 'butr',  # optional buttons area
+    rctf, 'prvr',  # optional preview area
+
+    c_short, 'preview_xsize', 'preview_ysize',  # reserved size of the preview rect
+    c_int, 'pad2',
+    c_void, '*block',  # struct uiBlock  # runtime during drawing
+)
+
+
+# 未使用
+# class bNodeTree(Cast, Structure):
+#     """DNA_node_types.h: 329"""
+#
+# bNodeTree._fields_ = fields(
+#     ID, 'id',
+#     c_void, '*adt',  # struct AnimData  # animation data (must be immediately after id for utilities to use it)
+#
+#     c_void, '*typeinfo',  # struct bNodeTreeType  # runtime type information
+#     c_char, 'idname[64]',  # runtime type identifier
+#
+#     c_void, '*interface_type',  # struct StructRNA  # runtime RNA type of the group interface
+#
+#     c_void, '*gpd',  # struct bGPdata  # grease pencil data
+#     c_float, 'view_center[2]',  # node tree stores own offset for consistent editor view
+#
+#     ListBase, 'nodes', 'links',
+#
+#     # 以下略
+# )
 
 
 ###############################################################################

@@ -48,11 +48,13 @@ try:
     importlib.reload(customproperty)
     importlib.reload(registerinfo)
     importlib.reload(structures)
+    importlib.reload(vawm)
 except NameError:
     from ..utils import addongroup
     from ..utils import customproperty
     from ..utils import registerinfo
     from ..utils import structures
+    from ..utils import vawm
 
 iface = bpy.app.translations.pgettext_iface
 
@@ -398,6 +400,9 @@ def is_visible(space, region, idname):
                 test_status = True
     if test_status:
         key = addon_prefs_key(space, region)
+        # FIXME: Load Factory Settings
+        #     AttributeError: 'NoneType' object has no attribute
+        #     'use_panel_view_3d_tools'
         if not getattr(addon_preferences, key):
             return True
 
@@ -523,17 +528,9 @@ PANEL_MOUSE_INSIDE_SCALE = 3  # mouse is inside panel scale widget
 
 UI_PNL_SCALE = 1 << 9
 
-def widget_unit():
-    U = bpy.context.user_preferences
-    return int((U.system.pixel_size * U.system.dpi * 20 + 36) / 72)
-
-
-def UI_UNIT_Y():
-    return widget_unit()
-
 
 def PNL_HEADER():
-    return UI_UNIT_Y() + 4  # 24 default
+    return vawm.UI_UNIT_Y() + 4  # 24 default
 
 
 def ui_window_to_block_fl(ar, block, x, y):  # for mouse cursor

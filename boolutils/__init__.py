@@ -33,7 +33,7 @@ import math
 
 import bpy
 import bmesh
-from mathutils import Matrix, Quaternion, Vector
+from mathutils import Matrix
 
 try:
     importlib.reload(addongroup)
@@ -41,6 +41,7 @@ try:
     importlib.reload(registerinfo)
     importlib.reload(vaoperator)
     importlib.reload(wrapoperator)
+    importlib.reload(vaprops)
 except NameError:
     from ..utils import addongroup
     from ..utils import customproperty
@@ -49,6 +50,7 @@ except NameError:
     from ..utils import wrapoperator
     from ..utils import vaview3d as vav
     from ..utils import vamath as vam
+    from ..utils import vaprops
 
 
 translation_dict = {
@@ -341,15 +343,15 @@ class OperatorMeshIntersectPlus(vaoperator.OperatorTemplate,
     bl_label = 'Intersect (Knife) Plus'
     bl_options = {'REGISTER', 'UNDO'}
 
-    mode = wrapoperator.bl_prop_to_py_prop(
+    mode = vaprops.bl_prop_to_py_prop(
         bpy.types.MESH_OT_intersect.bl_rna.properties['mode'])
-    use_separate = wrapoperator.bl_prop_to_py_prop(
+    use_separate = vaprops.bl_prop_to_py_prop(
         bpy.types.MESH_OT_intersect.bl_rna.properties['use_separate'])
     use_add_elements = bpy.props.BoolProperty(
         name='Add elements',
         description='Instead of subdivision'
     )
-    threshold = wrapoperator.bl_prop_to_py_prop(
+    threshold = vaprops.bl_prop_to_py_prop(
         bpy.types.MESH_OT_intersect.bl_rna.properties['threshold'])
 
     @classmethod

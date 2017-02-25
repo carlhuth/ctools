@@ -452,18 +452,6 @@ class RegionRulerPreferences(
 ###############################################################################
 # Data
 ###############################################################################
-def get_widget_unit(context):
-    # U.widget_unit = (U.pixelsize * U.dpi * 20 + 36) / 72;
-    PIXEL_SIZE = 1.0  # macだと1.0以外の可能性
-    U = context.user_preferences
-    if U.system.virtual_pixel_mode == 'NATIVE':
-        pixel_size = PIXEL_SIZE * 1.0
-    else:  # 'DOUBLE'
-        pixel_size = PIXEL_SIZE * 2.0
-    dpi = U.system.dpi
-    return int((pixel_size * dpi * 20 + 36) / 72)
-
-
 def get_view_location(context):
     ruler_settings = context.space_data.region_ruler
     region = context.region
@@ -838,7 +826,7 @@ def region_drawing_rectangle(context, area, region):
     # right scroll bar
     if context.area.type == 'NODE_EDITOR':
         # V2D_SCROLLER_HANDLE_SIZE 等を参照。+1は誤差修正用
-        xmax -= int(get_widget_unit(context) * 0.8) + 1
+        xmax -= int(vawm.widget_unit() * 0.8) + 1
 
     # render info
     has_render_info = False
@@ -851,7 +839,7 @@ def region_drawing_rectangle(context, area, region):
             has_render_info = True
     if has_render_info:
         dpi = context.user_preferences.system.dpi
-        ymax -= get_widget_unit(context)
+        ymax -= vawm.widget_unit()
 
     if not context.user_preferences.system.use_region_overlap:
         return 0, ymin, xmax, ymax
@@ -1540,7 +1528,7 @@ def view3d_upper_left_text_rect(context):
     # #define UI_UNIT_Y               ((void)0, U.widget_unit)
     # blender/blenkernel/intern/blender.c:507:
     #     U.widget_unit = (U.pixelsize * U.dpi * 20 + 36) / 72;
-    widget_unit = get_widget_unit(context)
+    widget_unit = vawm.widget_unit()
     # 文字描画位置: [rect.xmin + widget_unit, rect.xmax - widget_unit]
 
     font_path = context.user_preferences.system.font_path_ui
