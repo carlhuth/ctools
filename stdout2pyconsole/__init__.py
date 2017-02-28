@@ -18,12 +18,12 @@
 
 
 bl_info = {
-    'name': 'Print to Console',
+    'name': 'StdOut to Python Console',
     'author': 'chromoly',
-    'version': (0, 2, 3),
+    'version': (0, 1, 0),
     'blender': (2, 78, 0),
     'location': 'Python Console',
-    'description': 'print() -> Python Console',
+    'description': 'Python stdout & stderr -> python console',
     'warning': '',
     'wiki_url': '',
     'tracker_url': '',
@@ -32,7 +32,8 @@ bl_info = {
 
 
 """
-pythonの標準出力と標準エラーをPythonConsoleにも出力する
+pythonの標準出力と標準エラー出力をPythonConsoleにも出力する。
+SyntaxErrorのエラー出力には対応していない。
 """
 
 
@@ -50,7 +51,7 @@ except NameError:
     from ..utils import registerinfo
 
 
-class PrintToConsolePreferences(
+class StdOutToPythonConsolePreferences(
         addongroup.AddonGroupPreferences,
         registerinfo.AddonRegisterInfo,
         bpy.types.PropertyGroup if '.' in __name__ else
@@ -61,22 +62,12 @@ class PrintToConsolePreferences(
 stdout = stderr = None
 
 
-class Out(io.StringIO):
+class StdOut(io.StringIO):
     output_type = 'stdout'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.buf = ''
-
-    def get_context(self):
-        for area in bpy.context.screen.areas:
-            if area.type == 'CONSOLE':
-                break
-        else:
-            return None
-        ctx = bpy.context.copy()
-        ctx['area'] = area
-        return ctx
 
     def write(self, text, flush=False):
         if self.output_type == 'stdout':
@@ -86,45 +77,75 @@ class Out(io.StringIO):
             stderr.write(text)
             scrollback_type = 'ERROR'
 
-        ctx = self.get_context()
-        if not ctx:
+        console_areas = []
+        try:
+            # register時に使用した場合
+            # AttributeError: '_RestrictContext' object has no attribute ...
+            for window in bpy.context.window_manager.windows:
+                for area in window.screen.areas:
+                    if area.type == 'CONSOLE':
+                        console_areas.append((window, area))
+        except:
+            return
+
+        if not console_areas:
             return
 
         self.buf += text
         if self.buf and '\n' in self.buf:
             lines = self.buf.split('\n')
-            for line in lines[:-1]:
-                bpy.ops.console.scrollback_append(ctx, text=line,
+            write_lines = lines[:-1]
+            buf_next = lines[-1]
+        else:
+            write_lines = []
+            buf_next = self.buf
+        if flush and buf_next:
+            flush_line = buf_next
+            buf_next = ''
+        else:
+            flush_line = ''
+
+        ctx = bpy.context.copy()
+
+        for window, area in console_areas:
+            ctx['window'] = window
+            ctx['screen'] = window.screen
+            ctx['area'] = area
+            ctx['region'] = area.regions[-1]
+            if write_lines:
+                for line in write_lines:
+                    bpy.ops.console.scrollback_append(ctx, text=line,
+                                                      type=scrollback_type)
+            if flush_line:
+                bpy.ops.console.scrollback_append(ctx, text=flush_line,
                                                   type=scrollback_type)
-            self.buf = lines[-1]
-        if flush and self.buf:
-            bpy.ops.console.scrollback_append(ctx, text=self.buf,
-                                              type=scrollback_type)
-            self.buf = ''
+        self.buf = buf_next
 
     def flush(self):
         self.write('', flush=True)
 
 
-class Err(Out):
+class StdErr(StdOut):
     output_type = 'stderr'
 
 
-classes = [PrintToConsolePreferences]
+classes = [
+    StdOutToPythonConsolePreferences
+]
 
 
-@PrintToConsolePreferences.register_addon
+@StdOutToPythonConsolePreferences.register_addon
 def register():
     global stdout, stderr
     for cls in classes:
         bpy.utils.register_class(cls)
     stdout = sys.stdout
     stderr = sys.stderr
-    sys.stdout = Out()
-    sys.stderr = Err()
+    sys.stdout = StdOut()
+    sys.stderr = StdErr()
 
 
-@PrintToConsolePreferences.unregister_addon
+@StdOutToPythonConsolePreferences.unregister_addon
 def unregister():
     for cls in classes[::-1]:
         bpy.utils.unregister_class(cls)

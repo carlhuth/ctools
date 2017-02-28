@@ -97,6 +97,11 @@ View Navigation にこの機能を追加したもの -> View Navigation EX (Ctrl
 設定はファイルに保存される。  
 ![Image](__images/panelrestriction.jpg)
 
+## StdOut to Python Console
+sys.stdoutとsys.stderrを変更して、pythonの標準出力と標準エラー出力をPythonConsoleにも出力する。  
+※SyntaxErrorのエラー出力には対応していない。  
+![Image](__images/stdout.jpg)
+
 ## その他
 ### __patch/ui_layout_box.patch
 alignが真の状態のUILayoutでbox描画に不具合が起こる問題を修正するパッチ。  
