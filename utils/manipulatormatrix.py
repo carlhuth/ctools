@@ -752,9 +752,10 @@ class ManipulatorMatrix(Matrix):
                     override_context['edit_object'] = None
             v3d = area.spaces.active
             orient_bak = v3d.transform_orientation
+            current_orientation_bak = v3d.current_orientation
             bpy.ops.transform.create_orientation(override_context, False,
                                                  name='Normal', use=True)
-            if v3d.current_orientation:
+            if v3d.current_orientation != current_orientation_bak:
                 mat = v3d.current_orientation.matrix.copy()
                 bpy.ops.transform.delete_orientation(override_context, False)
                 v3d.transform_orientation = orient_bak

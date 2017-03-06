@@ -102,6 +102,10 @@ sys.stdoutとsys.stderrを変更して、pythonの標準出力と標準エラー
 ※SyntaxErrorのエラー出力には対応していない。  
 ![Image](__images/stdout.jpg)
 
+## Transform Orientation Editor
+作成した Transform Orientation を編集する。
+![Image](__images/transformorientation.jpg)
+
 ## その他
 ### __patch/ui_layout_box.patch
 alignが真の状態のUILayoutでbox描画に不具合が起こる問題を修正するパッチ。  

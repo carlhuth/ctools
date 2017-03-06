@@ -1173,6 +1173,8 @@ class VIEW3D_MT_localgrid(bpy.types.Menu):
         # Toggle
         op = layout.operator('view3d.localgrid_ex',
                              text='Toggle', icon='ARROW_LEFTRIGHT')
+        op.mode = 'TOGGLE'
+        op.type = 'NODE'
 
         # Set Object
         op = layout.operator('view3d.localgrid_ex',

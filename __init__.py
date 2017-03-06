@@ -91,6 +91,8 @@ class CToolsPreferences(addongroup.AddonGroupPreferences,
 
         # 作業中
         '_groupeditor',
+
+        'transformorientation',
     ]
 
 
@@ -285,6 +287,7 @@ def register():
         bpy.utils.register_class(cls)
 
 
+@CToolsPreferences.unregister_addon
 def unregister():
     for cls in classes[::-1]:
         bpy.utils.unregister_class(cls)

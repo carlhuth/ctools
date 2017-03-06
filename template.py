@@ -29,6 +29,8 @@ bl_info = {
 }
 
 
+import importlib
+
 import bpy
 
 try:
