@@ -635,7 +635,7 @@ class SCREEN_OT_emulate_keymap(bpy.types.Operator):
     @classmethod
     def poll(self, context):
         prefs = EmulateKeyMapsPreferences.get_instance()
-        return prefs.use_emulation_keymap
+        return context.area and prefs.use_emulation_keymap
 
     def __init__(self):
         self.event_type = ''

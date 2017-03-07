@@ -177,7 +177,7 @@ class VIEW3D_OT_cursor3d(bpy.types.Operator):
 
         center = center_of_circumscribed_circle_tri(*vecs)
         if center is not None:
-            self.set_cursor_location(context, center)
+            context.space_data.cursor_location = center
 
     def view_axis(self, context):
         """画面のZ軸の方を向いている軸を返す。
@@ -258,20 +258,6 @@ class VIEW3D_OT_cursor3d(bpy.types.Operator):
 
         return v
 
-    def get_cursor_location(self, context):
-        v3d = context.space_data
-        if v3d.local_view:
-            return v3d.cursor_location
-        else:
-            return context.scene.cursor_location
-
-    def set_cursor_location(self, context, vec):
-        v3d = context.space_data
-        if v3d.local_view:
-            v3d.cursor_location = vec
-        else:
-            context.scene.cursor_location = vec
-
     def cursor3d(self, context, event):
         U = context.user_preferences
         use_depth = U.view.use_mouse_depth_cursor
@@ -286,9 +272,9 @@ class VIEW3D_OT_cursor3d(bpy.types.Operator):
             self.call_builtin_cursor3d(context, event)
             U.view.use_mouse_depth_cursor = use_depth
 
-            cur = self.get_cursor_location(context)
+            cur = v3d.cursor_location
             cur = self.snap_grid(context, cur, self.use_precision)
-            self.set_cursor_location(context, cur)
+            v3d.cursor_location = cur
 
             # depth
             cur_2d_near = project(region, rv3d, cur)
@@ -303,7 +289,7 @@ class VIEW3D_OT_cursor3d(bpy.types.Operator):
                 v1, ray)
             if result:
                 location = (location - cur).project(ray) + cur
-                self.set_cursor_location(context, location)
+                v3d.cursor_location = location
 
         else:
             U.view.use_mouse_depth_cursor = self.use_depth
@@ -311,14 +297,11 @@ class VIEW3D_OT_cursor3d(bpy.types.Operator):
             U.view.use_mouse_depth_cursor = use_depth
 
             if self.use_snap:
-                cur = self.get_cursor_location(context)
+                cur = v3d.cursor_location
                 cur = self.snap_grid(context, cur, self.use_precision)
-                self.set_cursor_location(context, cur)
+                v3d.cursor_location = cur
 
-        if v3d.local_view:
-            self.cursor_location = v3d.cursor_location
-        else:
-            self.cursor_location = scene.cursor_location
+        self.cursor_location = v3d.cursor_location
 
     def action_select_mouse(self, context):
         U = context.user_preferences
@@ -367,7 +350,7 @@ class VIEW3D_OT_cursor3d(bpy.types.Operator):
 
         if event.type == self.event_type and event.value == 'RELEASE':
             if self.mco != self.mco_prev:
-                self.set_cursor_location(context, self.cursor_location_bak)
+                context.space_data.cursor_location = self.cursor_location_bak
                 self.cursor3d(context, event)
             self.exit(context)
             return {'FINISHED'}
@@ -414,7 +397,7 @@ class VIEW3D_OT_cursor3d(bpy.types.Operator):
                             'LEFT_ALT', 'RIGHT_ALT'}:
             update_cursor = True
         if update_cursor:
-            self.set_cursor_location(context, self.cursor_location_bak)
+            context.space_data.cursor_location = self.cursor_location_bak
             self.cursor3d(context, event)
         elif event.value == 'PRESS':
             if event.type == 'A':
@@ -448,7 +431,7 @@ class VIEW3D_OT_cursor3d(bpy.types.Operator):
         glsettings.push()
 
         cursor_2d = project(context.region, context.region_data,
-                            self.get_cursor_location(context))
+                            context.space_data.cursor_location)
 
         unit_settings = context.scene.unit_settings
         text_lines = []
@@ -511,7 +494,7 @@ class VIEW3D_OT_cursor3d(bpy.types.Operator):
 
         self.mco = event.mouse_region_x, event.mouse_region_y
         self.mco_prev = self.mco
-        self.cursor_location = self.get_cursor_location(context).copy()
+        self.cursor_location = context.space_data.cursor_location.copy()
         self.cursor_location_bak = self.cursor_location.copy()
 
         if not self.properties.is_property_set('use_depth'):

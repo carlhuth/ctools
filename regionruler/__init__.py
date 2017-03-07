@@ -457,7 +457,7 @@ def get_view_location(context):
     region = context.region
     rv3d = context.region_data
     if ruler_settings.view_depth == 'cursor':
-        view_location = context.scene.cursor_location
+        view_location = context.space_data.cursor_location
     else:
         if rv3d.view_perspective == 'CAMERA':
             obj = context.scene.camera
@@ -613,7 +613,7 @@ class Data:
                 uv_co = context.active_object.matrix_world.to_translation()
                 orig = vmat * uv_co
             elif ruler_settings.origin_type == 'cursor':
-                orig = vmat * context.scene.cursor_location
+                orig = vmat * v3d.cursor_location
             elif ruler_settings.origin_type == 'view':
                 orig = Vector((0, 0, 0))
             elif ruler_settings.origin_type == 'custom':
@@ -1718,7 +1718,7 @@ def draw_measure(context, event):
     _, th = blf.dimensions(font.id, string.digits)
 
     if ruler_settings.view_depth == 'cursor':
-        depth_location = context.scene.cursor_location
+        depth_location = context.space_data.cursor_location
     else:
         depth_location = rv3d.view_location
 
@@ -2474,7 +2474,7 @@ class VIEW3D_OT_region_ruler(bpy.types.Operator):
                         dvec = data.measure_points[-1]
                         vec = vav.unproject(region, rv3d, mco, dvec)
                     else:
-                        dvec = Vector(context.scene.cursor_location)
+                        dvec = Vector(context.space_data.cursor_location)
                         vec = vav.unproject(region, rv3d, mco, dvec)
                     if event.shift:
                         data.measure_points.append(vec)

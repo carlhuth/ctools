@@ -123,11 +123,11 @@ def reset_groups(context):
     item.gesture = 'L'
     item.type = 'STRING'
     item.exec_string = '\n'.join(
-        ['scn = context.scene',
-         'cursor_bak = scn.cursor_location[:]',
+        ['v3d = context.space_data',
+         'cursor_bak = v3d.cursor_location[:]',
          'bpy.ops.view3d.snap_cursor_to_selected(False)',
          'bpy.ops.view3d.view_center_cursor(False)',
-         'scn.cursor_location = cursor_bak',
+         'v3d.cursor_location = cursor_bak',
          ])
 
     # Transform ---------------------------------------------------------------

@@ -159,7 +159,7 @@ def loc_quat_from_cursor_selection(context):
                       for ob in context.selected_objects]
     elif context.mode == 'EDIT_MESH':
         bm = bmesh.from_edit_mesh(actob.data)
-        verts = [v for v in bm.verts if v.select and not v.hide]
+        verts = [v for v in bm.verts if v.select]
         if 1 <= len(verts) <= 2:
             coords = [mat * v.co for v in verts]
     elif context.mode in ('EDIT_ARMATURE', 'POSE'):
@@ -181,7 +181,7 @@ def loc_quat_from_cursor_selection(context):
             if 1 <= len(bone_coords) <= 2:
                 coords = bone_coords
 
-    loc = context.scene.cursor_location.copy()
+    loc = context.space_data.cursor_location.copy()
     rv3d = context.region_data
     if coords and len(coords) == 2:
         quat = rv3d.view_rotation.normalized()
@@ -743,9 +743,9 @@ class VIEW3D_OT_localgrid_cursor_clear(bpy.types.Operator):
         v3d = context.space_data
         scn = context.scene
         if v3d.use_local_grid:
-            scn.cursor_location = v3d.local_grid_location
+            v3d.cursor_location = v3d.local_grid_location
         else:
-            scn.cursor_location = [0.0, 0.0, 0.0]
+            v3d.cursor_location = [0.0, 0.0, 0.0]
         return {'FINISHED'}
 
 
@@ -776,8 +776,9 @@ class OBJECT_OT_custom_location_set(vaop.OperatorTemplate, bpy.types.Operator):
         return context.mode == 'OBJECT'
 
     def execute(self, context):
+        v3d = context.space_data
         scene = context.scene
-        cursor_bak = scene.cursor_location.copy()
+        cursor_bak = v3d.cursor_location.copy()
         # カーソルを移動
         if self.type == 'ACTIVE':
             actob = context.active_object
@@ -786,14 +787,13 @@ class OBJECT_OT_custom_location_set(vaop.OperatorTemplate, bpy.types.Operator):
             else:
                 return {'FINISHED'}
         elif self.type == 'ORIGIN':
-            v3d = context.space_data
             if v3d.use_local_grid:
                 location = v3d.local_grid_location
             else:
                 location = Vector()
         else:
             location = self.location
-        scene.cursor_location = location
+        v3d.cursor_location = location
 
         # view3d.snap_selected_to_cursor()でオブジェクトを移動
         override = context.copy()
@@ -807,7 +807,7 @@ class OBJECT_OT_custom_location_set(vaop.OperatorTemplate, bpy.types.Operator):
 
             bpy.ops.view3d.snap_selected_to_cursor(override)
 
-        context.scene.cursor_location = cursor_bak
+        v3d.cursor_location = cursor_bak
         return {'FINISHED'}
 
     def draw(self, context):
@@ -1174,7 +1174,7 @@ class VIEW3D_MT_localgrid(bpy.types.Menu):
         op = layout.operator('view3d.localgrid_ex',
                              text='Toggle', icon='ARROW_LEFTRIGHT')
         op.mode = 'TOGGLE'
-        op.type = 'NODE'
+        op.type = 'NONE'
 
         # Set Object
         op = layout.operator('view3d.localgrid_ex',
@@ -1231,35 +1231,42 @@ def register():
 
     km = registerinfo.AddonRegisterInfo.get_keymap('3D View')
     if km:
-        kmi = km.keymap_items.new('wm.call_menu', 'NUMPAD_SLASH', 'PRESS',
-                                  ctrl=True)
+        kmi = km.keymap_items.new(
+            'wm.call_menu', 'NUMPAD_SLASH', 'PRESS', ctrl=True)
         kmi.properties.name = 'VIEW3D_MT_localgrid'
         addon_keymaps.append((km, kmi))
 
-        kmi = km.keymap_items.new('wm.call_menu', 'D', 'PRESS', ctrl=True,
-                                  oskey=True)
-        kmi.properties.name = 'VIEW3D_MT_localgrid'
-        addon_keymaps.append((km, kmi))
-
-        kmi = km.keymap_items.new('view3d.localgrid_ex', 'E', 'PRESS',
-                                  oskey=True)
+        kmi = km.keymap_items.new(
+            'view3d.localgrid_ex', 'NUMPAD_SLASH', 'PRESS', shift=True,
+            ctrl=True)
         kmi.properties.mode = 'TOGGLE'
-        # # TODO: itemsが関数のEPに代入すると落ちるバグ
-        # kmi.properties.type_ = 'OBJECT'
-        kmi.properties.type = 'OBJECT'
+        kmi.properties.type = 'NONE'
         addon_keymaps.append((km, kmi))
 
-        kmi = km.keymap_items.new('view3d.localgrid_ex', 'E', 'PRESS',
-                                  ctrl=True, oskey=True)
-        kmi.properties.mode = 'ENABLE'
-        addon_keymaps.append((km, kmi))
+        # kmi = km.keymap_items.new('wm.call_menu', 'D', 'PRESS', ctrl=True,
+        #                           oskey=True)
+        # kmi.properties.name = 'VIEW3D_MT_localgrid'
+        # addon_keymaps.append((km, kmi))
+        #
+        # kmi = km.keymap_items.new('view3d.localgrid_ex', 'E', 'PRESS',
+        #                           oskey=True)
+        # kmi.properties.mode = 'TOGGLE'
+        # # # TODO: itemsが関数のEPに代入すると落ちるバグ
+        # # kmi.properties.type_ = 'OBJECT'
+        # kmi.properties.type = 'OBJECT'
+        # addon_keymaps.append((km, kmi))
 
-        kmi = km.keymap_items.new('view3d.localgrid_ex', 'E', 'PRESS',
-                                  shift=True, oskey=True)
-        kmi.properties.mode = 'TOGGLE'
-        kmi.properties.set_location = False
-        kmi.properties.set_rotation = False
-        addon_keymaps.append((km, kmi))
+        # kmi = km.keymap_items.new('view3d.localgrid_ex', 'E', 'PRESS',
+        #                           ctrl=True, oskey=True)
+        # kmi.properties.mode = 'ENABLE'
+        # addon_keymaps.append((km, kmi))
+        #
+        # kmi = km.keymap_items.new('view3d.localgrid_ex', 'E', 'PRESS',
+        #                           shift=True, oskey=True)
+        # kmi.properties.mode = 'TOGGLE'
+        # kmi.properties.set_location = False
+        # kmi.properties.set_rotation = False
+        # addon_keymaps.append((km, kmi))
 
 
 def unregister():

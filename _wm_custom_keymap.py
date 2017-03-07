@@ -51,11 +51,11 @@ class VIEW3D_OT_view_selected_no_zoom(bpy.types.Operator):
     bl_options = {'REGISTER'}
     
     def execute(self, context):
-        scn = context.scene
-        cursor_bak = scn.cursor_location[:]
+        v3d = context.space_data
+        cursor_bak = v3d.cursor_location[:]
         bpy.ops.view3d.snap_cursor_to_selected()
         bpy.ops.view3d.view_center_cursor()
-        scn.cursor_location = cursor_bak
+        v3d.cursor_location = cursor_bak
         return {'FINISHED'}
 
 

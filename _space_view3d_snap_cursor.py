@@ -204,7 +204,7 @@ class VIEW3D_OT_snap_cursor(bpy.types.Operator):
             bpy.ops.object.mode_set(mode='EDIT')
 
         if loc:
-            context.scene.cursor_location = loc
+            context.space_data.cursor_location = loc
 
         return {'FINISHED'}
     
