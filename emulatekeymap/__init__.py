@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Emulate Key Map',
     'author': 'chromoly',
-    'version': (0, 3, 0),
+    'version': (0, 3, 1),
     'blender': (2, 78, 0),
     'location': 'Screen > Space',
     'description': 'Space + any key, Shift + Space -> any key',
@@ -729,11 +729,14 @@ class SCREEN_OT_emulate_keymap(bpy.types.Operator):
             area.tag_redraw()
 
     def invoke(self, context, event):
-        # CONSOLEとTEXT_EDITORではSpaceキーのみでの呼び出しは無視する。
-        if context.area.type in {'CONSOLE', 'TEXT_EDITOR'}:
-            if event.type == 'SPACE':
-                if (not event.shift and not event.ctrl and not event.alt and
-                        not event.oskey):
+        # CONSOLEとTEXT_EDITOR,VIEW_3DのTEXT_EDITモードでは
+        # Spaceキーのみでの呼び出しは無視する。
+        if event.type == 'SPACE':
+            if (not event.shift and not event.ctrl and not event.alt and
+                    not event.oskey):
+                if (context.area.type in {'CONSOLE', 'TEXT_EDITOR'} or
+                        context.area.type == 'VIEW_3D' and
+                        context.mode == 'EDIT_TEXT'):
                     return {'CANCELLED', 'PASS_THROUGH'}
 
         self.event_type = event.type

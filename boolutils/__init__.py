@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Boolean Utils',
     'author': 'chromoly',
-    'version': (0, 0, 1),
+    'version': (0, 0, 2),
     'blender': (2, 78, 0),
     'location': 'View3D',
     'description': '',
@@ -345,8 +345,9 @@ class OperatorMeshIntersectPlus(vaoperator.OperatorTemplate,
 
     mode = vaprops.bl_prop_to_py_prop(
         bpy.types.MESH_OT_intersect.bl_rna.properties['mode'])
-    use_separate = vaprops.bl_prop_to_py_prop(
-        bpy.types.MESH_OT_intersect.bl_rna.properties['use_separate'])
+    # separate_modeはuse_add_elementsが有効な時は無意味になる
+    separate_mode = vaprops.bl_prop_to_py_prop(
+        bpy.types.MESH_OT_intersect.bl_rna.properties['separate_mode'])
     use_add_elements = bpy.props.BoolProperty(
         name='Add elements',
         description='Instead of subdivision'
@@ -364,7 +365,7 @@ class OperatorMeshIntersectPlus(vaoperator.OperatorTemplate,
 
         if not self.use_add_elements:
             bpy.ops.mesh.intersect(
-                mode=self.mode, use_separate=self.use_separate,
+                mode=self.mode, separate_mode=self.separate_mode,
                 threshold=self.threshold)
             return {'FINISHED'}
 
@@ -428,7 +429,7 @@ class OperatorMeshIntersectPlus(vaoperator.OperatorTemplate,
                 threshold=self.threshold)
         else:
             bpy.ops.mesh.intersect(
-                mode='SELECT', use_separate=False, threshold=self.threshold)
+                mode='SELECT', separate_mode='CUT', threshold=self.threshold)
         if (list(bm.verts) == verts and list(bm.edges) == edges and
                 list(bm.faces) == faces):
             non_delete_elems = set(orig_elems)
