@@ -453,6 +453,7 @@ class USERPREF_PT_system(Panel):
         col.separator()
         col.label(text="Selection")
         col.prop(system, "select_method", text="")
+        col.prop(system, "use_select_pick_depth")
 
         col.separator()
 
@@ -1243,7 +1244,7 @@ class USERPREF_MT_addons_online_resources(Menu):
                 "wm.url_open", text="API Concepts", icon='URL',
                 ).url = bpy.types.WM_OT_doc_view._prefix + "/info_quickstart.html"
         layout.operator("wm.url_open", text="Add-on Tutorial", icon='URL',
-                ).url = "http://www.blender.org/api/blender_python_api_current/info_tutorial_addon.html"
+                ).url = bpy.types.WM_OT_doc_view._prefix + "/info_tutorial_addon.html"
 
 
 class USERPREF_PT_addons(Panel):
@@ -1290,7 +1291,6 @@ class USERPREF_PT_addons(Panel):
 
     def draw(self, context):
         import os
-        import re
         import addon_utils
 
         layout = self.layout
@@ -1318,11 +1318,18 @@ class USERPREF_PT_addons(Panel):
 
         # set in addon_utils.modules_refresh()
         if addon_utils.error_duplicates:
-            self.draw_error(col,
-                            "Multiple addons using the same name found!\n"
-                            "likely a problem with the script search path.\n"
-                            "(see console for details)",
-                            )
+            box = col.box()
+            row = box.row()
+            row.label("Multiple addons with the same name found!")
+            row.label(icon='ERROR')
+            box.label("Please delete one of each pair:")
+            for (addon_name, addon_file, addon_path) in addon_utils.error_duplicates:
+                box.separator()
+                sub_col = box.column(align=True)
+                sub_col.label(addon_name + ":")
+                sub_col.label("    " + addon_file)
+                sub_col.label("    " + addon_path)
+
 
         if addon_utils.error_encoding:
             self.draw_error(col,
@@ -1489,5 +1496,31 @@ class USERPREF_PT_addons(Panel):
                 row.label(text=module_name, translate=False)
 
 
-if __name__ == "__main__":  # only for live edit.
-    bpy.utils.register_module(__name__)
+if bpy.app.version[2] > 0:
+    classes = (
+        USERPREF_HT_header,
+        USERPREF_PT_tabs,
+        USERPREF_MT_interaction_presets,
+        USERPREF_MT_appconfigs,
+        USERPREF_MT_splash,
+        USERPREF_MT_splash_footer,
+        USERPREF_PT_interface,
+        USERPREF_PT_edit,
+        USERPREF_PT_system,
+        USERPREF_MT_interface_theme_presets,
+        USERPREF_PT_theme,
+        USERPREF_PT_file,
+        USERPREF_MT_ndof_settings,
+        USERPREF_MT_keyconfigs,
+        USERPREF_PT_input,
+        USERPREF_MT_addons_online_resources,
+        USERPREF_PT_addons,
+    )
+
+    if __name__ == "__main__":  # only for live edit.
+        from bpy.utils import register_class
+        for cls in classes:
+            register_class(cls)
+else:
+    if __name__ == "__main__":  # only for live edit.
+        bpy.utils.register_module(__name__)
