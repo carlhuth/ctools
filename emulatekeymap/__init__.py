@@ -186,7 +186,7 @@ def get_template():
 ###############################################################################
 # User Preferences
 ###############################################################################
-CollectionOperator = customproperty.CollectionOperator.new_class()
+CollectionOperator = customproperty.CollectionOperator.derive()
 
 
 class WM_OT_event_type_search_popup(bpy.types.Operator):

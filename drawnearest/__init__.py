@@ -322,7 +322,7 @@ class VIEW3D_PG_DrawNearest(bpy.types.PropertyGroup):
         name='Enable', update=update)
 
 
-CustomProperty = customproperty.CustomProperty.new_class()
+CustomProperty = customproperty.CustomProperty.derive()
 
 
 ###############################################################################

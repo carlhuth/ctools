@@ -2863,7 +2863,7 @@ def scene_update_post_handler(dummy):
                                'INVOKE_DEFAULT', _scene_update=False)
 
 
-CustomProperty = customproperty.CustomProperty.new_class()
+CustomProperty = customproperty.CustomProperty.derive()
 
 auto_save_manager = utils.AutoSaveManager()
 

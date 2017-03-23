@@ -129,7 +129,7 @@ class VIEW3D_PG_QuadViewAspect(bpy.types.PropertyGroup):
     center = bpy.props.FloatVectorProperty(size=2)
 
 
-CustomProperty = customproperty.CustomProperty.new_class()
+CustomProperty = customproperty.CustomProperty.derive()
 
 
 def sync_quad(context, area):

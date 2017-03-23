@@ -523,7 +523,7 @@ class VIEW3D_OT_cursor3d(bpy.types.Operator):
             return {'FINISHED'}
 
 
-CustomProperty = customproperty.CustomProperty.new_class()
+CustomProperty = customproperty.CustomProperty.derive()
 
 
 draw_func_bak = None
