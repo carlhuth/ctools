@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'CTools',
     'author': 'chromoly',
-    'version': (1, 8, 7),
+    'version': (1, 8, 8),
     'blender': (2, 78, 0),
     'location': '',
     'description': 'Collection of add-ons',
@@ -55,6 +55,7 @@ class CToolsPreferences(addongroup.AddonGroupPreferences,
 
     sub_modules = [
         'aligntools',
+        'armaturehelper',
         'boolutils',
         'dollyzoom',
         'drawnearest',
