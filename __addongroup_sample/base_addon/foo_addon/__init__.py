@@ -18,7 +18,7 @@
 
 
 bl_info = {
-    'name': 'Child Addon',
+    'name': 'Foo Addon',
     'version': (0, 1),
     'description': 'Addon group test',
     'category': '3D View',
@@ -28,29 +28,51 @@ bl_info = {
 if 'bpy' in locals():
     import importlib
     importlib.reload(addongroup)
-    ChildAddonPreferences.reload_sub_modules()
+    FooAddonPreferences.reload_sub_modules()
 else:
     from . import addongroup
 
 import bpy
 
 
-class ChildAddonPreferences(
+class FooAddonPreferences(
         addongroup.AddonGroupPreferences,
         bpy.types.AddonPreferences if '.' not in __name__ else
         bpy.types.PropertyGroup):
     bl_idname = __name__
 
+    sub_modules = None
+
+    prop = bpy.props.IntProperty(name='BarAddon Prop')
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, 'prop')
+
+        layout.separator()
+        super().draw(context)
+
+    @classmethod
+    def register(cls):
+        super().register()
+
+    @classmethod
+    def unregister(cls):
+        super().unregister()
+
 
 classes = [
-    ChildAddonPreferences,
+    FooAddonPreferences,
 ]
 
 
-@ChildAddonPreferences.register_addon
+@FooAddonPreferences.register_addon
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
+
+    prefs = FooAddonPreferences.get_instance()
+    value = prefs.prop  # value of bpy.props.IntProperty(name='MyAddon Prop')
 
 
 def unregister():

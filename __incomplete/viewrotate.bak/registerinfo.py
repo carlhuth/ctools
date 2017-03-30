@@ -1589,6 +1589,8 @@ class _AddonRegisterInfoPanel(_AddonRegisterInfo):
     def panel_settings_restore(cls):
         """初期設定に戻す"""
         addon_prop = cls._get_addon_property_group()
+        if not addon_prop:
+            return
         if addon_prop.default_panel_settings:
             addon_prop['panel_settings'] = addon_prop['default_panel_settings']
         else:

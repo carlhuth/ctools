@@ -18,7 +18,7 @@
 
 
 bl_info = {
-    'name': 'My Addon',
+    'name': 'Hidden Addon',
     'version': (0, 1),
     'description': 'Addon group test',
     'category': '3D View',
@@ -28,7 +28,7 @@ bl_info = {
 if 'bpy' in locals():
     import importlib
     importlib.reload(addongroup)
-    MyAddonPreferences.reload_sub_modules()
+    HiddenAddonPreferences.reload_sub_modules()
 else:
     from . import addongroup
     from . import registerinfo
@@ -36,7 +36,7 @@ else:
 import bpy
 
 
-class MyAddonPreferences(
+class HiddenAddonPreferences(
         addongroup.AddonGroupPreferences,
         registerinfo.AddonRegisterInfo,
         bpy.types.AddonPreferences if '.' not in __name__ else
@@ -63,16 +63,16 @@ class MyAddonPreferences(
         super().unregister()
 
 
-@MyAddonPreferences.register_addon
+@HiddenAddonPreferences.register_addon
 def register():
-    MyAddonPreferences.register_module()
+    HiddenAddonPreferences.register_module()
 
-    km = MyAddonPreferences.get_keymap('Screen Editing')
+    km = HiddenAddonPreferences.get_keymap('Screen Editing')
     if km:
         km.keymap_items.new('wm.splash', 'ZERO', 'PRESS', shift=True,
                             ctrl=True, alt=True, oskey=True)
 
 
-@MyAddonPreferences.unregister_addon
+@HiddenAddonPreferences.unregister_addon
 def unregister():
-    MyAddonPreferences.unregister_module()
+    HiddenAddonPreferences.unregister_module()

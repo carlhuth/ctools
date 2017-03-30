@@ -18,7 +18,7 @@
 
 
 bl_info = {
-    'name': 'Base Addon',
+    'name': 'My Addon',
     'author': 'Anonymous',
     'version': (1, 0),
     'blender': (2, 78, 0),
@@ -32,31 +32,31 @@ bl_info = {
 if 'bpy' in locals():
     import importlib
     importlib.reload(addongroup)
-    BaseAddonPreferences.reload_sub_modules()
+    MyAddonPreferences.reload_sub_modules()
 else:
     from . import addongroup
 
 import bpy
 
 
-class BaseAddonPreferences(
+class MyAddonPreferences(
         addongroup.AddonGroupPreferences, bpy.types.AddonPreferences):
 
     bl_idname = __name__
 
     sub_modules = [
-        'my_addon',
+        'foo_addon',
         'space_view3d_other_addon',
         '_hidden_addon'
     ]
 
 
 classes = [
-    BaseAddonPreferences,
+    MyAddonPreferences,
 ]
 
 
-@BaseAddonPreferences.register_addon
+@MyAddonPreferences.register_addon
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
