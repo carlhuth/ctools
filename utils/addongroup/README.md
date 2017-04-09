@@ -1,6 +1,6 @@
 # Helper class for grouping add-ons
 
-![Image](../../__images/addongroup.jpg)
+![Image](../__images/addongroup.jpg)
 
 # How to use
 
