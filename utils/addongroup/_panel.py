@@ -22,6 +22,7 @@ from collections import OrderedDict
 import contextlib
 
 import bpy
+iface = bpy.app.translations.pgettext_iface
 
 from ._misc import Registerable
 
@@ -553,7 +554,11 @@ class AddonPanels:
             col = split.column()
 
             row = col.box().row()
-            row.label("bpy.types.{}".format(prop.name))
+            sp = row.split(0.32)
+            sub = sp.row()
+            sub.label(iface("ID Name") + ":", translate=False)
+            sub = sp.row()
+            sub.label(prop.name, translate=False)
 
             row = col.box().row()
             row.prop(prop, "bl_label")
