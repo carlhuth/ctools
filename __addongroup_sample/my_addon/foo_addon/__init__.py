@@ -18,38 +18,36 @@
 
 
 bl_info = {
-    'name': 'Hidden Addon',
-    'version': (0, 1),
-    'description': 'Addon group test',
-    'category': '3D View',
+    "name": "Foo Addon",
+    "version": (0, 1),
+    "description": "Addon group test",
+    "category": "3D View",
 }
 
 
-if 'bpy' in locals():
-    import importlib
-    importlib.reload(addongroup)
-    HiddenAddonPreferences.reload_sub_modules()
+if "bpy" in locals():
+    FooAddonPreferences.reload_sub_modules()
 else:
-    from . import addongroup
-    from . import registerinfo
+    from .. import addongroup
 
 import bpy
 
 
-class HiddenAddonPreferences(
-        addongroup.AddonGroupPreferences,
-        registerinfo.AddonRegisterInfo,
-        bpy.types.AddonPreferences if '.' not in __name__ else
+class FooAddonPreferences(
+        addongroup.AddonGroup,
+        bpy.types.AddonPreferences if "." not in __name__ else
         bpy.types.PropertyGroup):
     bl_idname = __name__
 
-    sub_modules = []
+    submodules = [
+        "bar_addon"
+    ]
 
-    prop = bpy.props.IntProperty(name='MyAddon Prop')
+    prop = bpy.props.IntProperty(name="BarAddon Prop")
 
     def draw(self, context):
         layout = self.layout
-        layout.prop(self, 'prop')
+        layout.prop(self, "prop")
 
         layout.separator()
         super().draw(context)
@@ -63,16 +61,21 @@ class HiddenAddonPreferences(
         super().unregister()
 
 
-@HiddenAddonPreferences.register_addon
+classes = [
+    FooAddonPreferences,
+]
+
+
+@FooAddonPreferences.register_addon
 def register():
-    HiddenAddonPreferences.register_module()
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
-    km = HiddenAddonPreferences.get_keymap('Screen Editing')
-    if km:
-        km.keymap_items.new('wm.splash', 'ZERO', 'PRESS', shift=True,
-                            ctrl=True, alt=True, oskey=True)
+    prefs = FooAddonPreferences.get_instance()
+    value = prefs.prop  # value of bpy.props.IntProperty(name="MyAddon Prop")
 
 
-@HiddenAddonPreferences.unregister_addon
+@FooAddonPreferences.unregister_addon
 def unregister():
-    HiddenAddonPreferences.unregister_module()
+    for cls in classes[::-1]:
+        bpy.utils.unregister_class(cls)

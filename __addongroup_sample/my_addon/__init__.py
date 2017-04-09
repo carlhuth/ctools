@@ -18,41 +18,54 @@
 
 
 bl_info = {
-    'name': 'Bar Addon',
-    'version': (0, 1),
-    'description': 'Addon group test',
-    'category': '3D View',
-}
+    "name": "My Addon",
+    "author": "Anonymous",
+    "version": (1, 1),
+    "blender": (2, 78, 0),
+    "location": "View3D > Tool Shelf",
+    "description": "Addon group test",
+    "warning": "",
+    "wiki_url": "",
+    "category": "3D View",
+    }
 
-
-if 'bpy' in locals():
+if "bpy" in locals():
     import importlib
     importlib.reload(addongroup)
-    BarAddonPreferences.reload_sub_modules()
+    MyAddonPreferences.reload_sub_modules()
 else:
     from . import addongroup
 
 import bpy
 
 
-class BarAddonPreferences(
-        addongroup.AddonGroupPreferences,
-        bpy.types.AddonPreferences if '.' not in __name__ else
-        bpy.types.PropertyGroup):
+class MyAddonPreferences(
+        addongroup.AddonGroup,
+        bpy.types.AddonPreferences):
     bl_idname = __name__
+
+    submodules = [
+        "foo_addon",
+        "space_view3d_other_addon",
+        "_hidden_addon"
+    ]
+
+    def draw(self, context):
+        super().draw(context)
 
 
 classes = [
-    BarAddonPreferences,
+    MyAddonPreferences,
 ]
 
 
-@BarAddonPreferences.register_addon
+@MyAddonPreferences.register_addon
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
 
+@MyAddonPreferences.unregister_addon
 def unregister():
     for cls in classes[::-1]:
         bpy.utils.unregister_class(cls)

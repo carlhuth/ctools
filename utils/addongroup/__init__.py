@@ -55,6 +55,12 @@ __all__ = [
 ]
 
 
+"""
+NOTE: invalid: get_instance().bl_idname
+      ok:      get_instance().__class__.bl_idname
+"""
+
+
 def fake_module(mod_name, mod_path, speedy=True, force_support=None,
                 quiet=True):
     """source: scripts/modules/addon_utils.py: module_refresh()
@@ -229,7 +235,7 @@ class NestedAddons:
 
 
 class _AddonInfo:
-    _ADDON_GROUP_ = None
+    _ADDON_GROUP_ = 1.0
 
     bl_idname = ""
 
@@ -425,17 +431,17 @@ class _AddonInfo:
             addon_prefs_type._classes_ = cls._classes_
             addon_prefs_type._keymap_items_ = cls._keymap_items_
             addon_prefs_type._fake_submodules_ = cls._fake_submodules_
-            addon_prefs_type._draw_main = cls.draw
+            addon_prefs_type._draw_ex = cls._draw_ex
             addon_prefs_type._draw_addon_info = cls._draw_addon_info
 
             draw_orig = getattr(addon_prefs_type, "draw", None)
             if draw_orig:
                 def draw(self, context):
                     self._draw_orig(context)
-                    self._draw_main(context, draw_bases=False)
+                    self._draw_ex(context, draw_bases=False)
             else:
                 def draw(self, context):
-                    self._draw_main(context, draw_bases=False)
+                    self._draw_ex(context, draw_bases=False)
 
             addon_prefs_type._draw_orig = draw_orig
             addon_prefs_type.draw = draw
@@ -461,7 +467,7 @@ class _AddonInfo:
             del prefs._classes_
             del prefs._keymap_items_
             del prefs._fake_submodules_
-            del prefs._draw_main
+            del prefs._draw_ex
             del prefs._draw_addon_info
             delattr(module, "_ADDON_PREFS_")
 
@@ -591,12 +597,15 @@ class _AddonInfo:
 
 
 class AddonInfo(_AddonInfo):
-    def draw(self, context, draw_bases=True):
+    def _draw_ex(self, context, draw_bases=True):
         if draw_bases:
             c = super()
             if hasattr(c, "draw"):
                 c.draw(context)
         self._draw_addon_info(context, self.layout, submodule="")
+
+    def draw(self, context):
+        self._draw_ex(context)
 
     @classmethod
     def register(cls):
@@ -813,14 +822,14 @@ class AddonGroup(_AddonInfo):
 
     @classmethod
     def __init_addons_attributes(cls):
-        addon_prefs = cls.get_instance()
-
         # Add PointerProperty to parent
         if "." in cls.bl_idname:
             parent_prefs = cls.get_instance(parent=True)
             mod_name = cls.bl_idname.split(".")[-1]
             prop = bpy.props.PointerProperty(type=cls)
             setattr(parent_prefs.addons.__class__, "prefs_" + mod_name, prop)
+
+        addon_prefs = cls.get_instance()
 
         # Add usd_***, show_expanded_***
         for fake_mod in cls._fake_submodules_.values():
@@ -1038,7 +1047,7 @@ class AddonGroup(_AddonInfo):
             if clear_preferences:
                 panels.remove(panels.find(mod_name))
 
-    def draw(self, context, draw_bases=True):
+    def _draw_ex(self, context, draw_bases=True):
         """
         :type context: bpy.types.Context
         :type draw_bases: bool
@@ -1046,7 +1055,7 @@ class AddonGroup(_AddonInfo):
         addons = self.addons
         bl_idname = self.__class__.bl_idname
 
-        layout = self.layout
+        group_layout = self.layout.box()
         """:type: bpy.types.UILayout"""
 
         if "." not in bl_idname:
@@ -1058,7 +1067,7 @@ class AddonGroup(_AddonInfo):
             use_indent_draw = root_prefs.addons.ui_use_indent_draw
 
         if self._fake_submodules_:
-            split = layout.split()
+            split = group_layout.split()
             col = split.column()
             sp = col.split(0.8)
             row = sp.row()
@@ -1111,7 +1120,7 @@ class AddonGroup(_AddonInfo):
                 if not match:
                     continue
 
-            column = layout.column(align=align_box_draw)
+            column = group_layout.column(align=align_box_draw)
 
             # Indent
             if use_indent_draw:
@@ -1234,10 +1243,8 @@ class AddonGroup(_AddonInfo):
                     if sub_addon_prefs:
                         del sub_addon_prefs.layout
 
-        self._draw_addon_info(context, layout, "")
-
         if "." not in bl_idname and self._fake_submodules_:
-            row = layout.row()
+            row = group_layout.row()
             sub = row.row()
             sub.alignment = 'LEFT'
             sub.prop(addons, "ui_show_private")
@@ -1246,11 +1253,16 @@ class AddonGroup(_AddonInfo):
             sub.prop(addons, "ui_align_box_draw")
             sub.prop(addons, "ui_use_indent_draw")
 
+        self._draw_addon_info(context, self.layout, "")
+
         if not draw_bases:
             return
         c = super()
         if hasattr(c, "draw"):
             c.draw(context)
+
+    def draw(self, context):
+        self._draw_ex(context)
 
     @classmethod
     def register(cls):

@@ -7,16 +7,20 @@
 ## Deploy add-ons
 
 ```
-2.78/scripts/addons/my_addon/ --- __init__.py
-                                 |- addongroup.py
-                                 |
-                                 |- foo_addon/ --- __init__.py
-                                 |             |- addongroup.py
-                                 |             |
-                                 |             `- bar_addon/ --- __init__.py
-                                 |                              `- addongroup.py
-                                 |
-                                 `- space_view3d_other_addon.py
+2.78/scripts/addons/
+    my_addon/ --- __init__.py
+               |- addongroup/ --- __init__.py
+               |               |- _class.py
+               |               |- _keymap.py
+               |               |- _misc.py
+               |               `- _panel.py
+               |
+               |- foo_addon/ --- __init__.py
+               |              `- bar_addon/ --- __init__.py
+               |
+               |- _hidden_addon.py
+               |
+               `- space_view3d_other_addon.py
 ```
 
 ## \_\_init\_\_.py
@@ -45,10 +49,10 @@ import bpy
 
 
 class MyAddonPreferences(
-        addongroup.AddonGroupPreferences, bpy.types.AddonPreferences):
+        addongroup.AddonGroup, bpy.types.AddonPreferences):
     bl_idname = __name__
 
-    sub_modules = [
+    submodules = [
         "foo_addon",
         "space_view3d_other_addon"
     ]
@@ -80,6 +84,12 @@ If add-on does not have AddonPreferences and has no children, there is no need t
 
 From:
 ```
+if "bpy" in locals():
+    import importlib
+    ...
+else:
+    ...
+
 import bpy
 ```
 
@@ -89,8 +99,10 @@ if "bpy" in locals():
     import importlib
     importlib.reload(addongroup)
     FooAddonPreferences.reload_sub_modules()
+    ...
 else:
     from . import addongroup
+    ...
 
 import bpy
 ```
@@ -99,6 +111,8 @@ import bpy
 
 From:
 ```
+# my_addon/foo_addon/__init__.py
+
 class FooAddonPreferences(bpy.types.AddonPreferences):
     bl_idname = __name__
 
@@ -116,15 +130,17 @@ class FooAddonPreferences(bpy.types.AddonPreferences):
 
 To:
 ```
+# my_addon/foo_addon/__init__.py
+
 class FooAddonPreferences(
-        addongroup.AddonGroupPreferences,
+        addongroup.AddonGroup,
         bpy.types.AddonPreferences if "." not in __name__ else
         bpy.types.PropertyGroup):
     bl_idname = __name__
 
     # Specify add-ons
     # If value is None instead of list, Automatically search and add
-    sub_modules = [
+    submodules = [
         "bar_addon"
     ]
 
@@ -213,12 +229,13 @@ addon_prefs = FooAddonPreferences.get_instance()
 
 # Add-on is enabled or not
 # attribute name:  use_ + module name
-is_enabled = addon_prefs.use_bar_addon
+is_enabled = addon_prefs.addons.use_bar_addon
 if is_enabled:
     # Same as ChildAddonPreferences.get_instance()
-    bar_addon_prefs = addon_prefs.bar_addon
+    # attribute name:  prefs_ + module name
+    bar_addon_prefs = addon_prefs.addons.prefs_bar_addon
 
 # If this value is true the add-on details are displayed in UserPreferences
 # attribute name: show_expanded_ + module name
-show_bar_addon_detail = addon_prefs.show_expanded_bar_addon
+show_bar_addon_detail = addon_prefs.addons.show_expanded_bar_addon
 ```

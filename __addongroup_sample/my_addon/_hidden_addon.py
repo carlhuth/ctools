@@ -18,50 +18,57 @@
 
 
 bl_info = {
-    'name': 'My Addon',
-    'author': 'Anonymous',
-    'version': (1, 0),
-    'blender': (2, 78, 0),
-    'location': 'View3D > Tool Shelf',
+    'name': 'Hidden Addon',
+    'version': (0, 1),
     'description': 'Addon group test',
-    'warning': '',
-    'wiki_url': '',
     'category': '3D View',
-    }
+}
+
 
 if 'bpy' in locals():
-    import importlib
-    importlib.reload(addongroup)
-    MyAddonPreferences.reload_sub_modules()
+    HiddenAddonPreferences.reload_sub_modules()
 else:
     from . import addongroup
 
 import bpy
 
 
-class MyAddonPreferences(
-        addongroup.AddonGroupPreferences, bpy.types.AddonPreferences):
-
+class HiddenAddonPreferences(
+        addongroup.AddonGroup,
+        bpy.types.AddonPreferences if '.' not in __name__ else
+        bpy.types.PropertyGroup):
     bl_idname = __name__
 
-    sub_modules = [
-        'foo_addon',
-        'space_view3d_other_addon',
-        '_hidden_addon'
-    ]
+    sub_modules = []
+
+    prop = bpy.props.IntProperty(name='MyAddon Prop')
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, 'prop')
+
+        layout.separator()
+        super().draw(context)
+
+    @classmethod
+    def register(cls):
+        super().register()
+
+    @classmethod
+    def unregister(cls):
+        super().unregister()
 
 
-classes = [
-    MyAddonPreferences,
-]
-
-
-@MyAddonPreferences.register_addon
+@HiddenAddonPreferences.register_addon
 def register():
-    for cls in classes:
-        bpy.utils.register_class(cls)
+    HiddenAddonPreferences.register_module()
+
+    km = HiddenAddonPreferences.get_keymap('Screen Editing')
+    if km:
+        km.keymap_items.new('wm.splash', 'ZERO', 'PRESS', shift=True,
+                            ctrl=True, alt=True, oskey=True)
 
 
+@HiddenAddonPreferences.unregister_addon
 def unregister():
-    for cls in classes[::-1]:
-        bpy.utils.unregister_class(cls)
+    HiddenAddonPreferences.unregister_module()

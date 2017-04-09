@@ -18,230 +18,8 @@
 
 
 """
-# Helper class for grouping add-ons
-
-![Image](../__images/addongroup.jpg)
-
-# How to use
-
-## Deploy add-ons
-
-```
-2.78/scripts/addons/my_addon/ --- __init__.py
-                                 |- addongroup.py
-                                 |
-                                 |- foo_addon/ --- __init__.py
-                                 |             |- addongroup.py
-                                 |             |
-                                 |             `- bar_addon/ --- __init__.py
-                                 |                              `- addongroup.py
-                                 |
-                                 `- space_view3d_other_addon.py
-```
-
-## \_\_init\_\_.py
-```
-bl_info = {
-    "name": "My Add-on",
-    "author": "Anonymous",
-    "version": (1, 0),
-    "blender": (2, 78, 0),
-    "location": "View3D > Tool Shelf",
-    "description": "Addon group test",
-    "warning": "",
-    "wiki_url": "",
-    "category": "3D View",
-    }
-
-
-if "bpy" in locals():
-    import importlib
-    importlib.reload(addongroup)
-    MyAddonPreferences.reload_submodules()
-else:
-    from . import addongroup
-
-import bpy
-
-
-class MyAddonPreferences(
-        addongroup.AddonGroupPreferences, bpy.types.AddonPreferences):
-    bl_idname = __name__
-
-    submodules = [
-        "foo_addon",
-        "space_view3d_other_addon"
-    ]
-
-
-classes = [
-    MyAddonPreferences,
-]
-
-
-@MyAddonPreferences.register_addon
-def register():
-    for cls in classes:
-        bpy.utils.register_class(cls)
-
-
-@MyAddonPreferences.unregister_addon
-def unregister():
-    for cls in classes[::-1]:
-        bpy.utils.unregister_class(cls)
-```
-
-## Fix Add-ons
-
-If single file add-on, change it to a package and copy addongroup.py.  
-If add-on does not have AddonPreferences and has no children, there is no need to modify it.
-
-### import
-
-From:
-```
-import bpy
-```
-
-To:
-```
-if "bpy" in locals():
-    import importlib
-    importlib.reload(addongroup)
-    FooAddonPreferences.reload_submodules()
-else:
-    from . import addongroup
-
-import bpy
-```
-
-### AddonPreferences
-
-From:
-```
-class FooAddonPreferences(bpy.types.AddonPreferences):
-    bl_idname = __name__
-
-    def draw(self, context):
-        ...
-
-    @classmethod
-    def register(cls):
-        ...
-
-    @classmethod
-    def unregister(cls):
-        ...
-```
-
-To:
-```
-class FooAddonPreferences(
-        addongroup.AddonGroupPreferences,
-        bpy.types.AddonPreferences if "." not in __name__ else
-        bpy.types.PropertyGroup):
-    bl_idname = __name__
-
-    # Specify add-ons
-    # If value is None instead of list, Automatically search and add
-    submodules = [
-        "bar_addon"
-    ]
-
-    def draw(self, context):
-        ...
-        super().draw(context)
-
-    @classmethod
-    def register(cls):
-        ...
-        super().register()
-
-    @classmethod
-    def unregister(cls):
-        ...
-        super().unregister()
-```
-
-### register and unregister functions
-From:
-```
-def register():
-    ...
-
-def unregister():
-    ...
-```
-
-To:
-```
-@FooAddonPreferences.register_addon
-def register():
-    ...
-
-@FooAddonPreferences.unregister_addon
-def unregister():
-    ...
-```
-
-### bpy.utils.register_module and bpy.utils.unregister_module functions
-From:
-```
-def register():
-    bpy.utils.register_module()
-    ...
-    
-def unregister():
-    bpy.utils.unregister_module()
-    ...
-```
-
-To:
-```
-@FooAddonPreferences.register_addon
-def register():
-    FooAddonPreferences.register_module()
-    ...
-
-@FooAddonPreferences.unregister_addon
-def unregister():
-    FooAddonPreferences.unregister_module()
-    ...
-```
-
-### Instance of AddonPreferences
-From:
-```
-addon_prefs = bpy.context.user_preferences.addons[FooAddonPreferences.bl_idname].preferences
-```
-
-To:
-```
-# Warning: This is not <AddonPreferences> but <PropertyGroup>
-addon_prefs = FooAddonPreferences.get_instance()
-```
-
-```
-# Only root add-on returns <AddonPreferences>
-addon_prefs = MyAddonPreferences.get_instance()
-```
-
-### Other
-
-```
-addon_prefs = FooAddonPreferences.get_instance()
-
-# Add-on is enabled or not
-# attribute name:  use_ + module name
-is_enabled = addon_prefs.use_bar_addon
-if is_enabled:
-    # Same as ChildAddonPreferences.get_instance()
-    bar_addon_prefs = addon_prefs.bar_addon
-
-# If this value is true the add-on details are displayed in UserPreferences
-# attribute name: show_expanded_ + module name
-show_bar_addon_detail = addon_prefs.show_expanded_bar_addon
-```
+Helper class for grouping add-ons
+See README.md
 """
 
 
@@ -252,14 +30,35 @@ import re
 import sys
 import traceback
 
+if "bpy" in locals():
+    importlib.reload(_misc)
+    importlib.reload(_keymap)
+    importlib.reload(_class)
+    importlib.reload(_panel)
+else:
+    from . import _misc
+    from . import _keymap
+    from . import _class
+    from . import _panel
+from ._keymap import AddonKeyConfig
+from ._class import AddonClasses
+from ._panel import AddonPanels
+
 import bpy
 
 
 __all__ = [
-    "AddonGroupPreferences",
+    "AddonInfo",
+    "AddonGroup",
     "register_module",
-    "unregister_module"
+    "unregister_module",
 ]
+
+
+"""
+NOTE: invalid: get_instance().bl_idname
+      ok:      get_instance().__class__.bl_idname
+"""
 
 
 def fake_module(mod_name, mod_path, speedy=True, force_support=None,
@@ -398,7 +197,7 @@ class NestedAddons:
 
         items_unique = set()
 
-        for mod_name, fake_mod in self.owner_class.fake_submodules.items():
+        for mod_name, fake_mod in self.owner_class._fake_submodules_.items():
             info = fake_mod.bl_info
             items_unique.add(info["category"])
 
@@ -429,25 +228,18 @@ class NestedAddons:
     )
 
     @classmethod
-    def derive(cls, owner_class):
+    def new_class(cls, owner_class):
         return type("NestedAddons",
                     (cls, bpy.types.PropertyGroup),
                     {"owner_class": owner_class})
 
 
-class AddonGroupPreferences:
-    """Create a hierarchical add-on.
-
-    Dynamically added attributes:
-        sub module names
-        "use_" + sub module name
-        "show_expanded_" + sub module name
-    """
-    _AddonGroupPreferences_ = None
+class _AddonInfo:
+    _ADDON_GROUP_ = 1.0
 
     bl_idname = ""
 
-    submodules = []
+    submodules = ()
     """str list of sub modules.
     If None is specified, all files and directories included are targeted.
 
@@ -463,6 +255,403 @@ class AddonGroupPreferences:
     addons = None
     """:type: NestedAddons"""
 
+    info_keyconfigs = None
+    """:type: list[AddonKeyConfig]"""
+    info_classes = None
+    """:tyre: list[AddonClasses]"""
+    info_panels = None
+    """:type: list[AddonPanels]"""
+
+    # Initialize at register()
+    _fake_submodules_ = None  # OrderedDict()
+    """:type: dict"""
+    _classes_ = None
+    """Included submodule classes.
+    :type: dict[str | list]
+    """
+    _keymap_items_ = None
+    """:type: dict[str|list[(str, int)]]"""
+
+    @classmethod
+    def get_instance(cls):
+        """return instance
+        :rtype: AddonPreferences
+        """
+        U = bpy.context.user_preferences
+        if cls.bl_idname in U.addons:
+            return U.addons[cls.bl_idname].preferences
+        else:  # wm.read_factory_settings()
+            return None
+
+    @classmethod
+    def get_keymap(cls, name, keyconfig="addon"):
+        """Return result of KeyMaps.new()
+        :type name: str
+        :param keyconfig: "addon" or "user" or "blender" or
+                          "default"(same as "blender")
+        :type keyconfig: str
+        :rtype: bpy.types.KeyMap
+        """
+        return AddonKeyConfig.get_keymap(name, keyconfig)
+
+    def _draw_addon_info(self, context, layout, submodule=""):
+        column = layout.column()
+        column.context_pointer_set("addon_preferences", self)
+
+        info_keyconfig = self.info_keyconfigs[submodule]
+        info_classes = self.info_classes[submodule]
+        info_panels = self.info_panels[submodule]
+        show_keymaps = info_keyconfig.kc_show_keymaps
+        show_classes = info_classes.show_classes
+        show_panels = info_panels.show_panels
+
+        row = column.row()
+        split = row.split()
+
+        # Keyconfig
+        sub = split.row()
+        icon = 'TRIA_DOWN' if show_keymaps else 'TRIA_RIGHT'
+        sub.prop(info_keyconfig, "kc_show_keymaps", text="", icon=icon,
+                 emboss=False)
+        num = len(info_keyconfig[info_keyconfig.ITEMS])
+        text = "{} Key Map Items".format(num)
+        sub.label(text)
+
+        # Classes
+        sub = split.row()
+        icon = 'TRIA_DOWN' if show_classes else 'TRIA_RIGHT'
+        sub.prop(info_classes, "show_classes", text="", icon=icon,
+                 emboss=False)
+        text = "{} Classes".format(len(self._classes_[submodule]))
+        sub.label(text)
+
+        # Panels
+        sub = split.row()
+        icon = 'TRIA_DOWN' if show_panels else 'TRIA_RIGHT'
+        sub.prop(info_panels, "show_panels", text="", icon=icon,
+                 emboss=False)
+        num = len(info_panels.default_settings)
+        text = "{} Panels".format(num)
+        sub.label(text)
+
+        if show_keymaps or show_classes or show_panels:
+            if show_keymaps:
+                info_keyconfig.draw(context, column.column())
+            if show_classes:
+                info_classes.draw(context, column.column())
+            if show_panels:
+                info_panels.draw(context, column.column())
+
+    @classmethod
+    def _verify_info_collections(cls):
+        addon_prefs = cls.get_instance()
+
+        keyconfigs = addon_prefs.info_keyconfigs
+        if "" not in keyconfigs:
+            item = keyconfigs.add()
+            item.name = ""
+            item.init()
+
+        classes = addon_prefs.info_classes
+        if "" not in classes:
+            item = classes.add()
+            item.name = ""
+
+        panels = addon_prefs.info_panels
+        if "" not in panels:
+            item = panels.add()
+            item.name = ""
+            item.init()
+
+    @classmethod
+    def _init_dynamic_types(cls):
+        """generare and register classes"""
+
+        # set NestedAddons
+        t = NestedAddons.new_class(cls)
+        bpy.utils.register_class(t)
+        cls.addons = bpy.props.PointerProperty(type=t)
+
+        # set AddonKeyConfig
+        keyconfig_type = AddonKeyConfig.new_class(cls)
+        bpy.utils.register_class(keyconfig_type)
+        cls.info_keyconfigs = bpy.props.CollectionProperty(type=keyconfig_type)
+        """:type: list[AddonKeyConfig]"""
+
+        # set AddonClasses
+        classes_type = AddonClasses.new_class(cls)
+        bpy.utils.register_class(classes_type)
+        cls.info_classes = bpy.props.CollectionProperty(type=classes_type)
+        """:type: list[AddonClasses]"""
+
+        # set AddonPanels
+        panels_type = AddonPanels.new_class(cls)
+        bpy.utils.register_class(panels_type.default_settings[1]["type"])
+        bpy.utils.register_class(panels_type)
+        cls.info_panels = bpy.props.CollectionProperty(type=panels_type)
+        """:type: list[AddonPanels]"""
+
+    @classmethod
+    def _delete_dynamic_types(cls):
+        t = cls.addons[1]["type"]
+        bpy.utils.unregister_class(t)
+
+        t = cls.info_keyconfigs[1]["type"]
+        bpy.utils.unregister_class(t)
+
+        t = cls.info_classes[1]["type"]
+        bpy.utils.unregister_class(t)
+
+        t = cls.info_panels[1]["type"]
+        bpy.utils.unregister_class(t)
+        bpy.utils.unregister_class(t.default_settings[1]["type"])
+
+        cls.addons = None
+        cls.info_keyconfigs = None
+        cls.info_classes = None
+        cls.info_panels = None
+
+    @classmethod
+    def _attach_to_preferences(cls, module, classes):
+        addon_prefs_type = None
+        for c in classes:
+            if issubclass(c, bpy.types.AddonPreferences):
+                addon_prefs_type = c
+
+        if addon_prefs_type:
+            bpy.utils.unregister_class(addon_prefs_type)
+            addon_prefs_type.addons = cls.addons
+            addon_prefs_type.info_keyconfigs = cls.info_keyconfigs
+            addon_prefs_type.info_classes = cls.info_classes
+            addon_prefs_type.info_panels = cls.info_panels
+            bpy.utils.register_class(addon_prefs_type)
+
+            cls.register()
+
+            addon_prefs_type._classes_ = cls._classes_
+            addon_prefs_type._keymap_items_ = cls._keymap_items_
+            addon_prefs_type._fake_submodules_ = cls._fake_submodules_
+            addon_prefs_type._draw_ex = cls._draw_ex
+            addon_prefs_type._draw_addon_info = cls._draw_addon_info
+
+            draw_orig = getattr(addon_prefs_type, "draw", None)
+            if draw_orig:
+                def draw(self, context):
+                    self._draw_orig(context)
+                    self._draw_ex(context, draw_bases=False)
+            else:
+                def draw(self, context):
+                    self._draw_ex(context, draw_bases=False)
+
+            addon_prefs_type._draw_orig = draw_orig
+            addon_prefs_type.draw = draw
+        else:
+            bpy.utils.register_class(cls)
+
+        setattr(module, "_ADDON_PREFS_", addon_prefs_type)
+
+    @classmethod
+    def _detach_from_preferences(cls, module):
+        if cls.is_registered:
+            bpy.utils.unregister_class(cls)
+        if getattr(module, "_ADDON_PREFS_", None):
+            prefs = module._ADDON_PREFS_
+            if prefs._draw_orig:
+                prefs.draw = prefs._draw_orig
+            else:
+                del prefs.draw
+            del prefs.addons
+            del prefs.info_keyconfigs
+            del prefs.info_classes
+            del prefs.info_panels
+            del prefs._classes_
+            del prefs._keymap_items_
+            del prefs._fake_submodules_
+            del prefs._draw_ex
+            del prefs._draw_addon_info
+            delattr(module, "_ADDON_PREFS_")
+
+    @classmethod
+    def _get_all_addon_keymap_items(cls):
+        kc = bpy.context.window_manager.keyconfigs.addon
+        if not kc:
+            return []
+
+        items = []
+        for km in kc.keymaps:
+            for kmi in km.keymap_items:
+                items.append((km, kmi))
+        return items
+
+    @classmethod
+    def register_addon(cls, func, module=None):
+        """decorator for addon register function.
+
+        e.g.
+        @AddonGroup.register_addon
+        def register():
+            ...
+        """
+        import functools
+
+        @functools.wraps(func)
+        def register():
+            cls._init_dynamic_types()
+
+            # get all registered classes
+            prev_classes = set(bpy.utils._bpy_module_classes(
+                cls.bl_idname, is_registered=True))
+
+            # get all keymap items
+            prev_km_items = [(item[0].name, item[1].id)
+                             for item in cls._get_all_addon_keymap_items()]
+
+            # register()
+            func()
+
+            # get new classes
+            post_classes = set(bpy.utils._bpy_module_classes(
+                cls.bl_idname, is_registered=True))
+            classes = [c for c in post_classes if c not in prev_classes]
+            if module:
+                cls._attach_to_preferences(module, classes)
+            cls._classes_[""] = classes
+
+            # get new keymap items
+            post_km_items = [(item[0].name, item[1].id)
+                             for item in cls._get_all_addon_keymap_items()]
+            km_items = [item for item in post_km_items
+                        if item not in set(prev_km_items)]
+            cls._keymap_items_[""] = km_items
+
+            # init CollectionProperty
+            cls.info_keyconfigs[1]["type"].init_collection()
+            cls.info_classes[1]["type"].init_collection()
+            cls.info_panels[1]["type"].init_collection()
+
+        register._register = func
+        setattr(register, "_ADDON_GROUP_", None)
+
+        return register
+
+    @classmethod
+    def unregister_addon(cls, func, module=None):
+        """decorator for addon unregister function.
+
+        e.g.
+        @AddonGroup.unregister_addon
+        def unregister():
+            ...
+        """
+        import functools
+
+        @functools.wraps(func)
+        def unregister():
+            addon_prefs = cls.get_instance()
+
+            # restore panels
+            for item in addon_prefs.info_panels:
+                item.restore_all(only_classes=True)
+
+            # get addon keymap items
+            keyconfig_items = []
+            for keyconfig in addon_prefs.info_keyconfigs:
+                for item in keyconfig[keyconfig.ITEMS]:
+                    keyconfig_items.append([item["keymap"], item["id"]])
+
+            # unregister()
+            func()
+
+            if module:
+                cls._detach_from_preferences(module)
+
+            # remove keymap items that still exist
+            for item in keyconfig_items:
+                km_name, kmi_id = item
+                km = keyconfig.get_keymap(km_name)
+                if km:
+                    for kmi in km.keymap_items:
+                        if kmi.id == kmi_id:
+                            keyconfig.remove_item(kmi)
+
+            cls._delete_dynamic_types()
+
+        unregister._unregister = func
+
+        return unregister
+
+    @classmethod
+    def wrap_module(cls, module):
+        """addon_utils.py用"""
+        if not (hasattr(module, "register") and hasattr(module, "unregister")):
+            return
+        if hasattr(module.register, "_ADDON_GROUP_"):
+            return
+
+        new_cls = type(cls.__name__, (cls, bpy.types.AddonPreferences),
+                       {"bl_idname": module.__name__})
+        module.register = new_cls.register_addon(
+            module.register, module=module)
+        module.unregister = new_cls.unregister_addon(
+            module.unregister, module=module)
+
+
+class AddonInfo(_AddonInfo):
+    def _draw_ex(self, context, draw_bases=True):
+        if draw_bases:
+            c = super()
+            if hasattr(c, "draw"):
+                c.draw(context)
+        self._draw_addon_info(context, self.layout, submodule="")
+
+    def draw(self, context):
+        self._draw_ex(context)
+
+    @classmethod
+    def register(cls):
+        cls._fake_submodules_ = {}
+        cls._classes_ = {}
+        cls._keymap_items_ = {}
+
+        cls._verify_info_collections()
+
+        c = super()
+        if hasattr(c, "register"):
+            c.register()
+
+    @classmethod
+    def unregister(cls):
+        U = bpy.context.user_preferences
+        if cls.bl_idname not in U.addons:  # wm.read_factory_settings()
+            return
+
+        cls._classes_.clear()
+        cls._keymap_items_.clear()
+        cls._fake_submodules_.clear()
+
+        c = super()
+        if hasattr(c, "unregister"):
+            c.unregister()
+
+
+class AddonGroup(_AddonInfo):
+    """Create a hierarchical add-on.
+
+    Dynamically added attributes:
+        sub module names
+        "use_" + sub module name
+        "show_expanded_" + sub module name
+    """
+
+    """str list of sub modules.
+    If None is specified, all files and directories included are targeted.
+
+    Sub modules whose heads begin with _ are not displayed in UserPreference
+    by default. They are displayed when enable the 'Show Hidden' option.
+
+    :type: list[str]
+    """
+
     # def __getattribute__(self, name):
     #     try:
     #         return super().__getattribute__(name)
@@ -470,8 +659,8 @@ class AddonGroupPreferences:
     #         m = re.match("(use_|show_expanded_|)(.*)", name)
     #         prefix, base = m.groups()
     #         addons = super().__getattribute__("addons")
-    #         if base in self.fake_submodules:
-    #             mod = self.fake_submodules[base]
+    #         if base in self._fake_submodules_:
+    #             mod = self._fake_submodules_[base]
     #             attr = prefix + self.mod_to_attr(mod)
     #             return getattr(addons, attr)
     #         else:
@@ -491,8 +680,8 @@ class AddonGroupPreferences:
     #
     #     prefix, base = re.match("(use_|show_expanded_|)(.*)", name).groups()
     #     addons = self.addons
-    #     if base in self.fake_submodules:
-    #         mod = self.fake_submodules[base]
+    #     if base in self._fake_submodules_:
+    #         mod = self._fake_submodules_[base]
     #         attr = prefix + self.mod_to_attr(mod)
     #         if is_bpy_props(value):
     #             setattr(addons.__class__, attr, value)
@@ -504,8 +693,8 @@ class AddonGroupPreferences:
     # def __delattr__(self, name):
     #     prefix, base = re.match("(use_|show_expanded_|)(.*)", name).groups()
     #     addons = self.addons
-    #     if base in self.fake_submodules:
-    #         mod = self.fake_submodules[base]
+    #     if base in self._fake_submodules_:
+    #         mod = self._fake_submodules_[base]
     #         attr = prefix + self.mod_to_attr(mod)
     #         delattr(addons.__class__, attr)
     #     else:
@@ -514,27 +703,14 @@ class AddonGroupPreferences:
     # def __dir__(self):
     #     attrs = list(super().__dir__())
     #     addons = self.addons
-    #     for name in self.fake_submodules:
-    #         mod = self.fake_submodules[name]
+    #     for name in self._fake_submodules_:
+    #         mod = self._fake_submodules_[name]
     #         attr = self.mod_to_attr(mod)
     #         for pre in ("", "use_", "show_expanded_"):
     #             n = pre + attr
     #             if hasattr(addons, n):
     #                 attrs.append(pre + name)
     #     return attrs
-
-    # Initialize at register()
-    fake_submodules = None  # OrderedDict()
-    """:type: dict"""
-    _classes = None
-    """Included submodule classes.
-    :type: dict[str | list]
-    """
-    _keymap_items = None
-    """:type: dict"""
-
-    # initialized _empty_callbacks()
-    callbacks = None
 
     @classmethod
     def get_instance(cls, *, root=False, parent=False):
@@ -555,26 +731,6 @@ class AddonGroupPreferences:
             if not addon_prefs:
                 return None
         return addon_prefs
-
-    @classmethod
-    def _empty_callbacks(cls):
-        callbacks = {
-            # func(cls)
-            "register": [],
-            # func(cls)
-            "unregister": [],
-            # func(cls, mod)
-            "register_submodule_pre": [],
-            # func(cls, mod)
-            "register_submodule_post": [],
-            # func(cls, mod, clear_preferences)
-            "unregister_submodule_pre": [],
-            # func(cls, mod, clear_preferences)
-            "unregister_submodule_post": [],
-            # func(cls, contex, fake_mod, layout)
-            "draw_submodule": [],
-        }
-        return callbacks
 
     @classmethod
     def __generate_fake_submodules(cls):
@@ -611,8 +767,8 @@ class AddonGroupPreferences:
                 if mod_name not in cls.submodules:
                     continue
 
-            if cls.fake_submodules:
-                mod = cls.fake_submodules.get(mod_name)
+            if cls._fake_submodules_:
+                mod = cls._fake_submodules_.get(mod_name)
                 if mod:
                     if mod.__time__ != os.path.getmtime(mod_path):
                         print("reloading addon:",
@@ -644,15 +800,14 @@ class AddonGroupPreferences:
         e.g.
         if "bpy" in locals():
             import importlib
-            AddonGroupPreferences.reload_submodules()
+            AddonGroup.reload_submodules()
         """
         if cls.is_registered:
-            cls.__unregister_submodules(False)
-            cls.__delete_attributes()
+            cls.__unregister_submodules()
+            cls.__delete_addons_attributes()
 
-        cls.__delete_fake_submodules()
-        cls.__init_fake_submodules()
-        for fake_mod in cls.fake_submodules.values():
+        cls._fake_submodules_ = cls.__generate_fake_submodules()
+        for fake_mod in cls._fake_submodules_.values():
             try:
                 if fake_mod.__name__ in sys.modules:
                     mod = importlib.import_module(fake_mod.__name__)
@@ -662,21 +817,11 @@ class AddonGroupPreferences:
                 traceback.print_exc()
 
         if cls.is_registered:
-            cls.__init_attributes()
+            cls.__init_addons_attributes()
             cls.__register_submodules()
 
     @classmethod
-    def __init_fake_submodules(cls):
-        cls.fake_submodules = cls.__generate_fake_submodules()
-
-    @classmethod
-    def __delete_fake_submodules(cls):
-        cls.fake_submodules.clear()
-
-    @classmethod
-    def __init_attributes(cls):
-        addon_prefs = cls.get_instance()
-
+    def __init_addons_attributes(cls):
         # Add PointerProperty to parent
         if "." in cls.bl_idname:
             parent_prefs = cls.get_instance(parent=True)
@@ -684,8 +829,10 @@ class AddonGroupPreferences:
             prop = bpy.props.PointerProperty(type=cls)
             setattr(parent_prefs.addons.__class__, "prefs_" + mod_name, prop)
 
+        addon_prefs = cls.get_instance()
+
         # Add usd_***, show_expanded_***
-        for fake_mod in cls.fake_submodules.values():
+        for fake_mod in cls._fake_submodules_.values():
             info = fake_mod.bl_info
 
             def gen_func(fake_mod):
@@ -696,7 +843,7 @@ class AddonGroupPreferences:
                         if getattr(addon_prefs.addons, "use_" + mod_name):
                             cls.__register_submodule(mod)
                         else:
-                            cls.__unregister_submodule(mod)
+                            cls.__unregister_submodule(mod, True)
                     except:
                         traceback.print_exc()
                 return update
@@ -727,7 +874,7 @@ class AddonGroupPreferences:
                     "show_expanded_" + mod_name, prop)
 
     @classmethod
-    def __delete_attributes(cls):
+    def __delete_addons_attributes(cls):
         addon_prefs = cls.get_instance()
         parent_addon_prefs = cls.get_instance(parent=True)
 
@@ -738,34 +885,12 @@ class AddonGroupPreferences:
 
         # Delete usd_***, show_expanded_***
         dyn_class = addon_prefs.addons.__class__
-        for fake_mod in cls.fake_submodules.values():
+        for fake_mod in cls._fake_submodules_.values():
             mod_name = fake_mod.__name__.split(".")[-1]
             delattr(dyn_class, "use_" + mod_name)
             delattr(dyn_class, "show_expanded_" + mod_name)
             if hasattr(dyn_class, "_show_expanded_" + mod_name):
                 delattr(dyn_class, "_show_expanded_" + mod_name)
-
-    @classmethod
-    def __get_keymap_items(cls):
-        kc = bpy.context.window_manager.keyconfigs.addon
-        if not kc:
-            return []
-
-        items = []
-        for km in kc.keymaps:
-            for kmi in km.keymap_items:
-                items.append((km, kmi))
-        return items
-
-    @classmethod
-    def __init_register_info(cls):
-        cls._classes = {}
-        cls._keymap_items = {}
-
-    @classmethod
-    def __delete_register_info(cls):
-        cls._classes.clear()
-        cls._keymap_items.clear()
 
     @classmethod
     def __register_submodule(cls, mod):
@@ -780,11 +905,7 @@ class AddonGroupPreferences:
             mod_name = mod.__name__.split(".")[-1]
 
             # get all keymap items
-            prev_km_items = cls.__get_keymap_items()
-
-            if "register_submodule_pre" in cls.callbacks:
-                for func in cls.callbacks["register_submodule_pre"]:
-                    func(cls, mod)
+            prev_km_items = cls._get_all_addon_keymap_items()
 
             # register
             mod.register()
@@ -794,22 +915,20 @@ class AddonGroupPreferences:
             post_classes = set(bpy.utils._bpy_module_classes(
                 root_module, is_registered=True))
             classes = [c for c in post_classes if c not in prev_classes]
-            cls._classes[mod_name] = classes
+            cls._classes_[mod_name] = classes
 
             # get new keymap items
-            post_km_items = cls.__get_keymap_items()
+            post_km_items = cls._get_all_addon_keymap_items()
             km_items = [(item[0].name, item[1].id) for item in post_km_items
                         if item not in set(prev_km_items)]
-            cls._keymap_items[mod_name] = km_items
+            cls._keymap_items_[mod_name] = km_items
 
-            if "register_submodule_post" in cls.callbacks:
-                for func in cls.callbacks["register_submodule_post"]:
-                    func(cls, mod)
+            cls.__info_register_submodule(mod)
 
     @classmethod
     def __register_submodules(cls):
         addon_prefs = cls.get_instance()
-        for fake_mod in cls.fake_submodules.values():
+        for fake_mod in cls._fake_submodules_.values():
             mod_name = fake_mod.__name__.split(".")[-1]
             if getattr(addon_prefs.addons, "use_" + mod_name):
                 try:
@@ -820,36 +939,34 @@ class AddonGroupPreferences:
                     traceback.print_exc()
 
     @classmethod
-    def __unregister_submodule(cls, mod, clear_preferences=True):
+    def __unregister_submodule(cls, mod, clear_preferences=False):
+        addon_prefs = cls.get_instance()
+        mod_name = mod.__name__.split(".")[-1]
+
         if not hasattr(mod, "__addon_enabled__"):
             mod.__addon_enabled__ = False
-        if mod.__addon_enabled__:
-            if "unregister_submodule_pre" in cls.callbacks:
-                for func in cls.callbacks["unregister_submodule_pre"]:
-                    func(cls, mod, clear_preferences)
 
+        cls.__info_unregister_submodule_pre(mod, clear_preferences)
+
+        if mod.__addon_enabled__:
             mod.unregister()
             mod.__addon_enabled__ = False
 
-            if "unregister_submodule_post" in cls.callbacks:
-                for func in cls.callbacks["unregister_submodule_post"]:
-                    func(cls, mod, clear_preferences)
+        cls.__info_unregister_submodule_post(mod, clear_preferences)
 
-        addon_prefs = cls.get_instance()
-        mod_name = mod.__name__.split(".")[-1]
         if clear_preferences:
             for prefix in ("prefs_", "use_", "show_expanded_"):
                 if prefix + mod_name in addon_prefs.addons:
                     del addon_prefs.addons[prefix + mod_name]
-        if mod_name in cls._classes:
-            del cls._classes[mod_name]
-        if mod_name in cls._keymap_items:
-            del cls._keymap_items[mod_name]
+        if mod_name in cls._classes_:
+            del cls._classes_[mod_name]
+        if mod_name in cls._keymap_items_:
+            del cls._keymap_items_[mod_name]
 
     @classmethod
-    def __unregister_submodules(cls, clear_preferences=True):
+    def __unregister_submodules(cls, clear_preferences=False):
         addon_prefs = cls.get_instance()
-        for fake_mod in cls.fake_submodules.values():
+        for fake_mod in cls._fake_submodules_.values():
             mod_name = fake_mod.__name__.split(".")[-1]
             if getattr(addon_prefs.addons, "use_" + mod_name):
                 try:
@@ -858,14 +975,87 @@ class AddonGroupPreferences:
                 except:
                     traceback.print_exc()
 
-    def draw(self, context):
+    @classmethod
+    def __info_register_submodule(cls, mod):
+        mod_name = mod.__name__.split(".")[-1]
+        addon_prefs = cls.get_instance()
+
+        # init info_keyconfigs
+        keyconfigs = addon_prefs.info_keyconfigs
+        if mod_name in keyconfigs:
+            item = keyconfigs[mod_name]
+        else:
+            item = keyconfigs.add()
+            item.name = mod_name
+        item.init()
+        item.load()
+
+        # init info_classes
+        classes = addon_prefs.info_classes
+        if mod_name not in classes:
+            item = classes.add()
+            item.name = mod_name
+
+        # init info_panels
+        panels = addon_prefs.info_panels
+        if mod_name in panels:
+            item = panels[mod_name]
+        else:
+            item = panels.add()
+            item.name = mod_name
+        item.init()
+        item.load()
+
+    @classmethod
+    def __info_unregister_submodule_pre(cls, mod, clear_preferences):
+        # restore panel settings until unregister
+        mod_name = mod.__name__.split(".")[-1]
+        addon_prefs = cls.get_instance()
+        panels = addon_prefs.info_panels
+        if mod_name in panels:
+            item = panels[mod_name]
+            item.restore_all(only_classes=True)
+
+    @classmethod
+    def __info_unregister_submodule_post(cls, mod, clear_preferences):
+        # remove keymap items that still exist
+        mod_name = mod.__name__.split(".")[-1]
+        addon_prefs = cls.get_instance()
+        keyconfigs = addon_prefs.info_keyconfigs
+        if mod_name in keyconfigs:
+            keyconfig = keyconfigs[mod_name]
+            for item in keyconfig[keyconfig.ITEMS]:
+                km_name = item["keymap"]
+                kmi_id = item["id"]
+                km = keyconfig.get_keymap(km_name)
+                if km:
+                    for kmi in km.keymap_items:
+                        if kmi.id == kmi_id:
+                            keyconfig.remove_item(kmi)
+            if clear_preferences:
+                keyconfigs.remove(keyconfigs.find(mod_name))
+
+        # remove class item
+        classes = addon_prefs.info_classes
+        if mod_name in classes:
+            if clear_preferences:
+                classes.remove(classes.find(mod_name))
+
+        # remove panel item
+        panels = addon_prefs.info_panels
+        if mod_name in panels:
+            if clear_preferences:
+                panels.remove(panels.find(mod_name))
+
+    def _draw_ex(self, context, draw_bases=True):
         """
         :type context: bpy.types.Context
+        :type draw_bases: bool
         """
         addons = self.addons
         bl_idname = self.__class__.bl_idname
 
-        layout = self.layout
+        group_layout = self.layout.box()
         """:type: bpy.types.UILayout"""
 
         if "." not in bl_idname:
@@ -876,8 +1066,8 @@ class AddonGroupPreferences:
             align_box_draw = root_prefs.addons.ui_align_box_draw
             use_indent_draw = root_prefs.addons.ui_use_indent_draw
 
-        if self.fake_submodules:
-            split = layout.split()
+        if self._fake_submodules_:
+            split = group_layout.split()
             col = split.column()
             sp = col.split(0.8)
             row = sp.row()
@@ -892,7 +1082,7 @@ class AddonGroupPreferences:
         filter = addons.ui_addon_filter
         search = addons.ui_addon_search
 
-        for fake_mod in self.fake_submodules.values():
+        for fake_mod in self._fake_submodules_.values():
             mod_name = fake_mod.__name__.split(".")[-1]
             if not addons.ui_show_private and mod_name.startswith("_"):
                 continue
@@ -930,7 +1120,7 @@ class AddonGroupPreferences:
                 if not match:
                     continue
 
-            column = layout.column(align=align_box_draw)
+            column = group_layout.column(align=align_box_draw)
 
             # Indent
             if use_indent_draw:
@@ -1022,7 +1212,8 @@ class AddonGroupPreferences:
                     col_head = col.column()
                     col_body = col.column()
                     has_error = False
-                    sub_addon_prefs.layout = col_body
+                    if sub_addon_prefs:
+                        sub_addon_prefs.layout = col_body
                     if sub_addon_prefs and hasattr(sub_addon_prefs, "draw"):
                         try:
                             sub_addon_prefs.draw(context)
@@ -1030,13 +1221,9 @@ class AddonGroupPreferences:
                             traceback.print_exc()
                             has_error = True
                     if (not sub_addon_prefs or
-                            not hasattr(sub_addon_prefs,
-                                        "_AddonGroupPreferences_")):
+                            not hasattr(sub_addon_prefs, "_ADDON_GROUP_")):
                         # TODO: use hasattr or not
-                        if "draw_submodule" in self.callbacks:
-                            for func in self.callbacks["draw_submodule"]:
-                                func(self.__class__, context,
-                                     self.fake_submodules[mod_name], col_body)
+                        self._draw_addon_info(context, col_body, mod_name)
                     has_introspect_error = False
                     try:
                         # SyntaxError may occur due to " or "
@@ -1056,8 +1243,8 @@ class AddonGroupPreferences:
                     if sub_addon_prefs:
                         del sub_addon_prefs.layout
 
-        if "." not in bl_idname and self.fake_submodules:
-            row = layout.row()
+        if "." not in bl_idname and self._fake_submodules_:
+            row = group_layout.row()
             sub = row.row()
             sub.alignment = 'LEFT'
             sub.prop(addons, "ui_show_private")
@@ -1066,24 +1253,29 @@ class AddonGroupPreferences:
             sub.prop(addons, "ui_align_box_draw")
             sub.prop(addons, "ui_use_indent_draw")
 
+        self._draw_addon_info(context, self.layout, "")
+
+        if not draw_bases:
+            return
         c = super()
         if hasattr(c, "draw"):
             c.draw(context)
 
+    def draw(self, context):
+        self._draw_ex(context)
+
     @classmethod
     def register(cls):
-        cls.__init_fake_submodules()
-        cls.__init_attributes()
-        cls.__init_register_info()
+        cls._fake_submodules_ = cls.__generate_fake_submodules()
+        cls._classes_ = {}
+        cls._keymap_items_ = {}
+        cls.__init_addons_attributes()
         cls.__register_submodules()
-
-        if "register" in cls.callbacks:
-            for func in cls.callbacks["register"]:
-                func(cls)
+        cls._verify_info_collections()
 
         c = super()
         if hasattr(c, "register"):
-            c.register(cls)
+            c.register()
 
     @classmethod
     def unregister(cls):
@@ -1092,25 +1284,22 @@ class AddonGroupPreferences:
         if attrs[0] not in U.addons:  # wm.read_factory_settings()
             return None
 
-        if "unregister" in cls.callbacks:
-            for func in cls.callbacks["unregister"]:
-                func(cls)
-
         cls.__unregister_submodules()
-        cls.__delete_register_info()
-        cls.__delete_attributes()
-        cls.__delete_fake_submodules()
+        cls._classes_.clear()
+        cls._keymap_items_.clear()
+        cls.__delete_addons_attributes()
+        cls._fake_submodules_.clear()
 
         c = super()
         if hasattr(c, "unregister"):
             c.unregister()
 
     @classmethod
-    def register_addon(cls, func, **kwargs):
-        """decorator fro addon register function.
+    def register_addon(cls, func, module=None):
+        """decorator for addon register function.
 
         e.g.
-        @AddonGroupPreferences.register_addon
+        @AddonGroup.register_addon
         def register():
             ...
         """
@@ -1118,12 +1307,7 @@ class AddonGroupPreferences:
 
         @functools.wraps(func)
         def register():
-            t = NestedAddons.derive(cls)
-            bpy.utils.register_class(t)
-            cls.addons = bpy.props.PointerProperty(type=t)
-
-            if cls.callbacks is None:
-                cls.callbacks = cls._empty_callbacks()
+            cls._init_dynamic_types()
 
             # get all registered classes
             root_module = cls.bl_idname.split(".")[0]
@@ -1132,52 +1316,57 @@ class AddonGroupPreferences:
 
             # get all keymap items
             prev_km_items = [(item[0].name, item[1].id)
-                             for item in cls.__get_keymap_items()]
+                             for item in cls._get_all_addon_keymap_items()]
 
+            # register()
             func()
 
             # get new classes
             post_classes = set(bpy.utils._bpy_module_classes(
                 root_module, is_registered=True))
             classes = [c for c in post_classes if c not in prev_classes]
-            for mod_name, mod_classes in cls._classes.items():
-                if mod_name != "":
-                    for c in mod_classes:
-                        if c in classes:
-                            classes.remove(c)
-                        else:
-                            raise ValueError()  # Unexpected error. fix code
-            cls._classes[""] = classes
+            if module:
+                cls._attach_to_preferences(module, classes)
+            else:
+                for mod_name, mod_classes in cls._classes_.items():
+                    if mod_name != "":
+                        for c in mod_classes:
+                            if c in classes:
+                                classes.remove(c)
+                                # else:
+                                #     raise ValueError()
+            cls._classes_[""] = classes
 
             # get new keymap items
             post_km_items = [(item[0].name, item[1].id)
-                             for item in cls.__get_keymap_items()]
+                             for item in cls._get_all_addon_keymap_items()]
             km_items = [item for item in post_km_items
                         if item not in set(prev_km_items)]
-            for mod_name, mod_km_items in cls._keymap_items.items():
+            for mod_name, mod_km_items in cls._keymap_items_.items():
                 if mod_name != "":
-                    for item in \
-                            mod_km_items:
+                    for item in mod_km_items:
                         if item in km_items:
                             km_items.remove(item)
                         # else:
-                        #     raise ValueError()  # Unexpected error. fix code
-            cls._keymap_items[""] = km_items
+                        #     raise ValueError()
+            cls._keymap_items_[""] = km_items
+
+            # init CollectionProperty
+            cls.info_keyconfigs[1]["type"].init_collection()
+            cls.info_classes[1]["type"].init_collection()
+            cls.info_panels[1]["type"].init_collection()
 
         register._register = func
-
-        c = super()
-        if hasattr(c, "register_addon"):
-            register = c.register_addon(register)
+        setattr(register, "_ADDON_GROUP_", None)
 
         return register
 
     @classmethod
-    def unregister_addon(cls, func, **kwargs):
+    def unregister_addon(cls, func, module=None):
         """decorator for addon unregister function.
 
         e.g.
-        @AddonGroupPreferences.unregister_addon
+        @AddonGroup.unregister_addon
         def unregister():
             ...
         """
@@ -1185,16 +1374,36 @@ class AddonGroupPreferences:
 
         @functools.wraps(func)
         def unregister():
+            addon_prefs = cls.get_instance()
+
+            # restore panels
+            for item in addon_prefs.info_panels:
+                item.restore_all(only_classes=True)
+
+            # get addon keymap items
+            keyconfig_items = []
+            for keyconfig in addon_prefs.info_keyconfigs:
+                for item in keyconfig[keyconfig.ITEMS]:
+                    keyconfig_items.append([item["keymap"], item["id"]])
+
+            # unregister()
             func()
 
-            t = cls.addons[1]["type"]
-            bpy.utils.unregister_class(t)
+            if module:
+                cls._detach_from_preferences(module)
+
+            # remove keymap items that still exist
+            for item in keyconfig_items:
+                km_name, kmi_id = item
+                km = keyconfig.get_keymap(km_name)
+                if km:
+                    for kmi in km.keymap_items:
+                        if kmi.id == kmi_id:
+                            keyconfig.remove_item(kmi)
+
+            cls._delete_dynamic_types()
 
         unregister._unregister = func
-
-        c = super()
-        if hasattr(c, "unregister_addon"):
-            unregister = c.unregister_addon(unregister)
 
         return unregister
 
@@ -1297,7 +1506,7 @@ def register_module(module, verbose=False):
     :type module: str
     :type verbose: bool
     """
-    AddonGroupPreferences.register_module(module, verbose)
+    AddonGroup.register_module(module, verbose)
 
 
 def unregister_module(module, verbose=False):
@@ -1305,4 +1514,4 @@ def unregister_module(module, verbose=False):
     :type module: str
     :type verbose: bool
     """
-    AddonGroupPreferences.unregister_module(module, verbose)
+    AddonGroup.unregister_module(module, verbose)

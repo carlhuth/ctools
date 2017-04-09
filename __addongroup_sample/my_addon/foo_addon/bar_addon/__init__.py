@@ -18,21 +18,40 @@
 
 
 bl_info = {
-    'name': 'Other Addon',
-    'author': 'Anonymous',
-    'version': (1, 0),
-    'blender': (2, 78, 0),
-    'location': 'View3D > Tool Shelf',
-    'description': 'Addon group test',
-    'warning': '',
-    'wiki_url': '',
-    'category': '3D View',
-    }
+    "name": "Bar Addon",
+    "version": (0, 1),
+    "description": "Addon group test",
+    "category": "3D View",
+}
 
 
+if "bpy" in locals():
+    BarAddonPreferences.reload_sub_modules()
+else:
+    from ... import addongroup
+
+import bpy
+
+
+class BarAddonPreferences(
+        addongroup.AddonGroup,
+        bpy.types.AddonPreferences if "." not in __name__ else
+        bpy.types.PropertyGroup):
+    bl_idname = __name__
+
+
+classes = [
+    BarAddonPreferences,
+]
+
+
+@BarAddonPreferences.register_addon
 def register():
-    pass
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
 
+@BarAddonPreferences.unregister_addon
 def unregister():
-    pass
+    for cls in classes[::-1]:
+        bpy.utils.unregister_class(cls)

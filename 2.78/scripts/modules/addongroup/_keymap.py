@@ -334,7 +334,7 @@ class AddonKeyConfig:
             "Standard Modal Map", "Knife Tool Modal Map",
             "Transform Modal Map", "Paint Stroke Modal", "View3D Fly Modal",
             "View3D Walk Modal", "View3D Rotate Modal", "View3D Move Modal",
-            "View3D Zoom Modal", "View3D Dolly Modal"}
+            "View3D Zoom Modal", "View3D Dolly Modal", "Eyedropper Modal Map"}
 
         keyconfigs = bpy.context.window_manager.keyconfigs
         if keyconfig == "addon":  # "Blender Addon"
@@ -366,7 +366,19 @@ class AddonKeyConfig:
 
         km = get(bpy_extras.keyconfig_utils.KM_HIERARCHY, name)
         if not km:
-            msg = "Keymap '{}' not in builtins".format(name)
+            def get_names(ls):
+                for keymap_name, space_type, region_type, children in ls:
+                    yield keymap_name
+                    yield from get_names(children)
+
+            all_names = list(get_names(
+                bpy_extras.keyconfig_utils.KM_HIERARCHY))
+            for name in modal_keymaps:
+                all_names.remove(name)
+            msg = "Keymap '{}' not in builtins\n".format(name)
+            msg += "[\n"
+            msg += "\n".join(["    '" + name + "'" for name in all_names])
+            msg += "\n]\n"
             raise ValueError(msg)
         return km
 
@@ -1002,7 +1014,7 @@ class AddonKeyConfig:
             subcolsplitrow_sub.enabled = current_values != saved_values
         icon = 'INFO' if subcolsplitrow_sub.enabled else 'NONE'
         subcolsplitrow_sub.operator(OperatorKeymapsWrite.bl_idname,
-                                    text="Write", icon=icon)
+                                    text="Save", icon=icon)
         # Restore
         subcolsplitrow_sub = subcolsplitrow.row(align=True)
         if current_values == default_values and self.SAVED_VALUES not in self:
