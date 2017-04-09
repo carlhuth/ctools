@@ -18,14 +18,14 @@
 
 
 bl_info = {
-    'name': 'Hidden Addon',
-    'version': (0, 1),
-    'description': 'Addon group test',
-    'category': '3D View',
+    "name": "Hidden Add-on",
+    "version": (0, 1),
+    "description": "Addon group test",
+    "category": "3D View",
 }
 
 
-if 'bpy' in locals():
+if "bpy" in locals():
     HiddenAddonPreferences.reload_submodules()
 else:
     from . import addongroup
@@ -35,17 +35,17 @@ import bpy
 
 class HiddenAddonPreferences(
         addongroup.AddonGroup,
-        bpy.types.AddonPreferences if '.' not in __name__ else
+        bpy.types.AddonPreferences if "." not in __name__ else
         bpy.types.PropertyGroup):
     bl_idname = __name__
 
     submodules = []
 
-    prop = bpy.props.IntProperty(name='MyAddon Prop')
+    prop = bpy.props.IntProperty(name="Hidden Add-on Prop")
 
     def draw(self, context):
         layout = self.layout
-        layout.prop(self, 'prop')
+        layout.prop(self, "prop")
 
         layout.separator()
         super().draw(context)
@@ -63,9 +63,9 @@ class HiddenAddonPreferences(
 def register():
     HiddenAddonPreferences.register_module()
 
-    km = HiddenAddonPreferences.get_keymap('Screen Editing')
+    km = HiddenAddonPreferences.get_keymap("Screen Editing")
     if km:
-        km.keymap_items.new('wm.splash', 'ZERO', 'PRESS', shift=True,
+        km.keymap_items.new("wm.splash", 'ZERO', 'PRESS', shift=True,
                             ctrl=True, alt=True, oskey=True)
 
 

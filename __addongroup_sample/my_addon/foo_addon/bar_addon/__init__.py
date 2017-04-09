@@ -18,7 +18,7 @@
 
 
 bl_info = {
-    "name": "Bar Addon",
+    "name": "Bar Add-on",
     "version": (0, 1),
     "description": "Addon group test",
     "category": "3D View",

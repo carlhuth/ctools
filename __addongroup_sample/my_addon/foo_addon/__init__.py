@@ -18,7 +18,7 @@
 
 
 bl_info = {
-    "name": "Foo Addon",
+    "name": "Foo Add-on",
     "version": (0, 1),
     "description": "Addon group test",
     "category": "3D View",
@@ -43,11 +43,11 @@ class FooAddonPreferences(
         "bar_addon"
     ]
 
-    prop = bpy.props.IntProperty(name="BarAddon Prop")
+    foo_prop = bpy.props.IntProperty(name="Foo Add-on Prop")
 
     def draw(self, context):
         layout = self.layout
-        layout.prop(self, "prop")
+        layout.prop(self, "foo_prop")
 
         layout.separator()
         super().draw(context)
@@ -72,7 +72,7 @@ def register():
         bpy.utils.register_class(cls)
 
     prefs = FooAddonPreferences.get_instance()
-    value = prefs.prop  # value of bpy.props.IntProperty(name="MyAddon Prop")
+    value = prefs.foo_prop
 
 
 @FooAddonPreferences.unregister_addon

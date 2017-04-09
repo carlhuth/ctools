@@ -18,7 +18,7 @@
 
 
 bl_info = {
-    "name": "My Addon",
+    "name": "My Add-on",
     "author": "Anonymous",
     "version": (1, 1),
     "blender": (2, 78, 0),

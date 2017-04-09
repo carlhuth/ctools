@@ -30,7 +30,7 @@ Helper class for grouping add-ons
 bl_info = {
     "name": "My Add-on",
     "author": "Anonymous",
-    "version": (1, 0),
+    "version": (1, 1),
     "blender": (2, 78, 0),
     "location": "View3D > Tool Shelf",
     "description": "Addon group test",
@@ -38,7 +38,6 @@ bl_info = {
     "wiki_url": "",
     "category": "3D View",
     }
-
 
 if "bpy" in locals():
     import importlib
@@ -56,7 +55,8 @@ class MyAddonPreferences(
 
     submodules = [
         "foo_addon",
-        "space_view3d_other_addon"
+        "space_view3d_other_addon",
+        "_hidden_addon"
     ]
 
 
@@ -79,7 +79,6 @@ def unregister():
 
 ## Fix Add-ons
 
-If single file add-on, change it to a package and copy addongroup.py.  
 If add-on does not have AddonPreferences and has no children, there is no need to modify it.
 
 ### import
@@ -99,11 +98,10 @@ To:
 ```
 if "bpy" in locals():
     import importlib
-    importlib.reload(addongroup)
     FooAddonPreferences.reload_submodules()
     ...
 else:
-    from . import addongroup
+    from .. import addongroup
     ...
 
 import bpy
