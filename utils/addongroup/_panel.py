@@ -22,9 +22,10 @@ from collections import OrderedDict
 import contextlib
 
 import bpy
-iface = bpy.app.translations.pgettext_iface
 
 from ._misc import Registerable
+
+iface = bpy.app.translations.pgettext_iface
 
 
 class OperatorPanelSettingUnset(Registerable, bpy.types.Operator):
@@ -527,7 +528,7 @@ class AddonPanels:
 
         row = column.row()
         split = row.split(0.7)
-        _ = split.row()
+        split.row()
         row = split.row()
         sp = row.split(align=True)
 

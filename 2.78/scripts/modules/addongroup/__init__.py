@@ -18,7 +18,7 @@
 
 
 """
-Helper class for grouping add-ons
+Helper module for grouping add-ons
 See README.md
 """
 

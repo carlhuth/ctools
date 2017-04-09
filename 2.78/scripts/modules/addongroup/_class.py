@@ -18,9 +18,10 @@
 
 
 import bpy
-iface = bpy.app.translations.pgettext_iface
 
 from ._misc import Registerable
+
+iface = bpy.app.translations.pgettext_iface
 
 
 def _get_base_class(cls):

@@ -48,8 +48,7 @@ class OperatorKeymapItemAdd(Registerable, bpy.types.Operator):
         def get():
             def _get(entry):
                 idname, spaceid, regionid, children = entry
-                if not ("INVALID_MODAL_KEYMAP" and
-                                idname in modal_keymaps):
+                if not ("INVALID_MODAL_KEYMAP" and idname in modal_keymaps):
                     yield entry
                     for e in children:
                         yield from _get(e)
@@ -652,7 +651,7 @@ class AddonKeyConfig:
 
         for km, km_items in display_keymaps:
             if (km.name == idname and km.space_type == spaceid and
-                        km.region_type == regionid):
+                    km.region_type == regionid):
                 self._draw_km(display_keymaps, km, km_items, children, col,
                               level)
 
@@ -834,7 +833,7 @@ class AddonKeyConfig:
 
             # Modifier {kmi.attribute: name} mapping
             key_mod = {"ctrl": "ctrl", "alt": "alt", "shift": "shift",
-                       "cmd": "oskey", "oskey": "oskey", "any": "any",}
+                       "cmd": "oskey", "oskey": "oskey", "any": "any"}
             # KeyMapItem like dict, use for comparing against
             # attr: {states, ...}
             kmi_test_dict = {}
@@ -933,10 +932,6 @@ class AddonKeyConfig:
             self._draw_entry(display_keymaps, entry, layout)
 
     def _draw_addon_keymaps(self, context, layout, hierarchy=False, box=True):
-        owner_class = self.owner_class
-        """:type: addongroup.AddonGroupPreferences"""
-        addon_prefs = owner_class.get_instance()
-
         if box:
             col = layout.column().box()
         else:
