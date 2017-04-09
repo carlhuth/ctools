@@ -43,7 +43,7 @@ bl_info = {
 if "bpy" in locals():
     import importlib
     importlib.reload(addongroup)
-    MyAddonPreferences.reload_sub_modules()
+    MyAddonPreferences.reload_submodules()
 else:
     from . import addongroup
 
@@ -100,7 +100,7 @@ To:
 if "bpy" in locals():
     import importlib
     importlib.reload(addongroup)
-    FooAddonPreferences.reload_sub_modules()
+    FooAddonPreferences.reload_submodules()
     ...
 else:
     from . import addongroup

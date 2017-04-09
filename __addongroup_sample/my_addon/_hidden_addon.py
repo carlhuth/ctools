@@ -26,7 +26,7 @@ bl_info = {
 
 
 if 'bpy' in locals():
-    HiddenAddonPreferences.reload_sub_modules()
+    HiddenAddonPreferences.reload_submodules()
 else:
     from . import addongroup
 
@@ -39,7 +39,7 @@ class HiddenAddonPreferences(
         bpy.types.PropertyGroup):
     bl_idname = __name__
 
-    sub_modules = []
+    submodules = []
 
     prop = bpy.props.IntProperty(name='MyAddon Prop')
 

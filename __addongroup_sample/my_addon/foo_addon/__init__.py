@@ -26,7 +26,7 @@ bl_info = {
 
 
 if "bpy" in locals():
-    FooAddonPreferences.reload_sub_modules()
+    FooAddonPreferences.reload_submodules()
 else:
     from .. import addongroup
 

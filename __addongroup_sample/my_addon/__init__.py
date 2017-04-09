@@ -32,7 +32,7 @@ bl_info = {
 if "bpy" in locals():
     import importlib
     importlib.reload(addongroup)
-    MyAddonPreferences.reload_sub_modules()
+    MyAddonPreferences.reload_submodules()
 else:
     from . import addongroup
 

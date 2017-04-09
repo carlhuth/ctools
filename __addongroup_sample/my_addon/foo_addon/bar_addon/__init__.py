@@ -26,7 +26,7 @@ bl_info = {
 
 
 if "bpy" in locals():
-    BarAddonPreferences.reload_sub_modules()
+    BarAddonPreferences.reload_submodules()
 else:
     from ... import addongroup
 
