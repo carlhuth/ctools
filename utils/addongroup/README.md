@@ -1,4 +1,6 @@
-# Helper class for grouping add-ons
+# addongroup.AddonGroup
+
+Helper class for grouping add-ons
 
 ![Image](../__images/addongroup.jpg)
 
