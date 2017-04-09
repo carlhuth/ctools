@@ -183,6 +183,10 @@ class NestedAddons:
         name="Show Hidden",
         default=False)
 
+    ui_use_addon_filter = bpy.props.BoolProperty(
+        name="Filter",
+        default=False)
+
     def _prop_addon_search_get(self):
         return getattr(self, "_ui_addon_search", "")
 
@@ -1055,8 +1059,12 @@ class AddonGroup(_AddonInfo):
         addons = self.addons
         bl_idname = self.__class__.bl_idname
 
-        group_layout = self.layout.box()
-        """:type: bpy.types.UILayout"""
+        if self._fake_submodules_:
+            group_layout = self.layout.box()
+            """:type: bpy.types.UILayout"""
+        else:
+            group_layout = self.layout
+            """:type: bpy.types.UILayout"""
 
         if "." not in bl_idname:
             align_box_draw = addons.ui_align_box_draw
@@ -1066,7 +1074,8 @@ class AddonGroup(_AddonInfo):
             align_box_draw = root_prefs.addons.ui_align_box_draw
             use_indent_draw = root_prefs.addons.ui_use_indent_draw
 
-        if self._fake_submodules_:
+        use_filter = addons.ui_use_addon_filter
+        if use_filter and self._fake_submodules_:
             split = group_layout.split()
             col = split.column()
             sp = col.split(0.8)
@@ -1090,7 +1099,7 @@ class AddonGroup(_AddonInfo):
             info = fake_mod.bl_info
 
             is_enabled = getattr(addons, "use_" + mod_name)
-            if ((filter == 'All') or
+            if (not use_filter or (filter == 'All') or
                     (filter == info["category"]) or
                     (filter == 'Enabled' and is_enabled) or
                     (filter == 'Disabled' and not is_enabled)):
@@ -1098,7 +1107,7 @@ class AddonGroup(_AddonInfo):
             else:
                 continue
 
-            if search:
+            if use_filter and search:
                 if search.startswith("//"):
                     if re.search(search.lstrip("//"), fake_mod.__file__):
                         match = True
@@ -1248,6 +1257,7 @@ class AddonGroup(_AddonInfo):
             sub = row.row()
             sub.alignment = 'LEFT'
             sub.prop(addons, "ui_show_private")
+            sub.prop(addons, "ui_use_addon_filter")
             sub = row.row()
             sub.alignment = 'RIGHT'
             sub.prop(addons, "ui_align_box_draw")
