@@ -65,7 +65,6 @@ from bpy.app.handlers import persistent
 try:
     importlib.reload(addongroup)
     importlib.reload(customproperty)
-    importlib.reload(registerinfor)
     importlib.reload(unitsystem)
     importlib.reload(utils)
     importlib.reload(vagl)
@@ -75,7 +74,6 @@ try:
 except NameError:
     from ..utils import addongroup
     from ..utils import customproperty
-    from ..utils import registerinfo
     from ..utils import utils
     from ..utils import unitsystem
     from ..utils import vagl
@@ -292,8 +290,7 @@ class RegionRuler_PG(bpy.types.PropertyGroup):
 
 
 class RegionRulerPreferences(
-        addongroup.AddonGroupPreferences,
-        registerinfo.AddonRegisterInfo,
+        addongroup.AddonGroup,
         bpy.types.PropertyGroup if '.' in __name__ else
         bpy.types.AddonPreferences):
     def draw_property(self, attr, layout, text=None, skip_hidden=True,

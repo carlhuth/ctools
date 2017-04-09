@@ -24,10 +24,10 @@ import traceback
 import bpy
 
 
-try:
-    from .customproperty import CustomProperty
-except:
-    from _addon_customproperty import CustomProperty
+# try:
+#     from .customproperty import CustomProperty
+# except:
+#     from _addon_customproperty import CustomProperty
 
 __all__ = [
     'AddonRegisterInfo',
@@ -797,7 +797,7 @@ class _AddonRegisterInfoKeyMap(_AddonRegisterInfo):
     """:type: list[(str, int)]"""
 
     # keymaps_set_default()の際に_keymap_itemsを複製
-    # [(km.name, kmi.id), ...]
+    # [(km.name, kmi.id), ...]s
     __default_keymap_items = ()
     """:type: list[(str, int)]"""
 
@@ -1760,6 +1760,7 @@ class _AddonRegisterInfoClass(_AddonRegisterInfo):
         for class_type, class_name, base_class in classes:
             col1.label(base_class.__name__)
             col2.label(class_name)
+            print(class_type, getattr(class_type, 'bl_label', ''))
             col3.label(getattr(class_type, 'bl_label', ''))
 
 
@@ -1815,7 +1816,6 @@ class AddonRegisterInfo(  # _AddonRegisterInfo,
             name_mangling(_AddonRegisterInfoKeyMap.__name__, '__default_keymap_item_values'): [],
             'addon_classes': [],
             'addon_attributes': [],
-            'hoge': '############'
         }
         if bl_idname is not None:
             attrs['bl_idname'] = bl_idname

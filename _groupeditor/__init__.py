@@ -32,16 +32,13 @@ bl_info = {
 import importlib
 
 import bpy
-from mathutils import Matrix
 
 try:
     importlib.reload(addongroup)
     importlib.reload(customproperty)
-    importlib.reload(registerinfo)
 except NameError:
     from ..utils import addongroup
     from ..utils import customproperty
-    from ..utils import registerinfo
 
 
 translation_dict = {
@@ -52,8 +49,7 @@ translation_dict = {
 
 
 class AddonPreferencesGroupEditor(
-        addongroup.AddonGroupPreferences,
-        registerinfo.AddonRegisterInfo,
+        addongroup.AddonGroup,
         bpy.types.PropertyGroup if '.' in __name__ else
         bpy.types.AddonPreferences):
     bl_idname = __name__

@@ -41,17 +41,15 @@ from mathutils import Matrix, Vector
 try:
     importlib.reload(addongroup)
     importlib.reload(customproperty)
-    importlib.reload(registerinfo)
     importlib.reload(st)
-    importlib.reload(wrapoperator)
     importlib.reload(vaprops)
+    importlib.reload(wrapoperator)
 except NameError:
     from ..utils import addongroup
     from ..utils import customproperty
-    from ..utils import registerinfo
     from ..utils import structures as st
-    from ..utils import wrapoperator
     from ..utils import vaprops
+    from ..utils import wrapoperator
 
 
 PROP_MODE_ATTR = 'ct_dz_mode'
@@ -104,8 +102,7 @@ class WM_OT_event_type_search_popup2(bpy.types.Operator):
 
 
 class AddonDollyZoomPreferences(
-        addongroup.AddonGroupPreferences,
-        registerinfo.AddonRegisterInfo,
+        addongroup.AddonGroup,
         bpy.types.PropertyGroup if '.' in __name__ else
         bpy.types.AddonPreferences):
     bl_idname = __name__

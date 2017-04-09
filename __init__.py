@@ -42,18 +42,18 @@ import zipfile
 
 if 'bpy' in locals():
     importlib.reload(addongroup)
-    CToolsPreferences.reload_sub_modules()
+    CToolsPreferences.reload_submodules()
 else:
     from .utils import addongroup
 
 import bpy
 
 
-class CToolsPreferences(addongroup.AddonGroupPreferences,
+class CToolsPreferences(addongroup.AddonGroup,
                         bpy.types.AddonPreferences):
     bl_idname = __name__
 
-    sub_modules = [
+    submodules = [
         'aligntools',
         'armaturehelper',
         'boolutils',

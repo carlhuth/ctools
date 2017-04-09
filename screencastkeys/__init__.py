@@ -60,13 +60,11 @@ import bpy.props
 
 try:
     importlib.reload(addongroup)
-    importlib.reload(registerinfo)
     importlib.reload(structures)
     importlib.reload(utils)
     importlib.reload(modalmanager)
 except NameError:
     from ..utils import addongroup
-    from ..utils import registerinfo
     from ..utils import utils
     from ..utils import vagl
 from .modalmanager import ModalHandlerManager
@@ -76,8 +74,7 @@ from .modalmanager import ModalHandlerManager
 # Addon Preferences
 ###############################################################################
 class ScreenCastKeysPreferences(
-    addongroup.AddonGroupPreferences,
-    registerinfo.AddonRegisterInfo,
+    addongroup.AddonGroup,
     bpy.types.PropertyGroup if '.' in __name__ else
     bpy.types.AddonPreferences):
     bl_idname = __name__

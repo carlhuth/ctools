@@ -57,7 +57,7 @@ bl_info = {
 if "bpy" in locals():
     import importlib
     importlib.reload(addongroup)
-    MyAddonPreferences.reload_sub_modules()
+    MyAddonPreferences.reload_submodules()
 else:
     from . import addongroup
 
@@ -68,7 +68,7 @@ class MyAddonPreferences(
         addongroup.AddonGroupPreferences, bpy.types.AddonPreferences):
     bl_idname = __name__
 
-    sub_modules = [
+    submodules = [
         "foo_addon",
         "space_view3d_other_addon"
     ]
@@ -108,7 +108,7 @@ To:
 if "bpy" in locals():
     import importlib
     importlib.reload(addongroup)
-    FooAddonPreferences.reload_sub_modules()
+    FooAddonPreferences.reload_submodules()
 else:
     from . import addongroup
 
@@ -144,7 +144,7 @@ class FooAddonPreferences(
 
     # Specify add-ons
     # If value is None instead of list, Automatically search and add
-    sub_modules = [
+    submodules = [
         "bar_addon"
     ]
 
@@ -262,21 +262,177 @@ __all__ = [
 ]
 
 
-class AddonGroupMiscellaneous(bpy.types.PropertyGroup):
+def fake_module(mod_name, mod_path, speedy=True, force_support=None,
+                quiet=True):
+    """source: scripts/modules/addon_utils.py: module_refresh()
+    fix it not to use error_encoding. add "quiet" argument
+    """
+    if 0:
+        global error_encoding
+
+    if bpy.app.debug_python:
+        print("fake_module", mod_path, mod_name)
+    import ast
+    ModuleType = type(ast)
+    try:
+        file_mod = open(mod_path, "r", encoding="UTF-8")
+    except OSError as e:
+        print("Error opening file %r: %s" % (mod_path, e))
+        return None
+
+    with file_mod:
+        if speedy:
+            lines = []
+            line_iter = iter(file_mod)
+            l = ""
+            while not l.startswith("bl_info"):
+                try:
+                    l = line_iter.readline()
+                except UnicodeDecodeError as e:
+                    if 0:
+                        if not error_encoding:
+                            error_encoding = True
+                            print("Error reading file as UTF-8:", mod_path,
+                                  e)
+                    else:
+                        print("Error reading file as UTF-8:", mod_path, e)
+                    return None
+
+                if len(l) == 0:
+                    break
+            while l.rstrip():
+                lines.append(l)
+                try:
+                    l = line_iter.readline()
+                except UnicodeDecodeError as e:
+                    if 0:
+                        if not error_encoding:
+                            error_encoding = True
+                            print("Error reading file as UTF-8:", mod_path,
+                                  e)
+                    else:
+                        print("Error reading file as UTF-8:", mod_path, e)
+                    return None
+
+            data = "".join(lines)
+
+        else:
+            data = file_mod.read()
+    del file_mod
+
+    try:
+        ast_data = ast.parse(data, filename=mod_path)
+    except:
+        print("Syntax error 'ast.parse' can't read %r" % mod_path)
+        import traceback
+        traceback.print_exc()
+        ast_data = None
+
+    body_info = None
+
+    if ast_data:
+        for body in ast_data.body:
+            if body.__class__ == ast.Assign:
+                if len(body.targets) == 1:
+                    if getattr(body.targets[0], "id", "") == "bl_info":
+                        body_info = body
+                        break
+
+    if body_info:
+        try:
+            mod = ModuleType(mod_name)
+            mod.bl_info = ast.literal_eval(body.value)
+            mod.__file__ = mod_path
+            mod.__time__ = os.path.getmtime(mod_path)
+        except:
+            print("AST error parsing bl_info for %s" % mod_name)
+            import traceback
+            traceback.print_exc()
+            raise
+
+        if force_support is not None:
+            mod.bl_info["support"] = force_support
+
+        return mod
+    else:
+        if not quiet:
+            print("fake_module: addon missing 'bl_info' "
+                  "gives bad performance!: %r" % mod_path)
+        return None
+
+
+class NestedAddons:
     """For dynamically adding attributes
 
     Dynamically added attributes:
-        fixed module name  # module.__name__.replace(".", "__")
-        "use_" + fixed module name
-        "show_expanded_" + fixed module name
-        "_show_expanded_" + fixed module name
+        module name  (replaced . to _ )
+        "use_" + module name
+        "show_expanded_" + module name
+        "_show_expanded_" module name
     """
 
+    owner_class = None
+
+    ui_align_box_draw = bpy.props.BoolProperty(
+        name="Box Draw",
+        description="If applied patch: patch/ui_layout_box.patch",
+        default=False)
+    ui_use_indent_draw = bpy.props.BoolProperty(
+        name="Indent",
+        default=True)
+    ui_show_private = bpy.props.BoolProperty(
+        name="Show Hidden",
+        default=False)
+
+    def _prop_addon_search_get(self):
+        return getattr(self, "_ui_addon_search", "")
+
+    def _prop_addon_search_set(self, value):
+        setattr(self.__class__, "_ui_addon_search", value)
+
+    def _prop_addon_filter_items(self, context):
+        items = [('All', "All", "All Add-ons"),
+                 ('Enabled', "Enabled", "All Enabled Add-ons"),
+                 ('Disabled', "Disabled", "All Disabled Add-ons"),
+                 ]
+
+        items_unique = set()
+
+        for mod_name, fake_mod in self.owner_class.fake_submodules.items():
+            info = fake_mod.bl_info
+            items_unique.add(info["category"])
+
+        items.extend([(cat, cat, "") for cat in sorted(items_unique)])
+        self.__class__._ui_addon_filter_items = items
+        return items
+
+    def _prop_addon_filter_get(self):
+        return getattr(self, "_ui_addon_filter", 0)
+
+    def _prop_addon_filter_set(self, value):
+        setattr(self.__class__, "_ui_addon_filter", value)
+
+    ui_addon_search = bpy.props.StringProperty(
+        name="Search",
+        description="Search within the selected filter. "
+                    "If startswith \"/\"/, use path search ",
+        options={'TEXTEDIT_UPDATE'},
+        get=_prop_addon_search_get,
+        set=_prop_addon_search_set,
+    )
+    ui_addon_filter = bpy.props.EnumProperty(
+        items=_prop_addon_filter_items,
+        name="Category",
+        description="Filter add-ons by category",
+        get=_prop_addon_filter_get,
+        set=_prop_addon_filter_set,
+    )
+
     @classmethod
-    def new_class(cls):
-        return type("AddonGroupMiscellaneous",
-                    (bpy.types.PropertyGroup,),
-                    {})
+    def derive(cls, owner_class):
+        return type("NestedAddons",
+                    (cls, bpy.types.PropertyGroup),
+                    {"owner_class": owner_class})
 
 
 class AddonGroupPreferences:
@@ -287,10 +443,11 @@ class AddonGroupPreferences:
         "use_" + sub module name
         "show_expanded_" + sub module name
     """
+    _AddonGroupPreferences_ = None
 
     bl_idname = ""
 
-    sub_modules = ()
+    submodules = []
     """str list of sub modules.
     If None is specified, all files and directories included are targeted.
 
@@ -300,284 +457,127 @@ class AddonGroupPreferences:
     :type: list[str]
     """
 
-    _fake_sub_modules = OrderedDict()
+    # Initialize at register_addon()
+    # addons = bpy.props.PointerProperty(
+    #     type=NestedAddons.derive())
+    addons = None
+    """:type: NestedAddons"""
 
-    # misc_ = bpy.props.PointerProperty(
-    #     type=AddonGroupMiscellaneous.new_class())
-    misc_ = None
+    # def __getattribute__(self, name):
+    #     try:
+    #         return super().__getattribute__(name)
+    #     except AttributeError:
+    #         m = re.match("(use_|show_expanded_|)(.*)", name)
+    #         prefix, base = m.groups()
+    #         addons = super().__getattribute__("addons")
+    #         if base in self.fake_submodules:
+    #             mod = self.fake_submodules[base]
+    #             attr = prefix + self.mod_to_attr(mod)
+    #             return getattr(addons, attr)
+    #         else:
+    #             raise
 
-    align_box_draw_ = bpy.props.BoolProperty(
-        name="Box Draw",
-        description="If applied patch: patch/ui_layout_box.patch",
-        default=False)
-    use_indent_draw_ = bpy.props.BoolProperty(
-        name="Indent",
-        default=True)
-    show_hidden_ = bpy.props.BoolProperty(
-        name="Show Hidden",
-        default=False)
+    # def __setattr__(self, name, value):
+    #     def is_bpy_props(val):
+    #         """return True if argument:val is in a format such as
+    #         (bpy.props.BoolProperty, {name="Name", default="True"})
+    #         """
+    #         try:
+    #             t, kwargs = val
+    #             props = [getattr(bpy.props, attr) for attr in dir(bpy.props)]
+    #             return t in props and isinstance(kwargs, dict)
+    #         except:
+    #             return False
+    #
+    #     prefix, base = re.match("(use_|show_expanded_|)(.*)", name).groups()
+    #     addons = self.addons
+    #     if base in self.fake_submodules:
+    #         mod = self.fake_submodules[base]
+    #         attr = prefix + self.mod_to_attr(mod)
+    #         if is_bpy_props(value):
+    #             setattr(addons.__class__, attr, value)
+    #         else:
+    #             setattr(addons, attr, value)
+    #     else:
+    #         super().__setattr__(name, value)
+    #
+    # def __delattr__(self, name):
+    #     prefix, base = re.match("(use_|show_expanded_|)(.*)", name).groups()
+    #     addons = self.addons
+    #     if base in self.fake_submodules:
+    #         mod = self.fake_submodules[base]
+    #         attr = prefix + self.mod_to_attr(mod)
+    #         delattr(addons.__class__, attr)
+    #     else:
+    #         super().__delattr__(name)
+    #
+    # def __dir__(self):
+    #     attrs = list(super().__dir__())
+    #     addons = self.addons
+    #     for name in self.fake_submodules:
+    #         mod = self.fake_submodules[name]
+    #         attr = self.mod_to_attr(mod)
+    #         for pre in ("", "use_", "show_expanded_"):
+    #             n = pre + attr
+    #             if hasattr(addons, n):
+    #                 attrs.append(pre + name)
+    #     return attrs
 
-    _addon_filter_items = None  # cache for dynamic enum items
+    # Initialize at register()
+    fake_submodules = None  # OrderedDict()
+    """:type: dict"""
+    _classes = None
+    """Included submodule classes.
+    :type: dict[str | list]
+    """
+    _keymap_items = None
+    """:type: dict"""
 
-    def _prop_addon_filter_items(self, context):
-        items = [('All', "All", "All Add-ons"),
-                 ('Enabled', "Enabled", "All Enabled Add-ons"),
-                 ('Disabled', "Disabled", "All Disabled Add-ons"),
-                 ]
-
-        items_unique = set()
-
-        for mod_name, fake_mod in self._fake_sub_modules.items():
-            info = fake_mod.bl_info
-            items_unique.add(info["category"])
-
-        items.extend([(cat, cat, "") for cat in sorted(items_unique)])
-        self.__class__._addon_filter_items = items
-        return items
-
-    def _prop_addon_search_get(self):
-        return getattr(self, "addon_search__", "")
-
-    def _prop_addon_search_set(self, value):
-        setattr(self.__class__, "addon_search__", value)
-
-    def _prop_addon_filter_get(self):
-        return getattr(self, "addon_filter__", 0)
-
-    def _prop_addon_filter_set(self, value):
-        setattr(self.__class__, "addon_filter__", value)
-
-    addon_search_ = bpy.props.StringProperty(
-        name="Search",
-        description="Search within the selected filter. "
-                    "If startswith \"/\"/, use path search ",
-        options={'TEXTEDIT_UPDATE'},
-        get=_prop_addon_search_get,
-        set=_prop_addon_search_set,
-    )
-    addon_filter_ = bpy.props.EnumProperty(
-        items=_prop_addon_filter_items,
-        name="Category",
-        description="Filter add-ons by category",
-        get=_prop_addon_filter_get,
-        set=_prop_addon_filter_set,
-    )
-
-    del _prop_addon_filter_items
-    del _prop_addon_search_get, _prop_addon_search_set
-    del _prop_addon_filter_get, _prop_addon_filter_set
-
-    def __getattribute__(self, name):
-        prefix, base = re.match("(use_|show_expanded_|)(.*)", name).groups()
-        if base in super().__getattribute__("_fake_sub_modules"):
-            misc = super().__getattribute__("misc_")
-            attr = prefix + self.__mod_to_attr(self._fake_sub_modules[base])
-            return getattr(misc, attr)
-        else:
-            return super().__getattribute__(name)
-
-    def __setattr__(self, name, value):
-        def is_bpy_props(val):
-            """return True if argument:val is in a format such as
-            (bpy.props.BoolProperty, {name="Name", default="True"})
-            """
-            try:
-                t, kwargs = val
-                props = [getattr(bpy.props, attr) for attr in dir(bpy.props)]
-                return t in props and isinstance(kwargs, dict)
-            except:
-                return False
-
-        prefix, base = re.match("(use_|show_expanded_|)(.*)", name).groups()
-        if base in self._fake_sub_modules:
-            misc = self.misc_
-            attr = prefix + self.__mod_to_attr(self._fake_sub_modules[base])
-            if is_bpy_props(value):
-                setattr(misc.__class__, attr, value)
-            else:
-                setattr(misc, attr, value)
-        else:
-            super().__setattr__(name, value)
-
-    def __delattr__(self, name):
-        prefix, base = re.match("(use_|show_expanded_|)(.*)", name).groups()
-        if base in self._fake_sub_modules:
-            misc = self.misc_
-            attr = prefix + self.__mod_to_attr(self._fake_sub_modules[base])
-            delattr(misc.__class__, attr)
-        else:
-            super().__delattr__(name)
-
-    def __dir__(self):
-        attrs = list(super().__dir__())
-        misc = self.misc_
-        for name in self._fake_sub_modules:
-            attr = self.__mod_to_attr(self._fake_sub_modules[name])
-            for pre in ("", "use_", "show_expanded_"):
-                n = pre + attr
-                if hasattr(misc, n):
-                    attrs.append(pre + name)
-        return attrs
+    # initialized _empty_callbacks()
+    callbacks = None
 
     @classmethod
-    def __get_misc_type(cls):
-        return cls.misc_[1]["type"]
-
-    @classmethod
-    def reload_sub_modules(cls):
-        """
-        e.g.
-        if "bpy" in locals():
-            import importlib
-            AddonGroupPreferences.reload_sub_modules()
-        """
-        if cls.is_registered:
-            cls.__unregister_sub_modules()
-            cls.__free_attributes()
-
-        cls.__free_fake_sub_modules()
-        cls.__init_fake_sub_modules()
-        for fake_mod in cls._fake_sub_modules.values():
-            try:
-                if fake_mod.__name__ in sys.modules:
-                    mod = importlib.import_module(fake_mod.__name__)
-                    # print("Reloading:", mod)
-                    importlib.reload(mod)
-            except:
-                traceback.print_exc()
-
-        if cls.is_registered:
-            cls.__init_attributes()
-            cls.__register_sub_modules()
-
-    _get_instance_cache = None
-
-    @classmethod
-    def get_instance(cls):
+    def get_instance(cls, *, root=False, parent=False):
         """return instance
         :rtype: AddonPreferences
         """
-        if cls._get_instance_cache:
-            return cls._get_instance_cache
-
+        if root and parent:
+            raise ValueError()
         U = bpy.context.user_preferences
         attrs = cls.bl_idname.split(".")
         if attrs[0] not in U.addons:  # wm.read_factory_settings()
             return None
-        prefs = U.addons[attrs[0]].preferences
-        for attr in attrs[1:]:
-            if not hasattr(prefs, attr):
+        addon_prefs = U.addons[attrs[0]].preferences
+        if root:
+            return addon_prefs
+        for attr in (attrs[1:-1] if parent else attrs[1:]):
+            addon_prefs = getattr(addon_prefs.addons, "prefs_" + attr, None)
+            if not addon_prefs:
                 return None
-            prefs = getattr(prefs, attr)
-        cls._get_instance_cache = prefs
-        return prefs
-
-    @staticmethod
-    def __mod_to_attr(mod):
-        return mod.__name__.replace(".", "__")
+        return addon_prefs
 
     @classmethod
-    def __fake_module(cls, mod_name, mod_path, speedy=True, force_support=None,
-                      quiet=True):
-        """source: scripts/modules/addon_utils.py: module_refresh()
-        fix it not to use error_encoding. add "quiet" argument
-        """
-        if 0:
-            global error_encoding
-
-        if bpy.app.debug_python:
-            print("fake_module", mod_path, mod_name)
-        import ast
-        ModuleType = type(ast)
-        try:
-            file_mod = open(mod_path, "r", encoding="UTF-8")
-        except OSError as e:
-            print("Error opening file %r: %s" % (mod_path, e))
-            return None
-
-        with file_mod:
-            if speedy:
-                lines = []
-                line_iter = iter(file_mod)
-                l = ""
-                while not l.startswith("bl_info"):
-                    try:
-                        l = line_iter.readline()
-                    except UnicodeDecodeError as e:
-                        if 0:
-                            if not error_encoding:
-                                error_encoding = True
-                                print("Error reading file as UTF-8:", mod_path,
-                                      e)
-                        else:
-                            print("Error reading file as UTF-8:", mod_path, e)
-                        return None
-
-                    if len(l) == 0:
-                        break
-                while l.rstrip():
-                    lines.append(l)
-                    try:
-                        l = line_iter.readline()
-                    except UnicodeDecodeError as e:
-                        if 0:
-                            if not error_encoding:
-                                error_encoding = True
-                                print("Error reading file as UTF-8:", mod_path,
-                                      e)
-                        else:
-                            print("Error reading file as UTF-8:", mod_path, e)
-                        return None
-
-                data = "".join(lines)
-
-            else:
-                data = file_mod.read()
-        del file_mod
-
-        try:
-            ast_data = ast.parse(data, filename=mod_path)
-        except:
-            print("Syntax error 'ast.parse' can't read %r" % mod_path)
-            import traceback
-            traceback.print_exc()
-            ast_data = None
-
-        body_info = None
-
-        if ast_data:
-            for body in ast_data.body:
-                if body.__class__ == ast.Assign:
-                    if len(body.targets) == 1:
-                        if getattr(body.targets[0], "id", "") == "bl_info":
-                            body_info = body
-                            break
-
-        if body_info:
-            try:
-                mod = ModuleType(mod_name)
-                mod.bl_info = ast.literal_eval(body.value)
-                mod.__file__ = mod_path
-                mod.__time__ = os.path.getmtime(mod_path)
-            except:
-                print("AST error parsing bl_info for %s" % mod_name)
-                import traceback
-                traceback.print_exc()
-                raise
-
-            if force_support is not None:
-                mod.bl_info["support"] = force_support
-
-            return mod
-        else:
-            if not quiet:
-                print("fake_module: addon missing 'bl_info' "
-                      "gives bad performance!: %r" % mod_path)
-            return None
+    def _empty_callbacks(cls):
+        callbacks = {
+            # func(cls)
+            "register": [],
+            # func(cls)
+            "unregister": [],
+            # func(cls, mod)
+            "register_submodule_pre": [],
+            # func(cls, mod)
+            "register_submodule_post": [],
+            # func(cls, mod, clear_preferences)
+            "unregister_submodule_pre": [],
+            # func(cls, mod, clear_preferences)
+            "unregister_submodule_post": [],
+            # func(cls, contex, fake_mod, layout)
+            "draw_submodule": [],
+        }
+        return callbacks
 
     @classmethod
-    def __generate_fake_sub_modules(cls):
-        # genarate cls._face_modules
+    def __generate_fake_submodules(cls):
         fake_modules = []
         mod = sys.modules[cls.bl_idname]
         if os.path.basename(mod.__file__) != "__init__.py":
@@ -588,11 +588,11 @@ class AddonGroupPreferences:
 
         def sort_func(item):
             name, path = item
-            if cls.sub_modules is not None:
-                if name in cls.sub_modules:
-                    return cls.sub_modules.index(name)
+            if cls.submodules is not None:
+                if name in cls.submodules:
+                    return cls.submodules.index(name)
                 else:
-                    return len(cls.sub_modules) + module_names.index(item)
+                    return len(cls.submodules) + module_names.index(item)
             else:
                 return module_names.index(item)
 
@@ -607,280 +607,299 @@ class AddonGroupPreferences:
                         continue
                 except:
                     pass
-            if cls.sub_modules is not None:
-                if mod_name not in cls.sub_modules:
+            if cls.submodules is not None:
+                if mod_name not in cls.submodules:
                     continue
 
-            mod = cls._fake_sub_modules.get(mod_name)
-            if mod:
-                if mod.__time__ != os.path.getmtime(mod_path):
-                    print("reloading addon:",
-                          mod.__name__,
-                          mod.__time__,
-                          os.path.getmtime(mod_path),
-                          mod_path,
-                          )
-            mod = cls.__fake_module(cls.bl_idname + "." + mod_name, mod_path)
+            if cls.fake_submodules:
+                mod = cls.fake_submodules.get(mod_name)
+                if mod:
+                    if mod.__time__ != os.path.getmtime(mod_path):
+                        print("reloading addon:",
+                              mod.__name__,
+                              mod.__time__,
+                              os.path.getmtime(mod_path),
+                              mod_path,
+                              )
+            mod = fake_module(cls.bl_idname + "." + mod_name, mod_path)
             if mod:
                 fake_modules.append(mod)
 
         fake_modules.sort(
             key=lambda mod: (mod.bl_info["category"], mod.bl_info["name"]))
         fake_modules = OrderedDict(
-            [(mod.__name__.split(".")[-1], mod) for mod in fake_modules])
+            [(mod.__name__[len(cls.bl_idname) + 1:], mod)
+             for mod in fake_modules])
 
-        if cls.sub_modules is not None:
-            for name in cls.sub_modules:
+        if cls.submodules is not None:
+            for name in cls.submodules:
                 if name not in fake_modules:
                     print("Submodule not found: {}.{}".format(
-                        cls.bl_idname, name))
+                          cls.bl_idname, name))
         return fake_modules
 
     @classmethod
-    def __init_fake_sub_modules(cls):
-        cls._fake_sub_modules = cls.__generate_fake_sub_modules()
+    def reload_submodules(cls):
+        """
+        e.g.
+        if "bpy" in locals():
+            import importlib
+            AddonGroupPreferences.reload_submodules()
+        """
+        if cls.is_registered:
+            cls.__unregister_submodules(False)
+            cls.__delete_attributes()
+
+        cls.__delete_fake_submodules()
+        cls.__init_fake_submodules()
+        for fake_mod in cls.fake_submodules.values():
+            try:
+                if fake_mod.__name__ in sys.modules:
+                    mod = importlib.import_module(fake_mod.__name__)
+                    # print("Reloading:", mod)
+                    importlib.reload(mod)
+            except:
+                traceback.print_exc()
+
+        if cls.is_registered:
+            cls.__init_attributes()
+            cls.__register_submodules()
 
     @classmethod
-    def __free_fake_sub_modules(cls):
-        cls._fake_sub_modules.clear()
+    def __init_fake_submodules(cls):
+        cls.fake_submodules = cls.__generate_fake_submodules()
+
+    @classmethod
+    def __delete_fake_submodules(cls):
+        cls.fake_submodules.clear()
 
     @classmethod
     def __init_attributes(cls):
-        prefs = cls.get_instance()
-        misc_type = cls.__get_misc_type()
+        addon_prefs = cls.get_instance()
 
-        for name, fake_mod in cls._fake_sub_modules.items():
+        # Add PointerProperty to parent
+        if "." in cls.bl_idname:
+            parent_prefs = cls.get_instance(parent=True)
+            mod_name = cls.bl_idname.split(".")[-1]
+            prop = bpy.props.PointerProperty(type=cls)
+            setattr(parent_prefs.addons.__class__, "prefs_" + mod_name, prop)
+
+        # Add usd_***, show_expanded_***
+        for fake_mod in cls.fake_submodules.values():
             info = fake_mod.bl_info
 
-            def gen_update(fake_mod):
+            def gen_func(fake_mod):
                 def update(self, context):
-                    name_attr = cls.__mod_to_attr(fake_mod)
+                    mod_name = fake_mod.__name__.split(".")[-1]
                     try:
                         mod = importlib.import_module(fake_mod.__name__)
-                        if getattr(self, "use_" + name_attr):
-                            cls.__register_sub_module(mod)
+                        if getattr(addon_prefs.addons, "use_" + mod_name):
+                            cls.__register_submodule(mod)
                         else:
-                            cls.__unregister_sub_module(mod, True)
+                            cls.__unregister_submodule(mod)
                     except:
                         traceback.print_exc()
                 return update
 
+            update = gen_func(fake_mod)
             prop = bpy.props.BoolProperty(
                 name=info["name"],
                 description=info.get("description", "").rstrip("."),
-                update=gen_update(fake_mod),
+                update=update,
             )
-            setattr(prefs, "use_" + name, prop)
+            mod_name = fake_mod.__name__.split(".")[-1]
+            setattr(addon_prefs.addons.__class__, "use_" + mod_name, prop)
 
             def gen_func(fake_mod):
-                attr = cls.__mod_to_attr(fake_mod)
+                mod_name = fake_mod.__name__.split(".")[-1]
 
                 def fget(self):
-                    return getattr(misc_type, "_show_expanded_" + attr, False)
+                    return getattr(cls, "_show_expanded_" + mod_name, False)
 
                 def fset(self, value):
-                    setattr(misc_type, "_show_expanded_" + attr, value)
+                    setattr(cls, "_show_expanded_" + mod_name, value)
 
                 return fget, fset
 
             fget, fset = gen_func(fake_mod)
             prop = bpy.props.BoolProperty(get=fget, set=fset)
-            setattr(prefs, "show_expanded_" + name, prop)
+            setattr(addon_prefs.addons.__class__,
+                    "show_expanded_" + mod_name, prop)
 
     @classmethod
-    def __free_attributes(cls):
-        prefs = cls.get_instance()
-        misc_type = cls.__get_misc_type()
-        for name, fake_mod in cls._fake_sub_modules.items():
-            delattr(prefs, "use_" + name)
-            delattr(prefs, "show_expanded_" + name)
-            attr = cls.__mod_to_attr(fake_mod)
-            if hasattr(misc_type, "_show_expanded_" + attr):
-                delattr(misc_type, "_show_expanded_" + attr)
+    def __delete_attributes(cls):
+        addon_prefs = cls.get_instance()
+        parent_addon_prefs = cls.get_instance(parent=True)
+
+        # Delete PointerProperty
+        if "." in cls.bl_idname:
+            mod_name = cls.bl_idname.split(".")[-1]
+            delattr(parent_addon_prefs.addons.__class__, "prefs_" + mod_name)
+
+        # Delete usd_***, show_expanded_***
+        dyn_class = addon_prefs.addons.__class__
+        for fake_mod in cls.fake_submodules.values():
+            mod_name = fake_mod.__name__.split(".")[-1]
+            delattr(dyn_class, "use_" + mod_name)
+            delattr(dyn_class, "show_expanded_" + mod_name)
+            if hasattr(dyn_class, "_show_expanded_" + mod_name):
+                delattr(dyn_class, "_show_expanded_" + mod_name)
 
     @classmethod
-    def __register_sub_module(cls, mod):
+    def __get_keymap_items(cls):
+        kc = bpy.context.window_manager.keyconfigs.addon
+        if not kc:
+            return []
+
+        items = []
+        for km in kc.keymaps:
+            for kmi in km.keymap_items:
+                items.append((km, kmi))
+        return items
+
+    @classmethod
+    def __init_register_info(cls):
+        cls._classes = {}
+        cls._keymap_items = {}
+
+    @classmethod
+    def __delete_register_info(cls):
+        cls._classes.clear()
+        cls._keymap_items.clear()
+
+    @classmethod
+    def __register_submodule(cls, mod):
         if not hasattr(mod, "__addon_enabled__"):
             mod.__addon_enabled__ = False
+
         if not mod.__addon_enabled__:
+            # get all registered classes
+            root_module = cls.bl_idname.split(".")[0]
+            prev_classes = set(bpy.utils._bpy_module_classes(
+                root_module, is_registered=True))
+            mod_name = mod.__name__.split(".")[-1]
+
+            # get all keymap items
+            prev_km_items = cls.__get_keymap_items()
+
+            if "register_submodule_pre" in cls.callbacks:
+                for func in cls.callbacks["register_submodule_pre"]:
+                    func(cls, mod)
+
+            # register
             mod.register()
             mod.__addon_enabled__ = True
 
+            # get new classes
+            post_classes = set(bpy.utils._bpy_module_classes(
+                root_module, is_registered=True))
+            classes = [c for c in post_classes if c not in prev_classes]
+            cls._classes[mod_name] = classes
+
+            # get new keymap items
+            post_km_items = cls.__get_keymap_items()
+            km_items = [(item[0].name, item[1].id) for item in post_km_items
+                        if item not in set(prev_km_items)]
+            cls._keymap_items[mod_name] = km_items
+
+            if "register_submodule_post" in cls.callbacks:
+                for func in cls.callbacks["register_submodule_post"]:
+                    func(cls, mod)
+
     @classmethod
-    def __register_sub_modules(cls):
-        prefs = cls.get_instance()
-        for name, fake_mod in cls._fake_sub_modules.items():
-            if getattr(prefs, "use_" + name):
+    def __register_submodules(cls):
+        addon_prefs = cls.get_instance()
+        for fake_mod in cls.fake_submodules.values():
+            mod_name = fake_mod.__name__.split(".")[-1]
+            if getattr(addon_prefs.addons, "use_" + mod_name):
                 try:
                     mod = importlib.import_module(fake_mod.__name__)
-                    cls.__register_sub_module(mod)
+                    cls.__register_submodule(mod)
                 except:
-                    setattr(prefs, "use_" + name, False)
+                    setattr(addon_prefs.addons, "use_" + mod_name, False)
                     traceback.print_exc()
 
     @classmethod
-    def __unregister_sub_module(cls, mod, clear_preferences=False):
+    def __unregister_submodule(cls, mod, clear_preferences=True):
         if not hasattr(mod, "__addon_enabled__"):
             mod.__addon_enabled__ = False
         if mod.__addon_enabled__:
+            if "unregister_submodule_pre" in cls.callbacks:
+                for func in cls.callbacks["unregister_submodule_pre"]:
+                    func(cls, mod, clear_preferences)
+
             mod.unregister()
             mod.__addon_enabled__ = False
 
+            if "unregister_submodule_post" in cls.callbacks:
+                for func in cls.callbacks["unregister_submodule_post"]:
+                    func(cls, mod, clear_preferences)
+
+        addon_prefs = cls.get_instance()
+        mod_name = mod.__name__.split(".")[-1]
         if clear_preferences:
-            prefs = cls.get_instance()
-            for prefix in ("", "use_", "show_expanded_"):
-                attr = prefix + cls.__mod_to_attr(mod)
-                if attr in prefs.misc_:
-                    del prefs.misc_[attr]
+            for prefix in ("prefs_", "use_", "show_expanded_"):
+                if prefix + mod_name in addon_prefs.addons:
+                    del addon_prefs.addons[prefix + mod_name]
+        if mod_name in cls._classes:
+            del cls._classes[mod_name]
+        if mod_name in cls._keymap_items:
+            del cls._keymap_items[mod_name]
 
     @classmethod
-    def __unregister_sub_modules(cls):
-        prefs = cls.get_instance()
-        for name, fake_mod in cls._fake_sub_modules.items():
-            if getattr(prefs, "use_" + name):
+    def __unregister_submodules(cls, clear_preferences=True):
+        addon_prefs = cls.get_instance()
+        for fake_mod in cls.fake_submodules.values():
+            mod_name = fake_mod.__name__.split(".")[-1]
+            if getattr(addon_prefs.addons, "use_" + mod_name):
                 try:
                     mod = importlib.import_module(fake_mod.__name__)
-                    cls.__unregister_sub_module(mod)
+                    cls.__unregister_submodule(mod, clear_preferences)
                 except:
                     traceback.print_exc()
 
-    @classmethod
-    def register(cls):
-        cls._get_instance_cache = None
-
-        if "." in cls.bl_idname:  # set property to parent
-            U = bpy.context.user_preferences
-            attrs = cls.bl_idname.split(".")
-            base_prop = U.addons[attrs[0]].preferences
-            for attr in attrs[1:-1]:
-                base_prop = getattr(base_prop, attr)
-            prop = bpy.props.PointerProperty(type=cls)
-            setattr(base_prop, attrs[-1], prop)
-
-        cls.__init_fake_sub_modules()
-        cls.__init_attributes()
-        cls.__register_sub_modules()
-
-        c = super()
-        if hasattr(c, "register"):
-            c.register()
-
-    @classmethod
-    def unregister(cls):
-        U = bpy.context.user_preferences
-        attrs = cls.bl_idname.split(".")
-        if attrs[0] not in U.addons:  # wm.read_factory_settings()
-            return None
-
-        cls.__unregister_sub_modules()
-        cls.__free_attributes()
-        cls.__free_fake_sub_modules()
-
-        if "." in cls.bl_idname:  # remove from parent
-            base_prop = U.addons[attrs[0]].preferences
-            for attr in attrs[1:-1]:
-                base_prop = getattr(base_prop, attr)
-            delattr(base_prop, attrs[-1])
-
-        c = super()
-        if hasattr(c, "unregister"):
-            c.unregister()
-
-        cls._get_instance_cache = None
-
-    @classmethod
-    def register_addon(cls, func, **kwargs):
-        """decorator fro addon register function.
-
-        e.g.
-        @AddonGroupPreferences.register_addon
-        def register():
-            ...
-        """
-        import functools
-
-        @functools.wraps(func)
-        def new_func():
-            misc_type = AddonGroupMiscellaneous.new_class()
-            bpy.utils.register_class(misc_type)
-            cls.misc_ = bpy.props.PointerProperty(type=misc_type)
-            func()
-        new_func._register = func
-
-        c = super()
-        if hasattr(c, "register_addon"):
-            new_func = c.register_addon(new_func, **kwargs)
-
-        return new_func
-
-    @classmethod
-    def unregister_addon(cls, func, **kwargs):
-        """decorator for addon unregister function.
-
-        e.g.
-        @AddonGroupPreferences.unregister_addon
-        def unregister():
-            ...
-        """
-        import functools
-
-        @functools.wraps(func)
-        def new_func():
-            misc_type = cls.__get_misc_type()
-            # if misc_type.is_registered:
-            bpy.utils.unregister_class(misc_type)
-            func()
-
-        new_func._unregister = func
-
-        c = super()
-        if hasattr(c, "unregister_addon"):
-            new_func = c.unregister_addon(new_func, **kwargs)
-
-        return new_func
-
-    def draw(self, context, **kwargs):
+    def draw(self, context):
         """
         :type context: bpy.types.Context
         """
+        addons = self.addons
+        bl_idname = self.__class__.bl_idname
+
         layout = self.layout
         """:type: bpy.types.UILayout"""
 
-        bl_idname = self.__class__.bl_idname
-
         if "." not in bl_idname:
-            align_box_draw = self.align_box_draw_
-            use_indent_draw = self.use_indent_draw_
+            align_box_draw = addons.ui_align_box_draw
+            use_indent_draw = addons.ui_use_indent_draw
         else:
-            U = context.user_preferences
-            root_prefs = U.addons[bl_idname.split(".")[0]].preferences
-            align_box_draw = root_prefs.align_box_draw_
-            use_indent_draw = root_prefs.use_indent_draw_
+            root_prefs = self.get_instance(root=True)
+            align_box_draw = root_prefs.addons.ui_align_box_draw
+            use_indent_draw = root_prefs.addons.ui_use_indent_draw
 
-        if self._fake_sub_modules:
+        if self.fake_submodules:
             split = layout.split()
             col = split.column()
             sp = col.split(0.8)
             row = sp.row()
-            row.prop(self, "addon_search_", text="", icon='VIEWZOOM')
+            row.prop(addons, "ui_addon_search", text="", icon='VIEWZOOM')
             sp.row()
             col = split.column()
             sp = col.split(0.8)
             row = sp.row()
-            row.prop(self, "addon_filter_")
+            row.prop(addons, "ui_addon_filter")
             sp.row()
 
-        filter = self.addon_filter_
-        search = self.addon_search_
+        filter = addons.ui_addon_filter
+        search = addons.ui_addon_search
 
-        for mod_name, fake_mod in self._fake_sub_modules.items():
-            if not self.show_hidden_ and mod_name.startswith("_"):
+        for fake_mod in self.fake_submodules.values():
+            mod_name = fake_mod.__name__.split(".")[-1]
+            if not addons.ui_show_private and mod_name.startswith("_"):
                 continue
 
-            mod_name_attr = self.__mod_to_attr(fake_mod)
             info = fake_mod.bl_info
 
-            is_enabled = getattr(self, "use_" + mod_name)
+            is_enabled = getattr(addons, "use_" + mod_name)
             if ((filter == 'All') or
                     (filter == info["category"]) or
                     (filter == 'Enabled' and is_enabled) or
@@ -913,7 +932,7 @@ class AddonGroupPreferences:
 
             column = layout.column(align=align_box_draw)
 
-            # Indend
+            # Indent
             if use_indent_draw:
                 sp = column.split(0.01)
                 sp.column()
@@ -922,16 +941,16 @@ class AddonGroupPreferences:
             box = column.box()
 
             # Title
-            expand = getattr(self, "show_expanded_" + mod_name)
+            expand = getattr(addons, "show_expanded_" + mod_name)
             icon = 'TRIA_DOWN' if expand else 'TRIA_RIGHT'
             col = box.column()  # boxのままだと行間が広い
             row = col.row()
             sub = row.row()
-            sub.context_pointer_set("addon_prefs", self)
+            sub.context_pointer_set("prefs", addons)
             sub.alignment = 'LEFT'
             op = sub.operator("wm.context_toggle", text="", icon=icon,
                               emboss=False)
-            op.data_path = "addon_prefs.show_expanded_" + mod_name
+            op.data_path = "prefs.show_expanded_" + mod_name
             sub = row.row()
             sub.label("{}: {}".format(info["category"], info["name"]))
             sub = row.row()
@@ -940,7 +959,7 @@ class AddonGroupPreferences:
                 sub.label("", icon='SCRIPTPLUGINS')
             if info.get("warning"):
                 sub.label("", icon='ERROR')
-            sub.prop(self.misc_, "use_" + mod_name_attr, text="")
+            sub.prop(addons, "use_" + mod_name, text="")
 
             # Info
             if expand:
@@ -987,58 +1006,197 @@ class AddonGroupPreferences:
                         split.separator()
 
                 # Preferences
-                if getattr(self, "use_" + mod_name):
+                if getattr(addons, "use_" + mod_name):
                     try:
-                        prefs = getattr(self, mod_name, None)
+                        sub_addon_prefs = getattr(addons, "prefs_" + mod_name,
+                                                  None)
                     except:
                         traceback.print_exc()
                         continue
-                    if prefs and hasattr(prefs, "draw"):
-                        if align_box_draw:
-                            col = column.box().column()
-                        else:
-                            col = box.column()
 
-                        col_head = col.column()
-                        col_body = col.column()
-                        prefs.layout = col_body
-                        has_error = False
+                    if align_box_draw:
+                        col = column.box().column()
+                    else:
+                        col = box.column()
+
+                    col_head = col.column()
+                    col_body = col.column()
+                    has_error = False
+                    sub_addon_prefs.layout = col_body
+                    if sub_addon_prefs and hasattr(sub_addon_prefs, "draw"):
                         try:
-                            prefs.draw(context)
+                            sub_addon_prefs.draw(context)
                         except:
                             traceback.print_exc()
                             has_error = True
-                        has_introspect_error = False
-                        try:
-                            # SyntaxError may occur due to " or "
-                            introspect = eval(col_body.introspect())
-                        except:
-                            # traceback.print_exc()
-                            has_introspect_error = True
-                        if has_introspect_error or introspect[0] or has_error:
-                            if not align_box_draw:
-                                sub = col_head.row()
-                                sub.active = False  # To make the color thinner
-                                sub.label("―" * 40)
-                            col_head.label("Preferences:")
-                        if has_error:
-                            col_body.label(text="Error (see console)",
-                                           icon='ERROR')
-                        del prefs.layout
+                    if (not sub_addon_prefs or
+                            not hasattr(sub_addon_prefs,
+                                        "_AddonGroupPreferences_")):
+                        # TODO: use hasattr or not
+                        if "draw_submodule" in self.callbacks:
+                            for func in self.callbacks["draw_submodule"]:
+                                func(self.__class__, context,
+                                     self.fake_submodules[mod_name], col_body)
+                    has_introspect_error = False
+                    try:
+                        # SyntaxError may occur due to " or "
+                        introspect = eval(col_body.introspect())
+                    except:
+                        # traceback.print_exc()
+                        has_introspect_error = True
+                    if has_introspect_error or introspect[0] or has_error:
+                        if not align_box_draw:
+                            sub = col_head.row()
+                            sub.active = False  # To make the color thinner
+                            sub.label("―" * 40)
+                        col_head.label("Preferences:")
+                    if has_error:
+                        col_body.label(text="Error (see console)",
+                                       icon='ERROR')
+                    if sub_addon_prefs:
+                        del sub_addon_prefs.layout
 
-        if "." not in bl_idname and self._fake_sub_modules:
+        if "." not in bl_idname and self.fake_submodules:
             row = layout.row()
             sub = row.row()
             sub.alignment = 'LEFT'
-            sub.prop(self, "show_hidden_")
+            sub.prop(addons, "ui_show_private")
             sub = row.row()
             sub.alignment = 'RIGHT'
-            sub.prop(self, "align_box_draw_")
-            sub.prop(self, "use_indent_draw_")
+            sub.prop(addons, "ui_align_box_draw")
+            sub.prop(addons, "ui_use_indent_draw")
 
         c = super()
         if hasattr(c, "draw"):
-            c.draw(context, **kwargs)
+            c.draw(context)
+
+    @classmethod
+    def register(cls):
+        cls.__init_fake_submodules()
+        cls.__init_attributes()
+        cls.__init_register_info()
+        cls.__register_submodules()
+
+        if "register" in cls.callbacks:
+            for func in cls.callbacks["register"]:
+                func(cls)
+
+        c = super()
+        if hasattr(c, "register"):
+            c.register(cls)
+
+    @classmethod
+    def unregister(cls):
+        U = bpy.context.user_preferences
+        attrs = cls.bl_idname.split(".")
+        if attrs[0] not in U.addons:  # wm.read_factory_settings()
+            return None
+
+        if "unregister" in cls.callbacks:
+            for func in cls.callbacks["unregister"]:
+                func(cls)
+
+        cls.__unregister_submodules()
+        cls.__delete_register_info()
+        cls.__delete_attributes()
+        cls.__delete_fake_submodules()
+
+        c = super()
+        if hasattr(c, "unregister"):
+            c.unregister()
+
+    @classmethod
+    def register_addon(cls, func, **kwargs):
+        """decorator fro addon register function.
+
+        e.g.
+        @AddonGroupPreferences.register_addon
+        def register():
+            ...
+        """
+        import functools
+
+        @functools.wraps(func)
+        def register():
+            t = NestedAddons.derive(cls)
+            bpy.utils.register_class(t)
+            cls.addons = bpy.props.PointerProperty(type=t)
+
+            if cls.callbacks is None:
+                cls.callbacks = cls._empty_callbacks()
+
+            # get all registered classes
+            root_module = cls.bl_idname.split(".")[0]
+            prev_classes = set(bpy.utils._bpy_module_classes(
+                root_module, is_registered=True))
+
+            # get all keymap items
+            prev_km_items = [(item[0].name, item[1].id)
+                             for item in cls.__get_keymap_items()]
+
+            func()
+
+            # get new classes
+            post_classes = set(bpy.utils._bpy_module_classes(
+                root_module, is_registered=True))
+            classes = [c for c in post_classes if c not in prev_classes]
+            for mod_name, mod_classes in cls._classes.items():
+                if mod_name != "":
+                    for c in mod_classes:
+                        if c in classes:
+                            classes.remove(c)
+                        else:
+                            raise ValueError()  # Unexpected error. fix code
+            cls._classes[""] = classes
+
+            # get new keymap items
+            post_km_items = [(item[0].name, item[1].id)
+                             for item in cls.__get_keymap_items()]
+            km_items = [item for item in post_km_items
+                        if item not in set(prev_km_items)]
+            for mod_name, mod_km_items in cls._keymap_items.items():
+                if mod_name != "":
+                    for item in \
+                            mod_km_items:
+                        if item in km_items:
+                            km_items.remove(item)
+                        # else:
+                        #     raise ValueError()  # Unexpected error. fix code
+            cls._keymap_items[""] = km_items
+
+        register._register = func
+
+        c = super()
+        if hasattr(c, "register_addon"):
+            register = c.register_addon(register)
+
+        return register
+
+    @classmethod
+    def unregister_addon(cls, func, **kwargs):
+        """decorator for addon unregister function.
+
+        e.g.
+        @AddonGroupPreferences.unregister_addon
+        def unregister():
+            ...
+        """
+        import functools
+
+        @functools.wraps(func)
+        def unregister():
+            func()
+
+            t = cls.addons[1]["type"]
+            bpy.utils.unregister_class(t)
+
+        unregister._unregister = func
+
+        c = super()
+        if hasattr(c, "unregister_addon"):
+            unregister = c.unregister_addon(unregister)
+
+        return unregister
 
     @classmethod
     def register_module(cls, module=None, verbose=False):
@@ -1057,7 +1215,7 @@ class AddonGroupPreferences:
             print("bpy.utils.register_module(%r): ..." % module)
         root_module = module.split(".")[0]
         if cls.bl_idname:
-            fake_modules = cls.__generate_fake_sub_modules()
+            fake_modules = cls.__generate_fake_submodules()
         else:
             fake_modules = None
         cls_ = None
@@ -1105,7 +1263,7 @@ class AddonGroupPreferences:
             print("bpy.utils.unregister_module(%r): ..." % module)
         root_module = module.split(".")[0]
         if cls.bl_idname:
-            fake_modules = cls.__generate_fake_sub_modules()
+            fake_modules = cls.__generate_fake_submodules()
         else:
             fake_modules = None
         for cls_ in bpy.utils._bpy_module_classes(root_module,

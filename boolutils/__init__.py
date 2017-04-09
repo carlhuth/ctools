@@ -38,19 +38,17 @@ from mathutils import Matrix
 try:
     importlib.reload(addongroup)
     importlib.reload(customproperty)
-    importlib.reload(registerinfo)
     importlib.reload(vaoperator)
-    importlib.reload(wrapoperator)
     importlib.reload(vaprops)
+    importlib.reload(wrapoperator)
 except NameError:
     from ..utils import addongroup
     from ..utils import customproperty
-    from ..utils import registerinfo
     from ..utils import vaoperator
-    from ..utils import wrapoperator
-    from ..utils import vaview3d as vav
     from ..utils import vamath as vam
     from ..utils import vaprops
+    from ..utils import vaview3d as vav
+    from ..utils import wrapoperator
 
 
 translation_dict = {
@@ -61,8 +59,7 @@ translation_dict = {
 
 
 class Preferences(
-        addongroup.AddonGroupPreferences,
-        registerinfo.AddonRegisterInfo,
+        addongroup.AddonGroup,
         bpy.types.PropertyGroup if '.' in __name__ else
         bpy.types.AddonPreferences):
     bl_idname = __name__

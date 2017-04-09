@@ -46,13 +46,11 @@ import bpy
 try:
     importlib.reload(addongroup)
     importlib.reload(customproperty)
-    importlib.reload(registerinfo)
     importlib.reload(structures)
     importlib.reload(vawm)
 except NameError:
     from ..utils import addongroup
     from ..utils import customproperty
-    from ..utils import registerinfo
     from ..utils import structures
     from ..utils import vawm
 
@@ -137,10 +135,10 @@ def gen_addon_prefs_name_space():
     space_names = {e.identifier: e.name for e in prop.enum_items}
     prop = bpy.types.Region.bl_rna.properties['type']
     region_names = {e.identifier: e.name for e in prop.enum_items}
-    for space_type, region_types in registerinfo.area_region_types.items():
+    for space_type, region_types in addongroup.area_region_types.items():
         if space_type == 'PROPERTIES':
             for bl_context, (_, space_context_name) in \
-                    registerinfo.bl_context_properties.items():
+                    addongroup.bl_context_properties.items():
                 space = Temp(type=space_type, context=bl_context)
                 region = Temp(type='WINDOW')
                 attr = addon_prefs_key(space, region)
@@ -181,8 +179,7 @@ _AddonPreferencesPanelRestriction = type(
 
 class AddonPreferencesResrictPanels(
         _AddonPreferencesPanelRestriction,
-        addongroup.AddonGroupPreferences,
-        registerinfo.AddonRegisterInfo,
+        addongroup.AddonGroup,
         bpy.types.PropertyGroup if '.' in __name__ else
         bpy.types.AddonPreferences):
     bl_idname = __name__
@@ -758,8 +755,8 @@ class _SCREEN_PT_panel_restriction:
             panel_context_label = panel_context
             if space.type == 'VIEW_3D' and region.type == 'TOOLS':
                 if panel_context:
-                    if panel_context in registerinfo.bl_context_view3d:
-                        mode = registerinfo.bl_context_view3d[
+                    if panel_context in addongroup.bl_context_view3d:
+                        mode = addongroup.bl_context_view3d[
                             panel_context][0]
                         if context.mode != mode:
                             visible = False
@@ -858,11 +855,11 @@ class _SCREEN_PT_panel_restriction:
 def generate_panel_classes():
     panel_classes.clear()
 
-    for space_type, region_types in registerinfo.area_region_types.items():
+    for space_type, region_types in addongroup.area_region_types.items():
         spacetype = space_type.replace('_', '')
         for region_type in region_types:
             if space_type == 'PROPERTIES' and region_type == 'WINDOW':
-                for bl_context in registerinfo.bl_context_properties:
+                for bl_context in addongroup.bl_context_properties:
                     name = '{}_PT_panel_restriction_{}_{}'.format(
                         spacetype, region_type.lower(), bl_context)
                     attrs = {
@@ -1060,7 +1057,7 @@ class SCREEN_OT_panal_restriction_move(bpy.types.Operator):
     def move_head(self, area, region, space_context='', close=False):
         if space_context:
             d = {v[0]: k for k, v in
-                 registerinfo.bl_context_properties.items()}
+                 addongroup.bl_context_properties.items()}
             space_context = d[space_context]
 
         region_types = get_region_types()

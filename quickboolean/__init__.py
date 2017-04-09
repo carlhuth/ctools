@@ -44,13 +44,11 @@ from mathutils import *
 
 try:
     importlib.reload(addongroup)
-    importlib.reload(registerinfo)
     importlib.reload(unitsystem)
     importlib.reload(vagl)
     importlib.reload(vaview3d)
 except NameError:
     from ..utils import addongroup
-    from ..utils import registerinfo
     from ..utils import unitsystem
     from ..utils import vagl
     from ..utils import vaview3d
@@ -91,8 +89,7 @@ view_operators = [
 
 
 class QuickBooleanPreferences(
-        addongroup.AddonGroupPreferences,
-        registerinfo.AddonRegisterInfo,
+        addongroup.AddonGroup,
         bpy.types.PropertyGroup if '.' in __name__ else
         bpy.types.AddonPreferences):
 

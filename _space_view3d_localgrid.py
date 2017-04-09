@@ -34,7 +34,6 @@ from mathutils import Euler, Vector, Quaternion
 import bmesh
 
 from .utils import addongroup
-from .utils import registerinfo
 from .utils import vaobject as vaob
 from .utils import vaview3d as vav
 from .utils import vaoperator as vaop
@@ -1223,13 +1222,13 @@ addon_keymaps = []
 
 
 def register():
-    addongroup.AddonGroupPreferences.register_module(__name__)
+    addongroup.AddonGroup.register_module(__name__)
 
     bpy.types.Scene.local_grid = bpy.props.PointerProperty(
         name='Local Grid',
         type=LocalGridData)
 
-    km = registerinfo.AddonRegisterInfo.get_keymap('3D View')
+    km = addongroup.AddonGroup.get_keymap('3D View')
     if km:
         kmi = km.keymap_items.new(
             'wm.call_menu', 'NUMPAD_SLASH', 'PRESS', ctrl=True)
@@ -1270,7 +1269,7 @@ def register():
 
 
 def unregister():
-    addongroup.AddonGroupPreferences.unregister_module(__name__)
+    addongroup.AddonGroup.unregister_module(__name__)
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()

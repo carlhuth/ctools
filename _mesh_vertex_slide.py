@@ -36,7 +36,6 @@ import bmesh
 
 
 from .utils import addongroup
-from .utils import registerinfo
 
 from .utils import vagl as vagl
 from .utils import vaview3d as vav
@@ -293,10 +292,10 @@ addon_keymaps = []
 
 
 def register():
-    addongroup.AddonGroupPreferences.register_module(__name__)
+    addongroup.AddonGroup.register_module(__name__)
     bpy.types.VIEW3D_MT_edit_mesh_vertices.append(menu_func)
 
-    km = registerinfo.AddonRegisterInfo.get_keymap('Mesh')
+    km = addongroup.AddonGroup.get_keymap('Mesh')
     if km:
         kmi = km.keymap_items.new('mesh.vertex_slide', 'V', 'PRESS',
                                   shift=True, head=True)
@@ -304,7 +303,7 @@ def register():
 
 
 def unregister():
-    addongroup.AddonGroupPreferences.unregister_module(__name__)
+    addongroup.AddonGroup.unregister_module(__name__)
     bpy.types.VIEW3D_MT_edit_mesh_vertices.remove(menu_func)
 
     for km, kmi in addon_keymaps:

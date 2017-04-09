@@ -53,21 +53,43 @@ import types
 import bpy
 
 try:
-    importlib.reload(listvalidkeys)
     importlib.reload(addongroup)
     importlib.reload(customproperty)
-    importlib.reload(registerinfo)
+    importlib.reload(listvalidkeys)
     importlib.reload(st)
 except NameError:
     from .. import listvalidkeys
     from ..utils import addongroup
     from ..utils import customproperty
-    from ..utils import registerinfo
     from ..utils import structures as st
 
 
 numpad_preset = {
     'TYPE1': [
+        ('NUMPAD_0', 'V'),
+        ('NUMPAD_1', 'Z'),
+        ('NUMPAD_2', 'X'),
+        ('NUMPAD_3', 'C'),
+        ('NUMPAD_4', 'A'),
+        ('NUMPAD_5', 'S'),
+        ('NUMPAD_6', 'D'),
+        ('NUMPAD_7', 'Q'),
+        ('NUMPAD_8', 'W'),
+        ('NUMPAD_9', 'E'),
+        ('NUMPAD_PERIOD', 'B'),
+        ('NUMPAD_PLUS', 'F'),
+        ('NUMPAD_MINUS', 'R'),
+        ('NUMPAD_ASTERIX', 'THREE'),
+        ('NUMPAD_SLASH', 'TWO'),
+        ('NUMPAD_ENTER', 'N '),
+        ('SPACE', 'TAB'),
+        ('HOME', 'FIVE'),
+        ('END', 'T'),
+
+        ('HOLD', 'G'),
+    ],
+
+    'TYPE2': [
         ('NUMPAD_0', 'Z'),
         ('NUMPAD_1', 'X'),
         ('NUMPAD_2', 'C'),
@@ -89,30 +111,6 @@ numpad_preset = {
         ('END', 'TWO'),
 
         ('HOLD', 'Q'),
-    ],
-
-    'TYPE2': [
-        ('NUMPAD_0', 'V'),
-        ('NUMPAD_1', 'Z'),
-        ('NUMPAD_2', 'X'),
-        ('NUMPAD_3', 'C'),
-        ('NUMPAD_4', 'A'),
-        ('NUMPAD_5', 'S'),
-        ('NUMPAD_6', 'D'),
-        ('NUMPAD_7', 'Q'),
-        ('NUMPAD_8', 'W'),
-        ('NUMPAD_9', 'E'),
-        ('NUMPAD_PERIOD', 'F'),
-        ('NUMPAD_PLUS', 'R'),
-        ('NUMPAD_MINUS', 'FOUR'),
-        ('NUMPAD_ASTERIX', 'THREE'),
-        ('NUMPAD_SLASH', 'TWO'),
-        ('NUMPAD_ENTER', 'B'),
-        ('SPACE', 'TAB'),
-        ('HOME', 'FIVE'),
-        ('END', 'T'),
-
-        ('HOLD', 'G'),
     ],
 
     'TYPE3': [
@@ -236,8 +234,7 @@ class EmulationKeyMapItem(bpy.types.PropertyGroup):
 
 
 class EmulateKeyMapsPreferences(
-        addongroup.AddonGroupPreferences,
-        registerinfo.AddonRegisterInfo,
+        addongroup.AddonGroup,
         bpy.types.PropertyGroup if '.' in __name__ else
         bpy.types.AddonPreferences):
     bl_idname = __name__

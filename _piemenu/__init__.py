@@ -51,8 +51,6 @@ from mathutils import Vector
 import blf
 import bgl
 
-from ..utils import addongroup
-from ..utils import registerinfo
 from ..utils import vagl as vagl
 from ..utils.structures import *
 from ..utils import vawm

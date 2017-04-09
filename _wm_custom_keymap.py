@@ -34,12 +34,10 @@ import traceback
 import bpy
 
 from .utils import addongroup
-from .utils import registerinfo
 
 
 class CustomKeyMapPreferences(
-        addongroup.AddonGroupPreferences,
-        registerinfo.AddonRegisterInfo,
+        addongroup.AddonGroup,
         bpy.types.PropertyGroup if '.' in __name__ else
         bpy.types.AddonPreferences):
     bl_idname = __name__
@@ -201,7 +199,7 @@ classes = [
 
 
 def new_keymap_item(kmname, *args, **kwargs):
-    km = registerinfo.AddonRegisterInfo.get_keymap(kmname)
+    km = CustomKeyMapPreferences.get_keymap(kmname)
     return km.keymap_items.new(*args, **kwargs)
 
 

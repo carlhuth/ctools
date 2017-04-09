@@ -40,10 +40,8 @@ import bpy
 
 try:
     importlib.reload(addongroup)
-    importlib.reload(registerinfo)
 except NameError:
     from ..utils import addongroup
-    from ..utils import registerinfo
 
 
 DEFAULT_PATTERN = 'CHECKER'  # 'CHECKER', 'CHECKER_CIRCLE', 'FULL'
@@ -216,8 +214,7 @@ def draw_circle(image, color, origin, offset, diameter, color_image=None,
 
 
 class UVGridPreferences(
-        addongroup.AddonGroupPreferences,
-        registerinfo.AddonRegisterInfo,
+        addongroup.AddonGroup,
         bpy.types.PropertyGroup if '.' in __name__ else
         bpy.types.AddonPreferences):
     bl_idname = __name__

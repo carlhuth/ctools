@@ -38,11 +38,9 @@ import bpy
 
 try:
     importlib.reload(addongroup)
-    importlib.reload(registerinfo)
     importlib.reload(structures)
 except NameError:
     from ..utils import addongroup
-    from ..utils import registerinfo
     from ..utils import structures
 
 
@@ -50,8 +48,7 @@ TEXT_NAME = 'valid_shortcuts.txt'
 
 
 class ListValidKeysPreferences(
-    addongroup.AddonGroupPreferences,
-    registerinfo.AddonRegisterInfo,
+    addongroup.AddonGroup,
     bpy.types.PropertyGroup if '.' in __name__ else
     bpy.types.AddonPreferences):
     bl_idname = __name__

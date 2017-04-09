@@ -43,11 +43,9 @@ from mathutils import Vector
 
 try:
     importlib.reload(addongroup)
-    importlib.reload(registerinfo)
     importlib.reload(vawm)
 except NameError:
     from ..utils import addongroup
-    from ..utils import registerinfo
     from ..utils import vawm
 
 
@@ -736,8 +734,7 @@ class WM_OT_mouse_gesture_from_text(bpy.types.Operator):
 
 
 class MouseGesturePreferences(
-        addongroup.AddonGroupPreferences,
-        registerinfo.AddonRegisterInfo,
+        addongroup.AddonGroup,
         bpy.types.PropertyGroup if '.' in __name__ else
         bpy.types.AddonPreferences):
     bl_idname = __name__

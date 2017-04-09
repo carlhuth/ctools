@@ -428,12 +428,12 @@ class AreaExist:
 
 def widget_unit():
     """
-    blender/makesdna/DNA_userdef_types.h:518:
+    blender/makesdna/DNA_userdef_types.h:527:
         short widget_unit;  /* private, defaults to 20 for 72 DPI setting */
 
     # #define UI_UNIT_X               ((void)0, U.widget_unit)
     # #define UI_UNIT_Y               ((void)0, U.widget_unit)
-    # blender/blenkernel/intern/blender.c:507:
+    # blender/blenkernel/intern/blender.c:237:
     #     U.widget_unit = (U.pixelsize * U.dpi * 20 + 36) / 72;
 
     dpi = context.user_preferences.system.dpi

@@ -42,13 +42,11 @@ import bmesh
 try:
     importlib.reload(addongroup)
     importlib.reload(customproperty)
-    importlib.reload(registerinfo)
     importlib.reload(manipulatormatrix)
     importlib.reload(st)
 except NameError:
     from ..utils import addongroup
     from ..utils import customproperty
-    from ..utils import registerinfo
     from ..utils import manipulatormatrix
     from ..utils import structures as st
 
@@ -69,8 +67,7 @@ translation_dict = {
 
 
 class TransformOrientationEditorPreferences(
-        addongroup.AddonGroupPreferences,
-        registerinfo.AddonRegisterInfo,
+        addongroup.AddonGroup,
         bpy.types.PropertyGroup if '.' in __name__ else
         bpy.types.AddonPreferences):
     bl_idname = __name__
