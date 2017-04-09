@@ -30,7 +30,7 @@ Helper class for grouping add-ons
 bl_info = {
     "name": "My Add-on",
     "author": "Anonymous",
-    "version": (1, 1),
+    "version": (1, 0),
     "blender": (2, 78, 0),
     "location": "View3D > Tool Shelf",
     "description": "Addon group test",
@@ -231,7 +231,7 @@ addon_prefs = FooAddonPreferences.get_instance()
 # attribute name:  use_ + module name
 is_enabled = addon_prefs.addons.use_bar_addon
 if is_enabled:
-    # Same as ChildAddonPreferences.get_instance()
+    # Same as BarAddonPreferences.get_instance()
     # attribute name:  prefs_ + module name
     bar_addon_prefs = addon_prefs.addons.prefs_bar_addon
 

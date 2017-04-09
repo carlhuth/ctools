@@ -61,8 +61,19 @@ class FooAddonPreferences(
         super().unregister()
 
 
+class FooPanel(bpy.types.Panel):
+    bl_idname = "FooPanel"
+    bl_label = "Foo Panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+
+    def draw(self, context):
+        pass
+
+
 classes = [
     FooAddonPreferences,
+    FooPanel,
 ]
 
 

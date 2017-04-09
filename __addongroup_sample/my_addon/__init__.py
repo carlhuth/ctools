@@ -20,7 +20,7 @@
 bl_info = {
     "name": "My Add-on",
     "author": "Anonymous",
-    "version": (1, 1),
+    "version": (1, 0),
     "blender": (2, 78, 0),
     "location": "View3D > Tool Shelf",
     "description": "Addon group test",
