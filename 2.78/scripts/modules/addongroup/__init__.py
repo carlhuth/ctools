@@ -723,11 +723,15 @@ class AddonGroup(_AddonInfo):
         """
         if root and parent:
             raise ValueError()
+        if not cls.is_registered:
+            raise ValueError("{} is not registered".format(cls))
         U = bpy.context.user_preferences
         attrs = cls.bl_idname.split(".")
         if attrs[0] not in U.addons:  # wm.read_factory_settings()
             return None
         addon_prefs = U.addons[attrs[0]].preferences
+        if not addon_prefs:
+            return None
         if root:
             return addon_prefs
         for attr in (attrs[1:-1] if parent else attrs[1:]):
@@ -806,12 +810,8 @@ class AddonGroup(_AddonInfo):
             import importlib
             AddonGroup.reload_submodules()
         """
-        if cls.is_registered:
-            cls.__unregister_submodules()
-            cls.__delete_addons_attributes()
-
-        cls._fake_submodules_ = cls.__generate_fake_submodules()
-        for fake_mod in cls._fake_submodules_.values():
+        _fake_submodules_ = cls.__generate_fake_submodules()
+        for fake_mod in _fake_submodules_.values():
             try:
                 if fake_mod.__name__ in sys.modules:
                     mod = importlib.import_module(fake_mod.__name__)
@@ -819,10 +819,6 @@ class AddonGroup(_AddonInfo):
                     importlib.reload(mod)
             except:
                 traceback.print_exc()
-
-        if cls.is_registered:
-            cls.__init_addons_attributes()
-            cls.__register_submodules()
 
     @classmethod
     def __init_addons_attributes(cls):
