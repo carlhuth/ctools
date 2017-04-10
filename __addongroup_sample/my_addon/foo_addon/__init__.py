@@ -33,10 +33,7 @@ else:
 import bpy
 
 
-class FooAddonPreferences(
-        addongroup.AddonGroup,
-        bpy.types.AddonPreferences if "." not in __name__ else
-        bpy.types.PropertyGroup):
+class FooAddonPreferences(addongroup.AddonGroup, bpy.types.PropertyGroup):
     bl_idname = __name__
 
     submodules = [

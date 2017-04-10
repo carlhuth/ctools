@@ -164,7 +164,7 @@ class NestedAddons:
     """For dynamically adding attributes
 
     Dynamically added attributes:
-        module name  (replaced . to _ )
+        "prefs_" + module name
         "use_" + module name
         "show_expanded_" + module name
         "_show_expanded_" module name
@@ -844,12 +844,15 @@ class AddonGroup(_AddonInfo):
                     mod_name = fake_mod.__name__.split(".")[-1]
                     try:
                         mod = importlib.import_module(fake_mod.__name__)
+                    except:
+                        traceback.print_exc()
+                        cls.__unregister_submodule(None, mod_name, True)
+                    else:
                         if getattr(addon_prefs.addons, "use_" + mod_name):
                             cls.__register_submodule(mod)
                         else:
-                            cls.__unregister_submodule(mod, True)
-                    except:
-                        traceback.print_exc()
+                            cls.__unregister_submodule(mod, mod_name, True)
+
                 return update
 
             update = gen_func(fake_mod)
@@ -912,8 +915,17 @@ class AddonGroup(_AddonInfo):
             prev_km_items = cls._get_all_addon_keymap_items()
 
             # register
-            mod.register()
-            mod.__addon_enabled__ = True
+            try:
+                mod.register()
+                mod.__addon_enabled__ = True
+            except:
+                traceback.print_exc()
+                addon_prefs = cls.get_instance()
+                key = "use_" + mod_name
+                if key in addon_prefs.addons:
+                    del addon_prefs.addons[key]
+                cls.__unregister_submodule(mod, mod_name, False)
+                return
 
             # get new classes
             post_classes = set(bpy.utils._bpy_module_classes(
@@ -937,31 +949,67 @@ class AddonGroup(_AddonInfo):
             if getattr(addon_prefs.addons, "use_" + mod_name):
                 try:
                     mod = importlib.import_module(fake_mod.__name__)
-                    cls.__register_submodule(mod)
                 except:
-                    setattr(addon_prefs.addons, "use_" + mod_name, False)
                     traceback.print_exc()
+                    cls.__unregister_submodule(None, mod_name, False)
+                    continue
+                cls.__register_submodule(mod)
 
     @classmethod
-    def __unregister_submodule(cls, mod, clear_preferences=False):
+    def __unregister_submodule(cls, mod, mod_name, clear_preferences=False):
         addon_prefs = cls.get_instance()
-        mod_name = mod.__name__.split(".")[-1]
 
-        if not hasattr(mod, "__addon_enabled__"):
+        if mod and not hasattr(mod, "__addon_enabled__"):
             mod.__addon_enabled__ = False
 
-        cls.__info_unregister_submodule_pre(mod, clear_preferences)
+        # restore panel settings until unregister
+        panels = addon_prefs.info_panels
+        if mod_name in panels:
+            item = panels[mod_name]
+            item.restore_all(only_classes=True)
 
-        if mod.__addon_enabled__:
-            mod.unregister()
+        if mod:
+            try:
+                if mod.__addon_enabled__:
+                    mod.unregister()
+            except:
+                traceback.print_exc()
             mod.__addon_enabled__ = False
 
-        cls.__info_unregister_submodule_post(mod, clear_preferences)
+        # remove keymap items that still exist
+        keyconfigs = addon_prefs.info_keyconfigs
+        if mod_name in keyconfigs:
+            keyconfig = keyconfigs[mod_name]
+            for item in list(keyconfig[keyconfig.ITEMS]):
+                km_name = item["keymap"]
+                kmi_id = item["id"]
+                km = keyconfig.get_keymap(km_name)
+                if km:
+                    for kmi in km.keymap_items:
+                        if kmi.id == kmi_id:
+                            keyconfig.remove_item(kmi)
+            if clear_preferences:
+                keyconfigs.remove(keyconfigs.find(mod_name))
 
+        # remove class item
+        classes = addon_prefs.info_classes
+        if mod_name in classes:
+            if clear_preferences:
+                classes.remove(classes.find(mod_name))
+
+        # remove panel item
+        panels = addon_prefs.info_panels
+        if mod_name in panels:
+            if clear_preferences:
+                panels.remove(panels.find(mod_name))
+
+        # remove prefs_***, use_***, show_expanded_***
         if clear_preferences:
             for prefix in ("prefs_", "use_", "show_expanded_"):
                 if prefix + mod_name in addon_prefs.addons:
                     del addon_prefs.addons[prefix + mod_name]
+
+        # remove module classes and keymap items
         if mod_name in cls._classes_:
             del cls._classes_[mod_name]
         if mod_name in cls._keymap_items_:
@@ -975,9 +1023,10 @@ class AddonGroup(_AddonInfo):
             if getattr(addon_prefs.addons, "use_" + mod_name):
                 try:
                     mod = importlib.import_module(fake_mod.__name__)
-                    cls.__unregister_submodule(mod, clear_preferences)
                 except:
                     traceback.print_exc()
+                    mod = None
+                cls.__unregister_submodule(mod, mod_name, clear_preferences)
 
     @classmethod
     def __info_register_submodule(cls, mod):
@@ -1009,47 +1058,6 @@ class AddonGroup(_AddonInfo):
             item.name = mod_name
         item.init()
         item.load()
-
-    @classmethod
-    def __info_unregister_submodule_pre(cls, mod, clear_preferences):
-        # restore panel settings until unregister
-        mod_name = mod.__name__.split(".")[-1]
-        addon_prefs = cls.get_instance()
-        panels = addon_prefs.info_panels
-        if mod_name in panels:
-            item = panels[mod_name]
-            item.restore_all(only_classes=True)
-
-    @classmethod
-    def __info_unregister_submodule_post(cls, mod, clear_preferences):
-        # remove keymap items that still exist
-        mod_name = mod.__name__.split(".")[-1]
-        addon_prefs = cls.get_instance()
-        keyconfigs = addon_prefs.info_keyconfigs
-        if mod_name in keyconfigs:
-            keyconfig = keyconfigs[mod_name]
-            for item in keyconfig[keyconfig.ITEMS]:
-                km_name = item["keymap"]
-                kmi_id = item["id"]
-                km = keyconfig.get_keymap(km_name)
-                if km:
-                    for kmi in km.keymap_items:
-                        if kmi.id == kmi_id:
-                            keyconfig.remove_item(kmi)
-            if clear_preferences:
-                keyconfigs.remove(keyconfigs.find(mod_name))
-
-        # remove class item
-        classes = addon_prefs.info_classes
-        if mod_name in classes:
-            if clear_preferences:
-                classes.remove(classes.find(mod_name))
-
-        # remove panel item
-        panels = addon_prefs.info_panels
-        if mod_name in panels:
-            if clear_preferences:
-                panels.remove(panels.find(mod_name))
 
     def _draw_ex(self, context, draw_bases=True):
         """

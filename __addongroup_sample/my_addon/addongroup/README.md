@@ -10,19 +10,20 @@ Helper class for grouping add-ons
 
 ```
 2.78/scripts/addons/
-    my_addon/ --- __init__.py
-               |- addongroup/ --- __init__.py
+    my_addon/ --- addongroup/ --- __init__.py
                |               |- _class.py
                |               |- _keymap.py
                |               |- _misc.py
                |               `- _panel.py
                |
-               |- foo_addon/ --- __init__.py
-               |              `- bar_addon/ --- __init__.py
+               |- foo_addon/ --- bar_addon/ --- __init__.py
+               |              `- __init__.py
+               |
+               |- space_view3d_other_addon.py
                |
                |- _hidden_addon.py
                |
-               `- space_view3d_other_addon.py
+               `- __init__.py
 ```
 
 ## \_\_init\_\_.py
@@ -132,10 +133,7 @@ To:
 ```
 # my_addon/foo_addon/__init__.py
 
-class FooAddonPreferences(
-        addongroup.AddonGroup,
-        bpy.types.AddonPreferences if "." not in __name__ else
-        bpy.types.PropertyGroup):
+class FooAddonPreferences(addongroup.AddonGroup, bpy.types.PropertyGroup):
     bl_idname = __name__
 
     # Specify add-ons

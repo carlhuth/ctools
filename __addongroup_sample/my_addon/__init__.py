@@ -41,13 +41,14 @@ import bpy
 
 class MyAddonPreferences(
         addongroup.AddonGroup,
+        bpy.types.PropertyGroup if '.' in __name__ else
         bpy.types.AddonPreferences):
     bl_idname = __name__
 
     submodules = [
         "foo_addon",
         "space_view3d_other_addon",
-        "_hidden_addon"
+        "_hidden_addon",
     ]
 
     def draw(self, context):

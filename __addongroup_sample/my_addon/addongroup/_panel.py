@@ -427,6 +427,8 @@ class AddonPanels:
     )
 
     def get_class(self, bl_idname):
+        if self.name not in self.owner_class._classes_:
+            return None
         for c in self.owner_class._classes_[self.name]:
             if getattr(c, "bl_idname", c.__name__) == bl_idname:
                 return c
