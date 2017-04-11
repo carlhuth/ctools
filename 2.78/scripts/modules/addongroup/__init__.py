@@ -44,7 +44,9 @@ from ._keymap import AddonKeyConfig
 from ._class import AddonClasses
 from ._panel import AddonPanels
 
+
 import bpy
+import addon_utils
 
 
 __all__ = [
@@ -61,9 +63,59 @@ NOTE: invalid: get_instance().bl_idname
 """
 
 
+error_message = ""
+
+
+class WM_OT_nested_addon_enable(_misc.Registerable, bpy.types.Operator):
+    # for display error messages with popup
+    bl_idname = "wm.nested_addon_enable"
+    bl_label = "Enable Add-on"
+    bl_description = "Enable an add-on"
+
+    module = bpy.props.StringProperty(
+        name="Module",
+        description="Module name of the add-on to enable",
+    )
+
+    def execute(self, context):
+        c = context.addon_preferences.addons.__class__
+        c.error = ""
+        setattr(context.addon_preferences.addons, "use_" + self.module, True)
+        if c.error:
+            self.report({'ERROR'}, c.error)
+            c.error = ""
+            return {'CANCELLED'}
+        else:
+            return {"FINISHED"}
+
+
+class WM_OT_nested_addon_disable(_misc.Registerable, bpy.types.Operator):
+    # for display error messages with popup
+    bl_idname = "wm.nested_addon_disable"
+    bl_label = "Disable Add-on"
+    bl_description = "Disable an add-on"
+
+    module = bpy.props.StringProperty(
+        name="Module",
+        description="Module name of the add-on to disable",
+    )
+
+    def execute(self, context):
+        c = context.addon_preferences.addons.__class__
+        c.error = ""
+        setattr(context.addon_preferences.addons, "use_" + self.module, False)
+        if c.error:
+            self.report({'ERROR'}, c.error)
+            c.error = ""
+            return {'CANCELLED'}
+        else:
+            return {"FINISHED"}
+
+
 def fake_module(mod_name, mod_path, speedy=True, force_support=None,
                 quiet=True):
-    """source: scripts/modules/addon_utils.py: module_refresh()
+    """fake module importing
+    source: scripts/modules/addon_utils.py: modules_refresh()
     fix it not to use error_encoding. add "quiet" argument
     """
     if 0:
@@ -74,7 +126,7 @@ def fake_module(mod_name, mod_path, speedy=True, force_support=None,
     import ast
     ModuleType = type(ast)
     try:
-        file_mod = open(mod_path, "r", encoding="UTF-8")
+        file_mod = open(mod_path, "r", encoding='UTF-8')
     except OSError as e:
         print("Error opening file %r: %s" % (mod_path, e))
         return None
@@ -91,8 +143,7 @@ def fake_module(mod_name, mod_path, speedy=True, force_support=None,
                     if 0:
                         if not error_encoding:
                             error_encoding = True
-                            print("Error reading file as UTF-8:", mod_path,
-                                  e)
+                            print("Error reading file as UTF-8:", mod_path, e)
                     else:
                         print("Error reading file as UTF-8:", mod_path, e)
                     return None
@@ -167,10 +218,11 @@ class NestedAddons:
         "prefs_" + module name
         "use_" + module name
         "show_expanded_" + module name
-        "_show_expanded_" module name
     """
 
     owner_class = None
+
+    error = ""
 
     ui_align_box_draw = bpy.props.BoolProperty(
         name="Box Draw",
@@ -842,12 +894,12 @@ class AddonGroup(_AddonInfo):
                         mod = importlib.import_module(fake_mod.__name__)
                     except:
                         traceback.print_exc()
-                        cls.__unregister_submodule(None, mod_name, True)
+                        cls.__disable_nested_addon(None, mod_name, True)
                     else:
                         if getattr(addon_prefs.addons, "use_" + mod_name):
-                            cls.__register_submodule(mod)
+                            cls.__enable_nested_addon(mod)
                         else:
-                            cls.__unregister_submodule(mod, mod_name, True)
+                            cls.__disable_nested_addon(mod, mod_name, True)
 
                 return update
 
@@ -861,13 +913,13 @@ class AddonGroup(_AddonInfo):
             setattr(addon_prefs.addons.__class__, "use_" + mod_name, prop)
 
             def gen_func(fake_mod):
-                mod_name = fake_mod.__name__.split(".")[-1]
-
                 def fget(self):
-                    return getattr(cls, "_show_expanded_" + mod_name, False)
+                    bl_info = addon_utils.module_bl_info(fake_mod)
+                    return int(bl_info["show_expanded"])
 
                 def fset(self, value):
-                    setattr(cls, "_show_expanded_" + mod_name, value)
+                    bl_info = addon_utils.module_bl_info(fake_mod)
+                    bl_info["show_expanded"] = bool(value)
 
                 return fget, fset
 
@@ -892,11 +944,9 @@ class AddonGroup(_AddonInfo):
             mod_name = fake_mod.__name__.split(".")[-1]
             delattr(dyn_class, "use_" + mod_name)
             delattr(dyn_class, "show_expanded_" + mod_name)
-            if hasattr(dyn_class, "_show_expanded_" + mod_name):
-                delattr(dyn_class, "_show_expanded_" + mod_name)
 
     @classmethod
-    def __register_submodule(cls, mod):
+    def __enable_nested_addon(cls, mod):
         if not hasattr(mod, "__addon_enabled__"):
             mod.__addon_enabled__ = False
 
@@ -915,12 +965,16 @@ class AddonGroup(_AddonInfo):
                 mod.register()
                 mod.__addon_enabled__ = True
             except:
-                traceback.print_exc()
                 addon_prefs = cls.get_instance()
+                c = addon_prefs.addons.__class__
+                error = traceback.format_exc()
+                print(c.error)
+                if not c.error:
+                    c.error = error
                 key = "use_" + mod_name
                 if key in addon_prefs.addons:
                     del addon_prefs.addons[key]
-                cls.__unregister_submodule(mod, mod_name, False)
+                cls.__disable_nested_addon(mod, mod_name, False)
                 return
 
             # get new classes
@@ -938,7 +992,7 @@ class AddonGroup(_AddonInfo):
             cls.__info_register_submodule(mod)
 
     @classmethod
-    def __register_submodules(cls):
+    def __enable_nested_addons(cls):
         addon_prefs = cls.get_instance()
         for fake_mod in cls._fake_submodules_.values():
             mod_name = fake_mod.__name__.split(".")[-1]
@@ -947,12 +1001,12 @@ class AddonGroup(_AddonInfo):
                     mod = importlib.import_module(fake_mod.__name__)
                 except:
                     traceback.print_exc()
-                    cls.__unregister_submodule(None, mod_name, False)
+                    cls.__disable_nested_addon(None, mod_name, False)
                     continue
-                cls.__register_submodule(mod)
+                cls.__enable_nested_addon(mod)
 
     @classmethod
-    def __unregister_submodule(cls, mod, mod_name, clear_preferences=False):
+    def __disable_nested_addon(cls, mod, mod_name, clear_preferences=False):
         addon_prefs = cls.get_instance()
 
         if mod and not hasattr(mod, "__addon_enabled__"):
@@ -969,7 +1023,11 @@ class AddonGroup(_AddonInfo):
                 if mod.__addon_enabled__:
                     mod.unregister()
             except:
-                traceback.print_exc()
+                c = addon_prefs.addons.__class__
+                error = traceback.format_exc()
+                print(error)
+                if not c.error:
+                    c.error = error
             mod.__addon_enabled__ = False
 
         # remove keymap items that still exist
@@ -1012,7 +1070,7 @@ class AddonGroup(_AddonInfo):
             del cls._keymap_items_[mod_name]
 
     @classmethod
-    def __unregister_submodules(cls, clear_preferences=False):
+    def __disable_nested_addons(cls, clear_preferences=False):
         addon_prefs = cls.get_instance()
         for fake_mod in cls._fake_submodules_.values():
             mod_name = fake_mod.__name__.split(".")[-1]
@@ -1022,7 +1080,7 @@ class AddonGroup(_AddonInfo):
                 except:
                     traceback.print_exc()
                     mod = None
-                cls.__unregister_submodule(mod, mod_name, clear_preferences)
+                cls.__disable_nested_addon(mod, mod_name, clear_preferences)
 
     @classmethod
     def __info_register_submodule(cls, mod):
@@ -1081,13 +1139,13 @@ class AddonGroup(_AddonInfo):
         use_filter = addons.ui_use_addon_filter
         if use_filter and self._fake_submodules_:
             split = group_layout.split()
-            col = split.column()
-            sp = col.split(0.8)
+            colsub = split.column()
+            sp = colsub.split(0.8)
             row = sp.row()
             row.prop(addons, "ui_addon_search", text="", icon='VIEWZOOM')
             sp.row()
-            col = split.column()
-            sp = col.split(0.8)
+            colsub = split.column()
+            sp = colsub.split(0.8)
             row = sp.row()
             row.prop(addons, "ui_addon_filter")
             sp.row()
@@ -1100,7 +1158,7 @@ class AddonGroup(_AddonInfo):
             if not addons.ui_show_private and mod_name.startswith("_"):
                 continue
 
-            info = fake_mod.bl_info
+            info = addon_utils.module_bl_info(fake_mod)
 
             is_enabled = getattr(addons, "use_" + mod_name)
             if (not use_filter or (filter == 'All') or
@@ -1146,36 +1204,47 @@ class AddonGroup(_AddonInfo):
             # Title
             expand = getattr(addons, "show_expanded_" + mod_name)
             icon = 'TRIA_DOWN' if expand else 'TRIA_RIGHT'
-            col = box.column()  # boxのままだと行間が広い
-            row = col.row()
-            sub = row.row()
-            sub.context_pointer_set("prefs", addons)
-            sub.alignment = 'LEFT'
-            op = sub.operator("wm.context_toggle", text="", icon=icon,
+            colsub = box.column()  # boxのままだと行間が広い
+            row = colsub.row(align=True)
+            row.context_pointer_set("addon_preferences", self)
+
+            op = row.operator("wm.context_toggle", text="", icon=icon,
                               emboss=False)
-            op.data_path = "prefs.show_expanded_" + mod_name
+            op.data_path = "addon_preferences.addons.show_expanded_" + mod_name
+
+            if 0:
+                row.prop(addons, "use_" + mod_name, text="")
+            else:
+                if is_enabled:
+                    op_name = "wm.nested_addon_disable"
+                    icon = 'CHECKBOX_HLT'
+                else:
+                    op_name = "wm.nested_addon_enable"
+                    icon = 'CHECKBOX_DEHLT'
+                op = row.operator(op_name, text="", icon=icon, emboss=False)
+                op.module = mod_name
+
             sub = row.row()
+            sub.active = is_enabled
+            # sub.alignment = 'RIGHT'
             sub.label("{}: {}".format(info["category"], info["name"]))
-            sub = row.row()
-            sub.alignment = 'RIGHT'
             if mod_name.startswith("_"):
                 sub.label("", icon='SCRIPTPLUGINS')
             if info.get("warning"):
                 sub.label("", icon='ERROR')
-            sub.prop(addons, "use_" + mod_name, text="")
 
             # Info
             if expand:
                 # reference: space_userpref.py
                 if info.get("description"):
-                    split = col.row().split(percentage=0.15)
+                    split = colsub.row().split(percentage=0.15)
                     split.label("Description:")
                     split.label(info["description"])
                 if info.get("location"):
-                    split = col.row().split(percentage=0.15)
+                    split = colsub.row().split(percentage=0.15)
                     split.label("Location:")
                     split.label(info["location"])
-                split = col.row().split(percentage=0.15)
+                split = colsub.row().split(percentage=0.15)
                 split.label("File:")
                 split.label(fake_mod.__file__)
                 if info.get("author"):
@@ -1184,22 +1253,22 @@ class AddonGroup(_AddonInfo):
                     if not isinstance(base_info, dict):
                         base_info = {}
                     if info["author"] != base_info.get("author"):
-                        split = col.row().split(percentage=0.15)
+                        split = colsub.row().split(percentage=0.15)
                         split.label("Author:")
                         split.label(info["author"])
                 if info.get("version"):
-                    split = col.row().split(percentage=0.15)
+                    split = colsub.row().split(percentage=0.15)
                     split.label("Version:")
                     split.label(".".join(str(x) for x in info["version"]),
                                 translate=False)
                 if info.get("warning"):
-                    split = col.row().split(percentage=0.15)
+                    split = colsub.row().split(percentage=0.15)
                     split.label("Warning:")
                     split.label("  " + info["warning"], icon="ERROR")
 
                 tot_row = int(bool(info.get("wiki_url")))
                 if tot_row:
-                    split = col.row().split(percentage=0.15)
+                    split = colsub.row().split(percentage=0.15)
                     split.label(text="Internet:")
                     if info.get("wiki_url"):
                         op = split.operator("wm.url_open",
@@ -1280,11 +1349,18 @@ class AddonGroup(_AddonInfo):
 
     @classmethod
     def register(cls):
+        classes = [
+            WM_OT_nested_addon_enable,
+            WM_OT_nested_addon_disable
+        ]
+        for c in classes:
+            c.register_class()
+
         cls._fake_submodules_ = cls.__generate_fake_submodules()
         cls._classes_ = {}
         cls._keymap_items_ = {}
         cls.__init_addons_attributes()
-        cls.__register_submodules()
+        cls.__enable_nested_addons()
         cls._verify_info_collections()
 
         c = super()
@@ -1298,11 +1374,18 @@ class AddonGroup(_AddonInfo):
         if attrs[0] not in U.addons:  # wm.read_factory_settings()
             return None
 
-        cls.__unregister_submodules()
+        cls.__disable_nested_addons()
         cls._classes_.clear()
         cls._keymap_items_.clear()
         cls.__delete_addons_attributes()
         cls._fake_submodules_.clear()
+
+        classes = [
+            WM_OT_nested_addon_enable,
+            WM_OT_nested_addon_disable
+        ]
+        for c in classes:
+            c.unregister_class()
 
         c = super()
         if hasattr(c, "unregister"):
