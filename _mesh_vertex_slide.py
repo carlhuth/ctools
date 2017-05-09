@@ -191,7 +191,8 @@ class MESH_OT_vertext_slide(bpy.types.Operator):
     def draw_callback_px(self, context):
         glsettings = vagl.GLSettings(context)
         glsettings.push()
-        cm = glsettings.region_view3d_space().enter()
+        cm = glsettings.region_view3d_space()
+        cm.__enter__()
 
         # draw edgelines
         bgl.glColor4f(0.8, 0.8, 0.8, 1.0)
@@ -208,7 +209,7 @@ class MESH_OT_vertext_slide(bpy.types.Operator):
             bgl.glVertex3f(*p2)
         bgl.glEnd()
 
-        cm.exit()
+        cm.__exit__(None, None, None)
         glsettings.pop()
 
     def modal(self, context, event):

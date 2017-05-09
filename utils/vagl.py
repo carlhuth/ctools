@@ -116,35 +116,6 @@ def glSwitch(attr, value):
         bgl.glDisable(attr)
 
 
-class GCM(contextlib._GeneratorContextManager):
-    @classmethod
-    def contextmanager(cls, func):
-        sig = inspect.signature(cls.__init__)
-        if '*' in str(sig.parameters['args']):
-            @functools.wraps(func)
-            def _func(*args, **kwargs):
-                return cls(func, *args, **kwargs)
-        else:
-            @functools.wraps(func)
-            def _func(*args, **kwargs):
-                return cls(func, args, kwargs)
-        return _func
-
-    def enter(self, result=False):
-        """
-        :type result: bool
-        :rtype: GCM | (GCM, T)
-        """
-        r = self.__enter__()
-        if result:
-            return self, r
-        else:
-            return self
-
-    def exit(self):
-        self.__exit__(None, None, None)
-
-
 class GLSettings:
     def __init__(self, context, view_matrix=None, perspective_matrix=None):
         rv3d = context.region_data
@@ -285,26 +256,26 @@ class GLSettings:
         bgl.glPopAttrib()
 
     @classmethod
-    @GCM.contextmanager
+    @contextlib.contextmanager
     def push_attrib(cls, mask=bgl.GL_ALL_ATTRIB_BITS, matrix=True):
         """with文で使用する。
         with GLSettings.push_attrib():
             ...
-        :rtype: GCM
         """
 
         bgl.glPushAttrib(mask)
         modelview = Buffer('double', (4, 4), bgl.GL_MODELVIEW_MATRIX)
         projection = Buffer('double', (4, 4), bgl.GL_PROJECTION_MATRIX)
+
         yield
+
         if matrix:
             cls._load_matrix(modelview, projection)
         bgl.glPopAttrib()
 
-    @GCM.contextmanager
+    @contextlib.contextmanager
     def region_view3d_space(self):
         """with文、又はデコレータとして使用
-        :rtype: GCM
         """
         modelview_mat = Buffer('double', (4, 4), bgl.GL_MODELVIEW_MATRIX)
         projection_mat = Buffer('double', (4, 4), bgl.GL_PROJECTION_MATRIX)
@@ -312,12 +283,11 @@ class GLSettings:
         win_mat = Buffer('double', (4, 4), self.window_matrix.transposed())
         self._load_matrix(view_mat, win_mat)
 
-        try:
-            yield
-        finally:
-            self._load_matrix(modelview_mat, projection_mat)
+        yield
 
-    @GCM.contextmanager
+        self._load_matrix(modelview_mat, projection_mat)
+
+    @contextlib.contextmanager
     def region_pixel_space(self):
         """with文、又はデコレータとして使用
 
@@ -326,7 +296,6 @@ class GLSettings:
         gluProject: 0.0 〜 +1.0
         POST_PIXEL: +100 〜 -100
         Z-Buffer: 0.0 〜 +1.0
-        :rtype: GCM
         """
 
         modelview_mat = Buffer('double', (4, 4), bgl.GL_MODELVIEW_MATRIX)
@@ -345,15 +314,13 @@ class GLSettings:
 
         bgl.glMatrixMode(matrix_mode[0])
 
-        try:
-            yield
-        finally:
-            self._load_matrix(modelview_mat, projection_mat)
+        yield
 
-    @GCM.contextmanager
+        self._load_matrix(modelview_mat, projection_mat)
+
+    @contextlib.contextmanager
     def window_pixel_space(self):
         """with文、又はデコレータとして使用
-        :rtype: GCM
         """
 
         win_width, win_height = self.window_size
@@ -372,11 +339,10 @@ class GLSettings:
         bgl.glLoadIdentity()
         bgl.glMatrixMode(matrix_mode[0])
 
-        try:
-            yield
-        finally:
-            bgl.glViewport(*viewport)
-            self._load_matrix(modelview_mat, projection_mat)
+        yield
+
+        bgl.glViewport(*viewport)
+        self._load_matrix(modelview_mat, projection_mat)
 
         # NOTE:
         # PyOpenGLの場合
@@ -540,7 +506,7 @@ def draw_quad_fan(x, y, inner_radius, outer_radius,
 
 
 def draw_arc_get_vectors(x, y, radius, start_angle, end_angle, edgenum=16):
-    # 三時から反時計回りに描画 angle:radians
+    # 三時から反時計回り angle:radians
     start = vam.normalize_angle(start_angle)
     end = vam.normalize_angle(end_angle)
     if end < start:

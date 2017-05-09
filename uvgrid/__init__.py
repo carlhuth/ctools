@@ -482,7 +482,7 @@ class OperatorUVGrid(bpy.types.Operator):
                 # GENERATED又は新規作成以外は無効化
                 if image:
                     if image.source in {'SEQUENCE', 'MOVIE', 'VIEWER'}:
-                        row.enable = False
+                        row.enabled = False
                     elif image.source == 'FILE':
                         if image.has_data:
                             row.enabled = False

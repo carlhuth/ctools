@@ -1573,6 +1573,20 @@ wmSubWindow._fields_ = fields(
 class wmEvent(Cast, Structure):
     """windowmanager/WM_types.h: 431"""
 
+    def is_timer_event(self, timer):
+        """
+        :type timer: bpy.types.Timer | int
+        :rtype: bool
+        """
+        TIMER = 272  # 'TIMER'
+        if isinstance(timer, int):
+            addr = timer
+        elif isinstance(timer, bpy.types.Timer):
+            addr = timer.as_pointer()
+        else:
+            raise TypeError()
+        return self.type == TIMER and self.customdata == addr
+
 wmEvent._fields_ = fields(
     wmEvent, '*next', '*prev',
 

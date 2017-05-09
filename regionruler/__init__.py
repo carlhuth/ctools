@@ -2300,7 +2300,8 @@ def draw_callback(context):
     data.updated_space(context, glsettings)
 
     if context.area.type in ('IMAGE_EDITOR', 'NODE_EDITOR'):
-        cm = glsettings.region_pixel_space().enter()
+        cm = glsettings.region_pixel_space()
+        cm.__enter__()
 
     bgl.glColorMask(1, 1, 1, 1)
     bgl.glEnable(bgl.GL_BLEND)
@@ -2347,7 +2348,7 @@ def draw_callback(context):
         draw_region_rulers(context)
 
     if context.area.type in ('IMAGE_EDITOR', 'NODE_EDITOR'):
-        cm.exit()
+        cm.__exit__(None, None, None)
     glsettings.pop()
     glsettings.font_size()
 

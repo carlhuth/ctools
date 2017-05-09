@@ -44,9 +44,11 @@ from mathutils import Vector
 try:
     importlib.reload(addongroup)
     importlib.reload(vawm)
+    importlib.reload(vaprops)
 except NameError:
     from ..utils import addongroup
     from ..utils import vawm
+    from ..utils import vaprops
 
 
 PIXEL_SIZE = 1.0
@@ -328,72 +330,6 @@ def enum_items_op(self, context):
         return ()
 
 
-def prop_from_struct(prop):
-    if prop.type not in ('BOOLEAN', 'ENUM', 'INT', 'FLOAT', 'STRING'):
-        return None
-
-    attrs = {'name': prop.name,
-             'description': prop.description}
-
-    if prop.type in ('BOOLEAN', 'INT', 'FLOAT') and prop.array_length > 0:
-        attrs['default'] = tuple(prop.default_array)
-        attrs['size'] = prop.array_length
-    else:
-        attrs['default'] = prop.default
-    if prop.type in ('BOOLEAN', 'INT', 'FLOAT', 'STRING'):
-        if prop.subtype == 'LAYER_MEMBER':  # 未対応
-            attrs['subtype'] = 'LAYER'
-        else:
-            attrs['subtype'] = prop.subtype
-    if prop.type == 'STRING':
-        attrs['maxlen'] = prop.length_max
-    if prop.type in ('INT', 'FLOAT'):
-        attrs['min'] = prop.hard_min
-        attrs['max'] = prop.hard_max
-        attrs['soft_min'] = prop.soft_min
-        attrs['soft_max'] = prop.soft_max
-        attrs['step'] = prop.step
-        if prop.type == 'FLOAT':
-            attrs['precision'] = prop.precision
-            attrs['unit'] = prop.unit
-    if prop.type == 'ENUM':
-        attrs['items'] = tuple(
-            [(p.identifier, p.name, p.description, p.icon, p.value)
-             for p in prop.enum_items])
-
-    attrs['options'] = set()
-    if prop.is_hidden:
-        attrs['options'].add('HIDDEN')
-    if prop.is_enum_flag:
-        attrs['options'].add('ENUM_FLAG')
-
-    if prop.type == 'BOOLEAN':
-        if prop.array_length > 0:
-            return bpy.props.BoolVectorProperty(**attrs)
-        else:
-            return bpy.props.BoolProperty(**attrs)
-    elif prop.type == 'ENUM':
-        if len(attrs['items']) == 0:
-            # get関数があるものと仮定する
-            d = {k: attrs[k] for k in ('name', 'description', 'default')}
-            d['options'] = attrs['options'] & {'HIDDEN'}
-            return bpy.props.StringProperty(**d)
-        else:
-            return bpy.props.EnumProperty(**attrs)
-    elif prop.type == 'FLOAT':
-        if prop.array_length > 0:
-            return bpy.props.FloatVectorProperty(**attrs)
-        else:
-            return bpy.props.FloatProperty(**attrs)
-    elif prop.type == 'INT':
-        if prop.array_length > 0:
-            return bpy.props.IntVectorProperty(**attrs)
-        else:
-            return bpy.props.IntProperty(**attrs)
-    elif prop.type == 'STRING':
-        return bpy.props.StringProperty(**attrs)
-
-
 def get_operator(name):
     split = name.split('.')
     op = None
@@ -431,7 +367,12 @@ def ensure_operator_args(item, clear=False):
         attr = item.operator + '.' + prop.identifier  # eg. mesh.delete.type
         attr = attr.replace('.', '__')
         arg.name = attr
-        setattr(MouseGestureOpArg, attr, prop_from_struct(prop))
+        try:
+            setattr(MouseGestureOpArg, attr,
+                    vaprops.bl_prop_to_py_prop(prop, modify_enum=True))
+        except:
+            print(op, attr)
+            raise
         MouseGestureOpArg.attrs.append(attr)
 
 

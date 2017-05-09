@@ -47,10 +47,13 @@ FLT_MAX = 3.402823e+38
 ###############################################################################
 # Convert Property
 ###############################################################################
-def bl_prop_to_py_prop(prop):
+def bl_prop_to_py_prop(prop, modify_enum=False):
     """bl_rnaのプロパティーをbpy.props.***()の返り値の形式に変換する
     :param prop: 例: bpy.types.Object.bl_rna.properties['type']
     :type prop: bpy.types.Property
+    :param modify_enum: ENUMのitemsが空なら関数と見做し、StringPropertyに
+        変更する
+    :type modify_enum: bool
     :return: bpy.props.***()の返り値
     :rtype: (T, dict)
     """
@@ -59,88 +62,95 @@ def bl_prop_to_py_prop(prop):
             prop_type = bpy.props.BoolVectorProperty
         else:
             prop_type = bpy.props.BoolProperty
-    elif prop.type == 'INT':
-        if prop.is_array:
-            prop_type = bpy.props.IntVectorProperty
-        else:
-            prop_type = bpy.props.IntProperty
+    elif prop.type == 'COLLECTION':
+        prop_type = bpy.props.CollectionProperty
+    elif prop.type == 'ENUM':
+        prop_type = bpy.props.EnumProperty
     elif prop.type == 'FLOAT':
         if prop.is_array:
             prop_type = bpy.props.FloatVectorProperty
         else:
             prop_type = bpy.props.FloatProperty
-    elif prop.type == 'ENUM':
-        prop_type = bpy.props.EnumProperty
-
-    elif prop.type == 'COLLECTION':
-        prop_type = bpy.props.CollectionProperty
-
+    elif prop.type == 'INT':
+        if prop.is_array:
+            prop_type = bpy.props.IntVectorProperty
+        else:
+            prop_type = bpy.props.IntProperty
     elif prop.type == 'STRING':
         prop_type = bpy.props.StringProperty
     else:
         return None
 
     attrs = {
-        'name': prop.name,
-        'description': prop.description,
-        # 'icon': prop.icon,
+        "name": prop.name,
+        "description": prop.description,
+        # "icon": prop.icon,
     }
-    if prop.type in {'BOOLEAN', 'FLOAT', 'INT', 'STRING'}:
-        if getattr(prop, 'is_array', False):
-            attrs['default'] = prop.default_array
-            attrs['size'] = prop.array_length
+    if prop.type in {'BOOLEAN', 'FLOAT', 'INT'}:
+        if prop.is_array:
+            attrs["default"] = prop.default_array
+            attrs["size"] = prop.array_length
         else:
-            attrs['default'] = prop.default
+            attrs["default"] = prop.default
     elif prop.type == 'ENUM':
         if prop.is_enum_flag:
-            attrs['default'] = prop.default_flag
+            attrs["default"] = prop.default_flag
         else:
-            attrs['default'] = prop.default
+            attrs["default"] = prop.default
+    elif prop.type == 'STRING':
+        attrs["default"] = prop.default
 
-    if prop.type in {'BOOLEAN', 'FLOAT', 'INT', 'STRING'}:
+    if prop.type in {'BOOLEAN', 'FLOAT', 'INT'}:
         subtype = prop.subtype
         if subtype == 'LAYER_MEMBERSHIP':
             subtype = 'LAYER_MEMBER'
-        if getattr(prop, 'is_array', False):
+        if prop.is_array:
             if subtype == 'UNSIGNED':  # Object.parent_vertices
                 subtype = 'NONE'
-        attrs['subtype'] = subtype
+        attrs["subtype"] = subtype
+    elif prop.type == 'STRING':
+        attrs["subtype"] = prop.subtype
 
-    if prop.type in {'INT', 'FLOAT'}:
-        attrs['min'] = prop.hard_min
-        attrs['max'] = prop.hard_max
-        attrs['soft_min'] = prop.soft_min
-        attrs['soft_max'] = prop.soft_max
-        attrs['step'] = prop.step
-        if prop.type == 'FLOAT':
-            attrs['precision'] = prop.precision
-            attrs['unit'] = prop.unit
     if prop.type == 'COLLECTION':
         if issubclass(prop.fixed_type.__class__, bpy.types.PropertyGroup):
-            attrs['type'] = prop.fixed_type.__class__
+            attrs["type"] = prop.fixed_type.__class__
         else:
             return None
     elif prop.type == 'ENUM':
-        items = attrs['items'] = []
+        items = attrs["items"] = []
         for enum_item in prop.enum_items:
             items.append((enum_item.identifier,
                           enum_item.name,
                           enum_item.description,
                           enum_item.icon,
                           enum_item.value))
+        if not items and modify_enum:
+            prop_type = bpy.props.StringProperty
+            if prop.is_enum_flag:
+                attrs["default"] = str(attrs["default"])
+            del attrs["items"]
+    elif prop.type in {'INT', 'FLOAT'}:
+        attrs["min"] = prop.hard_min
+        attrs["max"] = prop.hard_max
+        attrs["soft_min"] = prop.soft_min
+        attrs["soft_max"] = prop.soft_max
+        attrs["step"] = prop.step
+        if prop.type == 'FLOAT':
+            attrs["precision"] = prop.precision
+            attrs["unit"] = prop.unit
     elif prop.type == 'STRING':
-        attrs['maxlen'] = prop.length_max
+        attrs["maxlen"] = prop.length_max
 
     table = {
-        'is_hidden': 'HIDDEN',
-        'is_skip_save': 'SKIP_SAVE',
-        'is_animatable': 'ANIMATABLE',
-        'is_enum_flag': 'ENUM_FLAG',
-        'is_library_editable': 'LIBRARY_EDITABLE',
-        # '': 'PROPORTIONAL',
-        # '': 'TEXTEDIT_UPDATE',
+        "is_animatable": 'ANIMATABLE',
+        "is_enum_flag": 'ENUM_FLAG',
+        "is_hidden": 'HIDDEN',
+        "is_library_editable": 'LIBRARY_EDITABLE',
+        "is_skip_save": 'SKIP_SAVE',
+        # "": 'PROPORTIONAL',
+        # "": 'TEXTEDIT_UPDATE',
     }
-    options = attrs['options'] = set()
+    options = attrs["options"] = set()
     for key, value in table.items():
         if getattr(prop, key):
             options.add(value)
@@ -148,18 +158,21 @@ def bl_prop_to_py_prop(prop):
     return prop_type(**attrs)
 
 
-def bl_props_to_py_props(bl_rna):
+def bl_props_to_py_props(bl_rna, modify_enum=False):
     """bl_rnaの全てのプロパティーをbpy.props.***()の返り値の形式に変換して
     OrderedDictで返す。変換に失敗したプロパティーの値はNoneになる。
     :type bl_rna: T
+    :param modify_enum: ENUMのitemsが空なら関数と見做し、StringPropertyに
+        変更する
+    :type modify_enum: bool
     :return: OrderedDict
     :rtype: dict[str, T | None]
     """
     properties = OrderedDict()
     for name, prop in bl_rna.properties.items():
-        if name == 'rna_type':
+        if name == "rna_type":
             continue
-        properties[name] = bl_prop_to_py_prop(prop)
+        properties[name] = bl_prop_to_py_prop(prop, modify_enum)
     return properties
 
 
@@ -630,3 +643,14 @@ if (BPy_PropertyRNA_Check(self)) {
     BPy_PropertyRNA *self_prop = (BPy_PropertyRNA *)self;
     if (RNA_property_type(self_prop->prop) == PROP_COLLECTION) {
 """
+
+
+def idprop_to_py(prop):
+    if isinstance(prop, list):
+        return [idprop_to_py(p) for p in prop]
+    elif hasattr(prop, 'to_dict'):
+        return prop.to_dict()
+    elif hasattr(prop, 'to_list'):
+        return prop.to_list()
+    else:
+        return prop

@@ -394,7 +394,8 @@ class AddonKeyConfig:
         return km_table
 
     def add_item(self, keymap_item):
-        """Register key map item
+        """Register key map item.
+        Object references are invalid because rebuild properties.
         :param keymap_item: KeyMapItem
         :type keymap_item: bpy.types.KeyMapItem
         """
@@ -409,7 +410,8 @@ class AddonKeyConfig:
         self[self.ITEMS] = items
 
     def add_items(self, keymap_items):
-        """Register key map items
+        """Register key map items.
+        Object references are invalid because rebuild properties.
         :param keymap_items: list of KeyMapItem
         :type keymap_items: list[bpy.types.KeyMapItem]
         """
@@ -428,7 +430,8 @@ class AddonKeyConfig:
         self[self.ITEMS] = items
 
     def remove_item(self, keymap_item, wm=True):
-        """Unregister key map item
+        """Unregister key map item.
+        Object references are invalid because rebuild properties.
         :param keymap_item: KeyMapItem
         :type keymap_item: bpy.types.KeyMapItem
         :param wm: Remove from KeyMap.keymap_items
@@ -451,7 +454,8 @@ class AddonKeyConfig:
                 bpy.context.window_manager.keyconfigs.active
 
     def remove_items(self, wm=True, only_changed=False):
-        """Unregister key map items
+        """Unregister key map items.
+        Object references are invalid because rebuild properties.
         :param wm: Remove from KeyMap.keymap_items
         :type wm: bool
         :param only_changed: ignore included in self.default_keymap_items

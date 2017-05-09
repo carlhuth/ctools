@@ -254,8 +254,9 @@ class NestedAddons:
         items_unique = set()
 
         for mod_name, fake_mod in self.owner_class._fake_submodules_.items():
-            info = fake_mod.bl_info
-            items_unique.add(info["category"])
+            info = addon_utils.module_bl_info(fake_mod)
+            if info["category"]:
+                items_unique.add(info["category"])
 
         items.extend([(cat, cat, "") for cat in sorted(items_unique)])
         self.__class__._ui_addon_filter_items = items
@@ -692,20 +693,6 @@ class AddonInfo(_AddonInfo):
 
 class AddonGroup(_AddonInfo):
     """Create a hierarchical add-on.
-
-    Dynamically added attributes:
-        sub module names
-        "use_" + sub module name
-        "show_expanded_" + sub module name
-    """
-
-    """str list of sub modules.
-    If None is specified, all files and directories included are targeted.
-
-    Sub modules whose heads begin with _ are not displayed in UserPreference
-    by default. They are displayed when enable the 'Show Hidden' option.
-
-    :type: list[str]
     """
 
     # def __getattribute__(self, name):
@@ -769,16 +756,27 @@ class AddonGroup(_AddonInfo):
     #     return attrs
 
     @classmethod
-    def get_instance(cls, *, root=False, parent=False):
+    def get_instance(cls, module="", *, root=False, parent=False):
         """return instance
         :rtype: AddonPreferences
         """
         if root and parent:
             raise ValueError()
+        if module and (root or parent):
+            raise ValueError()
         if not cls.is_registered:
             raise ValueError("{} is not registered".format(cls))
         U = bpy.context.user_preferences
         attrs = cls.bl_idname.split(".")
+
+        if module:
+            m = re.match("(\.*)(.*)", module)
+            if m.group(1):
+                num = len(m.group(1))
+                if num > 1:
+                    attrs = attrs[:-(num - 1)]
+            attrs.extend(m.group(2).split("."))
+
         if attrs[0] not in U.addons:  # wm.read_factory_settings()
             return None
         addon_prefs = U.addons[attrs[0]].preferences
@@ -842,7 +840,8 @@ class AddonGroup(_AddonInfo):
                 fake_modules.append(mod)
 
         fake_modules.sort(
-            key=lambda mod: (mod.bl_info["category"], mod.bl_info["name"]))
+            key=lambda mod: (mod.bl_info.get("category", ""),
+                             mod.bl_info["name"]))
         fake_modules = OrderedDict(
             [(mod.__name__[len(cls.bl_idname) + 1:], mod)
              for mod in fake_modules])
@@ -865,8 +864,9 @@ class AddonGroup(_AddonInfo):
         _fake_submodules_ = cls.__generate_fake_submodules()
         for fake_mod in _fake_submodules_.values():
             try:
-                if fake_mod.__name__ in sys.modules:
-                    mod = importlib.import_module(fake_mod.__name__)
+                mod_name = fake_mod.__name__
+                if mod_name in sys.modules:
+                    mod = importlib.import_module(mod_name)
                     # print("Reloading:", mod)
                     importlib.reload(mod)
             except:
@@ -889,18 +889,18 @@ class AddonGroup(_AddonInfo):
 
             def gen_func(fake_mod):
                 def update(self, context):
-                    mod_name = fake_mod.__name__.split(".")[-1]
+                    short_name = fake_mod.__name__.split(".")[-1]
+                    mod_name = fake_mod.__name__
                     try:
-                        mod = importlib.import_module(fake_mod.__name__)
+                        mod = importlib.import_module(mod_name)
                     except:
                         traceback.print_exc()
-                        cls.__disable_nested_addon(None, mod_name, True)
+                        cls.__disable_nested_addon(None, short_name, True)
                     else:
-                        if getattr(addon_prefs.addons, "use_" + mod_name):
+                        if getattr(addon_prefs.addons, "use_" + short_name):
                             cls.__enable_nested_addon(mod)
                         else:
-                            cls.__disable_nested_addon(mod, mod_name, True)
-
+                            cls.__disable_nested_addon(mod, short_name, True)
                 return update
 
             update = gen_func(fake_mod)
@@ -912,19 +912,22 @@ class AddonGroup(_AddonInfo):
             mod_name = fake_mod.__name__.split(".")[-1]
             setattr(addon_prefs.addons.__class__, "use_" + mod_name, prop)
 
-            def gen_func(fake_mod):
-                def fget(self):
-                    bl_info = addon_utils.module_bl_info(fake_mod)
-                    return int(bl_info["show_expanded"])
+            if 0:
+                def gen_func(fake_mod):
+                    def fget(self):
+                        bl_info = addon_utils.module_bl_info(fake_mod)
+                        return int(bl_info["show_expanded"])
 
-                def fset(self, value):
-                    bl_info = addon_utils.module_bl_info(fake_mod)
-                    bl_info["show_expanded"] = bool(value)
+                    def fset(self, value):
+                        bl_info = addon_utils.module_bl_info(fake_mod)
+                        bl_info["show_expanded"] = bool(value)
 
-                return fget, fset
+                    return fget, fset
 
-            fget, fset = gen_func(fake_mod)
-            prop = bpy.props.BoolProperty(get=fget, set=fset)
+                fget, fset = gen_func(fake_mod)
+                prop = bpy.props.BoolProperty(get=fget, set=fset)
+            else:
+                prop = bpy.props.BoolProperty()
             setattr(addon_prefs.addons.__class__,
                     "show_expanded_" + mod_name, prop)
 
@@ -968,7 +971,7 @@ class AddonGroup(_AddonInfo):
                 addon_prefs = cls.get_instance()
                 c = addon_prefs.addons.__class__
                 error = traceback.format_exc()
-                print(c.error)
+                print(error)
                 if not c.error:
                     c.error = error
                 key = "use_" + mod_name
@@ -995,13 +998,14 @@ class AddonGroup(_AddonInfo):
     def __enable_nested_addons(cls):
         addon_prefs = cls.get_instance()
         for fake_mod in cls._fake_submodules_.values():
-            mod_name = fake_mod.__name__.split(".")[-1]
-            if getattr(addon_prefs.addons, "use_" + mod_name):
+            short_name = fake_mod.__name__.split(".")[-1]
+            if getattr(addon_prefs.addons, "use_" + short_name):
+                mod_name = fake_mod.__name__
                 try:
-                    mod = importlib.import_module(fake_mod.__name__)
+                    mod = importlib.import_module(mod_name)
                 except:
                     traceback.print_exc()
-                    cls.__disable_nested_addon(None, mod_name, False)
+                    cls.__disable_nested_addon(None, short_name, False)
                     continue
                 cls.__enable_nested_addon(mod)
 
@@ -1034,7 +1038,8 @@ class AddonGroup(_AddonInfo):
         keyconfigs = addon_prefs.info_keyconfigs
         if mod_name in keyconfigs:
             keyconfig = keyconfigs[mod_name]
-            for item in list(keyconfig[keyconfig.ITEMS]):
+            items = _misc.idprop_to_py(keyconfig[keyconfig.ITEMS])
+            for item in items:
                 km_name = item["keymap"]
                 kmi_id = item["id"]
                 km = keyconfig.get_keymap(km_name)
@@ -1073,14 +1078,15 @@ class AddonGroup(_AddonInfo):
     def __disable_nested_addons(cls, clear_preferences=False):
         addon_prefs = cls.get_instance()
         for fake_mod in cls._fake_submodules_.values():
-            mod_name = fake_mod.__name__.split(".")[-1]
-            if getattr(addon_prefs.addons, "use_" + mod_name):
+            short_name = fake_mod.__name__.split(".")[-1]
+            if getattr(addon_prefs.addons, "use_" + short_name):
+                mod_name = fake_mod.__name__
                 try:
-                    mod = importlib.import_module(fake_mod.__name__)
+                    mod = importlib.import_module(mod_name)
                 except:
                     traceback.print_exc()
                     mod = None
-                cls.__disable_nested_addon(mod, mod_name, clear_preferences)
+                cls.__disable_nested_addon(mod, short_name, clear_preferences)
 
     @classmethod
     def __info_register_submodule(cls, mod):
@@ -1152,6 +1158,8 @@ class AddonGroup(_AddonInfo):
 
         filter = addons.ui_addon_filter
         search = addons.ui_addon_search
+
+        # user_addon_paths = []
 
         for fake_mod in self._fake_submodules_.values():
             mod_name = fake_mod.__name__.split(".")[-1]
@@ -1236,18 +1244,18 @@ class AddonGroup(_AddonInfo):
             # Info
             if expand:
                 # reference: space_userpref.py
-                if info.get("description"):
+                if info["description"]:
                     split = colsub.row().split(percentage=0.15)
                     split.label("Description:")
                     split.label(info["description"])
-                if info.get("location"):
+                if info["location"]:
                     split = colsub.row().split(percentage=0.15)
                     split.label("Location:")
                     split.label(info["location"])
                 split = colsub.row().split(percentage=0.15)
                 split.label("File:")
                 split.label(fake_mod.__file__)
-                if info.get("author"):
+                if info["author"]:
                     mod = sys.modules[bl_idname]
                     base_info = getattr(mod, "bl_info", None)
                     if not isinstance(base_info, dict):
@@ -1256,24 +1264,31 @@ class AddonGroup(_AddonInfo):
                         split = colsub.row().split(percentage=0.15)
                         split.label("Author:")
                         split.label(info["author"])
-                if info.get("version"):
+                if info["version"]:
                     split = colsub.row().split(percentage=0.15)
                     split.label("Version:")
                     split.label(".".join(str(x) for x in info["version"]),
                                 translate=False)
-                if info.get("warning"):
+                if info["warning"]:
                     split = colsub.row().split(percentage=0.15)
                     split.label("Warning:")
                     split.label("  " + info["warning"], icon="ERROR")
 
-                tot_row = int(bool(info.get("wiki_url")))
+                # user_addon = bpy.types.USERPREF_PT_addons.is_user_addon(mod, user_addon_paths)
+                # tot_row = bool(info["wiki_url"]) + bool(user_addon)
+                tot_row = int(bool(info["wiki_url"]))
+
                 if tot_row:
                     split = colsub.row().split(percentage=0.15)
                     split.label(text="Internet:")
-                    if info.get("wiki_url"):
-                        op = split.operator("wm.url_open",
-                                            text="Documentation", icon="HELP")
-                        op.url = info.get("wiki_url")
+                    if info["wiki_url"]:
+                        split.operator("wm.url_open", text="Documentation", icon='HELP').url = info["wiki_url"]
+                    split.operator("wm.url_open", text="Report a Bug", icon='URL').url = info.get(
+                            "tracker_url",
+                            "https://developer.blender.org/maniphest/task/edit/form/2")
+                    # if user_addon:
+                    #     split.operator("wm.addon_remove", text="Remove", icon='CANCEL').module = mod.__name__
+
                     for i in range(4 - tot_row):
                         split.separator()
 
@@ -1316,8 +1331,8 @@ class AddonGroup(_AddonInfo):
                     if has_introspect_error or introspect[0] or has_error:
                         if not align_box_draw:
                             sub = col_head.row()
-                            sub.active = False  # To make the color thinner
-                            sub.label("―" * 40)
+                            # sub.active = False  # To make the color thinner
+                            sub.label("…" * 200)
                         col_head.label("Preferences:")
                     if has_error:
                         col_body.label(text="Error (see console)",
@@ -1492,11 +1507,11 @@ class AddonGroup(_AddonInfo):
             # remove keymap items that still exist
             for item in keyconfig_items:
                 km_name, kmi_id = item
-                km = keyconfig.get_keymap(km_name)
+                km = AddonKeyConfig.get_keymap(km_name)
                 if km:
                     for kmi in km.keymap_items:
                         if kmi.id == kmi_id:
-                            keyconfig.remove_item(kmi)
+                            km.keymap_items.remove(kmi)
 
             cls._delete_dynamic_types()
 

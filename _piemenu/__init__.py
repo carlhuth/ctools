@@ -18,7 +18,7 @@
 
 
 bl_info = {
-    'name': 'Pie Menu',
+    'name': 'Pie Menu Old',
     'author': 'chromoly',
     'version': (0, 1, 0),
     'blender': (2, 78, 0),
@@ -660,7 +660,7 @@ class DrawingManager:
         self.icon_size = ICON_DEFAULT_HEIGHT * f
 
         # TODO: 暫定的な調整値
-        self.ICON_TEXT_MARGIN = self.widget_unit * 0.2
+        self.ICON_TEXT_MARGIN = self.widget_unit * 0.1
 
     def update(self, context, op):
         self.__init__(context, op)
@@ -2020,7 +2020,7 @@ class WM_OT_pie_menu(bpy.types.Operator):
         try:
             import ctools.regionruler as regionruler
             p = context.user_preferences.addons[
-                'ctools'].preferences.regionruler
+                'ctools'].preferences.get_instance("regionruler")
             self.draw_cross_cursor = p.draw_cross_cursor
             simple_measure = regionruler.data.simple_measure
             regionruler.data.simple_measure = False
@@ -2040,7 +2040,7 @@ class WM_OT_pie_menu(bpy.types.Operator):
     def regionruler_restore(self, context):
         try:
             p = context.user_preferences.addons[
-                'ctools'].preferences.regionruler
+                'ctools'].preferences.get_instance("regionruler")
             p.draw_cross_cursor = self.draw_cross_cursor
         except:
             pass
@@ -2307,33 +2307,7 @@ class WM_OT_pie_menu(bpy.types.Operator):
 
     def get_modal_handlers(self, context):
         window = context.window
-        if not window:
-            return []
-
-        win = wmWindow.cast(window)
-
-        handlers = []
-
-        ptr = wmEventHandler.cast(win.modalhandlers.first, contents=False)
-        while ptr:
-            # http://docs.python.jp/3/library/ctypes.html#surprises
-            # この辺りの事には注意する事
-            handler = ptr.contents
-            area = handler.op_area  # NULLの場合はNone
-            region = handler.op_region  # NULLの場合はNone
-            idname = 'UNKNOWN'
-            if handler.ui_handle:
-                idname = 'UI'
-            if handler.op:
-                op = handler.op.contents
-                ot = op.type.contents
-                if ot.idname:
-                    idname = ot.idname.decode()
-            handlers.append((handler, idname, area, region,
-                             handler.op_region_type))
-            ptr = handler.next
-
-        return handlers
+        return wmWindow.modal_handlers(window)
 
     def invoke(self, context, event):
         self.__class__.event = event  # get_event()用

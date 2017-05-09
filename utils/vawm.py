@@ -442,12 +442,23 @@ def widget_unit():
     """
     # dpi: 72 -> 20.5, 96: 27.2
 
-    U = bpy.context.user_preferences
-    return int((U.system.pixel_size * U.system.dpi * 20 + 36) / 72)
+    u = bpy.context.user_preferences
+    return int((u.system.pixel_size * u.system.dpi * 20 + 36) / 72)
 
 
 UI_UNIT_X = widget_unit
 UI_UNIT_Y = widget_unit
+
+
+# icon_size = ICON_DEFAULT_HEIGHT * (PIXEL_SIZE * dpi / 72.0)
+ICON_DEFAULT_HEIGHT = 16
+
+
+def icon_size():
+    # 通常アイコンの大きさ。widget_unit * 0.8 でも可
+    u = bpy.context.user_preferences
+    f = u.system.pixel_size * u.system.dpi / 72
+    return ICON_DEFAULT_HEIGHT * f
 
 
 ###############################################################################
