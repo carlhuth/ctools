@@ -1602,7 +1602,7 @@ wmEvent._fields_ = fields(
     c_short, 'prevtype',
     c_short, 'prevval',
     c_int, 'prevx', 'prevy',
-    c_double, 'prevclick_time',
+    c_double, 'prevclicktime',
     c_int, 'prevclickx', 'prevclicky',
 
     c_short, 'shift', 'ctrl', 'alt', 'oskey',
