@@ -24,6 +24,7 @@ bl_info = {
 }
 
 
+from collections import OrderedDict
 import inspect
 
 import bpy
@@ -33,101 +34,146 @@ from ..utils import addongroup
 import pie_menu
 
 
+class MenuItem:
+    def __init__(self, label=""):
+        self.label = label
+
+
+def has_particle(context):
+    actob = context.active_object
+    if actob:
+        if actob.particle_systems:
+            return True
+        else:
+            for mod in actob.modifiers:
+                if mod.type in ('CLOTH', 'SOFT_BODY'):
+                    return True
+    return False
+
+
+def has_gpencil(context):
+    return bool(context.gpencil_data)
+
+
+class ObjectModeMenuMore:
+    idname = "object_mode_set_more"
+    label = "Object Mode"
+    quick_action = 'NONE'
+
+    def init(self, context):
+        self.menu_items = []
+        prop = bpy.types.Object.bl_rna.properties["mode"]
+        enum_items = OrderedDict([(e.identifier, e) for e in prop.enum_items])
+
+        execute = "bpy.ops.object.mode_set(mode='{}', toggle={})"
+        if has_particle(context):
+            e = enum_items['PARTICLE_EDIT']
+            item = MenuItem(e.name)
+            item.icon = e.icon
+            item.execute = execute.format(e.identifier, "False")
+        else:
+            item = None
+        self.menu_items.append(item)
+
+        if has_gpencil(context):
+            e = enum_items['GPENCIL_EDIT']
+            item = MenuItem(e.name)
+            item.icon = e.icon
+            item.execute = execute.format(e.identifier, "False")
+        else:
+            item = None
+        self.menu_items.append(item)
+
+
+class ObjectModeMenu:
+    idname = "object_mode_set"
+    label = "Object Mode"
+    quick_action = 'W'
+
+    def init(self, context):
+        self.menu_items = []
+
+        actob = context.active_object
+
+        self.quick_action = 'W'
+
+        prop = bpy.types.Object.bl_rna.properties["mode"]
+        enum_items = OrderedDict([(e.identifier, e) for e in prop.enum_items])
+        for enum_item in enum_items.values():
+            mode = enum_item.identifier
+            add = False
+            execute = "bpy.ops.object.mode_set(mode='{}', toggle={})"
+            if mode == 'OBJECT':
+                # if actob and actob.type in {'EMPTY', 'CAMERA', 'LAMP',
+                #                             'SPEAKER'}:
+                #     self.quick_action = 'W'
+                add = True
+            elif mode == 'EDIT':
+                if actob and actob.type in {
+                        'MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'ARMATURE',
+                        'LATTICE'}:
+                    self.quick_action = 'E'
+                    add = True
+            elif mode == 'POSE':
+                if actob and actob.type == 'ARMATURE':
+                    add = True
+            elif mode in {'SCULPT', 'VERTEX_PAINT', 'WEIGHT_PAINT',
+                          'TEXTURE_PAINT'}:
+                if actob and actob.type == 'MESH':
+                    add = True
+            elif mode in {'PARTICLE_EDIT', 'GPENCIL_EDIT'}:
+                continue
+
+            if add:
+                item = MenuItem(enum_item.name)
+                item.icon = enum_item.icon
+                if mode == 'EDIT':
+                    item.execute = execute.format(mode, "True")
+                else:
+                    item.execute = execute.format(mode, "False")
+                self.menu_items.append(item)
+            else:
+                self.menu_items.append(None)
+
+        if has_particle(context) or has_gpencil(context):
+            e1 = enum_items['PARTICLE_EDIT']
+            e2 = enum_items['GPENCIL_EDIT']
+            name = "{} / {}".format(e1.name, e2.name)
+            item = MenuItem(name)
+            item.icon = "PLUS"
+            item.menu = "object_mode_set_more"
+            self.menu_items.append(item)
+        else:
+            self.menu_items.append(None)
+
+
 class PieMenuObjectModeSetAddonPreferences(
-    pie_menu.PieMenuPreferences, addongroup.AddonGroup,
-        bpy.types.PropertyGroup):
+        addongroup.AddonGroup, bpy.types.PropertyGroup):
     bl_idname = __name__
 
-    def reset_menus(self):
-        self.menus.clear()
-        self.menus.add()
-        p = self["menus"][0]
-        p.update(object_mode)
+    menus = [ObjectModeMenuMore, ObjectModeMenu]
 
     def draw(self, context):
-        pie_menu.PieMenuPreferences.draw(self, context)
+        pie_menu.draw_menus(self, context, self.layout)
         addongroup.AddonGroup.draw(self, context)
 
 
-def init(self, context):
-    self.menu_items.clear()
-    # order = {'OBJECT': 0,
-    #          'EDIT': 4,
-    #          'POSE': 2,
-    #          'SCULPT': 1,
-    #          'VERTEX_PAINT': 5,
-    #          'WEIGHT_PAINT': 6,
-    #          'TEXTURE_PAINT': 2,
-    #          'PARTICLE_EDIT': 3,
-    #          'GPENCIL_EDIT': 7,
-    #          }
-
-    def get_enum_items(obj, prop_name):
-        prop = obj.bl_rna.properties[prop_name]
-        return list(prop.enum_items)
-
-    actob = context.active_object
-
-    i = 0
-    for enum_item in get_enum_items(bpy.types.Object, 'mode'):
-        if enum_item.identifier == 'POSE':
-            if not (actob and actob.type == 'ARMATURE'):
-                continue
-        elif enum_item.identifier == 'EDIT':
-            if not (actob and actob.type in (
-                    'MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'ARMATURE',
-                    'LATTICE')):
-                continue
-        elif enum_item.identifier in ('SCULPT', 'VERTEX_PAINT',
-                                      'WEIGHT_PAINT', 'TEXTURE_PAINT'):
-            if not (actob and actob.type == 'MESH'):
-                continue
-        elif enum_item.identifier == 'GPENCIL_EDIT':
-            if not context.gpencil_data:
-                continue
-        elif enum_item.identifier == 'PARTICLE_EDIT':
-            use_particle = False
-            if actob:
-                if actob.particle_systems:
-                    use_particle = True
-                else:
-                    for mod in actob.modifiers:
-                        if mod.type in ('CLOTH', 'SOFT_BODY'):
-                            use_particle = True
-                            break
-            if not use_particle:
-                continue
-
-        item = self.menu_items.add()
-        item.label = enum_item.name
-        item.icon = enum_item.icon
-        text = "object.mode_set(mode='{}', toggle=True)"
-        item.execute_string = text.format(enum_item.identifier)
-        item["mode"] = enum_item.identifier
-
-        i += 1
-
-    if context.object:
-        if context.object.type in ('EMPTY', 'CAMERA', 'LAMP', 'SPEAKER'):
-            self.quick_action_index = 0
-        else:
-            for i, item in enumerate(self.menu_items):
-                if item["mode"] == 'EDIT':
-                    self.quick_action_index = i
-                    break
-
-
-object_mode = {
-    "name": "object_mode",
-    "label": "Object Mode",
-    "quick_action": pie_menu.EnumQuickAction['FIXED'],
-    "init_string":
-        "\n".join([t[4:] for t in inspect.getsource(init).split("\n")[1:]])
-}
+# order = {'OBJECT': 0,
+#          'EDIT': 4,
+#          'POSE': 2,
+#          'SCULPT': 1,
+#          'VERTEX_PAINT': 5,
+#          'WEIGHT_PAINT': 6,
+#          'TEXTURE_PAINT': 2,
+#          'PARTICLE_EDIT': 3,
+#          'GPENCIL_EDIT': 7,
+#          }
 
 
 menu_keymap_items = {
-    "object_mode": [["Object Non-modal", {"type": 'TAB', "value": 'PRESS'}]]
+    "object_mode_set": [
+        ["Object Non-modal", {"type": 'TAB', "value": 'PRESS'}],
+        ["Grease Pencil Stroke Edit Mode", {"type": 'TAB', "value": 'PRESS'}]]
 }
 
 
@@ -142,8 +188,6 @@ def register():
         bpy.utils.register_class(cls)
 
     addon_prefs = PieMenuObjectModeSetAddonPreferences.get_instance()
-    if "menus" not in addon_prefs:
-        addon_prefs.reset_menus()
 
     pie_menu.register_addon(addon_prefs)
 

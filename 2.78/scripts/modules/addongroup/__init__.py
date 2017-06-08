@@ -756,9 +756,9 @@ class AddonGroup(_AddonInfo):
     #     return attrs
 
     @classmethod
-    def get_instance(cls, module="", *, root=False, parent=False):
-        """return instance
-        :rtype: AddonPreferences
+    def __get_instance(cls, module="", *, root=False, parent=False):
+        """return instance or str
+        :rtype: AddonPreferences | str
         """
         if root and parent:
             raise ValueError()
@@ -777,18 +777,37 @@ class AddonGroup(_AddonInfo):
                     attrs = attrs[:-(num - 1)]
             attrs.extend(m.group(2).split("."))
 
+        path = "bpy.context.user_preferences.addons['" + attrs[0] + \
+               "'].preferences"
         if attrs[0] not in U.addons:  # wm.read_factory_settings()
-            return None
+            return None, path
         addon_prefs = U.addons[attrs[0]].preferences
         if not addon_prefs:
-            return None
+            return None, path
         if root:
-            return addon_prefs
+            return addon_prefs, path
         for attr in (attrs[1:-1] if parent else attrs[1:]):
             addon_prefs = getattr(addon_prefs.addons, "prefs_" + attr, None)
+            path += ".addons.prefs_" + attr
             if not addon_prefs:
-                return None
+                return None, path
+        return addon_prefs, path
+
+    @classmethod
+    def get_instance(cls, module="", *, root=False, parent=False):
+        """return instance
+        :rtype: AddonPreferences
+        """
+        addon_prefs, path = cls.__get_instance(module, root=root, parent=parent)
         return addon_prefs
+
+    @classmethod
+    def get_instance_path(cls, module="", *, root=False, parent=False):
+        """return instance path
+        :rtype: str
+        """
+        addon_prefs, path = cls.__get_instance(module, root=root, parent=parent)
+        return path
 
     @classmethod
     def __generate_fake_submodules(cls):
@@ -1158,8 +1177,6 @@ class AddonGroup(_AddonInfo):
 
         filter = addons.ui_addon_filter
         search = addons.ui_addon_search
-
-        # user_addon_paths = []
 
         for fake_mod in self._fake_submodules_.values():
             mod_name = fake_mod.__name__.split(".")[-1]

@@ -20,7 +20,7 @@
 bl_info = {
     "name": "Pie Menu",
     "author": "chromoly",
-    "version": (0, 9, 0),
+    "version": (0, 9, 1),
     "blender": (2, 78, 0),
     "location": "UserPreferences > Input > Pie Menu",
     "description": "",
@@ -34,6 +34,7 @@ bl_info = {
 from collections import OrderedDict
 import ctypes as ct
 import importlib
+import inspect
 import os
 import sys
 import time
@@ -81,7 +82,7 @@ from . import draw
 from .stubs import gen_screenshot_texture, draw_texture, cross2d
 from .preferences import OperatorArgument, PieMenuSubItem, PieMenuItem,\
     PieMenu,PieMenu_PG_Colors, PieMenuPreferences
-# from .menu_item import Menu, Item, DrawType, QuickAction
+from .menu_items import PieMenuPy
 from .draw import DrawingManager
 
 
@@ -193,7 +194,7 @@ class WM_OT_pie_menu_exec(bpy.types.Operator):
         cls = self.__class__
         item = cls.item
         try:
-            cls.result = item.execute(context, event)
+            cls.result = item.execute_(context, event)
         except:
             err = traceback.format_exc()
             print(err)
@@ -216,7 +217,7 @@ class WM_OT_pie_menu_exec_register(bpy.types.Operator):
         cls = self.__class__
         item = cls.item
         try:
-            cls.result = item.execute(context, event)
+            cls.result = item.execute_(context, event)
             # 履歴のメッセージを任意の物にする為、bl_optionsには'UNDO'を入れずに
             # ここでundo_push()を行う。
             bpy.ops.ed.undo_push(message=item.label)
@@ -523,12 +524,17 @@ class WM_OT_pie_menu(bpy.types.Operator):
         if not menu:
             return None
 
-        if not menu.poll(context):
+        if inspect.isclass(menu):
+            menu = PieMenuPy(menu())
+        elif not issubclass(menu.__class__, bpy.types.bpy_struct):
+            menu = PieMenuPy(menu)
+
+        if not menu.poll_(context):
             return False
 
         self.base_menu = menu
 
-        menu.init(context)
+        menu.init_(context)
         menu.co = co
         menu.update_current_items(context, self)
         menu.correct_radius()
@@ -541,14 +547,15 @@ class WM_OT_pie_menu(bpy.types.Operator):
         """
         # if event.type != 'TIMER':
         #     print(event.type, event.value)
+        if self.running_modal:
+            if not event.type.startswith("TIMER"):
+                return {'FINISHED', 'PASS_THROUGH'}
+
         if (event.type == 'INBETWEEN_MOUSEMOVE' or
                 event.type == 'MOUSEMOVE' and
                 event.mouse_x == event.mouse_prev_x and
                 event.mouse_y == event.mouse_prev_y):
             return {'RUNNING_MODAL'}
-
-        if self.running_modal:
-            return {'FINISHED', 'PASS_THROUGH'}
 
         # イベント履歴
         event_history_bak = self.event_history.copy()
@@ -640,19 +647,17 @@ class WM_OT_pie_menu(bpy.types.Operator):
 
         if confirm and not active_item:
             if menu.active_item_index != -1:
-                active_item = menu.current_items[menu.active_item_index]
-            else:
-                active_item = None
-            if active_item and release and menu.active_index == -1:
-                if menu.quick_action == 'NONE':
-                    active_item = None
+                if menu.quick_action == 'NONE' and menu.active_index == -1:
+                    pass
+                else:
+                    active_item = menu.current_items[menu.active_item_index]
 
         if confirm and active_item:
             retval = None
 
             if active_item.enabled:
                 if active_item.type in {'ADVANCED', 'OPERATOR'}:
-                    menu.set_last_item_index(
+                    menu.set_last_item_direction(
                         menu.current_items.index(active_item))
                     modal_handlers_pre = st.wmWindow.modal_handlers(win)
 
@@ -667,8 +672,10 @@ class WM_OT_pie_menu(bpy.types.Operator):
                         result = WM_OT_pie_menu_exec.result
 
                     modal_handlers_post = st.wmWindow.modal_handlers(win)
-                    running_modal = (ct.addressof(modal_handlers_pre[0][0]) !=
-                                     ct.addressof(modal_handlers_post[0][0]))
+                    # running_modal = (ct.addressof(modal_handlers_pre[0][0]) !=
+                    #                  ct.addressof(modal_handlers_post[0][0]))
+                    running_modal = (len(modal_handlers_pre) !=
+                                     len(modal_handlers_post))
                 else:
                     result = None
                     running_modal = False
@@ -684,7 +691,7 @@ class WM_OT_pie_menu(bpy.types.Operator):
                     menu_test = self.set_menu(context, sub_menu, co)
                     if menu_test is None:
                         retval = {'FINISHED'}
-                    elif not menu_test:  # poll()の結果がFalse
+                    elif not menu_test:  # poll_()の結果がFalse
                         pass
                     else:
                         self.menu_history.append((menu.idname, menu.label))
@@ -698,7 +705,7 @@ class WM_OT_pie_menu(bpy.types.Operator):
                     retval = {'FINISHED'}
             else:
                 if not click:
-                    menu.set_last_item_index(-1)
+                    menu.set_last_item_direction(-1)
                     retval = {'CANCELLED'}
 
             if retval is not None:
@@ -719,6 +726,9 @@ class WM_OT_pie_menu(bpy.types.Operator):
         elif event.type == 'ESC':
             if event.type not in item_shortcuts:
                 cancel = True
+        elif (confirm and menu.quick_action != 'NONE' and
+              menu.active_index == menu.active_item_index == -1):
+            cancel = True
 
         if cancel:
             self.draw_handler_remove()
@@ -804,7 +814,7 @@ class WM_OT_pie_menu(bpy.types.Operator):
             self.report({'ERROR'}, "menu '{}' not found".format(self.menu))
             return {'CANCELLED'}
 
-        elif not menu_test:  # poll()でFalseを返す
+        elif not menu_test:  # poll_()でFalseを返す
             return {'CANCELLED', 'PASS_THROUGH'}
 
         wm.modal_handler_add(self)

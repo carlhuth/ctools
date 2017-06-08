@@ -24,104 +24,164 @@ bl_info = {
 }
 
 
-from types import MethodType
+import inspect
 
 import bpy
 
-# import piemenus
+from ..utils import addongroup
+
+import pie_menu
 
 
-def get_enum_items(obj, prop_name):
-    prop = obj.bl_rna.properties[prop_name]
-    return list(prop.enum_items)
+class PieMenuSnapAddonPreferences(
+    pie_menu.PieMenuPreferences, addongroup.AddonGroup,
+        bpy.types.PropertyGroup):
+    bl_idname = __name__
+
+    def set_default_menus(self):
+        self.menus.clear()
+        make_menus(bpy.context, self)
+
+    def draw(self, context):
+        pie_menu.PieMenuPreferences.draw(self, context)
+        addongroup.AddonGroup.draw(self, context)
 
 
-class Empty:
-    def __init__(self, label=""):
-        self.label = label
+def snap_element_init(self, context):
+    def get_enum_items(obj, prop_name):
+        prop = obj.bl_rna.properties[prop_name]
+        return list(prop.enum_items)
 
+    self.menu_items.clear()
+    ToolSettings = bpy.types.ToolSettings
 
-class EmptyMenu:
-    def __init__(self, context):
-        pass
-
-
-class SnapElement:
-    idname = "snap_element"
-    label = "Snap Element"
-    next = "snap_target"
-    radius = 0
-
-    keymap_items = [["3D View", {"type": 'TAB', "value": 'PRESS',
-                                 "shift": True}]]
-
-    def __init__(self, context):
-        self.items = []
-        ToolSettings = bpy.types.ToolSettings
-
-        enum_items = {e.identifier: e for e in
-                      get_enum_items(ToolSettings, "snap_element")}
-        identifiers = ['VERTEX', None, 'EDGE', None, 'FACE', 'VOLUME',
-                       'INCREMENT', None]
-        for identifier in identifiers:
-            if identifier is None:
-                self.items.append(None)
-            else:
-                enum_item = enum_items[identifier]
-                item = Empty(enum_item.name)
-                item.description = enum_item.description
-                item.icon = enum_item.icon
-                item.execute = "bpy.ops.wm.context_set_enum(" \
-                               "data_path='tool_settings.snap_element', " \
-                               "value='{}')".format(identifier)
-                if identifier == 'INCREMENT':
-                    item.execute += (
-                        "\nbpy.ops.wm.context_set_boolean(data_path="
-                        "'tool_settings.use_snap_grid_absolute', value=False)")
-                self.items.append(item)
-
-        prop = ToolSettings.bl_rna.properties["use_snap_grid_absolute"]
-        item = Empty(prop.name)
-        item.description = prop.description
-        item.icon = prop.icon
-        item.execute = (
-            "bpy.ops.wm.context_set_enum("
-            "data_path='tool_settings.snap_element', "
-            "value='INCREMENT')\n"
-            "bpy.ops.wm.context_set_boolean(data_path="
-            "'tool_settings.use_snap_grid_absolute', value=True)")
-        self.items[-1] = item
-
-        item = Empty("Toggle Snap")
-        prop = ToolSettings.bl_rna.properties["use_snap"]
-        item.description = prop.description
-        item.icon = 'SNAP_ON'
-        item.execute = "wm.context_toggle(" \
-                       "data_path='tool_settings.use_snap')"
-        item.shortcut = 'TAB'
-        self.items[1] = item
-
-
-class SnapTarget:
-    idname = "snap_target"
-    label = "Snap Target"
-    prev = "snap_element"
-    item_order = 'OFFICIAL'
-
-    keymap_items = [["3D View", {"type": 'TAB', "value": 'PRESS',
-                                 "shift": True, "ctrl": True}]]
-
-    def __init__(self, context):
-        self.items = []
-        for enum_item in get_enum_items(bpy.types.ToolSettings,
-                                        "snap_target"):
-            item = Empty(enum_item.name)
+    enum_items = {e.identifier: e for e in
+                  get_enum_items(ToolSettings, "snap_element")}
+    identifiers = ['VERTEX', 'EDGE', 'FACE', None,'VOLUME', 'INCREMENT',
+                   None, None]
+    for identifier in identifiers:
+        item = self.menu_items.add()
+        if identifier is None:
+            item.type = 'SPACER'
+        else:
+            enum_item = enum_items[identifier]
+            item.label = enum_item.name
             item.description = enum_item.description
             item.icon = enum_item.icon
-            item.execute = "wm.context_set_enum(" \
-                           "data_path='tool_settings.snap_target', " \
-                           "value='{}')".format(enum_item.identifier)
-            self.items.append(item)
+            item.execute = \
+                "bpy.ops.wm.context_set_enum(" \
+                "data_path='tool_settings.snap_element', " \
+                "value='{}')".format(identifier)
+            if identifier == 'INCREMENT':
+                item.execute += (
+                    "\nbpy.ops.wm.context_set_boolean(data_path="
+                    "'tool_settings.use_snap_grid_absolute', value=False)")
+
+    prop = ToolSettings.bl_rna.properties["use_snap_grid_absolute"]
+    item = self.menu_items[6]
+    item.type = 'ADVANCED'
+    item.label = prop.name
+    item.description = prop.description
+    item.icon = prop.icon
+    item.execute = (
+        "bpy.ops.wm.context_set_enum("
+        "data_path='tool_settings.snap_element', "
+        "value='INCREMENT')\n"
+        "bpy.ops.wm.context_set_boolean(data_path="
+        "'tool_settings.use_snap_grid_absolute', value=True)")
+
+    item = self.menu_items[3]
+    item.label = "Toggle Snap"
+    item.type = 'ADVANCED'
+    prop = ToolSettings.bl_rna.properties["use_snap"]
+    item.description = prop.description
+    item.icon = 'SNAP_ON'
+    item.execute = "wm.context_toggle(" \
+                          "data_path='tool_settings.use_snap')"
+    item.shortcut = 'TAB'
+
+
+def snap_target_init(self, context):
+    def get_enum_items(obj, prop_name):
+        prop = obj.bl_rna.properties[prop_name]
+        return list(prop.enum_items)
+
+    self.menu_items.clear()
+    for enum_item in get_enum_items(bpy.types.ToolSettings,
+                                    "snap_target"):
+        item = self.menu_items.add()
+        item.label = enum_item.name
+        item.description = enum_item.description
+        item.icon = enum_item.icon
+        item.execute = "wm.context_set_enum(" \
+                              "data_path='tool_settings.snap_target', " \
+                              "value='{}')".format(enum_item.identifier)
+
+
+def make_menus(context, addon_prefs):
+    # Snap Element
+    menu = addon_prefs.menus.add()
+    menu.idname = "snap_element"
+    menu.label = "Snap Element"
+    menu.next = "snap_target"
+    menu.init = \
+        "\n".join([t[4:] for t in
+                   inspect.getsource(snap_element_init).split("\n")[1:]])
+
+    # Snap Target
+    menu = addon_prefs.menus.add()
+    menu.idname = "snap_target"
+    menu.label = "Snap Target"
+    menu.prev = "snap_element"
+    menu.init = \
+        "\n".join([t[4:] for t in
+                   inspect.getsource(snap_target_init).split("\n")[1:]])
+
+    # Snap
+    menu = addon_prefs.menus.add()
+    menu.idname = "snap"
+    menu.label = "Snap"
+    menu.item_order = 'CW6'
+
+    item = menu.menu_items.add()
+    item.label = "Selection to Grid"
+    item.icon = 'VERTEXSEL'
+    item.execute = "view3d.snap_selected_to_grid"
+
+    item = menu.menu_items.add()
+    item.label = "Selection to Cursor"
+    item.icon = 'VERTEXSEL'
+    item.execute = "view3d.snap_selected_to_cursor(use_offset=False)"
+
+    item = menu.menu_items.add()
+    item.label = "Selection to Cursor (Offset)"
+    item.icon = 'VERTEXSEL'
+    item.execute = "view3d.snap_selected_to_cursor(use_offset=True)"
+
+    item = menu.menu_items.add()
+    item.label = "Selection to Active"
+    item.icon = 'VERTEXSEL'
+    item.execute = "view3d.snap_selected_to_active"
+
+    item = menu.menu_items.add()
+    item.label = "Cursor to Selected"
+    item.icon = 'CURSOR'
+    item.execute = "view3d.snap_cursor_to_selected"
+
+    item = menu.menu_items.add()
+    item.label = "Cursor to Center"
+    item.icon = 'CURSOR'
+    item.execute = "view3d.snap_cursor_to_center"
+
+    item = menu.menu_items.add()
+    item.label = "Cursor to Grid"
+    item.icon = 'CURSOR'
+    item.execute = "view3d.snap_cursor_to_grid"
+
+    item = menu.menu_items.add()
+    item.label = "Cursor to Active"
+    item.icon = 'CURSOR'
+    item.execute = "view3d.snap_cursor_to_active"
 
 
 class Snap:
@@ -143,57 +203,6 @@ class Snap:
             return item
 
         self.menus = {}
-
-        self.items = []
-        item = add("Selection to Grid")
-        # item.icon = 'GRID'
-        item.icon = 'VERTEXSEL'
-        item.execute = "view3d.snap_selected_to_grid"
-
-        item = add("Selection to Cursor")
-        # item.icon = 'CURSOR'
-        item.icon = 'VERTEXSEL'
-        item.execute = "view3d.snap_selected_to_cursor(use_offset=False)"
-
-        item = add("Selection to Cursor (Offset)")
-        # item.icon = 'CURSOR'
-        item.icon = 'VERTEXSEL'
-        item.execute = "view3d.snap_selected_to_cursor(use_offset=True)"
-
-        item = add("Selection to Active")
-        # item.icon = 'CURSOR'
-        item.icon = 'VERTEXSEL'
-        item.execute = "view3d.snap_selected_to_active"
-
-        item = add("Cursor to Selected")
-        # item.icon = 'FACESEL'
-        item.icon = 'CURSOR'
-        item.execute = "view3d.snap_cursor_to_selected"
-
-        item = add("Cursor to Center")
-        item.icon = "CURSOR"
-        item.execute = "view3d.snap_cursor_to_center"
-
-        item = add("Cursor to Grid")
-        # item.icon = 'GRID'
-        item.icon = 'CURSOR'
-        item.execute = "view3d.snap_cursor_to_grid"
-
-        item = add("Cursor to Active")
-        # item.icon = 'VERTEXSEL'
-        item.icon = 'CURSOR'
-        item.execute = "view3d.snap_cursor_to_active"
-
-        # if context.area.type == 'VIEW_3D':
-        #     v3d = context.space_data
-        #     value = v3d.use_cursor_snap_grid
-        #     item = self.add_item(
-        #         "Cursor Snapping -> " + ('OFF' if value else 'ON'))
-        #     item.icon = 'GRID'
-        #     item.execute = "wm.context_toggle(" \
-        #                     "data_path='space_data.use_cursor_snap_grid')"
-        # else:
-        #     self.add_item(empty=True)
 
         try:
             import ctools.utils.unitsystem
@@ -273,32 +282,48 @@ class Snap:
             item.execute = "view3d.snap_cursor(mode='boundbox')"
 
 
-pie_menus = [
-    SnapElement,
-    SnapTarget,
-    Snap,
+menu_keymap_items = {
+    "snap_element": [
+        ["3D View",  {"type": 'TAB', "value": 'PRESS', "shift": True}],
+    ],
+    "snap_target": [
+        ["3D View",  {"type": 'TAB', "value": 'PRESS', "shift": True,
+                      "ctrl": True}],
+    ],
+    "snap": [
+        ["3D View",  {"type": 'S', "value": 'PRESS', "shift": True}],
+    ],
+}
+
+
+classes = [
+    PieMenuSnapAddonPreferences
 ]
 
-keymap_items = []
 
-
+@PieMenuSnapAddonPreferences.register_addon
 def register():
-    # piemenus.register_addon()
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
-    # for menu in pie_menus:
-    #     if hasattr(menu, "keymap_items"):
-    #         for km_name, kwargs in menu.keymap_items:
-    #             km = piemenus.get_keymap(km_name)
-    #             if km:
-    #                 kmi = km.keymap_items.new("wm.pie_menu", **kwargs)
-    #                 kmi.properties.menu = menu.idname
-    #                 keymap_items.append((km, kmi))
-    pass
+    addon_prefs = PieMenuSnapAddonPreferences.get_instance()
+    # if "menus" not in addon_prefs:
+    addon_prefs.set_default_menus()
+
+    pie_menu.register_addon(addon_prefs)
+
+    for idname, km_items in menu_keymap_items.items():
+        for km_name, kwargs in km_items:
+            km = pie_menu.get_keymap(km_name)
+            if km:
+                kmi = km.keymap_items.new("wm.pie_menu", **kwargs)
+                kmi.properties.menu = idname
 
 
+
+@PieMenuSnapAddonPreferences.unregister_addon
 def unregister():
-    # piemenus.unregister_addon()
-
-    for km, kmi in keymap_items:
-        km.keymap_items.remove(kmi)
-    keymap_items.clear()
+    addon_prefs = PieMenuSnapAddonPreferences.get_instance()
+    pie_menu.unregister_addon(addon_prefs)
+    for cls in classes[::-1]:
+        bpy.utils.unregister_class(cls)

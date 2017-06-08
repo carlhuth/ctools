@@ -53,7 +53,7 @@ def get_menu(idname):
     """
     for addon_prefs in _registered_addon_preferences[::-1]:
         for menu in addon_prefs.menus:
-            if menu.active:
+            if getattr(menu, "active", True):
                 if menu.idname == idname:
                     return menu
 

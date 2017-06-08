@@ -20,7 +20,7 @@
 from collections import OrderedDict
 import enum
 # import importlib
-# import inspect
+import inspect
 import os
 import math
 import re
@@ -67,13 +67,13 @@ class EnumDrawType(enum.IntEnum):
 class EnumQuickAction(enum.IntEnum):
     NONE = 0
     LAST = 1
-    FIXED = 2
+    DIRECTION = 2
 
 
 class EnumHighlight(enum.IntEnum):
     NONE = 0
     LAST = 1
-    FIXED = 2
+    DIRECTION = 2
 
 
 all_icon_identifiers = {
@@ -140,6 +140,16 @@ def draw_property(layout, obj, attr, text=None, unset=False,
 class _OperatorArgument:
     attrs = []
 
+    key = bpy.props.StringProperty()
+
+    @property
+    def value(self):
+        return getattr(self, self.key)
+
+    @value.setter
+    def value(self, val):
+        setattr(self, self.key, val)
+
     def draw_ui(self, context, layout):
         """
         :type context: bpy.types.Context
@@ -149,14 +159,14 @@ class _OperatorArgument:
         box.context_pointer_set("operator_argument", self)
         row = box.row()
         sub = row.row()
-        sub.prop(self, self.name)
-        if self.is_property_set(self.name):
+        sub.prop(self, self.key)
+        if self.is_property_set(self.key):
             sub = row.row()
             sub.alignment = 'RIGHT'
             op = sub.operator(ops.WM_OT_pie_menu_property_unset.bl_idname,
                               text="", icon='PANEL_CLOSE', emboss=False)
             op.data = "operator_argument"
-            op.property = self.name
+            op.property = self.key
         else:
             box.active = False
 
@@ -205,24 +215,25 @@ def ensure_operator_args(item, clear=False):
             for i in range(-n):
                 item.operator_arguments.add()
         for i, prop in enumerate(props):
-            name = bl_rna.identifier + "." + prop.identifier
-            if name in item.operator_arguments:
-                j = item.operator_arguments.find(name)
-                if i != j:
+            key = bl_rna.identifier + "." + prop.identifier
+            for j, itm in enumerate(item.operator_arguments):
+                if itm.key == key and j != i:
                     item.operator_arguments.move(j, i)
+                    break
         if n > 0:
             for i in range(n):
                 item.operator_arguments.remove(
                     len(item.operator_arguments) - 1)
     for arg_item, prop in zip(item.operator_arguments, props):
-        # attr: e.g. "MESH_OT_delete.type"
-        name = bl_rna.identifier + "." + prop.identifier
-        if arg_item.name != name:
-            for key in arg_item.keys():
-                del arg_item[key]
-        arg_item.name = name
+        # key: e.g. "MESH_OT_delete.type"
+        key = bl_rna.identifier + "." + prop.identifier
+        if arg_item.key != key:
+            for k in arg_item.keys():
+                del arg_item[k]
+        arg_item.name = prop.identifier
+        arg_item.key = key
         p = vaprops.bl_prop_to_py_prop(prop, modify_enum=True)
-        setattr(OperatorArgument, name, p)
+        setattr(arg_item.__class__, key, p)
 
 
 def _prop_label_get(self, key):
@@ -235,7 +246,7 @@ def _prop_label_get(self, key):
                 if not verify_operator_string(text):
                     return ""
             else:
-                text = self.execute_string
+                text = self.execute
             if text:
                 op_rna = oputils.get_operator_rna(text)
                 if op_rna:
@@ -276,7 +287,7 @@ def prop_description_set(self, value):
 
 
 def prop_poll_get(self):
-    result = _prop_label_get(self, "poll_string")
+    result = _prop_label_get(self, "poll")
     if isinstance(result, str):
         return result
     else:
@@ -285,7 +296,7 @@ def prop_poll_get(self):
 
 
 def prop_poll_set(self, value):
-    self["poll_string"] = value
+    self["poll"] = value
 
 
 def prop_ensure_argument_get(self):
@@ -311,6 +322,15 @@ def prop_operator_update(self, context):
     ensure_operator_args(self)
 
 
+prop_direction_enum_items = \
+    [('NONE', 'None', "", -1)] + \
+    [(d, d, "", i) for i, d in enumerate(
+     ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'])]
+
+prop_quick_action_enum_items = \
+    prop_direction_enum_items + [('LAST', "Last", "", 8)]
+
+
 class _PieMenuItem(ExecuteString):
     active = props.BoolProperty(
         name="Active",
@@ -328,12 +348,12 @@ class _PieMenuItem(ExecuteString):
         default='ADVANCED',
     )
 
-    poll_string = props.StringProperty(
+    poll = props.StringProperty(
         name="Poll",
         get=prop_poll_get,
         set=prop_poll_set,
     )
-    execute_string = props.StringProperty(
+    execute = props.StringProperty(
         name="Execute",
     )
 
@@ -383,8 +403,9 @@ class _PieMenuItem(ExecuteString):
         default=True,
     )
 
-    # 描画時に使う
+    # 描画等で使う
     enabled = props.BoolProperty()
+    direction = props.EnumProperty(items=prop_direction_enum_items)
 
     @property
     def icon_box_rect(self):
@@ -406,20 +427,20 @@ class _PieMenuItem(ExecuteString):
         if self.type == 'OPERATOR':
             if not verify_operator_string(self.operator):
                 return ""
+            _ = self.ensure_argument
             arg_string_list = []
             for arg in self.operator_arguments:
-                if arg.name in arg:
-                    value = getattr(arg, arg.name)
+                if arg.key in arg:
+                    value = arg.value
                     if isinstance(value, str):
                         value = "'" + value + "'"
                     else:
                         value = str(value)
-                    arg_name = "".join(arg.name.split("."))[1:]
-                    arg_string_list.append(arg_name + "=" + value)
+                    arg_string_list.append(arg.name + "=" + value)
             text = self.operator + "(" + ", ".join(arg_string_list) + ")"
             return text
         elif self.type == 'ADVANCED':
-            return self.execute_string
+            return self.execute
         else:
             return ""
 
@@ -449,7 +470,7 @@ class _PieMenuItem(ExecuteString):
                 if item.active:
                     items[item] = i
                     i += 1
-                if i == 16:
+                if i == 8:
                     break
 
             if self not in items:
@@ -460,12 +481,9 @@ class _PieMenuItem(ExecuteString):
                 if num <= 4:
                     num = 4
                     names = list(range(0, 16, 4))
-                elif num <= 8:
+                else:
                     num = 8
                     names = list(range(0, 16, 2))
-                else:
-                    num = 16
-                    names = list(range(0, 16, 1))
                 item_indices = menu.calc_item_indices(menu.item_order, num)
                 name = str(names[item_indices.index(items[self])])
                 icon = pcol[name]
@@ -551,6 +569,7 @@ class _PieMenuItem(ExecuteString):
             return
         elif self.type == 'MENU':
             column.prop(self, "menu")
+            column.prop(self, "shortcut")
         elif self.type == 'OPERATOR':
             _ = self.ensure_argument
             row = column.row()
@@ -572,10 +591,11 @@ class _PieMenuItem(ExecuteString):
                 flow = box.column_flow(2)
                 for arg in self.operator_arguments:
                     arg.draw_ui(context, flow)
+            column.prop(self, "shortcut")
         else:
-            draw_property(column, self, "execute_string", "Execute",
+            draw_property(column, self, "execute", "Execute",
                           paste=True, context_attr="pie_menu_item")
-            draw_property(column, self, "poll_string", "Poll", unset=True,
+            draw_property(column, self, "poll", "Poll", unset=True,
                           paste=True, context_attr="pie_menu_item",
                           active=True)
 
@@ -608,18 +628,18 @@ class _PieMenuItem(ExecuteString):
                     sub_item.draw_ui(context, col, menu, index,
                                      sub_item_type=key)
 
-    def poll(self, context, event=None):
-        if self.poll_string:
-            return bool(self.exec_string("poll_string", context, event))
+    def poll_(self, context):
+        if self.poll:
+            return bool(self.exec_string("poll", context, None))
         else:
             return True
 
-    def execute(self, context, event=None):
+    def execute_(self, context, event=None):
         if self.type == 'OPERATOR':
             text = self.get_execute_string()
             return self.exec_string_data(text, context, event)
         elif self.type == 'ADVANCED':
-            return self.exec_string("execute_string", context, event)
+            return self.exec_string("execute", context, event)
         else:
             return None
 
@@ -632,7 +652,6 @@ class PieMenuSubItem(_PieMenuItem, bpy.types.PropertyGroup):
     )
     operator_arguments = props.CollectionProperty(
         type=OperatorArgument)
-
 
 
 class PieMenuItem(_PieMenuItem, bpy.types.PropertyGroup):
@@ -691,187 +710,39 @@ def prop_radius_set(self, value):
     self["radius"] = value
 
 
-class _PieMenu(ExecuteString):
-    # {idname: index, ...}
-    _last_item_index = {}
-
-    idname = props.StringProperty(
-        name="ID Name",
-        get=prop_idname_get,
-        set=prop_idname_set
-    )
-
-    active = props.BoolProperty(
-        name="Active",
-        description="Activate or deactivate menu",
-        default=True
-    )
-    show_expanded = props.BoolProperty()
-
-    poll_string = props.StringProperty(
-        name="Poll",
-        description="e.g.\nreturn context.mode == 'EDIT_MESH'",
-    )
-    init_string = props.StringProperty(
-        name="Init",
-    )
-
-    label = props.StringProperty(
-        name="Label",
-        description="Menu title",
-    )
-    draw_type = props.EnumProperty(
-        name="Draw Type",
-        items=[('SIMPLE', "Simple", ""),
-               ('BOX', "Box", ""),
-               ('CIRCLE', "Circle", "")],
-        default='BOX',
-        get=prop_draw_type_get,
-        set=prop_draw_type_set
-    )
-    icon_scale = props.FloatProperty(
-        name="Icon Scale",
-        default=1.0,
-        min=1.0,
-        max=10.0,
-    )
-    icon_expand = props.FloatProperty(
-        name="Icon Expand",
-        default=0.0,
-        min=-1.0,
-        max=1.0,
-    )
-    radius = props.IntProperty(
-        name="Radius",
-        description="Pie menu size in pixels",
-        min=0,
-        default=0,
-        get=prop_radius_get,
-        set=prop_radius_set
-    )
-    quick_action = props.EnumProperty(
-        name="Quick Action",
-        items=[('NONE', "None", ""),
-               ('LAST', "Last", ""),
-               ('FIXED', "Fixed", "")],
-        default='NONE',
-    )
-    quick_action_index = props.IntProperty(
-        name="Quick Action Index",
-        description="",
-        min=0,
-        max=16,
-        default=0,
-    )
-    highlight = props.EnumProperty(
-        name="Highlight",
-        items=[('NONE', "None", ""),
-               ('LAST', "Last", ""),
-               ('FIXED', "Fixed", "")],
-        default='NONE',
-    )
-    highlight_index = props.IntProperty(
-        name="Highlight Index",
-        description="",
-        min=0,
-        max=16,
-        default=0,
-    )
-    translate = props.BoolProperty(
-        name="Translate",
-        default=True,
-    )
-
-    items_num = props.EnumProperty(
-        name="Number of Items",
-        items=[('4', "4", ""),
-               ('8', "8", ""),
-               ('16', "16", "")],
-        default='8',
-    )
-    # menu_items = props.CollectionProperty(
-    #     name="Items", type=PieMenuItem)
-    menu_items = []  # ↑継承で上書きする場合に問題が発生する
-    item_order = props.EnumProperty(
-        name="Item Order",
-        items=[('CW', "Clockwise", "[0, 1, 2, 3, 4, 5, 6, 7]"),
-               ('CW6', "Clockwise 6",
-                "[4, 5, 6, 7, 0, 1, 2, 3] Start from six o'clock"),
-               ('OFFICIAL', "Official", "[3, 5, 1, 7, 2, 6, 0, 4]"),
-               ('MODIFIED', "Modified", "[3, 7, 1, 5, 2, 4, 0, 6]"),
-               ],
-        default='OFFICIAL',
-    )
-
-    next = props.StringProperty(
-        name="Next Menu",
-        description="Shortcut: wheel down",
-    )
-    prev = props.StringProperty(
-        name="Previous Menu",
-        description="Shortcut: wheel up",
-    )
-
-    # 上書き
-    radius_ = props.IntProperty()
-    quick_action_index_ = props.IntProperty()
-    highlight_index_ = props.IntProperty()
-
-    # 描画時に使用
-    active_index = props.IntProperty(default=-1)
-    active_item_index = props.IntProperty(default=-1)  # -1: None
-    is_valid_click = props.BoolProperty(default=True)
-    co = props.FloatVectorProperty(subtype='XYZ', size=2)
-    current_items_type = props.StringProperty()  # "", "shift", "ctrl", "alt", "oskey"
-
-    @property
-    def item_boundary_angles(self):
-        return self["item_boundary_angles"]
-
-    @item_boundary_angles.setter
-    def item_boundary_angles(self, value):
-        self["item_boundary_angles"] = value
-
+class _PieMenuCommon:
     @property
     def current_items(self):
         mod = self.current_items_type
 
         items = []
         for item in self.menu_items:
-            if item.active:
-                if mod == "shift" and item.shift.active:
+            if item is None:
+                items.append(item)
+            elif item.active:
+                if mod == "shift" and item.shift and item.shift.active:
                     items.append(item.shift)
-                elif mod == "ctrl" and item.ctrl.active:
+                elif mod == "ctrl" and item.ctrl and item.ctrl.active:
                     items.append(item.ctrl)
                 else:
                     items.append(item)
 
         ls = []
-        for i in self["current_items_indices"]:
+        for i in self.current_items_indices:
             if i == -1:
                 ls.append(None)
             else:
                 item = items[i]
-                if item.type == 'SPACER':
+                if item is None or item.type == 'SPACER':
                     ls.append(None)
                 else:
                     ls.append(item)
         return ls
 
-    def poll(self, context, event=None):
-        if self.poll_string:
-            return bool(self.exec_string("poll_string", context, event))
-        else:
-            return True
-
-    def init(self, context):
-        if self.init_string:
-            self.exec_string("init_string", context, None)
-
     @staticmethod
     def calc_item_indices(item_order, num):
         def sort_cw():
-            for n in (4, 8, 16):
+            for n in (4, 8):
                 if num <= n:
                     return list(range(num)) + [-1] * (n - num)
 
@@ -885,25 +756,19 @@ class _PieMenu(ExecuteString):
             if modified:
                 if num <= 4:
                     order = [3, 1, 2, 0]
-                elif num <= 8:
+                else:
                     order = [3, 7, 1, 5, 2, 4, 0, 6]
-                else:  # if num <= 16:
-                    order = [3, 15, 7, 11, 1, 9, 5, 13, 2, 12, 4, 8, 0, 10, 6,
-                             14]
             else:
                 if num <= 4:
                     order = [3, 1, 2, 0]
-                elif num <= 8:
+                else:
                     order = [3, 5, 1, 7, 2, 6, 0, 4]
-                else:  # if num <= 16:
-                    order = [3, 15, 5, 11, 1, 9, 7, 13, 2, 12, 6, 8, 0, 10, 4,
-                             14]
 
             indices = list(range(num)) + [-1] * (len(order) - num)
 
             return [indices[i] for i in order]
 
-        if num > 16:
+        if num > 8:
             raise ValueError()
         if item_order == 'CW':
             indices = sort_cw()
@@ -916,51 +781,59 @@ class _PieMenu(ExecuteString):
 
         return indices
 
+    def _update_current_items_indices(self):
+        num = 0
+        for item in self.menu_items:
+            if item is None or item.active:
+                num += 1
+        num = min(num, 8)
+        indices = self.calc_item_indices(self.item_order, num)
+        self.current_items_indices = indices
+
+    def update_item_directions(self):
+        self._update_current_items_indices()
+
+        items = []
+        for item in self.menu_items:
+            if item is None or item.active:
+                items.append(item)
+
+        if len(items) <= 4:
+            directions = ['N', 'E', 'S', 'W']
+        else:
+            directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
+
+        for i, index in enumerate(self.current_items_indices):
+            if index != -1:
+                item = items[index]
+                if item is not None:
+                    item.direction = directions[i]
+                    if item.shift is not None:
+                        item.shift.direction = directions[i]
+                    if item.ctrl is not None:
+                        item.ctrl.direction = directions[i]
+
     def update_current_items(self, context, op):
         mod = op.last_modifier()
         self.current_items_type = mod
 
-        items = []
-        for item in self.menu_items:
-            if item.active:
-                if mod == "shift" and item.shift.active:
-                    items.append(item.shift)
-                elif mod == "ctrl" and item.ctrl.active:
-                    items.append(item.ctrl)
-                else:
-                    items.append(item)
-        items = items[:16]
+        # update current_items_indices and PieMenuItem.direction
+        self.update_item_directions()
 
-        num = len(items)
-        indices = self.calc_item_indices(self.item_order, num)
-        self["current_items_indices"] = indices
-
-        # quick_action_index, highlight_index
-        if num <= 4:
-            n = 4
-        elif num <= 8:
-            n = 8
-        else:  # if num <= 16:
-            n = 16
-        indices_ = self.calc_item_indices(self.item_order, n)
-        for attr in ["quick_action_index", "highlight_index"]:
-            index = getattr(self, attr)
-            if 0 <= index < num:
-                setattr(self, attr + "_", indices_.index(index))
+        current_items = self.current_items
 
         # poll()
-        for i in indices:
-            if i != -1:
-                item = items[i]
-                item.enabled = item.poll(context)
+        for item in current_items:
+            if item is not None:
+                item.enabled = item.poll_(context)
 
         # calc boundaries
-        num = len(indices)
+        num = len(current_items)
         pie_angle = math.pi * 2 / num
         item_boundary_angles = [[0.0, 0.0] for i in range(num)]
-        current_items = self.current_items
+
         for i, item in enumerate(current_items):
-            if not item:
+            if item is None:
                 continue
             angle = math.pi * 0.5 - pie_angle * i
             if angle < -1e-5:
@@ -977,7 +850,6 @@ class _PieMenu(ExecuteString):
                     ang = angle - pie_angle * k * 0.5
                     item_boundary_angles[i][1] = ang
                     break
-
         self.item_boundary_angles = item_boundary_angles
 
     def correct_radius(self):
@@ -986,17 +858,22 @@ class _PieMenu(ExecuteString):
         """
 
         addon_prefs = pie_menu.addon_preferences
-        radius = self.get("radius", addon_prefs.menu_radius)
+        # radius = self.get("radius", addon_prefs.menu_radius)
+        radius = self.radius
 
         current_items = self.current_items
-        if len(current_items) == 0:
+        num = len(current_items)
+        if num == 0:
             return
 
-        pie_angle = math.pi * 2 / len(current_items)
+        # 8個を最小とする
+        num = max(8, num)
+
+        pie_angle = math.pi * 2 / num
         widget_unit = vawm.widget_unit()
 
         if self.draw_type == 'SIMPLE':
-            n = len(current_items) / 4
+            n = num / 4
             r = widget_unit * (n - 0.5) + addon_prefs.item_min_space * n
             self.radius_ = max(r, radius)
         else:
@@ -1043,19 +920,29 @@ class _PieMenu(ExecuteString):
             else:
                 active_index = idx
 
+        def direction_to_index(direction):
+            if len(current_items) <= 4:
+                directions = ['N', 'E', 'S','W']
+            else:
+                directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
+            for i, direction_ in enumerate(directions):
+                if direction == direction_:
+                    return i
+            return -1  # 'NONE'
+
         active_item_index = -1
         if active_index == -1:
-            if self.quick_action == 'LAST':
-                last_item_index = self.get_last_item_index()
-                if 0 <= last_item_index < len(current_items):
-                    item = current_items[last_item_index]
-                    if item:
-                        active_item_index = last_item_index
-            elif self.quick_action == 'FIXED':
-                if 0 <= self.quick_action_index_ < len(current_items):
-                    item = current_items[self.quick_action_index_]
-                    if item:
-                        active_item_index = self.quick_action_index_
+            if self.quick_action == 'NONE':
+                pass
+            elif self.quick_action == 'LAST':
+                last_item_direction = self.get_last_item_direction()
+                i = direction_to_index(last_item_direction)
+                if i != -1 and current_items[i]:
+                    active_item_index = i
+            else:
+                i = direction_to_index(self.quick_action)
+                if i != -1 and current_items[i]:
+                    active_item_index = i
         else:
             item = current_items[active_index]
             if item:
@@ -1073,15 +960,148 @@ class _PieMenu(ExecuteString):
         else:
             self.is_valid_click = True
 
-    def get_last_item_index(self):
-        return self._last_item_index.get(self.idname, -1)
+    def get_last_item_direction(self):
+        return self._last_item_direction.get(self.idname, 'NONE')
 
-    def set_last_item_index(self, index):
-        self._last_item_index[self.idname] = index
+    def set_last_item_direction(self, direction):
+        self._last_item_direction[self.idname] = direction
 
-    def clear_last_item_idnex(self):
-        if self.idname in self._last_item_index:
-            del self._last_item_index[self.idname]
+    def clear_last_item_direction(self):
+        if self.idname in self._last_item_direction:
+            del self._last_item_direction[self.idname]
+
+
+class _PieMenu(ExecuteString, _PieMenuCommon):
+    # {idname: index, ...}
+    _last_item_direction = {}
+
+    idname = props.StringProperty(
+        name="ID Name",
+        get=prop_idname_get,
+        set=prop_idname_set
+    )
+
+    active = props.BoolProperty(
+        name="Active",
+        description="Activate or deactivate menu",
+        default=True
+    )
+    show_expanded = props.BoolProperty()
+
+    poll = props.StringProperty(
+        name="Poll",
+        description="e.g.\nreturn context.mode == 'EDIT_MESH'",
+    )
+    init = props.StringProperty(
+        name="Init",
+    )
+
+    label = props.StringProperty(
+        name="Label",
+        description="Menu title",
+    )
+    draw_type = props.EnumProperty(
+        name="Draw Type",
+        items=[('SIMPLE', "Simple", ""),
+               ('BOX', "Box", ""),
+               ('CIRCLE', "Circle", "")],
+        default='BOX',
+        get=prop_draw_type_get,
+        set=prop_draw_type_set
+    )
+    icon_scale = props.FloatProperty(
+        name="Icon Scale",
+        default=1.0,
+        min=1.0,
+        max=10.0,
+    )
+    icon_expand = props.FloatProperty(
+        name="Icon Expand",
+        default=0.0,
+        min=-1.0,
+        max=1.0,
+    )
+    radius = props.IntProperty(
+        name="Radius",
+        description="Pie menu size in pixels",
+        min=0,
+        default=0,
+        get=prop_radius_get,
+        set=prop_radius_set
+    )
+    quick_action = props.EnumProperty(
+        name="Quick Action",
+        items=prop_quick_action_enum_items,
+        default='NONE',
+    )
+    highlight = props.EnumProperty(
+        name="Highlight",
+        items=prop_quick_action_enum_items,
+        default='NONE',
+    )
+    translate = props.BoolProperty(
+        name="Translate",
+        default=True,
+    )
+
+    # menu_items = props.CollectionProperty(
+    #     name="Items", type=PieMenuItem)
+    menu_items = []  # ↑継承で上書きする場合に問題が発生する
+    item_order = props.EnumProperty(
+        name="Item Order",
+        items=[('CW', "Clockwise", "[0, 1, 2, 3, 4, 5, 6, 7]"),
+               ('CW6', "Clockwise 6",
+                "[4, 5, 6, 7, 0, 1, 2, 3] Start from six o'clock"),
+               ('OFFICIAL', "Official", "[3, 5, 1, 7, 2, 6, 0, 4]"),
+               ('MODIFIED', "Modified", "[3, 7, 1, 5, 2, 4, 0, 6]"),
+               ],
+        default='OFFICIAL',
+    )
+
+    next = props.StringProperty(
+        name="Next Menu",
+        description="Shortcut: wheel down",
+    )
+    prev = props.StringProperty(
+        name="Previous Menu",
+        description="Shortcut: wheel up",
+    )
+
+    # 上書き
+    radius_ = props.IntProperty()
+
+    # 描画等に使用
+    active_index = props.IntProperty(default=-1)
+    active_item_index = props.IntProperty(default=-1)  # -1: None
+    is_valid_click = props.BoolProperty(default=True)
+    co = props.FloatVectorProperty(subtype='XYZ', size=2)
+    current_items_type = props.StringProperty()  # "", "shift", "ctrl", "alt", "oskey"
+
+    @property
+    def current_items_indices(self):
+        return self.get("current_items_indices", [])
+
+    @current_items_indices.setter
+    def current_items_indices(self, value):
+        self["current_items_indices"] = value
+
+    @property
+    def item_boundary_angles(self):
+        return self.get("item_boundary_angles", [])
+
+    @item_boundary_angles.setter
+    def item_boundary_angles(self, value):
+        self["item_boundary_angles"] = value
+
+    def poll_(self, context):
+        if self.poll:
+            return bool(self.exec_string("poll", context, None))
+        else:
+            return True
+
+    def init_(self, context):
+        if self.init:
+            self.exec_string("init", context, None)
 
     def draw_ui(self, context, layout):
         if self.show_expanded:
@@ -1148,24 +1168,16 @@ class _PieMenu(ExecuteString):
         sp_column2.label("Quick Action:")
         draw_property(sp_column2, self, "quick_action", text="",
                       context_attr="pie_menu")
-        sub = sp_column2.row()
-        if self.quick_action != 'FIXED':
-            sub.active = False
-        draw_property(sub, self, "quick_action_index", context_attr="pie_menu")
 
         sp_column2.label("Highlight:")
         draw_property(sp_column2, self, "highlight", text="",
                       context_attr="pie_menu")
-        sub = sp_column2.row()
-        if self.highlight != 'FIXED':
-            sub.active = False
-        draw_property(sub, self, "highlight_index", context_attr="pie_menu")
 
         draw_separator(column)
 
-        draw_property(column, self, "poll_string", "Poll Function", paste=True,
+        draw_property(column, self, "poll", "Poll Function", paste=True,
                       context_attr="pie_menu")
-        draw_property(column, self, "init_string", "Init Function", paste=True,
+        draw_property(column, self, "init", "Init Function", paste=True,
                       context_attr="pie_menu")
 
         draw_separator(column)
@@ -1193,20 +1205,30 @@ def draw_menus(self, context, layout):
     menus_layout = layout.column()
     menus_layout.context_pointer_set("addon_preferences", self)
 
-    for menu in self.menus:
-        col = menus_layout.column()
-        menu.draw_ui(context, col)
+    if isinstance(self.menus, bpy.types.bpy_prop_collection):
+        for menu in self.menus:
+            col = menus_layout.column()
+            menu.draw_ui(context, col)
 
-    row = menus_layout.row()
-    sub = row.row()
-    sub.alignment = 'LEFT'
-    op = sub.operator(ops.WM_OT_pie_menu_menu_add.bl_idname, text="Add Menu",
-                      icon='ZOOMIN')
+        row = menus_layout.row()
+        sub = row.row()
+        sub.alignment = 'LEFT'
+        op = sub.operator(ops.WM_OT_pie_menu_menu_add.bl_idname,
+                          text="Add Menu", icon='ZOOMIN')
 
-    sub = row.row()
-    sub.alignment = 'RIGHT'
-    op = sub.operator(ops.WM_OT_pie_menu_menus_reset.bl_idname,
-                      text="Reset Menus")
+        sub = row.row()
+        sub.alignment = 'RIGHT'
+        op = sub.operator(ops.WM_OT_pie_menu_menus_reset.bl_idname,
+                          text="Reset Menus")
+    else:
+        split = menus_layout.split()
+        col1 = split.column()
+        col2 = split.column()
+        for menu in self.menus:
+            row = col1.row()
+            row.label(menu.idname)
+            row = col2.row()
+            row.lable(menu.label)
 
 
 def new_classes():
@@ -1234,3 +1256,256 @@ def new_classes():
     ])
     PieMenu = type("PieMenu", (_PieMenu, bpy.types.PropertyGroup), namespace)
     return OperatorArgument, PieMenuSubItem, PieMenuItem, PieMenu
+
+
+class PieMenuItemPy(ExecuteString):
+    def __getattribute__(self, key):
+        if key in ("_data", "_overwrite"):
+            return super().__getattribute__(key)
+
+        overwrite = super().__getattribute__("_overwrite")
+        if key in overwrite:
+            return super().__getattribute__(key)
+
+        data = super().__getattribute__("_data")
+        if hasattr(data, key):
+            return getattr(data, key)
+
+        return super().__getattribute__(key)
+
+    def __setattr__(self, key, value):
+        super().__setattr__(key, value)
+        self._overwrite.add(key)
+
+    def __init__(self, data):
+        self._overwrite = set()
+        self._data = data
+
+        if getattr(data, "shift", None):
+            self.shift = PieMenuItemPy(data.shift)
+        if getattr(data, "ctrl", None):
+            self.ctrl = PieMenuItemPy(data.ctrl)
+
+        # 描画等で使う
+        self.enabled = False
+        self.icon_box_rect = []
+        self.text_box_rect = []
+        self.direction = 'NONE'
+
+    @property
+    def label(self):
+        text = ""
+        if hasattr(self._data, "label"):
+            text = self._data.label
+        else:
+            if self.execute and isinstance(self.execute, str):
+                op_rna = oputils.get_operator_rna(self.execute)
+                if op_rna:
+                    text = op_rna.bl_rna.name
+                    if self.translate:
+                        text = translate_iface(text, "Operator")
+        return text
+
+    @property
+    def description(self):
+        text = ""
+        if hasattr(self._data, "description"):
+            text = self._data.label
+        else:
+            if self.execute and isinstance(self.execute, str):
+                op_rna = oputils.get_operator_rna(self.execute)
+                if op_rna:
+                    text = op_rna.bl_rna.description
+                    if self.translate:
+                        text = translate_iface(text, "")
+        return text
+
+    active = True
+    show_expanded = True
+    type = 'ADVANCED'  # 変更禁止
+
+    poll = None
+    execute = None
+
+    # 未使用
+    # operator_arguments更新用
+    ensure_argument = ""
+    operator = ""
+    operator_arguments = []
+
+    # label = ""
+    # description = ""
+    icon = ""
+    menu = ""
+    undo_push = False
+    shortcut = ""
+    translate = True
+
+    shift = None
+    ctrl = None
+
+    def get_execute_string(self):
+        if self.execute:
+            if isinstance(self.execute, str):
+                return self.execute
+            else:
+                try:
+                    text = inspect.getsource(self.execute)
+                    return "\n".join([t[4:] for t in text.split("\n")[1:]])
+                except:
+                    return ""
+        else:
+            return ""
+
+    def poll_(self, context):
+        if self.poll:
+            if isinstance(self.poll, str):
+                return bool(self.exec_string_data(self.poll, context, None))
+            else:
+                return bool(self.poll(context))
+        else:
+            if self.execute and isinstance(self.execute, str):
+                op = oputils.get_operator(self.execute)
+                if op:
+                    return op.poll()
+            return True
+
+    def execute_(self, context, event=None):
+        if self.execute:
+            if isinstance(self.execute, str):
+                return self.exec_string_data(self.execute, context, event)
+            else:
+                if event:
+                    return self.execute(context, event)
+                else:
+                    try:
+                        sig = inspect.signature(self.execute)
+                        use_event = "event" in sig
+                    except:
+                        use_event = False
+                    if use_event:
+                        event = oputils.events.get(context.window.as_pointer())
+                        return self.execute(context, event)
+                    else:
+                        return self.execute(context)
+        else:
+            return None
+
+
+class PieMenuPy(ExecuteString, _PieMenuCommon):
+    DEFAULT_RADIUS = 50
+    DEFAULT_DRAW_TYPE = 'BOX'
+
+    def __getattribute__(self, key):
+        if key in ("_data", "_overwrite"):
+            return super().__getattribute__(key)
+
+        overwrite = super().__getattribute__("_overwrite")
+        if key in overwrite:
+            return super().__getattribute__(key)
+
+        data = super().__getattribute__("_data")
+        if hasattr(data, key):
+            return getattr(data, key)
+
+        return super().__getattribute__(key)
+
+    def __setattr__(self, key, value):
+        try:
+            super().__setattr__(key, value)
+        except:
+            raise
+        else:
+            self._overwrite.add(key)
+
+    def __init__(self, data):
+        self._overwrite = set()
+        self._data = data
+
+        # 描画等で使用
+        self.current_items_indices = []
+        self.item_boundary_angles = []
+        self.active_index = -1
+        self.active_item_index = -1
+        self.is_valid_click = True
+        self.co = [0, 0]
+        self.current_items_type = ""  # "", "shift", "ctrl", "alt", "oskey"
+        self.radius_ = 0
+
+    # def get(self, key, default=None):
+    #     if key in self._overwrite:
+    #         return getattr(self, key, default)
+    #     else:
+    #         return getattr(self._data, key, default)
+
+    @property
+    def radius(self):
+        if pie_menu and pie_menu.addon_preferences:
+            radius = pie_menu.addon_preferences.menu_radius
+        else:
+            radius = self.DEFAULT_RADIUS
+        return radius
+
+    @property
+    def draw_type(self):
+        if pie_menu and pie_menu.addon_preferences:
+            draw_type = pie_menu.addon_preferences.draw_type
+        else:
+            draw_type = self.DEFAULT_DRAW_TYPE
+        if draw_type == 'SIMPLE_BOX':
+            if self.icon_scale > 1.0:
+                draw_type = 'BOX'
+            else:
+                draw_type = 'SIMPLE'
+        elif draw_type == 'SIMPLE_CIRCLE':
+            if self.icon_scale > 1.0:
+                draw_type = 'CIRCLE'
+            else:
+                draw_type = 'SIMPLE'
+        return draw_type
+
+    # {idname: index, ...}
+    _last_item_direction = {}
+
+    idname = ""
+    active = True
+    show_expanded = True
+
+    poll = None
+    init = None
+
+    def poll_(self, context):
+        if self.poll:
+            if isinstance(self.poll, str):
+                return bool(self.exec_string_data(self.poll, context, None))
+            else:
+                return bool(self.poll(context))
+        else:
+            return True
+
+    def init_(self, context):
+        if self.init:
+            if isinstance(self.init, str):
+                return self.exec_string_data(self.init, context, None)
+            else:
+                self.init(context)
+
+        items = []
+        for item in self._data.menu_items:
+            if item is None:
+                items.append(None)
+            else:
+                items.append(PieMenuItemPy(item))
+        self.menu_items = items
+
+    label = ""
+    # draw_type = 'BOX'  # 'SIMPLE', 'BOX', 'CIRCLE'
+    icon_scale = 1.0
+    icon_expand = 0.0
+    quick_action = 'NONE'  # 'NONE', 'LAST', 'N', 'NE', ...
+    highlight = 'NONE'  # 'NONE', 'LAST', 'N', 'NE', ...
+    translate = True
+    menu_items = []
+    item_order = 'OFFICIAL'
+    next = ""
+    prev = ""

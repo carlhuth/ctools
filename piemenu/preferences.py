@@ -20,6 +20,7 @@
 import importlib
 import os
 import re
+import math
 
 import bpy
 import blf
@@ -27,14 +28,18 @@ from bpy import props
 
 from ..utils import addongroup
 # from ..utils import vaprops
+from ..utils import vawm
 
 # from . import oputils
 from . import operators as ops
 from .menu_items import PieMenuSubItem, PieMenuItem, PieMenu,\
-    OperatorArgument, draw_menus, draw_separator
+    OperatorArgument, draw_menus, draw_separator, draw_property
 
 
 translate_iface = bpy.app.translations.pgettext_iface
+
+
+DEFAULT_CORRECTED_RADIUS = False
 
 
 class FVPColor:
@@ -176,7 +181,7 @@ class PieMenu_PG_Colors(bpy.types.PropertyGroup):
         default=(0.0, 0.0, 0.0, 1.0))
     pie_sel = FVPColor(
         name="Pie Sel",
-        default=(1.0, 1.0, 1.0, 0.4))
+        default=(1.0, 1.0, 1.0, 0.8))
     menu_marker = FVPColor(
         name="Menu Marker",
         default=(1.0, 1.0, 1.0, 1.0))
@@ -203,6 +208,29 @@ def font_id_get(self):
     return 0
 
 
+def prop_menu_radius_get(self):
+    if "menu_radius" in self:
+        return self["menu_radius"]
+    else:
+        wu = vawm.widget_unit()
+        space = 2  # draw.ICON_BOX_TEXT_BOX_MARGIN
+        if self.draw_type == 'SIMPLE':
+            n = 2  # itemは8個を想定。n = len(current_items) / 4
+            return wu * (n - 0.5) + space * n
+        else:
+            # y1 = radius + wu + space
+            # y2 = (radius + wu / 2) * math.sin(math.pi / 4) + wu / 2
+            # y3 = (radius + wu / 2) * math.sin(math.pi / 4) - wu / 2
+            # y4 = wu / 2
+            # y1 - y2 = y3 - y4
+            r = (-wu - space) / (1 - 2 * math.sin(math.pi / 4)) - wu / 2
+            return r
+
+
+def prop_menu_radius_set(self, value):
+    self["menu_radius"] = value
+
+
 class PieMenuPreferences(addongroup.AddonGroup,
                          bpy.types.PropertyGroup if "." in __name__ else
                          bpy.types.AddonPreferences):
@@ -221,10 +249,21 @@ class PieMenuPreferences(addongroup.AddonGroup,
         name="Font ID Mono",
         default=1,
         min=0)  # 読み込み専用
-    # 中心からアイコンの円の境界まで
-    menu_radius = props.IntProperty(
-        name="Menu Radius",
-        default=30, min=10)
+    # 中心からアイコンボックスの境界まで
+    if DEFAULT_CORRECTED_RADIUS:
+        menu_radius = props.IntProperty(
+            name="Menu Radius",
+            # default=30,
+            min=10,
+            get=prop_menu_radius_get,
+            set=prop_menu_radius_set,
+        )
+    else:
+        menu_radius = props.IntProperty(
+            name="Menu Radius",
+            default=0,
+            min=10,
+        )
     menu_radius_center = props.IntProperty(
         name="Menu Radius Center",
         default=10,
@@ -261,6 +300,7 @@ class PieMenuPreferences(addongroup.AddonGroup,
 
     def draw(self, context):
         layout = self.layout
+        layout.context_pointer_set("addon_preferences", self)
 
         draw_install = False
         try:
@@ -298,7 +338,8 @@ class PieMenuPreferences(addongroup.AddonGroup,
         sp = column.split()
         col = sp.column()
         col.prop(self, "draw_type")
-        col.prop(self, "menu_radius")
+        draw_property(col, self, "menu_radius", context_attr="addon_preferences", unset=True)
+        # col.prop(self, "menu_radius")
         col.prop(self, "menu_radius_center")
         col = sp.column()
         col.prop(self, "lock_menu_location")

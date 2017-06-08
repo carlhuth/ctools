@@ -542,6 +542,9 @@ class AddonKeyConfig:
             # operator properties
             op_props = {}
             if not km.is_modal:
+                if kmi.properties is None:
+                    # TODO: Investigation of occurrence condition
+                    continue
                 for attr in kmi.properties.bl_rna.properties.keys():
                     if attr == "rna_type":
                         continue
@@ -564,8 +567,8 @@ class AddonKeyConfig:
 
     def set_current_values(self, values):
         """一旦全部のKeyMapItemを削除してからvaluesに従って追加する。
-        keymap_items_get_attributes()と対になっている。
-        :param values: keymap_items_get_attributes()の返り値
+        get_current_values()と対になっている。
+        :param values: get_current_values()の返り値
         :type values: list | tuple
         """
         import traceback

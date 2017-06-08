@@ -44,6 +44,7 @@ ICON_DEFAULT_HEIGHT = 16
 CALC_TEXT_HEIGHT = "W"  # text_height = blf.dimensions(0, CALC_TEXT_HEIGHT)[1]
 ICON_BOX_TEXT_BOX_MARGIN = 2
 TOOLTIP_MAX_EXECUTE_LINES = 10
+GUID_LINE_LENGTH = 10
 
 DISABLE_CROSS_CURSOR = True
 
@@ -321,12 +322,12 @@ class DrawingManager:
         if icon:
             alpha = 1.0 if enabled else 0.5
             if isinstance(icon, (list, tuple)):
-                drawicon.draw_fill(icon, x, y, size, 1.0, round_radius,
+                drawicon.draw_fill(icon, x, y, size, 1.0,
                                    poly_line=poly_line)
                 drawn = True
             else:
                 drawn = drawicon.draw(icon, x, y, size, alpha,
-                                      round_radius, poly_line=poly_line)
+                                      poly_line=poly_line)
 
         # アイコンがない場合は矢印を描く
         if not drawn:
@@ -476,20 +477,24 @@ class DrawingManager:
         angle_subdiv = (angle_start - angle_end) / subdiv
         x, y = menu.co
         bgl.glColor4f(*colors.pie_sel)
-        if menu.draw_type == 'SIMPLE':
-            if len(menu.menu_items) <= 4:
-                r1 = menu.radius_ - widget_unit * 0.2
+        if 0:
+            if menu.draw_type == 'SIMPLE':
+                if len(menu.menu_items) <= 4:
+                    r1 = menu.radius_ - widget_unit * 0.2
+                else:
+                    # この辺は適当
+                    _, rect = self.calc_item_rect(
+                        int(len(menu.menu_items) / 4) - 1, "DUMMY", 'NONE')
+                    v = Vector((rect[0], rect[1]))
+                    r1 = (rect[1] - menu.co[1]) - widget_unit * 0.2
+                # r2 = menu.radius_ + r_icon * 2 + widget_unit * 0.2
+                r2 = r1 + r_icon * 2 + widget_unit * 0.4
             else:
-                # この辺は適当
-                _, rect = self.calc_item_rect(
-                    int(len(menu.menu_items) / 4) - 1, "DUMMY", 'NONE')
-                v = Vector((rect[0], rect[1]))
-                r1 = (rect[1] - menu.co[1]) - widget_unit * 0.2
-            # r2 = menu.radius_ + r_icon * 2 + widget_unit * 0.2
-            r2 = r1 + r_icon * 2 + widget_unit * 0.4
+                r1 = menu.radius_ - widget_unit * 0.2
+                r2 = menu.radius_ + r_icon * 2 + widget_unit * 0.2
         else:
-            r1 = menu.radius_ - widget_unit * 0.2
-            r2 = menu.radius_ + r_icon * 2 + widget_unit * 0.2
+            r1 = menu.radius_ - GUID_LINE_LENGTH
+            r2 = menu.radius_
 
         # r1 = prefs.menu_radius_center + widget_unit * 0.5
         # r2 = prefs.menu_radius_center + widget_unit * 0.8
@@ -509,10 +514,14 @@ class DrawingManager:
         menu = self.menu
         items = menu.current_items
         icon_box_size = self.icon_box_size
-        r1 = (prefs.menu_radius_center +
-              (menu.radius_ - prefs.menu_radius_center) / 2)
-        # r1 = menu.radius_
-        r2 = menu.radius_ + icon_box_size + 5
+        if 0:
+            r1 = (prefs.menu_radius_center +
+                  (menu.radius_ - prefs.menu_radius_center) / 2)
+            # r1 = menu.radius_
+            r2 = menu.radius_ + icon_box_size + 5
+        else:
+            r1 = menu.radius_ - GUID_LINE_LENGTH
+            r2 = menu.radius_
         x, y = menu.co
         col1 = colors.separator
         bgl.glColor4f(*col1)
@@ -540,8 +549,6 @@ class DrawingManager:
                     bgl.glVertex2f(x + r2 * cosf, y + r2 * sinf)
                     bgl.glEnd()
                     ang -= pie_angle
-
-
 
         # 中心の円
         bgl.glColor4f(*colors.line)
@@ -601,10 +608,10 @@ class DrawingManager:
         #     vagl.draw_circle(cx, cy, r, 16, False)
         has_shift = has_ctrl = False
         for item in menu.menu_items:
-            if item.active:
-                if item.shift.active:
+            if item is not None and item.active:
+                if item.shift is not None and item.shift.active:
                     has_shift = True
-                if item.ctrl.active:
+                if item.ctrl is not None and item.ctrl.active:
                     has_ctrl = True
         mod = self.op.last_modifier()
         for has_sub_item, key, p in [(has_shift, "shift", (1, 1)),
@@ -829,8 +836,12 @@ class DrawingManager:
             icon_x = icon_center[0] - icon_size / 2
             icon_y = icon_center[1] - icon_size / 2
             rotation = -math.pi * 2 / num * index
+            if menu.draw_type == 'SIMPLE':
+                poly_line = None
+            else:
+                poly_line = icon_box_poly_coords
             self.draw_icon(item.icon, icon_x, icon_y, icon_size, active,
-                           enabled, rotation, icon_box_poly_coords)
+                           enabled, rotation, poly_line)
 
         # Draw Outline
         if highlight:
@@ -924,11 +935,11 @@ class DrawingManager:
                 break
 
         if menu.highlight == 'NONE':
-            highlight_index = -1
+            highlight_direction = 'NONE'
         elif menu.highlight == 'LAST':
-            highlight_index = menu.get_last_item_index()
+            highlight_direction = menu.get_last_item_direction()
         else:
-            highlight_index = menu.highlight_index_
+            highlight_direction = menu.highlight
 
         for i, item in idx_items:
             if not item:
@@ -937,7 +948,7 @@ class DrawingManager:
             if not menu.is_valid_click:
                 active = False
             enabled = item.enabled
-            highlight = i == highlight_index
+            highlight = item.direction == highlight_direction
             self.draw_item(item, i, active, enabled, highlight)
 
     def draw_tooltip(self, context):
