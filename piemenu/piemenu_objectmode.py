@@ -18,14 +18,13 @@
 
 
 bl_info = {
-    "name": "Object Mode (Object Non-modal: TAB)",
-    # "description": "",
-    # "category": "User Interface"
+    "name": "Object Mode: Key: Tab key",
+    "location": "Tab key",
+    "category": "3D View",
 }
 
 
 from collections import OrderedDict
-import inspect
 
 import bpy
 
@@ -34,9 +33,9 @@ from ..utils import addongroup
 import pie_menu
 
 
-class MenuItem:
-    def __init__(self, label=""):
-        self.label = label
+class Empty:
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
 
 
 def has_particle(context):
@@ -68,7 +67,7 @@ class ObjectModeMenuMore:
         execute = "bpy.ops.object.mode_set(mode='{}', toggle={})"
         if has_particle(context):
             e = enum_items['PARTICLE_EDIT']
-            item = MenuItem(e.name)
+            item = Empty(label=e.name)
             item.icon = e.icon
             item.execute = execute.format(e.identifier, "False")
         else:
@@ -77,7 +76,7 @@ class ObjectModeMenuMore:
 
         if has_gpencil(context):
             e = enum_items['GPENCIL_EDIT']
-            item = MenuItem(e.name)
+            item = Empty(label=e.name)
             item.icon = e.icon
             item.execute = execute.format(e.identifier, "False")
         else:
@@ -125,7 +124,7 @@ class ObjectModeMenu:
                 continue
 
             if add:
-                item = MenuItem(enum_item.name)
+                item = Empty(label=enum_item.name)
                 item.icon = enum_item.icon
                 if mode == 'EDIT':
                     item.execute = execute.format(mode, "True")
@@ -139,7 +138,7 @@ class ObjectModeMenu:
             e1 = enum_items['PARTICLE_EDIT']
             e2 = enum_items['GPENCIL_EDIT']
             name = "{} / {}".format(e1.name, e2.name)
-            item = MenuItem(name)
+            item = Empty(label=name)
             item.icon = "PLUS"
             item.menu = "object_mode_set_more"
             self.menu_items.append(item)

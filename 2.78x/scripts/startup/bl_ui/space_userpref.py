@@ -80,7 +80,7 @@ class USERPREF_PT_tabs(Panel):
 
         userpref = context.user_preferences
 
-        layout.prop(userpref, "active_section", expand=True)
+        layout.row().prop(userpref, "active_section", expand=True)
 
 
 class USERPREF_MT_interaction_presets(Menu):
@@ -127,7 +127,7 @@ class USERPREF_MT_app_templates(Menu):
                 text=bpy.path.display_name(d),
             )
             props.use_splash = True
-            props.app_template = d;
+            props.app_template = d
 
         if use_install:
             layout.separator()
@@ -560,7 +560,7 @@ class USERPREF_PT_system(Panel):
         # 3. Column
         column = split.column()
 
-        column.label(text="Solid OpenGL lights:")
+        column.label(text="Solid OpenGL Lights:")
 
         split = column.split(percentage=0.1)
         split.label()
@@ -1561,33 +1561,29 @@ class USERPREF_PT_addons(Panel):
                 row.label(text=module_name, translate=False)
 
 
-if bpy.app.version[2] > 0:
-    classes = (
-        USERPREF_HT_header,
-        USERPREF_PT_tabs,
-        USERPREF_MT_interaction_presets,
-        USERPREF_MT_templates_splash,
-        USERPREF_MT_app_templates,
-        USERPREF_MT_appconfigs,
-        USERPREF_MT_splash,
-        USERPREF_MT_splash_footer,
-        USERPREF_PT_interface,
-        USERPREF_PT_edit,
-        USERPREF_PT_system,
-        USERPREF_MT_interface_theme_presets,
-        USERPREF_PT_theme,
-        USERPREF_PT_file,
-        USERPREF_MT_ndof_settings,
-        USERPREF_MT_keyconfigs,
-        USERPREF_PT_input,
-        USERPREF_MT_addons_online_resources,
-        USERPREF_PT_addons,
-    )
+classes = (
+    USERPREF_HT_header,
+    USERPREF_PT_tabs,
+    USERPREF_MT_interaction_presets,
+    USERPREF_MT_templates_splash,
+    USERPREF_MT_app_templates,
+    USERPREF_MT_appconfigs,
+    USERPREF_MT_splash,
+    USERPREF_MT_splash_footer,
+    USERPREF_PT_interface,
+    USERPREF_PT_edit,
+    USERPREF_PT_system,
+    USERPREF_MT_interface_theme_presets,
+    USERPREF_PT_theme,
+    USERPREF_PT_file,
+    USERPREF_MT_ndof_settings,
+    USERPREF_MT_keyconfigs,
+    USERPREF_PT_input,
+    USERPREF_MT_addons_online_resources,
+    USERPREF_PT_addons,
+)
 
-    if __name__ == "__main__":  # only for live edit.
-        from bpy.utils import register_class
-        for cls in classes:
-            register_class(cls)
-else:
-    if __name__ == "__main__":  # only for live edit.
-        bpy.utils.register_module(__name__)
+if __name__ == "__main__":  # only for live edit.
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)

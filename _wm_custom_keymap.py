@@ -215,11 +215,9 @@ def register():
     ## Screen
     add = functools.partial(new_keymap_item, 'Screen')
     # add('screen.redo_last', 'F6', 'PRESS')  # 何故か消えてたので
-    try:
-        add('screen.redo_last', 'BUTTON14MOUSE', 'PRESS')
-        add('screen.redo_last', 'BUTTON13MOUSE', 'PRESS')
-    except:
-        traceback.print_exc()
+    add('screen.redo_last', 'F19', 'PRESS')
+    add('screen.redo_last', 'F18', 'PRESS')
+    # add('screen.redo_last', 'BUTTON5MOUSE', 'PRESS')
 
     add('screen.screen_full_area', 'F', 'PRESS', oskey=True)
 
@@ -363,117 +361,117 @@ def register():
 
     bl_rna = bpy.types.Event.bl_rna
 
-    if 'BUTTON9MOUSE' in bl_rna.properties['type'].enum_items:
-        add = functools.partial(new_keymap_item, 'Outliner')
-        kmi = add('outliner.show_active', 'BUTTON9MOUSE', 'PRESS')
+    # if 'BUTTON5MOUSE' in bl_rna.properties['type'].enum_items:
+    add = functools.partial(new_keymap_item, 'Outliner')
+    kmi = add('outliner.show_active', 'BUTTON5MOUSE', 'PRESS')
 
-    if 'BUTTON16MOUSE' not in bl_rna.properties['type'].enum_items:
-        return
+    # if 'F13' not in bl_rna.properties['type'].enum_items:
+    #     return
 
     # Lキーに該当するもの
     add = functools.partial(new_keymap_item, 'Grease Pencil Stroke Edit Mode')
-    kmi = add('gpencil.select_linked', 'BUTTON16MOUSE', 'PRESS')
-    kmi = add('gpencil.select_linked', 'BUTTON16MOUSE', 'PRESS', ctrl=True)
+    kmi = add('gpencil.select_linked', 'F13', 'PRESS')
+    kmi = add('gpencil.select_linked', 'F13', 'PRESS', ctrl=True)
 
     add = functools.partial(new_keymap_item, 'Face Mask')
-    kmi = add('paint.face_select_linked', 'BUTTON16MOUSE', 'PRESS', ctrl=True)
-    kmi = add('paint.face_select_linked_pick', 'BUTTON16MOUSE', 'PRESS')
+    kmi = add('paint.face_select_linked', 'F13', 'PRESS', ctrl=True)
+    kmi = add('paint.face_select_linked_pick', 'F13', 'PRESS')
     kmi.properties.deselect = False
-    kmi = add('paint.face_select_linked_pick', 'BUTTON16MOUSE', 'PRESS',
+    kmi = add('paint.face_select_linked_pick', 'F13', 'PRESS',
               shift=True)
     kmi.properties.deselect = True
 
     add = functools.partial(new_keymap_item, 'Pose')
-    kmi = add('pose.select_linked', 'BUTTON16MOUSE', 'PRESS')
-    kmi = add('poselib.browse_interactive', 'BUTTON16MOUSE', 'PRESS',
+    kmi = add('pose.select_linked', 'F13', 'PRESS')
+    kmi = add('poselib.browse_interactive', 'F13', 'PRESS',
               ctrl=True)
-    kmi = add('poselib.pose_add', 'BUTTON16MOUSE', 'PRESS', shift=True)
-    kmi = add('poselib.pose_remove', 'BUTTON16MOUSE', 'PRESS', alt=True)
-    kmi = add('poselib.pose_rename', 'BUTTON16MOUSE', 'PRESS',
+    kmi = add('poselib.pose_add', 'F13', 'PRESS', shift=True)
+    kmi = add('poselib.pose_remove', 'F13', 'PRESS', alt=True)
+    kmi = add('poselib.pose_rename', 'F13', 'PRESS',
               shift=True, ctrl=True)
 
     add = functools.partial(new_keymap_item, 'Object Mode')
-    kmi = add('object.select_linked', 'BUTTON16MOUSE', 'PRESS', shift=True)
-    kmi = add('wm.call_menu', 'BUTTON16MOUSE', 'PRESS', ctrl=True)
+    kmi = add('object.select_linked', 'F13', 'PRESS', shift=True)
+    kmi = add('wm.call_menu', 'F13', 'PRESS', ctrl=True)
     kmi.properties.name = 'VIEW3D_MT_make_links'
-    kmi = add('object.make_local', 'BUTTON16MOUSE', 'PRESS')
+    kmi = add('object.make_local', 'F13', 'PRESS')
 
     add = functools.partial(new_keymap_item, 'Curve')
-    kmi = add('curve.select_linked', 'BUTTON16MOUSE', 'PRESS', ctrl=True)
-    kmi = add('curve.select_linked_pick', 'BUTTON16MOUSE', 'PRESS')
+    kmi = add('curve.select_linked', 'F13', 'PRESS', ctrl=True)
+    kmi = add('curve.select_linked_pick', 'F13', 'PRESS')
     kmi.properties.deselect = False
-    kmi = add('curve.select_linked_pick', 'BUTTON16MOUSE', 'PRESS', shift=True)
+    kmi = add('curve.select_linked_pick', 'F13', 'PRESS', shift=True)
     kmi.properties.deselect = True
 
     add = functools.partial(new_keymap_item, 'Sculpt')
-    kmi = add('paint.brush_select', 'BUTTON16MOUSE', 'PRESS')
+    kmi = add('paint.brush_select', 'F13', 'PRESS')
 
     add = functools.partial(new_keymap_item, 'Mesh')
-    kmi = add('mesh.select_linked', 'BUTTON16MOUSE', 'PRESS', ctrl=True)
-    kmi = add('mesh.select_linked_pick', 'BUTTON16MOUSE', 'PRESS')
+    kmi = add('mesh.select_linked', 'F13', 'PRESS', ctrl=True)
+    kmi = add('mesh.select_linked_pick', 'F13', 'PRESS')
     kmi.properties.deselect = False
-    kmi = add('mesh.select_linked_pick', 'BUTTON16MOUSE', 'PRESS', shift=True)
+    kmi = add('mesh.select_linked_pick', 'F13', 'PRESS', shift=True)
     kmi.properties.deselect = True
 
     add = functools.partial(new_keymap_item, 'Armature')
-    kmi = add('armature.select_linked', 'BUTTON16MOUSE', 'PRESS')
+    kmi = add('armature.select_linked', 'F13', 'PRESS')
 
     add = functools.partial(new_keymap_item, 'Particle')
-    kmi = add('particle.select_linked', 'BUTTON16MOUSE', 'PRESS')
+    kmi = add('particle.select_linked', 'F13', 'PRESS')
     kmi.properties.deselect = False
-    kmi = add('particle.select_linked', 'BUTTON16MOUSE', 'PRESS', shift=True)
+    kmi = add('particle.select_linked', 'F13', 'PRESS', shift=True)
     kmi.properties.deselect = True
 
     add = functools.partial(new_keymap_item, 'UV Editor')
-    kmi = add('uv.select_linked', 'BUTTON16MOUSE', 'PRESS', ctrl=True)
-    kmi = add('uv.select_linked_pick', 'BUTTON16MOUSE', 'PRESS')
-    kmi = add('uv.select_linked', 'BUTTON16MOUSE', 'PRESS', shift=True,
+    kmi = add('uv.select_linked', 'F13', 'PRESS', ctrl=True)
+    kmi = add('uv.select_linked_pick', 'F13', 'PRESS')
+    kmi = add('uv.select_linked', 'F13', 'PRESS', shift=True,
               ctrl=True)
     kmi.properties.extend = True
-    kmi = add('uv.select_linked_pick', 'BUTTON16MOUSE', 'PRESS', shift=True)
+    kmi = add('uv.select_linked_pick', 'F13', 'PRESS', shift=True)
     kmi.properties.extend = True
 
     add = functools.partial(new_keymap_item, 'Mask Editing')
-    kmi = add('mask.select_linked', 'BUTTON16MOUSE', 'PRESS', ctrl=True)
-    kmi = add('mask.select_linked_pick', 'BUTTON16MOUSE', 'PRESS')
+    kmi = add('mask.select_linked', 'F13', 'PRESS', ctrl=True)
+    kmi = add('mask.select_linked_pick', 'F13', 'PRESS')
     kmi.properties.deselect = False
-    kmi = add('mask.select_linked_pick', 'BUTTON16MOUSE', 'PRESS', shift=True)
+    kmi = add('mask.select_linked_pick', 'F13', 'PRESS', shift=True)
     kmi.properties.deselect = True
 
     add = functools.partial(new_keymap_item, 'Graph Editor')
-    kmi = add('graph.select_linked', 'BUTTON16MOUSE', 'PRESS')
+    kmi = add('graph.select_linked', 'F13', 'PRESS')
 
     add = functools.partial(new_keymap_item, 'Node Editor')
-    # kmi = add('node.nw_modify_labels', 'BUTTON16MOUSE', 'PRESS', shift=True,
+    # kmi = add('node.nw_modify_labels', 'F13', 'PRESS', shift=True,
     #           alt=True)
-    # kmi = add('node.nw_clear_label', 'BUTTON16MOUSE', 'PRESS', alt=True)
-    kmi = add('node.select_linked_to', 'BUTTON16MOUSE', 'PRESS', shift=True)
-    kmi = add('node.select_linked_from', 'BUTTON16MOUSE', 'PRESS')
+    # kmi = add('node.nw_clear_label', 'F13', 'PRESS', alt=True)
+    kmi = add('node.select_linked_to', 'F13', 'PRESS', shift=True)
+    kmi = add('node.select_linked_from', 'F13', 'PRESS')
 
     add = functools.partial(new_keymap_item, 'Dopesheet')
-    kmi = add('action.select_linked', 'BUTTON16MOUSE', 'PRESS')
+    kmi = add('action.select_linked', 'F13', 'PRESS')
 
     add = functools.partial(new_keymap_item, 'Sequencer')
-    kmi = add('sequencer.lock', 'BUTTON16MOUSE', 'PRESS', shift=True)
-    kmi = add('sequencer.unlock', 'BUTTON16MOUSE', 'PRESS', shift=True,
+    kmi = add('sequencer.lock', 'F13', 'PRESS', shift=True)
+    kmi = add('sequencer.unlock', 'F13', 'PRESS', shift=True,
               alt=True)
-    kmi = add('sequencer.select_linked_pick', 'BUTTON16MOUSE', 'PRESS')
-    kmi = add('sequencer.select_linked_pick', 'BUTTON16MOUSE', 'PRESS',
+    kmi = add('sequencer.select_linked_pick', 'F13', 'PRESS')
+    kmi = add('sequencer.select_linked_pick', 'F13', 'PRESS',
               shift=True)
     kmi.properties.extend = True
-    kmi = add('sequencer.select_linked', 'BUTTON16MOUSE', 'PRESS',
+    kmi = add('sequencer.select_linked', 'F13', 'PRESS',
               ctrl=True)
 
     add = functools.partial(new_keymap_item, 'Clip Editor')
-    kmi = add('clip.lock_tracks', 'BUTTON16MOUSE', 'PRESS', ctrl=True)
+    kmi = add('clip.lock_tracks', 'F13', 'PRESS', ctrl=True)
     kmi.properties.action = 'LOCK'
-    kmi = add('clip.lock_tracks', 'BUTTON16MOUSE', 'PRESS', alt=True)
+    kmi = add('clip.lock_tracks', 'F13', 'PRESS', alt=True)
     kmi.properties.action = 'UNLOCK'
-    kmi = add('wm.context_toggle', 'BUTTON16MOUSE', 'PRESS')
+    kmi = add('wm.context_toggle', 'F13', 'PRESS')
     kmi.properties.data_path = 'space_data.lock_selection'
 
     add = functools.partial(new_keymap_item, 'Clip Graph Editor')
-    kmi = add('wm.context_toggle', 'BUTTON16MOUSE', 'PRESS')
+    kmi = add('wm.context_toggle', 'F13', 'PRESS')
     kmi.properties.data_path = 'space_data.lock_time_cursor'
 
 

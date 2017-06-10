@@ -18,13 +18,13 @@
 
 
 bl_info = {
-    "name": "Sculpt Brushes (Sculpt: D, C, S, G)",
-    # "description": "",
-    # "category": "User Interface"
+    "name": "Brushes: Key: 'D', 'C', 'S', 'G'",
+    "location": "D, C, S, G",
+    "category": "Sculpt",
 }
 
 
-import inspect
+from types import MethodType
 
 import bpy
 
@@ -37,155 +37,139 @@ ICON_SCALE = 2.0
 
 
 class PieMenuSculptBrushAddonPreferences(
-    pie_menu.PieMenuPreferences, addongroup.AddonGroup,
-        bpy.types.PropertyGroup):
+        addongroup.AddonGroup, bpy.types.PropertyGroup):
     bl_idname = __name__
 
-    def set_default_menus(self):
-        self.menus.clear()
-        make_menus(bpy.context, self)
-        make_submenus(bpy.context, self)
-
-    def draw(self, context):
-        pie_menu.PieMenuPreferences.draw(self, context)
-        addongroup.AddonGroup.draw(self, context)
+    menus = []
 
 
-def submenu_init(self, context):
-    self.menu_items.clear()
-    sculpt_tool = self["sculpt_tool"]
-    brushes = [b for b in bpy.data.brushes if b.use_paint_sculpt and
-               b.sculpt_tool == sculpt_tool]
-    brush = context.tool_settings.sculpt.brush
-    if brush in brushes:
-        direction = brushes.index(brush)
-    else:
-        direction = 0
-    self.quick_direction = direction
-    for brush in brushes:
-        if sculpt_tool == 'DRAW':
-            icon = 'BRUSH_SCULPT_DRAW'
+class Empty:
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+
+
+def index_to_direction(index):
+    # directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
+    directions = ['W', 'E', 'S', 'N', 'NW', 'NE', 'SW', 'SE']
+    return directions[index]
+
+
+def direction_to_index(direction):
+    directions = ['N', 'E', 'S', 'N', 'NW', 'NE', 'SW', 'SE']
+    return directions.index(direction)
+
+
+class SculptBrushDraw:
+    idname = 'sculpt_brush_draw'
+    label = 'Brush Select'
+    quick_action = 'NONE'
+    icon_scale = ICON_SCALE
+    icon_expand = 1.0
+
+    brush_types = ['DRAW', 'CLAY', 'CLAY_STRIPS', 'INFLATE', 'BLOB',
+                   'LAYER', 'CREASE']
+    quick_brush_type = 'DRAW'
+
+    def gen_submenu(self, context, sculpt_tool, sculpt_tool_name):
+        menu = Empty()
+        menu.menu_items = []
+        menu.idname = "sculpt_brush_sub_" + sculpt_tool_name
+        menu.label = sculpt_tool_name
+        menu.quick_action = 'W'
+        menu.icon_scale = self.icon_scale
+        menu.icon_expand = self.icon_expand
+        brushes = [b for b in bpy.data.brushes if b.use_paint_sculpt and
+                   b.sculpt_tool == sculpt_tool]
+        brush = context.tool_settings.sculpt.brush
+        if brush in brushes:
+            i = brushes.index(brush)
         else:
-            icon = 'BRUSH_' + sculpt_tool
-        item = self.menu_items.add()
-        item.label = brush.name
-        item.icon = icon
-        item.execute = (
-            "brush = bpy.data.brushes[self.label]\n"
-            "context.tool_settings.sculpt.brush = brush")
+            i = 0
+        menu.quick_action = index_to_direction(i)
+        for brush in brushes:
+            if sculpt_tool == 'DRAW':
+                icon = 'BRUSH_SCULPT_DRAW'
+            else:
+                icon = 'BRUSH_' + sculpt_tool
+            item = Empty(label=brush.name)
+            item.icon = icon
+            item.execute = ('brush = bpy.data.brushes[self.label]\n'
+                            'context.tool_settings.sculpt.brush = brush')
+            menu.menu_items.append(item)
+
+        for m in PieMenuSculptBrushAddonPreferences.menus:
+            if m.idname == menu.idname:
+                PieMenuSculptBrushAddonPreferences.menus.remove(m)
+                break
+        PieMenuSculptBrushAddonPreferences.menus.append(menu)
+
+        return menu.idname
+
+    def init(self, context):
+        self.menu_items = []
+
+        def poll(self, context):
+            num = 0
+            for brush in bpy.data.brushes:
+                if (brush.use_paint_sculpt and
+                        brush.sculpt_tool == self.sculpt_tool):
+                    num += 1
+            if num > 1:
+                self.menu = self.main_menu.gen_submenu(
+                    context, self.sculpt_tool, self.sculpt_tool_name)
+            else:
+                self.menu = ""
+            return True
+
+        def execute(self, context, event):
+            if not self.menu or event.type not in (
+                    'LEFTMOUSE', 'SPACE', 'RET', 'NUMPAD_ENTER'):
+                bpy.ops.paint.brush_select(
+                    True, paint_mode='SCULPT',
+                    sculpt_tool=self.sculpt_tool)
+                self.menu = ""
+
+        prop = bpy.types.Brush.bl_rna.properties['sculpt_tool']
+        for i, brush_type in enumerate(self.brush_types):
+            enum_item = prop.enum_items[brush_type]
+            item = Empty(label=enum_item.name)
+            item.description = "Release key: decide, Press LeftMouse: sub menu"
+            item.icon = enum_item.icon
+            item.sculpt_tool_name = enum_item.name
+            item.sculpt_tool = enum_item.identifier
+            item.main_menu = self
+            item.poll = MethodType(poll, item)
+            item.execute = MethodType(execute, item)
+            if brush_type == self.quick_brush_type:
+                self.quick_action = index_to_direction(i)
+            self.menu_items.append(item)
 
 
-def make_submenus(context, addon_prefs):
-    init_string = \
-        "\n".join([t[4:] for t in
-                   inspect.getsource(submenu_init).split("\n")[1:]])
-    prop = bpy.types.Brush.bl_rna.properties['sculpt_tool']
-    for enum_item in prop.enum_items:
-        idname = "sculpt_brush_submenu_" + enum_item.identifier
-        if idname in addon_prefs.menus:
-            menu = addon_prefs.menus[idname]
-        else:
-            menu = addon_prefs.menus.add()
-            menu.idname = idname
-        menu.label = enum_item.name
-        menu.quick_action = 'FIXED'
-        menu.radius = menu.radius
-        menu.icon_scale = ICON_SCALE
-        menu.icon_expand = 1.0
-        menu.init = init_string
-        menu["sculpt_tool"] = enum_item.identifier
+class SculptBrushClay(SculptBrushDraw):
+    idname = "sculpt_brush_clay"
+    quick_brush_type = 'CLAY'
 
 
-def menu_init(self, context):
-    execute_string = (
-        "if not self.menu or event.type not in {\n"
-        "         'LEFTMOUSE', 'SPACE', 'RET', 'NUMPAD_ENTER'}:\n"
-        "     bpy.ops.paint.brush_select(\n"
-        "         True, paint_mode='SCULPT',\n"
-        "         sculpt_tool=self[\"sculpt_tool\"])\n"
-        "     self.menu = \"\"\n"
-    )
+class SculptBrushSmooth(SculptBrushDraw):
+    idname = "sculpt_brush_smooth"
+    quick_brush_type = 'SMOOTH'
 
-    self.menu_items.clear()
-    brush_types = self["brush_types"]
-    prop = bpy.types.Brush.bl_rna.properties['sculpt_tool']
-    for brush_type in brush_types:
-        enum_item = prop.enum_items[brush_type]
-        item = self.menu_items.add()
-        item.label = enum_item.name
-        item.description = "Release key: decide, Press LeftMouse: sub menu"
-        item.icon = enum_item.icon
-        item["sculpt_tool_name"] = enum_item.name
-        item["sculpt_tool"] = enum_item.identifier
-        item.execute = execute_string
-
-        num = 0
-        for brush in bpy.data.brushes:
-            if (brush.use_paint_sculpt and
-                    brush.sculpt_tool == enum_item.identifier):
-                num += 1
-        if num > 1:
-            item.menu = "sculpt_brush_submenu_" + enum_item.identifier
-        else:
-            item.menu = ""
-
-    while len(self.menu_items) % 4:
-        item = self.menu_items.add()
-        item.type = 'SPACER'
+    brush_types = ['SMOOTH', 'FLATTEN', 'FILL', 'SCRAPE', 'PINCH']
 
 
-def make_menus(context, addon_prefs):
-    init_string = \
-        "\n".join([t[4:] for t in
-                   inspect.getsource(menu_init).split("\n")[1:]])
-    # Draw
-    menu = addon_prefs.menus.add()
-    menu.icon_scale = ICON_SCALE
-    menu.icon_expand = 1.0
-    menu.quick_action = 'FIXED'
-    menu.idname = "sculpt_brush_draw"
-    menu.label = "Brush Select"
-    menu.quick_action_index = 0
-    menu.init = init_string
-    # menu.radius = 0
-    # menu.item_order = 'OFFICIAL'
-    menu["brush_types"] = ['DRAW', 'CLAY', 'CLAY_STRIPS', 'INFLATE', 'BLOB',
-                           'LAYER', 'CREASE']
+class SculptBrushGrub(SculptBrushDraw):
+    idname = "sculpt_brush_grub"
+    quick_brush_type = 'GRAB'
 
-    # Clay
-    menu = addon_prefs.menus.add()
-    menu.icon_scale = ICON_SCALE
-    menu.icon_expand = 1.0
-    menu.quick_action = 'FIXED'
-    menu.idname = "sculpt_brush_clay"
-    menu.label = "Brush Select"
-    menu.quick_action_index = 1
-    menu.init = init_string
-    menu["brush_types"] = ['DRAW', 'CLAY', 'CLAY_STRIPS', 'INFLATE', 'BLOB',
-                           'LAYER', 'CREASE']
+    brush_types = ['GRAB', 'ROTATE', 'THUMB', 'SNAKE_HOOK', 'NUDGE', 'MASK']
 
-    # Smooth
-    menu = addon_prefs.menus.add()
-    menu.icon_scale = ICON_SCALE
-    menu.icon_expand = 1.0
-    menu.quick_action = 'FIXED'
-    menu.idname = "sculpt_brush_smooth"
-    menu.label = "Brush Select"
-    menu.quick_action_index = 0
-    menu.init = init_string
-    menu["brush_types"] = ['SMOOTH', 'FLATTEN', 'FILL', 'SCRAPE', 'PINCH']
 
-    # Grub
-    menu = addon_prefs.menus.add()
-    menu.icon_scale = ICON_SCALE
-    menu.icon_expand = 1.0
-    menu.quick_action = 'FIXED'
-    menu.idname = "sculpt_brush_grub"
-    menu.label = "Brush Select"
-    menu.quick_action_index = 0
-    menu.init = init_string
-    menu["brush_types"] = ['GRAB', 'ROTATE', 'THUMB', 'SNAKE_HOOK', 'NUDGE',
-                           'MASK']
+PieMenuSculptBrushAddonPreferences.menus = [
+    SculptBrushDraw,
+    SculptBrushClay,
+    SculptBrushSmooth,
+    SculptBrushGrub,
+]
 
 
 menu_keymap_items = {
@@ -215,8 +199,6 @@ def register():
         bpy.utils.register_class(cls)
 
     addon_prefs = PieMenuSculptBrushAddonPreferences.get_instance()
-    # if "menus" not in addon_prefs:
-    addon_prefs.set_default_menus()
 
     pie_menu.register_addon(addon_prefs)
 

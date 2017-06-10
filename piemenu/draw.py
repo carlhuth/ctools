@@ -608,10 +608,10 @@ class DrawingManager:
         #     vagl.draw_circle(cx, cy, r, 16, False)
         has_shift = has_ctrl = False
         for item in menu.menu_items:
-            if item is not None and item.active:
-                if item.shift is not None and item.shift.active:
+            if item is not None:
+                if item.shift:
                     has_shift = True
-                if item.ctrl is not None and item.ctrl.active:
+                if item.ctrl:
                     has_ctrl = True
         mod = self.op.last_modifier()
         for has_sub_item, key, p in [(has_shift, "shift", (1, 1)),
@@ -948,7 +948,8 @@ class DrawingManager:
             if not menu.is_valid_click:
                 active = False
             enabled = item.enabled
-            highlight = item.direction == highlight_direction
+            highlight = (item.direction == highlight_direction and
+                         highlight_direction != 'NONE')
             self.draw_item(item, i, active, enabled, highlight)
 
     def draw_tooltip(self, context):

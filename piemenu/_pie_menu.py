@@ -19,8 +19,8 @@
 
 import bpy
 
-from CTOOLS_MODULE_NAME.piemenu.menu_items import EnumItemType, \
-    EnumDrawType, EnumQuickAction, EnumHighlight, new_classes, draw_menus
+from CTOOLS_MODULE_NAME.piemenu.menu_items import EnumDrawType, \
+    EnumQuickAction, EnumHighlight
 
 
 CTOOLS_PIEMENU = None
@@ -52,10 +52,13 @@ def get_menu(idname):
     """:type idname: str
     """
     for addon_prefs in _registered_addon_preferences[::-1]:
-        for menu in addon_prefs.menus:
-            if getattr(menu, "active", True):
-                if menu.idname == idname:
-                    return menu
+        if isinstance(addon_prefs.menus, dict):
+            menus = addon_prefs.menus.values()
+        else:
+            menus = addon_prefs.menus
+        for menu in menus:
+            if menu.idname == idname:
+                return menu
 
 
 # Helper function
@@ -124,20 +127,3 @@ def get_keymap(name, keyconfig="addon"):
         msg += "\n]\n"
         raise ValueError(msg)
     return km
-
-
-OperatorArgument, PieMenuSubItem, PieMenuItem, PieMenu = new_classes()
-
-
-class PieMenuPreferences:
-    menus = bpy.props.CollectionProperty(type=PieMenu)
-
-    def reset_menus(self):
-        pass
-
-    def draw(self, context):
-        draw_menus(self, context, self.layout)
-
-
-for cls in [OperatorArgument, PieMenuSubItem, PieMenuItem, PieMenu]:
-    bpy.utils.register_class(cls)

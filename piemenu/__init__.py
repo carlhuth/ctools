@@ -20,7 +20,7 @@
 bl_info = {
     "name": "Pie Menu",
     "author": "chromoly",
-    "version": (0, 9, 1),
+    "version": (0, 9, 2),
     "blender": (2, 78, 0),
     "location": "UserPreferences > Input > Pie Menu",
     "description": "",
@@ -80,9 +80,7 @@ from . import draw
 # from . import pie_menu
 
 from .stubs import gen_screenshot_texture, draw_texture, cross2d
-from .preferences import OperatorArgument, PieMenuSubItem, PieMenuItem,\
-    PieMenu,PieMenu_PG_Colors, PieMenuPreferences
-from .menu_items import PieMenuPy
+from .preferences import PieMenu, PieMenu_PG_Colors, PieMenuPreferences
 from .draw import DrawingManager
 
 
@@ -194,7 +192,7 @@ class WM_OT_pie_menu_exec(bpy.types.Operator):
         cls = self.__class__
         item = cls.item
         try:
-            cls.result = item.execute_(context, event)
+            cls.result = item.execute(context, event)
         except:
             err = traceback.format_exc()
             print(err)
@@ -217,7 +215,7 @@ class WM_OT_pie_menu_exec_register(bpy.types.Operator):
         cls = self.__class__
         item = cls.item
         try:
-            cls.result = item.execute_(context, event)
+            cls.result = item.execute(context, event)
             # 履歴のメッセージを任意の物にする為、bl_optionsには'UNDO'を入れずに
             # ここでundo_push()を行う。
             bpy.ops.ed.undo_push(message=item.label)
@@ -522,19 +520,20 @@ class WM_OT_pie_menu(bpy.types.Operator):
         menu = pie_menu.get_menu(idname)
         """:type: PieMenu"""
         if not menu:
+            self.report({'ERROR'}, "Menu '{}' not fond".format(idname))
             return None
 
         if inspect.isclass(menu):
-            menu = PieMenuPy(menu())
-        elif not issubclass(menu.__class__, bpy.types.bpy_struct):
-            menu = PieMenuPy(menu)
+            menu = PieMenu(menu())
+        else:
+            menu = PieMenu(menu)
 
-        if not menu.poll_(context):
+        if not menu.poll(context):
             return False
 
         self.base_menu = menu
 
-        menu.init_(context)
+        menu.init(context)
         menu.co = co
         menu.update_current_items(context, self)
         menu.correct_radius()
@@ -588,8 +587,7 @@ class WM_OT_pie_menu(bpy.types.Operator):
         if event.type.startswith('TIMER'):
             pass
         elif event.type == 'MOUSEMOVE':
-            if (self.show_tooltip and
-                    item_index == menu.active_index):
+            if (self.show_tooltip and item_index == menu.active_index):
                 pass
             else:
                 self.last_action_time = current_time
@@ -621,8 +619,8 @@ class WM_OT_pie_menu(bpy.types.Operator):
         if event.type == self.event_type and event.value == 'RELEASE':
             if menu.is_valid_click:
                 confirm = True
-                self.event_type = ''
                 release = True
+            self.event_type = ''
         elif (event.type == 'LEFTMOUSE' and event.value == 'RELEASE' and
               'LEFTMOUSE' in event_history_bak):
             if menu.is_valid_click:
@@ -634,8 +632,9 @@ class WM_OT_pie_menu(bpy.types.Operator):
                     if event.type == item.shortcut and event.value == 'PRESS':
                         confirm = True
                         active_item = item
-                        self.event_type = event.type
-                        self.hack_lock_pie_event(context, event.type)
+                        if 0:
+                            self.event_type = event.type
+                            self.hack_lock_pie_event(context, event.type)
                         break
         if not confirm:
             if (event.type in {'SPACE', 'RET', 'NUMPAD_ENTER'} and
@@ -656,32 +655,26 @@ class WM_OT_pie_menu(bpy.types.Operator):
             retval = None
 
             if active_item.enabled:
-                if active_item.type in {'ADVANCED', 'OPERATOR'}:
-                    menu.set_last_item_direction(
-                        menu.current_items.index(active_item))
-                    modal_handlers_pre = st.wmWindow.modal_handlers(win)
+                menu.set_last_item_direction(active_item.direction)
+                modal_handlers_pre = st.wmWindow.modal_handlers(win)
 
-                    if active_item.undo_push:
-                        WM_OT_pie_menu_exec_register.item = active_item
-                        bpy.ops.wm.pie_menu_exec_register('INVOKE_DEFAULT',
-                                                          True)
-                        result = WM_OT_pie_menu_exec_register.result
-                    else:
-                        WM_OT_pie_menu_exec.item = active_item
-                        bpy.ops.wm.pie_menu_exec('INVOKE_DEFAULT', True)
-                        result = WM_OT_pie_menu_exec.result
-
-                    modal_handlers_post = st.wmWindow.modal_handlers(win)
-                    # running_modal = (ct.addressof(modal_handlers_pre[0][0]) !=
-                    #                  ct.addressof(modal_handlers_post[0][0]))
-                    running_modal = (len(modal_handlers_pre) !=
-                                     len(modal_handlers_post))
+                if active_item.undo_push:
+                    WM_OT_pie_menu_exec_register.item = active_item
+                    bpy.ops.wm.pie_menu_exec_register('INVOKE_DEFAULT',
+                                                      True)
+                    result = WM_OT_pie_menu_exec_register.result
                 else:
-                    result = None
-                    running_modal = False
+                    WM_OT_pie_menu_exec.item = active_item
+                    bpy.ops.wm.pie_menu_exec('INVOKE_DEFAULT', True)
+                    result = WM_OT_pie_menu_exec.result
 
-                if (active_item.type in {'ADVANCED', 'MENU'} and
-                        active_item.menu or isinstance(result, str)):
+                modal_handlers_post = st.wmWindow.modal_handlers(win)
+                # running_modal = (ct.addressof(modal_handlers_pre[0][0]) !=
+                #                  ct.addressof(modal_handlers_post[0][0]))
+                running_modal = (len(modal_handlers_pre) !=
+                                 len(modal_handlers_post))
+
+                if active_item.menu or isinstance(result, str):
                     if active_item.menu:
                         sub_menu = active_item.menu
                     else:
@@ -705,7 +698,7 @@ class WM_OT_pie_menu(bpy.types.Operator):
                     retval = {'FINISHED'}
             else:
                 if not click:
-                    menu.set_last_item_direction(-1)
+                    # menu.set_last_item_direction('NONE')
                     retval = {'CANCELLED'}
 
             if retval is not None:
@@ -726,9 +719,13 @@ class WM_OT_pie_menu(bpy.types.Operator):
         elif event.type == 'ESC':
             if event.type not in item_shortcuts:
                 cancel = True
-        elif (confirm and menu.quick_action != 'NONE' and
-              menu.active_index == menu.active_item_index == -1):
-            cancel = True
+        elif confirm and not active_item:
+            if release and menu.active_index != -1:
+                cancel = True
+        #     pass
+        # elif confirm and menu.quick_action != 'NONE' and not active_item:
+        #     if menu.active_index == -1:
+        #         cancel = True
 
         if cancel:
             self.draw_handler_remove()
@@ -837,10 +834,6 @@ classes = [
     WM_OT_pie_menu_exec,
     WM_OT_pie_menu_exec_register,
 
-    OperatorArgument,
-    PieMenuSubItem,
-    PieMenuItem,
-    PieMenu,
     PieMenu_PG_Colors,
     PieMenuPreferences,
 ]
@@ -854,15 +847,22 @@ def register():
 
     custom_icons.register()
 
+    addon_prefs = PieMenuPreferences.get_instance()
     if pie_menu:
-        pie_menu.addon_preferences = PieMenuPreferences.get_instance()
-        pie_menu.register_addon(PieMenuPreferences.get_instance())
+        pie_menu.addon_preferences = addon_prefs
+        # pie_menu.register_addon(PieMenuPreferences.get_instance())
+
+    # Enable all sub modules if not disabled
+    for name, mod in PieMenuPreferences._fake_submodules_.items():
+        key = "use_" + name
+        if key not in addon_prefs.addons:
+            setattr(addon_prefs.addons, key, True)
 
 
 @PieMenuPreferences.unregister_addon
 def unregister():
     if pie_menu:
-        pie_menu.unregister_addon(PieMenuPreferences.get_instance())
+        # pie_menu.unregister_addon(PieMenuPreferences.get_instance())
         pie_menu.addon_preferences = None
 
     custom_icons.unregister()

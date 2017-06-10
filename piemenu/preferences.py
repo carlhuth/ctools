@@ -32,8 +32,7 @@ from ..utils import vawm
 
 # from . import oputils
 from . import operators as ops
-from .menu_items import PieMenuSubItem, PieMenuItem, PieMenu,\
-    OperatorArgument, draw_menus, draw_separator, draw_property
+from .menu_items import draw_separator, draw_property, PieMenu
 
 
 translate_iface = bpy.app.translations.pgettext_iface
@@ -238,7 +237,7 @@ class PieMenuPreferences(addongroup.AddonGroup,
 
     submodules = None
 
-    menus = props.CollectionProperty(type=PieMenu)
+    # menus = []
 
     font_id = props.IntProperty(
         name="Font ID",
@@ -271,7 +270,7 @@ class PieMenuPreferences(addongroup.AddonGroup,
     # submenuに切り替えた際に中心を変えない
     lock_menu_location = props.BoolProperty(
         name="Lock Menu Location",
-        default=False)
+        default=True)
 
     # Itemの上下の隙間がこれより狭いならmenu_radiusを広げる
     item_min_space = props.IntProperty(
@@ -294,9 +293,9 @@ class PieMenuPreferences(addongroup.AddonGroup,
         default='BOX'
     )
 
-    def reset_menus(self):
-        self.menus.clear()
-        pass
+    # def reset_menus(self):
+    #     self.menus.clear()
+    #     pass
 
     def draw(self, context):
         layout = self.layout
@@ -416,13 +415,6 @@ class PieMenuPreferences(addongroup.AddonGroup,
         sub2.active = colors.tooltip_show_shaded
         sub2.prop(colors, "tooltip_shadetop")
         sub2.prop(colors, "tooltip_shadedown")
-
-        draw_separator(layout)
-
-        # Menus
-        row = layout.row()
-        row.label("Menus:")
-        draw_menus(self, context, layout)
 
         draw_separator(layout)
 

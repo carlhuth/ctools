@@ -1379,8 +1379,7 @@ def register():
         kmi = km.keymap_items.new('mesh.bm_fake_knife', 'K', 'PRESS',
                                   ctrl=True)
         addon_keymaps.append((km, kmi))
-        kmi = km.keymap_items.new('mesh.bm_fake_knife', 'BUTTON10MOUSE',
-                                  'PRESS')
+        kmi = km.keymap_items.new('mesh.bm_fake_knife', 'F15', 'PRESS')
         addon_keymaps.append((km, kmi))
 
 
