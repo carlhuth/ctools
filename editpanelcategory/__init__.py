@@ -20,17 +20,13 @@
 bl_info = {
     'name': 'Edit Panel Category',
     'author': 'chromoly',
-    'version': (0, 1, 1),
+    'version': (0, 1, 0),
     'blender': (2, 78, 0),
     'location': '',
     'description': '',
     'wiki_url': '',
     'category': 'User Interface',
-    'warning': "Not support 2.79"
 }
-
-# いつか直す
-DISABLED = True
 
 
 """
@@ -100,11 +96,6 @@ class ToolPropsPanelPreferences(
 
     def draw(self, context):
         layout = self.layout
-
-        if DISABLED:
-            layout.label("Disabled", icon='ERROR')
-            super().draw(context)
-            return
 
         row = layout.row()
         file_path = os.path.join(bpy.utils.user_resource('CONFIG'),
@@ -676,9 +667,6 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    if DISABLED:
-        return
-
     bpy.app.handlers.scene_update_pre.append(callback_get_draw_func)
     bpy.app.handlers.scene_update_pre.append(callback_init_categories)
 
@@ -701,9 +689,6 @@ def register():
 def unregister():
     for cls in classes[::-1]:
         bpy.utils.unregister_class(cls)
-
-    if DISABLED:
-        return
 
     if callback_get_draw_func in bpy.app.handlers.scene_update_pre:
         bpy.app.handlers.scene_update_pre.remove(callback_get_draw_func)
