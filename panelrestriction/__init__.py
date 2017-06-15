@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Panel Restriction',
     'author': 'chromoly',
-    'version': (0, 2, 0),
+    'version': (0, 2, 1),
     'blender': (2, 78, 0),
     'location': 'TOOLS/UI/WINDOW Panel > Panel Restriction, '
                 'H, Shift+H, Alt+H, Ctrl+H, Ctrl+Alt+H',
@@ -135,10 +135,10 @@ def gen_addon_prefs_name_space():
     space_names = {e.identifier: e.name for e in prop.enum_items}
     prop = bpy.types.Region.bl_rna.properties['type']
     region_names = {e.identifier: e.name for e in prop.enum_items}
-    for space_type, region_types in addongroup.area_region_types.items():
+    for space_type, region_types in addongroup._panel.area_region_types.items():
         if space_type == 'PROPERTIES':
             for bl_context, (_, space_context_name) in \
-                    addongroup.bl_context_properties.items():
+                    addongroup._panel.bl_context_properties.items():
                 space = Temp(type=space_type, context=bl_context)
                 region = Temp(type='WINDOW')
                 attr = addon_prefs_key(space, region)
@@ -844,7 +844,10 @@ class _SCREEN_PT_panel_restriction:
                 for category in categories:
                     if not d[category]:
                         continue
-                    layout.label(iface(category) + ':')
+                    name = iface(category)
+                    if not name:
+                        name = "NO CATEGORY NAME"
+                    layout.label(name + ':')
                     for pt in d[category]:
                         draw_item(layout, pt)
             else:
@@ -855,11 +858,11 @@ class _SCREEN_PT_panel_restriction:
 def generate_panel_classes():
     panel_classes.clear()
 
-    for space_type, region_types in addongroup.area_region_types.items():
+    for space_type, region_types in addongroup._panel.area_region_types.items():
         spacetype = space_type.replace('_', '')
         for region_type in region_types:
             if space_type == 'PROPERTIES' and region_type == 'WINDOW':
-                for bl_context in addongroup.bl_context_properties:
+                for bl_context in addongroup._panel.bl_context_properties:
                     name = '{}_PT_panel_restriction_{}_{}'.format(
                         spacetype, region_type.lower(), bl_context)
                     attrs = {
