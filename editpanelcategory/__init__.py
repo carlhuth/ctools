@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Edit Panel Category',
     'author': 'chromoly',
-    'version': (0, 1, 0),
+    'version': (0, 1, 1),
     'blender': (2, 78, 0),
     'location': '',
     'description': '',
@@ -667,7 +667,8 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.app.handlers.scene_update_pre.append(callback_get_draw_func)
+    if not bpy.app.background:
+        bpy.app.handlers.scene_update_pre.append(callback_get_draw_func)
     bpy.app.handlers.scene_update_pre.append(callback_init_categories)
 
     bpy.types.Region.active_panel_category = property(

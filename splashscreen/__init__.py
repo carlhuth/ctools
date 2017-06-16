@@ -734,6 +734,7 @@ def scene_update_pre(scene):
     bpy.app.handlers.scene_update_pre.remove(scene_update_pre)
     bpy.ops.wm.splash_qt('INVOKE_DEFAULT')
 
+
 def menu_item(self, context):
     layout = self.layout.column()
     # layout.operator_context = 'INVOKE_DEFAULT'
@@ -756,7 +757,8 @@ def register():
         bpy.utils.register_class(cls)
     bpy.types.INFO_MT_help.append(menu_item)
     if first_run:
-        bpy.app.handlers.scene_update_pre.append(scene_update_pre)
+        if not bpy.app.background:
+            bpy.app.handlers.scene_update_pre.append(scene_update_pre)
         first_run = False
 
     U = bpy.context.user_preferences
