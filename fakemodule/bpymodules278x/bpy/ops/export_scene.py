@@ -1,4 +1,4 @@
-def autodesk_3ds(*args, filepath="", check_existing=True, axis_forward='Y', axis_up='Z', filter_glob="*.3ds", use_selection=False):
+def autodesk_3ds(*args, filepath=”“, check_existing=True, axis_forward=’Y’, axis_up=’Z’, filter_glob=”*.3ds”, use_selection=False):
     """Export to 3DS file format (.3ds)
     
     :param args: (override_context, execution_context, undo)
@@ -29,7 +29,7 @@ def autodesk_3ds(*args, filepath="", check_existing=True, axis_forward='Y', axis
     return {'FINISHED'}
 
 
-def fbx(*args, filepath="", check_existing=True, axis_forward='-Z', axis_up='Y', filter_glob="*.fbx", version='BIN7400', ui_tab='MAIN', use_selection=False, global_scale=1.0, apply_unit_scale=True, bake_space_transform=False, object_types={'ARMATURE', 'CAMERA', 'EMPTY', 'LAMP', 'MESH', 'OTHER'}, use_mesh_modifiers=True, use_mesh_modifiers_render=True, mesh_smooth_type='OFF', use_mesh_edges=False, use_tspace=False, use_custom_props=False, add_leaf_bones=True, primary_bone_axis='Y', secondary_bone_axis='X', use_armature_deform_only=False, armature_nodetype='NULL', bake_anim=True, bake_anim_use_all_bones=True, bake_anim_use_nla_strips=True, bake_anim_use_all_actions=True, bake_anim_force_startend_keying=True, bake_anim_step=1.0, bake_anim_simplify_factor=1.0, use_anim=True, use_anim_action_all=True, use_default_take=True, use_anim_optimize=True, anim_optimize_precision=6.0, path_mode='AUTO', embed_textures=False, batch_mode='OFF', use_batch_own_dir=True, use_metadata=True):
+def fbx(*args, filepath=”“, check_existing=True, axis_forward=’-Z’, axis_up=’Y’, filter_glob=”*.fbx”, version=’BIN7400’, ui_tab=’MAIN’, use_selection=False, global_scale=1.0, apply_unit_scale=True, bake_space_transform=False, object_types={‘ARMATURE’, ’CAMERA’, ’EMPTY’, ’LAMP’, ’MESH’, ’OTHER’}, use_mesh_modifiers=True, use_mesh_modifiers_render=True, mesh_smooth_type=’OFF’, use_mesh_edges=False, use_tspace=False, use_custom_props=False, add_leaf_bones=True, primary_bone_axis=’Y’, secondary_bone_axis=’X’, use_armature_deform_only=False, armature_nodetype=’NULL’, bake_anim=True, bake_anim_use_all_bones=True, bake_anim_use_nla_strips=True, bake_anim_use_all_actions=True, bake_anim_force_startend_keying=True, bake_anim_step=1.0, bake_anim_simplify_factor=1.0, use_anim=True, use_anim_action_all=True, use_default_take=True, use_anim_optimize=True, anim_optimize_precision=6.0, path_mode=’AUTO’, embed_textures=False, batch_mode=’OFF’, use_batch_own_dir=True, use_metadata=True):
     """Write a FBX file
     
     :param args: (override_context, execution_context, undo)
@@ -72,7 +72,7 @@ def fbx(*args, filepath="", check_existing=True, axis_forward='-Z', axis_up='Y',
     :param apply_unit_scale: Apply Unit, Scale all data according to current Blender size, to match default FBX unit (centimeter, some importers do not handle UnitScaleFactor properly)
         (type: boolean, (optional))
     :type apply_unit_scale: bool
-    :param bake_space_transform: !EXPERIMENTAL! Apply Transform, Bake space transform into object data, avoids getting unwanted rotations to objects when target space is not aligned with Blender's space (WARNING! experimental option, use at own risks, known broken with armatures/animations)
+    :param bake_space_transform: !EXPERIMENTAL! Apply Transform, Bake space transform into object data, avoids getting unwanted rotations to objects when target space is not aligned with Blender’s space (WARNING! experimental option, use at own risks, known broken with armatures/animations)
         (type: boolean, (optional))
     :type bake_space_transform: bool
     :param object_types: Object Types, Which kind of object to export
@@ -90,7 +90,7 @@ def fbx(*args, filepath="", check_existing=True, axis_forward='-Z', axis_up='Y',
     :param use_mesh_modifiers_render: Use Modifiers Render Setting, Use render settings when applying modifiers to mesh objects
         (type: boolean, (optional))
     :type use_mesh_modifiers_render: bool
-    :param mesh_smooth_type: Smoothing, Export smoothing information (prefer 'Normals Only' option if your target importer understand split normals)
+    :param mesh_smooth_type: Smoothing, Export smoothing information (prefer ‘Normals Only’ option if your target importer understand split normals)
         * 'OFF': Normals Only, Export only normals instead of writing edge or face smoothing data.
         * 'FACE': Face, Write face smoothing.
         * 'EDGE': Edge, Write edge smoothing.
@@ -117,10 +117,10 @@ def fbx(*args, filepath="", check_existing=True, axis_forward='-Z', axis_up='Y',
     :param use_armature_deform_only: Only Deform Bones, Only write deforming bones (and non-deforming ones when they have deforming children)
         (type: boolean, (optional))
     :type use_armature_deform_only: bool
-    :param armature_nodetype: Armature FBXNode Type, FBX type of node (object) used to represent Blender's armatures (use Null one unless you experience issues with other app, other choices may no import back perfectly in Blender...)
-        * 'NULL': Null, 'Null' FBX node, similar to Blender's Empty (default).
-        * 'ROOT': Root, 'Root' FBX node, supposed to be the root of chains of bones....
-        * 'LIMBNODE': LimbNode, 'LimbNode' FBX node, a regular joint between two bones....
+    :param armature_nodetype: Armature FBXNode Type, FBX type of node (object) used to represent Blender’s armatures (use Null one unless you experience issues with other app, other choices may no import back perfectly in Blender…)
+        * 'NULL': Null, ‘Null’ FBX node, similar to Blender’s Empty (default).
+        * 'ROOT': Root, ‘Root’ FBX node, supposed to be the root of chains of bones….
+        * 'LIMBNODE': LimbNode, ‘LimbNode’ FBX node, a regular joint between two bones….
         (type: enum in ['NULL', 'ROOT', 'LIMBNODE'], (optional))
     :type armature_nodetype: str
     :param bake_anim: Baked Animation, Export baked keyframe animation
@@ -129,10 +129,10 @@ def fbx(*args, filepath="", check_existing=True, axis_forward='-Z', axis_up='Y',
     :param bake_anim_use_all_bones: Key All Bones, Force exporting at least one key of animation for all bones (needed with some target applications, like UE4)
         (type: boolean, (optional))
     :type bake_anim_use_all_bones: bool
-    :param bake_anim_use_nla_strips: NLA Strips, Export each non-muted NLA strip as a separated FBX's AnimStack, if any, instead of global scene animation
+    :param bake_anim_use_nla_strips: NLA Strips, Export each non-muted NLA strip as a separated FBX’s AnimStack, if any, instead of global scene animation
         (type: boolean, (optional))
     :type bake_anim_use_nla_strips: bool
-    :param bake_anim_use_all_actions: All Actions, Export each action as a separated FBX's AnimStack, instead of global scene animation (note that animated objects will get all actions compatible with them, others will get no animation at all)
+    :param bake_anim_use_all_actions: All Actions, Export each action as a separated FBX’s AnimStack, instead of global scene animation (note that animated objects will get all actions compatible with them, others will get no animation at all)
         (type: boolean, (optional))
     :type bake_anim_use_all_actions: bool
     :param bake_anim_force_startend_keying: Force Start/End Keying, Always add a keyframe at start and end of actions for animated channels
@@ -168,7 +168,7 @@ def fbx(*args, filepath="", check_existing=True, axis_forward='-Z', axis_up='Y',
         * 'COPY': Copy, Copy the file to the destination path (or subdirectory).
         (type: enum in ['AUTO', 'ABSOLUTE', 'RELATIVE', 'MATCH', 'STRIP', 'COPY'], (optional))
     :type path_mode: str
-    :param embed_textures: Embed Textures, Embed textures in FBX binary file (only for "Copy" path mode!)
+    :param embed_textures: Embed Textures, Embed textures in FBX binary file (only for “Copy” path mode!)
         (type: boolean, (optional))
     :type embed_textures: bool
     :param batch_mode: Batch Mode
@@ -189,7 +189,7 @@ def fbx(*args, filepath="", check_existing=True, axis_forward='-Z', axis_up='Y',
     return {'FINISHED'}
 
 
-def obj(*args, filepath="", check_existing=True, axis_forward='-Z', axis_up='Y', filter_glob="*.obj;*.mtl", use_selection=False, use_animation=False, use_mesh_modifiers=True, use_mesh_modifiers_render=False, use_edges=True, use_smooth_groups=False, use_smooth_groups_bitflags=False, use_normals=True, use_uvs=True, use_materials=True, use_triangles=False, use_nurbs=False, use_vertex_groups=False, use_blen_objects=True, group_by_object=False, group_by_material=False, keep_vertex_order=False, global_scale=1.0, path_mode='AUTO'):
+def obj(*args, filepath=”“, check_existing=True, axis_forward=’-Z’, axis_up=’Y’, filter_glob=”*.obj;*.mtl”, use_selection=False, use_animation=False, use_mesh_modifiers=True, use_mesh_modifiers_render=False, use_edges=True, use_smooth_groups=False, use_smooth_groups_bitflags=False, use_normals=True, use_uvs=True, use_materials=True, use_triangles=False, use_nurbs=False, use_vertex_groups=False, use_blen_objects=True, group_by_object=False, group_by_material=False, keep_vertex_order=False, global_scale=1.0, path_mode=’AUTO’):
     """Save a Wavefront OBJ File
     
     :param args: (override_context, execution_context, undo)
@@ -229,7 +229,7 @@ def obj(*args, filepath="", check_existing=True, axis_forward='-Z', axis_up='Y',
     :param use_smooth_groups: Smooth Groups, Write sharp edges as smooth groups
         (type: boolean, (optional))
     :type use_smooth_groups: bool
-    :param use_smooth_groups_bitflags: Bitflag Smooth Groups, Same as 'Smooth Groups', but generate smooth groups IDs as bitflags (produces at most 32 different smooth groups, usually much less)
+    :param use_smooth_groups_bitflags: Bitflag Smooth Groups, Same as ‘Smooth Groups’, but generate smooth groups IDs as bitflags (produces at most 32 different smooth groups, usually much less)
         (type: boolean, (optional))
     :type use_smooth_groups_bitflags: bool
     :param use_normals: Write Normals, Export one normal per vertex and per face, to represent flat faces and sharp edges
@@ -280,7 +280,7 @@ def obj(*args, filepath="", check_existing=True, axis_forward='-Z', axis_up='Y',
     return {'FINISHED'}
 
 
-def x3d(*args, filepath="", check_existing=True, axis_forward='Z', axis_up='Y', filter_glob="*.x3d", use_selection=False, use_mesh_modifiers=True, use_triangulate=False, use_normals=False, use_compress=False, use_hierarchy=True, name_decorations=True, use_h3d=False, global_scale=1.0, path_mode='AUTO'):
+def x3d(*args, filepath=”“, check_existing=True, axis_forward=’Z’, axis_up=’Y’, filter_glob=”*.x3d”, use_selection=False, use_mesh_modifiers=True, use_triangulate=False, use_normals=False, use_compress=False, use_hierarchy=True, name_decorations=True, use_h3d=False, global_scale=1.0, path_mode=’AUTO’):
     """Export selection to Extensible 3D file (.x3d)
     
     :param args: (override_context, execution_context, undo)
@@ -308,7 +308,7 @@ def x3d(*args, filepath="", check_existing=True, axis_forward='Z', axis_up='Y', 
     :param use_mesh_modifiers: Apply Modifiers, Use transformed mesh data from each object
         (type: boolean, (optional))
     :type use_mesh_modifiers: bool
-    :param use_triangulate: Triangulate, Write quads into 'IndexedTriangleSet'
+    :param use_triangulate: Triangulate, Write quads into ‘IndexedTriangleSet’
         (type: boolean, (optional))
     :type use_triangulate: bool
     :param use_normals: Normals, Write normals with geometry

@@ -1,3 +1,41 @@
+def cycles_integrator_preset_add(*args, name=”“, remove_active=False):
+    """Add an Integrator Preset
+    
+    :param args: (override_context, execution_context, undo)
+        override_context (dict)
+        execution_context (str) -- enum in ['INVOKE_DEFAULT', 'INVOKE_REGION_WIN', 'INVOKE_REGION_CHANNELS', 'INVOKE_REGION_PREVIEW', 'INVOKE_AREA', 'INVOKE_SCREEN', 'EXEC_DEFAULT', 'EXEC_REGION_WIN', 'EXEC_REGION_CHANNELS', 'EXEC_REGION_PREVIEW', 'EXEC_AREA', 'EXEC_SCREEN']
+        undo (bool)
+    :param name: Name, Name of the preset, used to make the path name
+        (type: str, (optional, never None))
+    :type name: str
+    :param remove_active: remove_active
+        (type: boolean, (optional))
+    :type remove_active: bool
+    :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
+    :rtype: set[str]
+    """
+    return {'FINISHED'}
+
+
+def cycles_sampling_preset_add(*args, name=”“, remove_active=False):
+    """Add a Sampling Preset
+    
+    :param args: (override_context, execution_context, undo)
+        override_context (dict)
+        execution_context (str) -- enum in ['INVOKE_DEFAULT', 'INVOKE_REGION_WIN', 'INVOKE_REGION_CHANNELS', 'INVOKE_REGION_PREVIEW', 'INVOKE_AREA', 'INVOKE_SCREEN', 'EXEC_DEFAULT', 'EXEC_REGION_WIN', 'EXEC_REGION_CHANNELS', 'EXEC_REGION_PREVIEW', 'EXEC_AREA', 'EXEC_SCREEN']
+        undo (bool)
+    :param name: Name, Name of the preset, used to make the path name
+        (type: str, (optional, never None))
+    :type name: str
+    :param remove_active: remove_active
+        (type: boolean, (optional))
+    :type remove_active: bool
+    :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
+    :rtype: set[str]
+    """
+    return {'FINISHED'}
+
+
 def opengl(*args, animation=False, sequencer=False, write_still=False, view_context=True):
     """OpenGL render active viewport
     
@@ -8,7 +46,7 @@ def opengl(*args, animation=False, sequencer=False, write_still=False, view_cont
     :param animation: Animation, Render files from the animation range of this scene
         (type: boolean, (optional))
     :type animation: bool
-    :param sequencer: Sequencer, Render using the sequencer's OpenGL display
+    :param sequencer: Sequencer, Render using the sequencer’s OpenGL display
         (type: boolean, (optional))
     :type sequencer: bool
     :param write_still: Write Image, Save rendered the image to the output path (used only when animation is disabled)
@@ -36,7 +74,7 @@ def play_rendered_anim(*args):
     return {'FINISHED'}
 
 
-def preset_add(*args, name="", remove_active=False):
+def preset_add(*args, name=”“, remove_active=False):
     """Add or remove a Render Preset
     
     :param args: (override_context, execution_context, undo)
@@ -55,7 +93,7 @@ def preset_add(*args, name="", remove_active=False):
     return {'FINISHED'}
 
 
-def render(*args, animation=False, write_still=False, use_viewport=False, layer="", scene=""):
+def render(*args, animation=False, write_still=False, use_viewport=False, layer=”“, scene=”“):
     """Render active scene
     
     :param args: (override_context, execution_context, undo)
@@ -83,7 +121,7 @@ def render(*args, animation=False, write_still=False, use_viewport=False, layer=
     return {'FINISHED'}
 
 
-def shutter_curve_preset(*args, shape='SMOOTH'):
+def shutter_curve_preset(*args, shape=’SMOOTH’):
     """Set shutter curve
     
     :param args: (override_context, execution_context, undo)

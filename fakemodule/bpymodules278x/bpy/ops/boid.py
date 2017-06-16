@@ -1,4 +1,4 @@
-def rule_add(*args, type='GOAL'):
+def rule_add(*args, type=’GOAL’):
     """Add a boid rule to the current boid state
     
     :param args: (override_context, execution_context, undo)

@@ -94,7 +94,7 @@ def bundles_to_mesh(*args):
     return {'FINISHED'}
 
 
-def camera_preset_add(*args, name="", remove_active=False, use_focal_length=True):
+def camera_preset_add(*args, name=”“, remove_active=False, use_focal_length=True):
     """Add or remove a Tracking Camera Intrinsics Preset
     
     :param args: (override_context, execution_context, undo)
@@ -132,7 +132,7 @@ def change_frame(*args, frame=0):
     return {'FINISHED'}
 
 
-def clean_tracks(*args, frames=0, error=0.0, action='SELECT'):
+def clean_tracks(*args, frames=0, error=0.0, action=’SELECT’):
     """Clean tracks with high error values or few frames
     
     :param args: (override_context, execution_context, undo)
@@ -170,7 +170,7 @@ def clear_solution(*args):
     return {'FINISHED'}
 
 
-def clear_track_path(*args, action='REMAINED', clear_active=False):
+def clear_track_path(*args, action=’REMAINED’, clear_active=False):
     """Clear tracks after/before current position or clear the whole track
     
     :param args: (override_context, execution_context, undo)
@@ -193,7 +193,7 @@ def clear_track_path(*args, action='REMAINED', clear_active=False):
 
 
 def constraint_to_fcurve(*args):
-    """Create F-Curves for object which will copy object's movement caused by this constraint
+    """Create F-Curves for object which will copy object’s movement caused by this constraint
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -286,7 +286,7 @@ def delete_track(*args):
     return {'FINISHED'}
 
 
-def detect_features(*args, placement='FRAME', margin=16, threshold=0.5, min_distance=120):
+def detect_features(*args, placement=’FRAME’, margin=16, threshold=0.5, min_distance=120):
     """Automatically detect features and place markers to track
     
     :param args: (override_context, execution_context, undo)
@@ -314,7 +314,7 @@ def detect_features(*args, placement='FRAME', margin=16, threshold=0.5, min_dist
     return {'FINISHED'}
 
 
-def disable_markers(*args, action='DISABLE'):
+def disable_markers(*args, action=’DISABLE’):
     """Disable/enable selected markers
     
     :param args: (override_context, execution_context, undo)
@@ -381,7 +381,7 @@ def filter_tracks(*args, track_threshold=5.0):
     return {'FINISHED'}
 
 
-def frame_jump(*args, position='PATHSTART'):
+def frame_jump(*args, position=’PATHSTART’):
     """Jump to special frame
     
     :param args: (override_context, execution_context, undo)
@@ -440,7 +440,7 @@ def graph_delete_knot(*args):
     return {'FINISHED'}
 
 
-def graph_disable_markers(*args, action='DISABLE'):
+def graph_disable_markers(*args, action=’DISABLE’):
     """Disable/enable selected markers
     
     :param args: (override_context, execution_context, undo)
@@ -478,7 +478,7 @@ def graph_select(*args, location=(0.0, 0.0), extend=False):
     return {'FINISHED'}
 
 
-def graph_select_all_markers(*args, action='TOGGLE'):
+def graph_select_all_markers(*args, action=’TOGGLE’):
     """Change selection of all markers of active track
     
     :param args: (override_context, execution_context, undo)
@@ -610,7 +610,7 @@ def keyframe_insert(*args):
     return {'FINISHED'}
 
 
-def lock_tracks(*args, action='LOCK'):
+def lock_tracks(*args, action=’LOCK’):
     """Lock/unlock selected tracks
     
     :param args: (override_context, execution_context, undo)
@@ -629,7 +629,7 @@ def lock_tracks(*args, action='LOCK'):
     return {'FINISHED'}
 
 
-def mode_set(*args, mode='TRACKING'):
+def mode_set(*args, mode=’TRACKING’):
     """Set the clip interaction mode
     
     :param args: (override_context, execution_context, undo)
@@ -647,7 +647,7 @@ def mode_set(*args, mode='TRACKING'):
     return {'FINISHED'}
 
 
-def open(*args, directory="", files=None, filter_blender=False, filter_backup=False, filter_image=True, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA'):
+def open(*args, directory=”“, files=None, filter_blender=False, filter_backup=False, filter_image=True, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’):
     """Load a sequence of frames or a movie file
     
     :param args: (override_context, execution_context, undo)
@@ -784,7 +784,7 @@ def rebuild_proxy(*args):
 
 
 def refine_markers(*args, backwards=False):
-    """Refine selected markers positions by running the tracker from track's reference to current frame
+    """Refine selected markers positions by running the tracker from track’s reference to current frame
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -831,7 +831,7 @@ def select(*args, extend=False, location=(0.0, 0.0)):
     return {'FINISHED'}
 
 
-def select_all(*args, action='TOGGLE'):
+def select_all(*args, action=’TOGGLE’):
     """Change selection of all tracking markers
     
     :param args: (override_context, execution_context, undo)
@@ -907,7 +907,7 @@ def select_circle(*args, x=0, y=0, radius=1, gesture_mode=0):
     return {'FINISHED'}
 
 
-def select_grouped(*args, group='ESTIMATED'):
+def select_grouped(*args, group=’ESTIMATED’):
     """Select all tracks from specified group
     
     :param args: (override_context, execution_context, undo)
@@ -965,7 +965,7 @@ def set_active_clip(*args):
     return {'FINISHED'}
 
 
-def set_axis(*args, axis='X'):
+def set_axis(*args, axis=’X’):
     """Set direction of scene axis rotating camera (or its parent if present) and assume selected track lies on real axis, joining it with the origin
     
     :param args: (override_context, execution_context, undo)
@@ -1012,7 +1012,7 @@ def set_origin(*args, use_median=False):
     return {'FINISHED'}
 
 
-def set_plane(*args, plane='FLOOR'):
+def set_plane(*args, plane=’FLOOR’):
     """Set plane based on 3 selected bundles by moving camera (or its parent if present) in 3D space
     
     :param args: (override_context, execution_context, undo)
@@ -1047,7 +1047,7 @@ def set_scale(*args, distance=0.0):
 
 
 def set_scene_frames(*args):
-    """Set scene's start and end frame to match clip's start frame and length
+    """Set scene’s start and end frame to match clip’s start frame and length
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -1075,7 +1075,7 @@ def set_solution_scale(*args, distance=0.0):
     return {'FINISHED'}
 
 
-def set_solver_keyframe(*args, keyframe='KEYFRAME_A'):
+def set_solver_keyframe(*args, keyframe=’KEYFRAME_A’):
     """Set keyframe used by solver
     
     :param args: (override_context, execution_context, undo)
@@ -1250,7 +1250,7 @@ def tools(*args):
     return {'FINISHED'}
 
 
-def track_color_preset_add(*args, name="", remove_active=False):
+def track_color_preset_add(*args, name=”“, remove_active=False):
     """Add or remove a Clip Track Color Preset
     
     :param args: (override_context, execution_context, undo)
@@ -1366,7 +1366,7 @@ def tracking_object_remove(*args):
     return {'FINISHED'}
 
 
-def tracking_settings_preset_add(*args, name="", remove_active=False):
+def tracking_settings_preset_add(*args, name=”“, remove_active=False):
     """Add or remove a motion tracking settings preset
     
     :param args: (override_context, execution_context, undo)

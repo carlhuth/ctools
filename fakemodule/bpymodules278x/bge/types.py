@@ -1,17 +1,118 @@
 from . import logic
 
 
-class PyObjectPlus:
-    """PyObjectPlus base class of most other types in the Game Engine."""
+class BL_ActionActuator(SCA_IActuator):
+    """Action Actuators apply an action to an actor."""
 
-    invalid = None
-    """Test if the object has been freed by the game engine and is no longer valid.
-    Normally this is not a problem but when storing game engine data in the GameLogic module,
-                                KX_Scenes or other KX_GameObjects its possible to hold a reference to invalid data.
-                                Calling an attribute or method on an invalid object will raise a SystemError.
-    The invalid attribute allows testing for this case without exception handling.
+    action = ""
+    """The name of the action to set as the current action.
+    
+    :type: str
+    """
+
+    frameStart = None
+    """Specifies the starting frame of the animation.
+    
+    :type: float
+    """
+
+    frameEnd = None
+    """Specifies the ending frame of the animation.
+    
+    :type: float
+    """
+
+    blendIn = None
+    """Specifies the number of frames of animation to generate when making transitions between actions.
+    
+    :type: float
+    """
+
+    priority = None
+    """Sets the priority of this actuator. Actuators will lower priority numbers will override actuators with higher numbers.
+    
+    :type: int
+    """
+
+    frame = None
+    """Sets the current frame for the animation.
+    
+    :type: float
+    """
+
+    propName = ""
+    """Sets the property to be used in FromProp playback mode.
+    
+    :type: str
+    """
+
+    blendTime = None
+    """Sets the internal frame timer. This property must be in the range from 0.0 to blendIn.
+    
+    :type: float
+    """
+
+    mode = None
+    """The operation mode of the actuator. Can be one of bge.logic#action-actuatorthese constants.
+    
+    :type: int
+    """
+
+    useContinue = None
+    """The actions continue option, True or False. When True, the action will always play from where last left off,
+                                otherwise negative events to this actuator will reset it to its start frame.
     
     :type: bool
+    """
+
+    framePropName = ""
+    """The name of the property that is set to the current frame number.
+    
+    :type: str
+    """
+
+
+class BL_ArmatureActuator(SCA_IActuator):
+    """Armature Actuators change constraint condition on armatures."""
+
+    type = None
+    """The type of action that the actuator executes when it is active.
+    Can be one of bge.logic#armatureactuator-constants-typethese constants
+    
+    :type: int
+    """
+
+    constraint = None
+    """The constraint object this actuator is controlling.
+    (type: bge.types.BL_ArmatureConstraint)
+    
+    :type: BL_ArmatureConstraint
+    """
+
+    target = None
+    """The object that this actuator will set as primary target to the constraint it controls.
+    (type: bge.types.KX_GameObject)
+    
+    :type: KX_GameObject
+    """
+
+    subtarget = None
+    """The object that this actuator will set as secondary target to the constraint it controls.
+    (type: bge.types.KX_GameObject.)
+    
+    :type: KX_GameObject.
+    """
+
+    weight = None
+    """The weight this actuator will set on the constraint it controls.
+    
+    :type: float.
+    """
+
+    influence = None
+    """The influence this actuator will set on the constraint it controls.
+    
+    :type: float.
     """
 
 
@@ -27,13 +128,13 @@ class BL_ArmatureBone(PyObjectPlus):
     """
 
     connected = None
-    """true when the bone head is struck to the parent's tail.
+    """true when the bone head is struck to the parent’s tail.
     
     :type: bool
     """
 
     hinge = None
-    """true when bone doesn't inherit rotation or scale from parent bone.
+    """true when bone doesn’t inherit rotation or scale from parent bone.
     
     :type: bool
     """
@@ -106,7 +207,7 @@ class BL_ArmatureBone(PyObjectPlus):
     """
 
     children = None
-    """list of bone's children.
+    """list of bone’s children.
     (type: list of bge.types.BL_ArmatureBone)
     
     :type: list
@@ -304,7 +405,7 @@ class BL_ArmatureChannel(PyObjectPlus):
     """
 
     ik_stretch = None
-    """ratio of scale change that is allowed, 0=bone can't change size, read-only.
+    """ratio of scale change that is allowed, 0=bone can’t change size, read-only.
     
     :type: float
     """
@@ -438,6 +539,34 @@ class BL_ArmatureConstraint(PyObjectPlus):
     """
 
 
+class BL_ArmatureObject(KX_GameObject):
+    """An armature object."""
+
+    constraints = None
+    """The list of armature constraint defined on this armature.
+                                Elements of the list can be accessed by index or string.
+                                The key format for string access is ‘<bone_name>:<constraint_name>’.
+    (type: list of bge.types.BL_ArmatureConstraint)
+    
+    :type: list
+    """
+
+    channels = None
+    """The list of armature channels.
+                                Elements of the list can be accessed by index or name the bone.
+    (type: list of bge.types.BL_ArmatureChannel)
+    
+    :type: list
+    """
+
+    def update(self):
+        """Ensures that the armature will be updated on next graphic frame.
+        This action is unecessary if a KX_ArmatureActuator with mode run is active
+                                    or if an action is playing. Use this function in other cases. It must be called
+                                    on each frame to ensure that the armature is updated continously.
+        """
+
+
 class BL_Shader(PyObjectPlus):
     """BL_Shader GLSL shaders.
     TODO - Description
@@ -477,7 +606,7 @@ class BL_Shader(PyObjectPlus):
         """
 
     def setAttrib(self, enum):
-        """Set attribute location. (The parameter is ignored a.t.m. and the value of "tangent" is always used.)
+        """Set attribute location. (The parameter is ignored a.t.m. and the value of “tangent” is always used.)
         
         :param enum: attribute location value
         :type enum: int
@@ -658,2285 +787,6 @@ class BL_Shader(PyObjectPlus):
         """Validate the shader object."""
 
 
-class CValue(PyObjectPlus):
-    """This class is a basis for other classes."""
-
-    name = ""
-    """The name of this CValue derived object (read-only).
-    
-    :type: str
-    """
-
-
-class KX_BlenderMaterial(PyObjectPlus):
-    """This is the interface to materials in the game engine.
-    Materials define the render state to be applied to mesh objects.
-    The example below shows a simple GLSL shader setup allowing to dynamically mix two texture channels
-                        in a material. All materials of the object executing this script should have two textures using
-                        separate UV maps in the two first texture channels.
-    The code works for both Multitexture and GLSL rendering modes.
-    """
-
-    shader = None
-    """The material's shader.
-    (type: bge.types.BL_Shader)
-    
-    :type: BL_Shader
-    """
-
-    blending = None
-    """Ints used for pixel blending, (src, dst), matching the setBlending method.
-    
-    :type: (integer, integer)
-    """
-
-    material_index = None
-    """The material's index.
-    
-    :type: int
-    """
-
-    def getShader(self):
-        """Returns the material's shader.
-        
-        :return: the material's shader
-        :param : (type: bge.types.BL_Shader)
-        :rtype: BL_Shader
-        """
-
-    def getTextureBindcode(self, textureslot):
-        """Returns the material's texture OpenGL bind code/id/number/name.
-        
-        :param textureslot: Specifies the texture slot number
-        :type textureslot: int
-        :return: the material's texture OpenGL bind code/id/number/name
-        :rtype: int
-        """
-
-    alpha = None
-    """The material's alpha transparency.
-    
-    :type: float between 0.0 and 1.0 inclusive
-    """
-
-    hardness = None
-    """How hard (sharp) the material's specular reflection is.
-    
-    :type: integer between 1 and 511 inclusive
-    """
-
-    emit = None
-    """Amount of light to emit.
-    
-    :type: float between 0.0 and 2.0 inclusive
-    """
-
-    specularIntensity = None
-    """How intense (bright) the material's specular reflection is.
-    
-    :type: float between 0.0 and 1.0 inclusive
-    """
-
-    diffuseIntensity = None
-    """The material's amount of diffuse reflection.
-    
-    :type: float between 0.0 and 1.0 inclusive
-    """
-
-    specularColor = None
-    """The material's specular color.
-    
-    :type: mathutils.Color
-    """
-
-    diffuseColor = None
-    """The material's diffuse color.
-    
-    :type: mathutils.Color
-    """
-
-    def setBlending(self, src, dest):
-        """Set the pixel color arithmetic functions.
-        
-        :param src: Specifies how the red, green, blue, and alpha source blending factors are computed, one of...
-            * 'GL_ZERO':
-            * 'GL_ONE':
-            * 'GL_SRC_COLOR':
-            * 'GL_ONE_MINUS_SRC_COLOR':
-            * 'GL_DST_COLOR':
-            * 'GL_ONE_MINUS_DST_COLOR':
-            * 'GL_SRC_ALPHA':
-            * 'GL_ONE_MINUS_SRC_ALPHA':
-            * 'GL_DST_ALPHA':
-            * 'GL_ONE_MINUS_DST_ALPHA':
-            * 'GL_SRC_ALPHA_SATURATE':
-        :type src: int
-        :param dest: Specifies how the red, green, blue, and alpha destination blending factors are computed, one of...
-            * 'GL_ZERO':
-            * 'GL_ONE':
-            * 'GL_SRC_COLOR':
-            * 'GL_ONE_MINUS_SRC_COLOR':
-            * 'GL_DST_COLOR':
-            * 'GL_ONE_MINUS_DST_COLOR':
-            * 'GL_SRC_ALPHA':
-            * 'GL_ONE_MINUS_SRC_ALPHA':
-            * 'GL_DST_ALPHA':
-            * 'GL_ONE_MINUS_DST_ALPHA':
-            * 'GL_SRC_ALPHA_SATURATE':
-        :type dest: int
-        """
-
-    def getMaterialIndex(self):
-        """Returns the material's index.
-        
-        :return: the material's index
-        :rtype: int
-        """
-
-
-class KX_CharacterWrapper(PyObjectPlus):
-    """A wrapper to expose character physics options."""
-
-    onGround = None
-    """Whether or not the character is on the ground. (read-only)
-    
-    :type: bool
-    """
-
-    gravity = None
-    """The gravity value used for the character.
-    
-    :type: float
-    """
-
-    maxJumps = 1
-    """The maximum number of jumps a character can perform before having to touch the ground. By default this is set to 1. 2 allows for a double jump, etc.
-    (type: int in [0, 255], default 1)
-    
-    :type: int
-    """
-
-    jumpCount = None
-    """The current jump count. This can be used to have different logic for a single jump versus a double jump. For example, a different animation for the second jump.
-    
-    :type: int
-    """
-
-    walkDirection = None
-    """The speed and direction the character is traveling in using world coordinates. This should be used instead of applyMovement() to properly move the character.
-    
-    :type: Vector((x, y, z))
-    """
-
-    def jump(self):
-        """The character jumps based on it's jump speed."""
-
-
-class KX_ConstraintWrapper(PyObjectPlus):
-    """KX_ConstraintWrapper"""
-
-    def getConstraintId(self, val):
-        """Returns the contraint ID
-        
-        :return: the constraint ID
-        :rtype: int
-        """
-
-    def setParam(self, axis, value0, value1):
-        """Set the contraint limits
-        <Note> * Lowerlimit == Upperlimit -> axis is locked
-            * Lowerlimit > Upperlimit -> axis is free
-            * Lowerlimit < Upperlimit -> axis it limited in that range
-        For PHY_LINEHINGE_CONSTRAINT = 2 or PHY_ANGULAR_CONSTRAINT = 3:
-        For PHY_CONE_TWIST_CONSTRAINT = 4:
-        For PHY_GENERIC_6DOF_CONSTRAINT = 12:
-        
-        :type axis: int
-        :param (min) (value0): Set the minimum limit of the axis
-        :param (max) (value1): Set the maximum limit of the axis
-        :param (min) (value0): Set the minimum limit of the axis
-        :param (max) (value1): Set the maximum limit of the axis
-        :param (min) (value0): Set the minimum limit of the axis
-        :param (max) (value1): Set the maximum limit of the axis
-        :param (speed) (value0): Set the linear velocity of the axis
-        :param (force) (value1): Set the maximum force limit of the axis
-        :param (stiffness) (value0): Set the stiffness of the spring
-        :param (damping) (value1): Tendency of the spring to return to it's original position
-        """
-
-    def getParam(self, axis):
-        """Get the contraint position or euler angle of a generic 6DOF constraint
-        
-        :type axis: int
-        :return: position
-        :rtype: float
-        :return: angle
-        :rtype: float
-        """
-
-    constraint_id = None
-    """Returns the contraint ID  (read only)
-    
-    :type: int
-    """
-
-    constraint_type = None
-    """Returns the contraint type (read only)
-    
-    :type: integer
-        - bge.constraints.POINTTOPOINT_CONSTRAINT
-        - bge.constraints.LINEHINGE_CONSTRAINT
-        - bge.constraints.ANGULAR_CONSTRAINT
-        - bge.constraints.CONETWIST_CONSTRAINT
-        - bge.constraints.VEHICLE_CONSTRAINT
-        - bge.constraints.GENERIC_6DOF_CONSTRAINT
-    """
-
-
-class KX_LibLoadStatus(PyObjectPlus):
-    """An object providing information about a LibLoad() operation."""
-
-    onFinish = None
-    """A callback that gets called when the lib load is done.
-    
-    :type: callable
-    """
-
-    finished = None
-    """The current status of the lib load.
-    
-    :type: bool
-    """
-
-    progress = None
-    """The current progress of the lib load as a normalized value from 0.0 to 1.0.
-    
-    :type: float
-    """
-
-    libraryName = ""
-    """The name of the library being loaded (the first argument to LibLoad).
-    
-    :type: str
-    """
-
-    timeTaken = None
-    """The amount of time, in seconds, the lib load took (0 until the operation is complete).
-    
-    :type: float
-    """
-
-
-class KX_Scene(PyObjectPlus):
-    """An active scene that gives access to objects, cameras, lights and scene attributes.
-    The activity culling stuff is supposed to disable logic bricks when their owner gets too far
-                        from the active camera.  It was taken from some code lurking at the back of KX_Scene - who knows
-                        what it does!
-    @bug: All attributes are read only at the moment.
-    """
-
-    name = ""
-    """The scene's name, (read-only).
-    
-    :type: str
-    """
-
-    objects = None
-    """A list of objects in the scene, (read-only).
-    (type: bge.types.CListValue of bge.types.KX_GameObject)
-    
-    :type: CListValue
-    """
-
-    objectsInactive = None
-    """A list of objects on background layers (used for the addObject actuator), (read-only).
-    (type: bge.types.CListValue of bge.types.KX_GameObject)
-    
-    :type: CListValue
-    """
-
-    lights = None
-    """A list of lights in the scene, (read-only).
-    (type: bge.types.CListValue of bge.types.KX_LightObject)
-    
-    :type: CListValue
-    """
-
-    cameras = None
-    """A list of cameras in the scene, (read-only).
-    (type: bge.types.CListValue of bge.types.KX_Camera)
-    
-    :type: CListValue
-    """
-
-    active_camera = None
-    """The current active camera.
-    (type: bge.types.KX_Camera)
-    
-    :type: KX_Camera
-    """
-
-    world = None
-    """The current active world, (read-only).
-    (type: bge.types.KX_WorldInfo)
-    
-    :type: KX_WorldInfo
-    """
-
-    suspended = None
-    """True if the scene is suspended, (read-only).
-    
-    :type: bool
-    """
-
-    activity_culling = None
-    """True if the scene is activity culling.
-    
-    :type: bool
-    """
-
-    activity_culling_radius = None
-    """The distance outside which to do activity culling. Measured in manhattan distance.
-    
-    :type: float
-    """
-
-    dbvt_culling = None
-    """True when Dynamic Bounding box Volume Tree is set (read-only).
-    
-    :type: bool
-    """
-
-    pre_draw = None
-    """A list of callables to be run before the render step.
-    
-    :type: list
-    """
-
-    post_draw = None
-    """A list of callables to be run after the render step.
-    
-    :type: list
-    """
-
-    pre_draw_setup = None
-    """A list of callables to be run before the drawing setup (i.e., before the model view and projection matrices are computed).
-    
-    :type: list
-    """
-
-    gravity = None
-    """The scene gravity using the world x, y and z axis.
-    
-    :type: Vector((gx, gy, gz))
-    """
-
-    def addObject(self, object, reference, time=0):
-        """Adds an object to the scene like the Add Object Actuator would.
-        
-        :param object: The (name of the) object to add.
-            (type: bge.types.KX_GameObject or string)
-        :type object: KX_GameObject or string
-        :param reference: The (name of the) object which position, orientation, and scale to copy (optional), if the object to add is a light and there is not reference the light's layer will be the same that the active layer in the blender scene.
-            (type: bge.types.KX_GameObject or string)
-        :type reference: KX_GameObject or string
-        :param time: The lifetime of the added object, in frames. A time of 0 means the object will last forever (optional).
-        :type time: int
-        :return: The newly added object.
-        :param : (type: bge.types.KX_GameObject)
-        :rtype: KX_GameObject
-        """
-
-    def end(self):
-        """Removes the scene from the game."""
-
-    def restart(self):
-        """Restarts the scene."""
-
-    def replace(self, scene):
-        """Replaces this scene with another one.
-        
-        :param scene: The name of the scene to replace this scene with.
-        :type scene: str
-        :return: True if the scene exists and was scheduled for addition, False otherwise.
-        :rtype: bool
-        """
-
-    def suspend(self):
-        """Suspends this scene."""
-
-    def resume(self):
-        """Resume this scene."""
-
-    def get(self, key, default=None):
-        """Return the value matching key, or the default value if its not found.
-                                    :return: The key value or a default.
-        """
-
-    def drawObstacleSimulation(self):
-        """Draw debug visualization of obstacle simulation."""
-
-
-class KX_VehicleWrapper(PyObjectPlus):
-    """KX_VehicleWrapper
-    TODO - description
-    """
-
-    def addWheel(self, wheel, attachPos, downDir, axleDir, suspensionRestLength, wheelRadius, hasSteering):
-        """Add a wheel to the vehicle
-        
-        :param wheel: The object to use as a wheel.
-            (type: bge.types.KX_GameObject or a bge.types.KX_GameObject name)
-        :type wheel: KX_GameObject or a KX_GameObject name
-        :param attachPos: The position to attach the wheel, relative to the chassis object center.
-            (type: vector of 3 floats)
-        :type attachPos: vector
-        :param downDir: The direction vector pointing down to where the vehicle should collide with the floor.
-            (type: vector of 3 floats)
-        :type downDir: vector
-        :param axleDir: The axis the wheel rotates around, relative to the chassis.
-            (type: vector of 3 floats)
-        :type axleDir: vector
-        :param suspensionRestLength: The length of the suspension when no forces are being applied.
-        :type suspensionRestLength: float
-        :param wheelRadius: The radius of the wheel (half the diameter).
-        :type wheelRadius: float
-        :param hasSteering: True if the wheel should turn with steering, typically used in front wheels.
-        :type hasSteering: bool
-        """
-
-    def applyBraking(self, force, wheelIndex):
-        """Apply a braking force to the specified wheel
-        
-        :param force: the brake force
-        :type force: float
-        :param wheelIndex: index of the wheel where the force needs to be applied
-        :type wheelIndex: int
-        """
-
-    def applyEngineForce(self, force, wheelIndex):
-        """Apply an engine force to the specified wheel
-        
-        :param force: the engine force
-        :type force: float
-        :param wheelIndex: index of the wheel where the force needs to be applied
-        :type wheelIndex: int
-        """
-
-    def getConstraintId(self):
-        """Get the constraint ID
-        
-        :return: the constraint id
-        :rtype: int
-        """
-
-    def getConstraintType(self):
-        """Returns the constraint type.
-        
-        :return: constraint type
-        :rtype: int
-        """
-
-    def getNumWheels(self):
-        """Returns the number of wheels.
-        
-        :return: the number of wheels for this vehicle
-        :rtype: int
-        """
-
-    def getWheelOrientationQuaternion(self, wheelIndex):
-        """Returns the wheel orientation as a quaternion.
-        
-        :param wheelIndex: the wheel index
-        :type wheelIndex: int
-        :return: TODO Description
-        :rtype: TODO - type should be quat as per method name but from the code it looks like a matrix
-        """
-
-    def getWheelPosition(self, wheelIndex):
-        """Returns the position of the specified wheel
-        
-        :param wheelIndex: the wheel index
-        :type wheelIndex: int
-        :return: position vector
-        :rtype: list[x, y, z]
-        """
-
-    def getWheelRotation(self, wheelIndex):
-        """Returns the rotation of the specified wheel
-        
-        :param wheelIndex: the wheel index
-        :type wheelIndex: int
-        :return: the wheel rotation
-        :rtype: float
-        """
-
-    def setRollInfluence(self, rollInfluece, wheelIndex):
-        """Set the specified wheel's roll influence.
-                                    The higher the roll influence the more the vehicle will tend to roll over in corners.
-        
-        :param rollInfluece: the wheel roll influence
-        :type rollInfluece: float
-        :param wheelIndex: the wheel index
-        :type wheelIndex: int
-        """
-
-    def setSteeringValue(self, steering, wheelIndex):
-        """Set the specified wheel's steering
-        
-        :param steering: the wheel steering
-        :type steering: float
-        :param wheelIndex: the wheel index
-        :type wheelIndex: int
-        """
-
-    def setSuspensionCompression(self, compression, wheelIndex):
-        """Set the specified wheel's compression
-        
-        :param compression: the wheel compression
-        :type compression: float
-        :param wheelIndex: the wheel index
-        :type wheelIndex: int
-        """
-
-    def setSuspensionDamping(self, damping, wheelIndex):
-        """Set the specified wheel's damping
-        
-        :param damping: the wheel damping
-        :type damping: float
-        :param wheelIndex: the wheel index
-        :type wheelIndex: int
-        """
-
-    def setSuspensionStiffness(self, stiffness, wheelIndex):
-        """Set the specified wheel's stiffness
-        
-        :param stiffness: the wheel stiffness
-        :type stiffness: float
-        :param wheelIndex: the wheel index
-        :type wheelIndex: int
-        """
-
-    def setTyreFriction(self, friction, wheelIndex):
-        """Set the specified wheel's tyre friction
-        
-        :param friction: the tyre friction
-        :type friction: float
-        :param wheelIndex: the wheel index
-        :type wheelIndex: int
-        """
-
-
-class KX_WorldInfo(PyObjectPlus):
-    """A world object."""
-
-    KX_MIST_QUADRATIC = None
-    """Type of quadratic attenuation used to fade mist."""
-
-    KX_MIST_LINEAR = None
-    """Type of linear attenuation used to fade mist."""
-
-    KX_MIST_INV_QUADRATIC = None
-    """Type of inverse quadratic attenuation used to fade mist."""
-
-    mistEnable = None
-    """Return the state of the mist.
-    
-    :type: bool
-    """
-
-    mistStart = None
-    """The mist start point.
-    
-    :type: float
-    """
-
-    mistDistance = None
-    """The mist distance fom the start point to reach 100% mist.
-    
-    :type: float
-    """
-
-    mistIntensity = None
-    """The mist intensity.
-    
-    :type: float
-    """
-
-    mistType = None
-    """The type of mist - must be KX_MIST_QUADRATIC, KX_MIST_LINEAR or KX_MIST_INV_QUADRATIC"""
-
-    mistColor = None
-    """The color of the mist. Black = [0.0, 0.0, 0.0], White = [1.0, 1.0, 1.0].
-                                Mist and background color sould always set to the same color.
-    
-    :type: mathutils.Color
-    """
-
-    backgroundColor = None
-    """The color of the background. Black = [0.0, 0.0, 0.0], White = [1.0, 1.0, 1.0].
-                                Mist and background color sould always set to the same color.
-    
-    :type: mathutils.Color
-    """
-
-    ambientColor = None
-    """The color of the ambient light. Black = [0.0, 0.0, 0.0], White = [1.0, 1.0, 1.0].
-    
-    :type: mathutils.Color
-    """
-
-
-class SCA_PythonJoystick(PyObjectPlus):
-    """A Python interface to a joystick."""
-
-    name = ""
-    """The name assigned to the joystick by the operating system. (read-only)
-    
-    :type: str
-    """
-
-    activeButtons = None
-    """A list of active button values. (read-only)
-    
-    :type: list
-    """
-
-    axisValues = None
-    """The state of the joysticks axis as a list of values bge.types.SCA_PythonJoystick.numAxis long. (read-only).
-    Each specifying the value of an axis between -1.0 and 1.0
-                                depending on how far the axis is pushed, 0 for nothing.
-                                The first 2 values are used by most joysticks and gamepads for directional control.
-                                3rd and 4th values are only on some joysticks and can be used for arbitary controls.
-    * left:[-1.0, 0.0, ...]
-    * right:[1.0, 0.0, ...]
-    * up:[0.0, -1.0, ...]
-    * down:[0.0, 1.0, ...]
-    (type: list of ints.)
-    
-    :type: list
-    """
-
-    hatValues = None
-    """The state of the joysticks hats as a list of values bge.types.SCA_PythonJoystick.numHats long. (read-only).
-    Each specifying the direction of the hat from 1 to 12, 0 when inactive.
-    Hat directions are as follows...
-    * 0:None
-    * 1:Up
-    * 2:Right
-    * 4:Down
-    * 8:Left
-    * 3:Up - Right
-    * 6:Down - Right
-    * 12:Down - Left
-    * 9:Up - Left
-    (type: list of ints)
-    
-    :type: list
-    """
-
-    numAxis = None
-    """The number of axes for the joystick at this index. (read-only).
-    
-    :type: int
-    """
-
-    numButtons = None
-    """The number of buttons for the joystick at this index. (read-only).
-    
-    :type: int
-    """
-
-    numHats = None
-    """The number of hats for the joystick at this index. (read-only).
-    
-    :type: int
-    """
-
-
-class SCA_PythonKeyboard(PyObjectPlus):
-    """The current keyboard."""
-
-    events = None
-    """A dictionary containing the status of each keyboard event or key. (read-only).
-    
-    :type: dictionary {bge.events#keyboard-keyskeycode:bge.logic#input-statusstatus, ...}
-    """
-
-    active_events = None
-    """A dictionary containing the status of only the active keyboard events or keys. (read-only).
-    
-    :type: dictionary {bge.events#keyboard-keyskeycode:bge.logic#input-statusstatus, ...}
-    """
-
-    def getClipboard(self):
-        """Gets the clipboard text.
-        
-        :rtype: str
-        """
-
-    def setClipboard(self, text):
-        """Sets the clipboard text.
-        
-        :param text: New clipboard text
-        :type text: str
-        """
-
-
-class SCA_PythonMouse(PyObjectPlus):
-    """The current mouse."""
-
-    events = None
-    """a dictionary containing the status of each mouse event. (read-only).
-    
-    :type: dictionary {bge.events#mouse-keyskeycode:bge.logic#input-statusstatus, ...}
-    """
-
-    active_events = None
-    """a dictionary containing the status of only the active mouse events. (read-only).
-    
-    :type: dictionary {bge.events#mouse-keyskeycode:bge.logic#input-statusstatus, ...}
-    """
-
-    position = None
-    """The normalized x and y position of the mouse cursor.
-    
-    :type: tuple (x, y)
-    """
-
-    visible = None
-    """The visibility of the mouse cursor.
-    
-    :type: bool
-    """
-
-
-class CPropValue(CValue):
-    """This class has no python functions"""
-
-
-class SCA_ILogicBrick(CValue):
-    """Base class for all logic bricks."""
-
-    executePriority = None
-    """This determines the order controllers are evaluated, and actuators are activated (lower priority is executed first).
-    
-    :type: executePriority: int
-    """
-
-    owner = None
-    """The game object this logic brick is attached to (read-only).
-    (type: bge.types.KX_GameObject or None in exceptional cases.)
-    
-    :type: KX_GameObject or None in exceptional cases.
-    """
-
-    name = ""
-    """The name of this logic brick (read-only).
-    
-    :type: str
-    """
-
-
-class SCA_IObject(CValue):
-    """This class has no python functions"""
-
-
-class CListValue(CPropValue):
-    """This is a list like object used in the game engine internally that behaves similar to a python list in most ways.
-    As well as the normal index lookup (val= clist[i]), CListValue supports string lookups (val= scene.objects["Cube"])
-    Other operations such as len(clist), list(clist), clist[0:10] are also supported.
-    """
-
-    def append(self, val):
-        """Add an item to the list (like pythons append)"""
-
-    def count(self, val):
-        """Count the number of instances of a value in the list.
-        
-        :return: number of instances
-        :rtype: int
-        """
-
-    def index(self, val):
-        """Return the index of a value in the list.
-        
-        :return: The index of the value in the list.
-        :rtype: int
-        """
-
-    def reverse(self):
-        """Reverse the order of the list."""
-
-    def get(self, key, default=None):
-        """Return the value matching key, or the default value if its not found.
-        
-        :return: The key value or a default.
-        """
-
-    def from_id(self, id):
-        """This is a funtion especially for the game engine to return a value with a spesific id.
-        Since object names are not always unique, the id of an object can be used to get an object from the CValueList.
-        Example:
-        Where myObID is an int or long from the id function.
-        This has the advantage that you can store the id in places you could not store a gameObject.
-        """
-
-
-class KX_GameObject(SCA_IObject):
-    """All game objects are derived from this class.
-    Properties assigned to game objects are accessible as attributes of this class.
-    <Note> Calling ANY method or attribute on an object that has been removed from a scene will raise a SystemError,
-                                if an object may have been removed since last accessing it use the invalid attribute to check.
-    KX_GameObject can be subclassed to extend functionality. For example:
-    When subclassing objects other than empties and meshes, the specific type
-                        should be used - e.g. inherit from bge.types.BL_ArmatureObject when the object
-                        to mutate is an armature.
-    """
-
-    name = ""
-    """The object's name. (read-only).
-    
-    :type: str
-    """
-
-    mass = None
-    """The object's mass
-    
-    :type: float
-    """
-
-    isSuspendDynamics = None
-    """The object's dynamic state (read-only).
-    
-    :type: bool
-    """
-
-    linearDamping = None
-    """The object's linear damping, also known as translational damping. Can be set simultaneously with angular damping using the bge.types.KX_GameObject.setDamping method.
-    
-    :type: float between 0 and 1 inclusive.
-    """
-
-    angularDamping = None
-    """The object's angular damping, also known as rotationation damping. Can be set simultaneously with linear damping using the bge.types.KX_GameObject.setDamping method.
-    
-    :type: float between 0 and 1 inclusive.
-    """
-
-    linVelocityMin = None
-    """Enforces the object keeps moving at a minimum velocity.
-    
-    :type: float
-    """
-
-    linVelocityMax = None
-    """Clamp the maximum linear velocity to prevent objects moving beyond a set speed.
-    
-    :type: float
-    """
-
-    angularVelocityMin = None
-    """Enforces the object keeps rotating at a minimum velocity. A value of 0.0 disables this.
-    
-    :type: non-negative float
-    """
-
-    angularVelocityMax = None
-    """Clamp the maximum angular velocity to prevent objects rotating beyond a set speed.
-                                A value of 0.0 disables clamping; it does not stop rotation.
-    
-    :type: non-negative float
-    """
-
-    localInertia = None
-    """the object's inertia vector in local coordinates. Read only.
-    
-    :type: Vector((ix, iy, iz))
-    """
-
-    parent = None
-    """The object's parent object. (read-only).
-    (type: bge.types.KX_GameObject or None)
-    
-    :type: KX_GameObject or None
-    """
-
-    groupMembers = None
-    """Returns the list of group members if the object is a group object (dupli group instance), otherwise None is returned.
-    (type: bge.types.CListValue of bge.types.KX_GameObject or None)
-    
-    :type: CListValue
-    """
-
-    groupObject = None
-    """Returns the group object (dupli group instance) that the object belongs to or None if the object is not part of a group.
-    (type: bge.types.KX_GameObject or None)
-    
-    :type: KX_GameObject or None
-    """
-
-    collisionGroup = None
-    """The object's collision group.
-    
-    :type: bitfield
-    """
-
-    collisionMask = None
-    """The object's collision mask.
-    
-    :type: bitfield
-    """
-
-    collisionCallbacks = None
-    """A list of functions to be called when a collision occurs.
-    Callbacks should either accept one argument (object), or three
-                                arguments (object, point, normal). For simplicity, per
-                                colliding object only the first collision point is reported.
-    (type: list of functions and/or methods)
-    
-    :type: list
-    """
-
-    scene = None
-    """The object's scene. (read-only).
-    (type: bge.types.KX_Scene or None)
-    
-    :type: KX_Scene or None
-    """
-
-    visible = None
-    """visibility flag.
-    
-    :type: bool
-    """
-
-    record_animation = None
-    """Record animation for this object.
-    
-    :type: bool
-    """
-
-    color = None
-    """The object color of the object. [r, g, b, a]
-    
-    :type: mathutils.Vector
-    """
-
-    occlusion = None
-    """occlusion capability flag.
-    
-    :type: bool
-    """
-
-    position = None
-    """The object's position. [x, y, z] On write: local position, on read: world position
-    
-    :type: mathutils.Vector
-    """
-
-    orientation = None
-    """The object's orientation. 3x3 Matrix. You can also write a Quaternion or Euler vector. On write: local orientation, on read: world orientation
-    
-    :type: mathutils.Matrix
-    """
-
-    scaling = None
-    """The object's scaling factor. [sx, sy, sz] On write: local scaling, on read: world scaling
-    
-    :type: mathutils.Vector
-    """
-
-    localOrientation = None
-    """The object's local orientation. 3x3 Matrix. You can also write a Quaternion or Euler vector.
-    
-    :type: mathutils.Matrix
-    """
-
-    worldOrientation = None
-    """The object's world orientation. 3x3 Matrix.
-    
-    :type: mathutils.Matrix
-    """
-
-    localScale = None
-    """The object's local scaling factor. [sx, sy, sz]
-    
-    :type: mathutils.Vector
-    """
-
-    worldScale = None
-    """The object's world scaling factor. [sx, sy, sz]
-    
-    :type: mathutils.Vector
-    """
-
-    localPosition = None
-    """The object's local position. [x, y, z]
-    
-    :type: mathutils.Vector
-    """
-
-    worldPosition = None
-    """The object's world position. [x, y, z]
-    
-    :type: mathutils.Vector
-    """
-
-    localTransform = None
-    """The object's local space transform matrix. 4x4 Matrix.
-    
-    :type: mathutils.Matrix
-    """
-
-    worldTransform = None
-    """The object's world space transform matrix. 4x4 Matrix.
-    
-    :type: mathutils.Matrix
-    """
-
-    localLinearVelocity = None
-    """The object's local linear velocity. [x, y, z]
-    
-    :type: mathutils.Vector
-    """
-
-    worldLinearVelocity = None
-    """The object's world linear velocity. [x, y, z]
-    
-    :type: mathutils.Vector
-    """
-
-    localAngularVelocity = None
-    """The object's local angular velocity. [x, y, z]
-    
-    :type: mathutils.Vector
-    """
-
-    worldAngularVelocity = None
-    """The object's world angular velocity. [x, y, z]
-    
-    :type: mathutils.Vector
-    """
-
-    timeOffset = None
-    """adjust the slowparent delay at runtime.
-    
-    :type: float
-    """
-
-    state = None
-    """the game object's state bitmask, using the first 30 bits, one bit must always be set.
-    
-    :type: int
-    """
-
-    meshes = None
-    """a list meshes for this object.
-    (type: list of bge.types.KX_MeshProxy)
-    
-    :type: list
-    """
-
-    sensors = None
-    """a sequence of bge.types.SCA_ISensor objects with string/index lookups and iterator support.
-    
-    :type: list
-    """
-
-    controllers = None
-    """a sequence of bge.types.SCA_IController objects with string/index lookups and iterator support.
-    (type: list of bge.types.SCA_ISensor)
-    
-    :type: list
-    """
-
-    actuators = None
-    """a list of bge.types.SCA_IActuator with string/index lookups and iterator support.
-    
-    :type: list
-    """
-
-    attrDict = None
-    """get the objects internal python attribute dictionary for direct (faster) access.
-    
-    :type: dict
-    """
-
-    children = None
-    """direct children of this object, (read-only).
-    (type: bge.types.CListValue of bge.types.KX_GameObject's)
-    
-    :type: CListValue
-    """
-
-    childrenRecursive = None
-    """all children of this object including children's children, (read-only).
-    (type: bge.types.CListValue of bge.types.KX_GameObject's)
-    
-    :type: CListValue
-    """
-
-    life = None
-    """The number of seconds until the object ends, assumes 50fps.
-                                (when added with an add object actuator), (read-only).
-    
-    :type: float
-    """
-
-    debug = None
-    """If true, the object's debug properties will be displayed on screen.
-    
-    :type: bool
-    """
-
-    debugRecursive = None
-    """If true, the object's and children's debug properties will be displayed on screen.
-    
-    :type: bool
-    """
-
-    currentLodLevel = None
-    """The index of the level of detail (LOD) currently used by this object (read-only).
-    
-    :type: int
-    """
-
-    def endObject(self):
-        """Delete this object, can be used in place of the EndObject Actuator.
-        The actual removal of the object from the scene is delayed.
-        """
-
-    def replaceMesh(self, mesh, useDisplayMesh=True, usePhysicsMesh=False):
-        """Replace the mesh of this object with a new mesh. This works the same was as the actuator.
-        
-        :param mesh: mesh to replace or the meshes name.
-        :type mesh: MeshProxy or string
-        :param useDisplayMesh: when enabled the display mesh will be replaced (optional argument).
-        :type useDisplayMesh: bool
-        :param usePhysicsMesh: when enabled the physics mesh will be replaced (optional argument).
-        :type usePhysicsMesh: bool
-        """
-
-    def setVisible(self, visible, recursive):
-        """Sets the game object's visible flag.
-        
-        :param visible: the visible state to set.
-        :type visible: bool
-        :param recursive: optional argument to set all childrens visibility flag too.
-        :type recursive: bool
-        """
-
-    def setOcclusion(self, occlusion, recursive):
-        """Sets the game object's occlusion capability.
-        
-        :param occlusion: the state to set the occlusion to.
-        :type occlusion: bool
-        :param recursive: optional argument to set all childrens occlusion flag too.
-        :type recursive: bool
-        """
-
-    def alignAxisToVect(self, vect, axis=2, factor=1.0):
-        """Aligns any of the game object's axis along the given vector.
-        
-        :param vect: a vector to align the axis.
-        :type vect: 3D vector
-        :param axis: The axis you want to align
-            * 0: X axis
-            * 1: Y axis
-            * 2: Z axis
-        :type axis: int
-        :param factor: Only rotate a feaction of the distance to the target vector (0.0 - 1.0)
-        :type factor: float
-        """
-
-    def getAxisVect(self, vect):
-        """Returns the axis vector rotates by the object's worldspace orientation.
-                                    This is the equivalent of multiplying the vector by the orientation matrix.
-        
-        :param vect: a vector to align the axis.
-        :type vect: 3D Vector
-        :return: The vector in relation to the objects rotation.
-        :rtype: 3d vector.
-        """
-
-    def applyMovement(self, movement, local=False):
-        """Sets the game object's movement.
-        
-        :param movement: movement vector.
-        :type movement: 3D Vector
-        :param local:
-            * False: you get the "global" movement ie: relative to world orientation.
-            * True: you get the "local" movement ie: relative to object orientation.
-        :param local: boolean
-        """
-
-    def applyRotation(self, rotation, local=False):
-        """Sets the game object's rotation.
-        
-        :param rotation: rotation vector.
-        :type rotation: 3D Vector
-        :param local:
-            * False: you get the "global" rotation ie: relative to world orientation.
-            * True: you get the "local" rotation ie: relative to object orientation.
-        :param local: boolean
-        """
-
-    def applyForce(self, force, local=False):
-        """Sets the game object's force.
-        This requires a dynamic object.
-        
-        :param force: force vector.
-        :type force: 3D Vector
-        :param local:
-            * False: you get the "global" force ie: relative to world orientation.
-            * True: you get the "local" force ie: relative to object orientation.
-        :type local: bool
-        """
-
-    def applyTorque(self, torque, local=False):
-        """Sets the game object's torque.
-        This requires a dynamic object.
-        
-        :param torque: torque vector.
-        :type torque: 3D Vector
-        :param local:
-            * False: you get the "global" torque ie: relative to world orientation.
-            * True: you get the "local" torque ie: relative to object orientation.
-        :type local: bool
-        """
-
-    def getLinearVelocity(self, local=False):
-        """Gets the game object's linear velocity.
-        This method returns the game object's velocity through it's center of mass, ie no angular velocity component.
-        
-        :param local:
-            * False: you get the "global" velocity ie: relative to world orientation.
-            * True: you get the "local" velocity ie: relative to object orientation.
-        :type local: bool
-        :return: the object's linear velocity.
-        :rtype: Vector((vx, vy, vz))
-        """
-
-    def setLinearVelocity(self, velocity, local=False):
-        """Sets the game object's linear velocity.
-        This method sets game object's velocity through it's center of mass,
-                                    ie no angular velocity component.
-        This requires a dynamic object.
-        
-        :param velocity: linear velocity vector.
-        :type velocity: 3D Vector
-        :param local:
-            * False: you get the "global" velocity ie: relative to world orientation.
-            * True: you get the "local" velocity ie: relative to object orientation.
-        :type local: bool
-        """
-
-    def getAngularVelocity(self, local=False):
-        """Gets the game object's angular velocity.
-        
-        :param local:
-            * False: you get the "global" velocity ie: relative to world orientation.
-            * True: you get the "local" velocity ie: relative to object orientation.
-        :type local: bool
-        :return: the object's angular velocity.
-        :rtype: Vector((vx, vy, vz))
-        """
-
-    def setAngularVelocity(self, velocity, local=False):
-        """Sets the game object's angular velocity.
-        This requires a dynamic object.
-        
-        :param velocity: angular velocity vector.
-        :type velocity: bool
-        :param local:
-            * False: you get the "global" velocity ie: relative to world orientation.
-            * True: you get the "local" velocity ie: relative to object orientation.
-        """
-
-    def getVelocity(self, point=(0, 0, 0)):
-        """Gets the game object's velocity at the specified point.
-        Gets the game object's velocity at the specified point, including angular
-                                    components.
-        
-        :param point: optional point to return the velocity for, in local coordinates.
-        :type point: 3D Vector
-        :return: the velocity at the specified point.
-        :rtype: Vector((vx, vy, vz))
-        """
-
-    def getReactionForce(self):
-        """Gets the game object's reaction force.
-        The reaction force is the force applied to this object over the last simulation timestep.
-                                    This also includes impulses, eg from collisions.
-        <Note> This is not implimented at the moment.
-        
-        :return: the reaction force of this object.
-        :rtype: Vector((fx, fy, fz))
-        """
-
-    def applyImpulse(self, point, impulse, local=False):
-        """Applies an impulse to the game object.
-        This will apply the specified impulse to the game object at the specified point.
-                                    If point != position, applyImpulse will also change the object's angular momentum.
-                                    Otherwise, only linear momentum will change.
-        
-        :param point: the point to apply the impulse to (in world or local coordinates)
-        :type point: freestyle.types.StrokeVertex.point [ix, iy, iz] the point to apply the impulse to (in world or local coordinates)
-        :param impulse: impulse vector.
-        :type impulse: 3D Vector
-        :param local:
-            * False: you get the "global" impulse ie: relative to world coordinates with world orientation.
-            * True: you get the "local" impulse ie: relative to local coordinates with object orientation.
-        :type local: bool
-        """
-
-    def setDamping(self, linear_damping, angular_damping):
-        """Sets both the bge.types.KX_GameObject.linearDamping and bge.types.KX_GameObject.angularDamping simultaneously. This is more efficient than setting both properties individually.
-        
-        :param linear_damping: Linear ("translational") damping factor.
-        :type linear_damping: float ∈ [0, 1]
-        :param angular_damping: Angular ("rotational") damping factor.
-        :type angular_damping: float ∈ [0, 1]
-        """
-
-    def suspendDynamics(self, ghost:"Optional"):
-        """Suspends physics for this object.
-        <See also> bge.types.KX_GameObject.isSuspendDynamics allows you to inspect whether the object is in a suspended state.
-        
-        :param ghost: When set to True, collisions with the object will be ignored, similar to the "ghost" checkbox in
-                                                    Blender. When False (the default), the object becomes static but still collide with other objects.
-        :type ghost: bool
-        """
-
-    def restoreDynamics(self):
-        """Resumes physics for this object. Also reinstates collisions; the object will no longer be a ghost.
-        <Note> The objects linear velocity will be applied from when the dynamics were suspended.
-        """
-
-    def enableRigidBody(self):
-        """Enables rigid body physics for this object.
-        Rigid body physics allows the object to roll on collisions.
-        """
-
-    def disableRigidBody(self):
-        """Disables rigid body physics for this object."""
-
-    def setParent(self, parent, compound=True, ghost=True):
-        """Sets this object's parent.
-                                    Control the shape status with the optional compound and ghost parameters:
-        In that case you can control if it should be ghost or not:
-        <Note> If the object type is sensor, it stays ghost regardless of ghost parameter
-        
-        :param parent: new parent object.
-            (type: bge.types.KX_GameObject)
-        :type parent: KX_GameObject
-        :param compound: whether the shape should be added to the parent compound shape.
-            * True: the object shape should be added to the parent compound shape.
-            * False: the object should keep its individual shape.
-        :type compound: bool
-        :param ghost: whether the object should be ghost while parented.
-            * True: if the object should be made ghost while parented.
-            * False: if the object should be solid while parented.
-        :type ghost: bool
-        """
-
-    def removeParent(self):
-        """Removes this objects parent."""
-
-    def getPhysicsId(self):
-        """Returns the user data object associated with this game object's physics controller."""
-
-    def getPropertyNames(self):
-        """Gets a list of all property names.
-        
-        :return: All property names for this object.
-        :rtype: list
-        """
-
-    def getDistanceTo(self, other):
-        """
-        :param other: a point or another bge.types.KX_GameObject to measure the distance to.
-            (type: bge.types.KX_GameObject or list [x, y, z])
-        :type other: KX_GameObject or list [x, y, z]
-        :return: distance to another object or point.
-        :rtype: float
-        """
-
-    def getVectTo(self, other):
-        """Returns the vector and the distance to another object or point.
-                                    The vector is normalized unless the distance is 0, in which a zero length vector is returned.
-        
-        :param other: a point or another bge.types.KX_GameObject to get the vector and distance to.
-            (type: bge.types.KX_GameObject or list [x, y, z])
-        :type other: KX_GameObject or list [x, y, z]
-        :return: (distance, globalVector(3), localVector(3))
-        :rtype: 3-tuple (float, 3-tuple (x, y, z), 3-tuple (x, y, z))
-        """
-
-    def rayCastTo(self, other, dist, prop):
-        """Look towards another point/object and find first object hit within dist that matches prop.
-        The ray is always casted from the center of the object, ignoring the object itself.
-                                    The ray is casted towards the center of another object or an explicit [x, y, z] point.
-                                    Use rayCast() if you need to retrieve the hit point
-        
-        :param other: [x, y, z] or object towards which the ray is casted
-            (type: bge.types.KX_GameObject or 3-tuple)
-        :type other: KX_GameObject or 3-tuple
-        :param dist: max distance to look (can be negative => look behind); 0 or omitted => detect up to other
-        :type dist: float
-        :param prop: property name that object must have; can be omitted => detect any object
-        :type prop: str
-        :return: the first object hit or None if no object or object does not match prop
-        :param : (type: bge.types.KX_GameObject)
-        :rtype: KX_GameObject
-        """
-
-    def rayCast(self, objto, objfrom, dist, prop, face, xray, poly, mask):
-        """Look from a point/object to another point/object and find first object hit within dist that matches prop.
-                                    if poly is 0, returns a 3-tuple with object reference, hit point and hit normal or (None, None, None) if no hit.
-                                    if poly is 1, returns a 4-tuple with in addition a bge.types.KX_PolyProxy as 4th element.
-                                    if poly is 2, returns a 5-tuple with in addition a 2D vector with the UV mapping of the hit point as 5th element.
-        The face parameter determines the orientation of the normal.
-        * 0 => hit normal is always oriented towards the ray origin (as if you casted the ray from outside)
-        * 1 => hit normal is the real face normal (only for mesh object, otherwise face has no effect)
-        The ray has X-Ray capability if xray parameter is 1, otherwise the first object hit (other than self object) stops the ray.
-                                    The prop and xray parameters interact as follow.
-        * prop off, xray off: return closest hit or no hit if there is no object on the full extend of the ray.
-        * prop off, xray on : idem.
-        * prop on, xray off: return closest hit if it matches prop, no hit otherwise.
-        * prop on, xray on : return closest hit matching prop or no hit if there is no object matching prop on the full extend of the ray.
-        The bge.types.KX_PolyProxy 4th element of the return tuple when poly=1 allows to retrieve information on the polygon hit by the ray.
-                                    If there is no hit or the hit object is not a static mesh, None is returned as 4th element.
-        The ray ignores collision-free objects and faces that dont have the collision flag enabled, you can however use ghost objects.
-        <Note> The ray ignores the object on which the method is called. It is casted from/to object center or explicit [x, y, z] points.
-        
-        :param objto: [x, y, z] or object to which the ray is casted
-            (type: bge.types.KX_GameObject or 3-tuple)
-        :type objto: KX_GameObject or 3-tuple
-        :param objfrom: [x, y, z] or object from which the ray is casted; None or omitted => use self object center
-            (type: bge.types.KX_GameObject or 3-tuple or None)
-        :type objfrom: KX_GameObject or 3-tuple or None
-        :param dist: max distance to look (can be negative => look behind); 0 or omitted => detect up to to
-        :type dist: float
-        :param prop: property name that object must have; can be omitted or "" => detect any object
-        :type prop: str
-        :param face: normal option: 1=>return face normal; 0 or omitted => normal is oriented towards origin
-        :type face: int
-        :param xray: X-ray option: 1=>skip objects that don't match prop; 0 or omitted => stop on first object
-        :type xray: int
-        :param poly: polygon option: 0, 1 or 2 to return a 3-, 4- or 5-tuple with information on the face hit.
-            * 0 or omitted: return value is a 3-tuple (object, hitpoint, hitnormal) or (None, None, None) if no hit
-            * 1: return value is a 4-tuple and the 4th element is a bge.types.KX_PolyProxy or None if no hit or the object doesn't use a mesh collision shape.
-            * 2: return value is a 5-tuple and the 5th element is a 2-tuple (u, v) with the UV mapping of the hit point or None if no hit, or the object doesn't use a mesh collision shape, or doesn't have a UV mapping.
-        :type poly: int
-        :param mask: collision mask: The collision mask (16 layers mapped to a 16-bit integer) is combined with each object's collision group, to hit only a subset of the objects in the scene. Only those objects for which collisionGroup & mask is true can be hit.
-        :type mask: bitfield
-        :return: (object, hitpoint, hitnormal) or (object, hitpoint, hitnormal, polygon) or (object, hitpoint, hitnormal, polygon, hituv).
-            * object, hitpoint and hitnormal are None if no hit.
-            * polygon is valid only if the object is valid and is a static object, a dynamic object using mesh collision shape or a soft body object, otherwise it is None
-            * hituv is valid only if polygon is valid and the object has a UV mapping, otherwise it is None
-        :param : (type: * 3-tuple (bge.types.KX_GameObject, 3-tuple (x, y, z), 3-tuple (nx, ny, nz))
-            * or 4-tuple (bge.types.KX_GameObject, 3-tuple (x, y, z), 3-tuple (nx, ny, nz), bge.types.KX_PolyProxy)
-            * or 5-tuple (bge.types.KX_GameObject, 3-tuple (x, y, z), 3-tuple (nx, ny, nz), bge.types.KX_PolyProxy, 2-tuple (u, v)))
-        :rtype: * 3-tuple (KX_GameObject, 3-tuple (x, y, z), 3-tuple (nx, ny, nz))
-            * or 4-tuple (KX_GameObject, 3-tuple (x, y, z), 3-tuple (nx, ny, nz), KX_PolyProxy)
-            * or 5-tuple (KX_GameObject, 3-tuple (x, y, z), 3-tuple (nx, ny, nz), KX_PolyProxy, 2-tuple (u, v))
-        """
-
-    def setCollisionMargin(self, margin):
-        """Set the objects collision margin.
-        <Note> If this object has no physics controller (a physics ID of zero), this function will raise RuntimeError.
-        
-        :param margin: the collision margin distance in blender units.
-        :type margin: float
-        """
-
-    def sendMessage(self, subject, body="", to=""):
-        """Sends a message.
-        
-        :param subject: The subject of the message
-        :type subject: str
-        :param body: The body of the message (optional)
-        :type body: str
-        :param to: The name of the object to send the message to (optional)
-        :type to: str
-        """
-
-    def reinstancePhysicsMesh(self, gameObject, meshObject):
-        """Updates the physics system with the changed mesh.
-        If no arguments are given the physics mesh will be re-created from the first mesh assigned to the game object.
-        <Note> If this object has instances the other instances will be updated too.
-        <Note> The gameObject argument has an advantage that it can convert from a mesh with modifiers applied (such as the Subdivision Surface modifier).
-        
-        :param gameObject: optional argument, set the physics shape from this gameObjets mesh.
-            (type: string, bge.types.KX_GameObject or None)
-        :type gameObject: string, KX_GameObject or None
-        :param meshObject: optional argument, set the physics shape from this mesh.
-        :type meshObject: string, MeshProxy or None
-        :return: True if reinstance succeeded, False if it failed.
-        :rtype: bool
-        """
-
-    def get(self, key, default=None):
-        """Return the value matching key, or the default value if its not found.
-                                    :return: The key value or a default.
-        """
-
-    def playAction(self, name, start_frame, end_frame, layer=0, priority=0, blendin=0, play_mode=logic.KX_ACTION_MODE_PLAY, layer_weight=0.0, ipo_flags=0, speed=1.0, blend_mode=logic.KX_ACTION_BLEND_BLEND):
-        """Plays an action.
-        
-        :param name: the name of the action
-        :type name: str
-        :param start: the start frame of the action
-        :type start: float
-        :param end: the end frame of the action
-        :type end: float
-        :param layer: the layer the action will play in (actions in different layers are added/blended together)
-        :type layer: int
-        :param priority: only play this action if there isn't an action currently playing in this layer with a higher (lower number) priority
-        :type priority: int
-        :param blendin: the amount of blending between this animation and the previous one on this layer
-        :type blendin: float
-        :param play_mode: the play mode
-            (type: one of bge.logic#gameobject-playaction-modethese constants)
-        :type play_mode: one
-        :param layer_weight: how much of the previous layer to use for blending
-        :type layer_weight: float
-        :param ipo_flags: flags for the old IPO behaviors (force, etc)
-        :type ipo_flags: int bitfield
-        :param speed: the playback speed of the action as a factor (1.0 = normal speed, 2.0 = 2x speed, etc)
-        :type speed: float
-        :param blend_mode: how to blend this layer with previous layers
-            (type: one of bge.logic#gameobject-playaction-blendthese constants)
-        :type blend_mode: one
-        """
-
-    def stopAction(self, layer=0):
-        """Stop playing the action on the given layer.
-        
-        :param layer: The layer to stop playing.
-        :type layer: int
-        """
-
-    def getActionFrame(self, layer=0):
-        """Gets the current frame of the action playing in the supplied layer.
-        
-        :param layer: The layer that you want to get the frame from.
-        :type layer: int
-        :return: The current frame of the action
-        :rtype: float
-        """
-
-    def getActionName(self, layer=0):
-        """Gets the name of the current action playing in the supplied layer.
-        
-        :param layer: The layer that you want to get the action name from.
-        :type layer: int
-        :return: The name of the current action
-        :rtype: str
-        """
-
-    def setActionFrame(self, frame, layer=0):
-        """Set the current frame of the action playing in the supplied layer.
-        
-        :param layer: The layer where you want to set the frame
-        :type layer: int
-        :param frame: The frame to set the action to
-        :type frame: float
-        """
-
-    def isPlayingAction(self, layer=0):
-        """Checks to see if there is an action playing in the given layer.
-        
-        :param layer: The layer to check for a playing action.
-        :type layer: int
-        :return: Whether or not the action is playing
-        :rtype: bool
-        """
-
-    def addDebugProperty(self, name, debug = True):
-        """Adds a single debug property to the debug list.
-        
-        :param name: name of the property that added to the debug list.
-        :type name: str
-        :param debug: the debug state.
-        :type debug: bool
-        """
-
-
-class KX_MeshProxy(SCA_IObject):
-    """A mesh object.
-    You can only change the vertex properties of a mesh object, not the mesh topology.
-    To use mesh objects effectively, you should know a bit about how the game engine handles them.
-    The correct method of iterating over every bge.types.KX_VertexProxy in a game object
-    """
-
-    materials = None
-    """(type: list of bge.types.KX_BlenderMaterial type)
-    
-    :type: list
-    """
-
-    numPolygons = None
-    """:type: int"""
-
-    numMaterials = None
-    """:type: int"""
-
-    def getMaterialName(self, matid):
-        """Gets the name of the specified material.
-        
-        :param matid: the specified material.
-        :type matid: int
-        :return: the attached material name.
-        :rtype: str
-        """
-
-    def getTextureName(self, matid):
-        """Gets the name of the specified material's texture.
-        
-        :param matid: the specified material
-        :type matid: int
-        :return: the attached material's texture name.
-        :rtype: str
-        """
-
-    def getVertexArrayLength(self, matid):
-        """Gets the length of the vertex array associated with the specified material.
-        There is one vertex array for each material.
-        
-        :param matid: the specified material
-        :type matid: int
-        :return: the number of verticies in the vertex array.
-        :rtype: int
-        """
-
-    def getVertex(self, matid, index):
-        """Gets the specified vertex from the mesh object.
-        
-        :param matid: the specified material
-        :type matid: int
-        :param index: the index into the vertex array.
-        :type index: int
-        :return: a vertex object.
-        :param : (type: bge.types.KX_VertexProxy)
-        :rtype: KX_VertexProxy
-        """
-
-    def getPolygon(self, index):
-        """Gets the specified polygon from the mesh.
-        
-        :param index: polygon number
-        :type index: int
-        :return: a polygon object.
-        :param : (type: bge.types.KX_PolyProxy)
-        :rtype: KX_PolyProxy
-        """
-
-    def transform(self, matid, matrix):
-        """Transforms the vertices of a mesh.
-        
-        :param matid: material index, -1 transforms all.
-        :type matid: int
-        :param matrix: transformation matrix.
-        :type matrix: 4x4 matrix [[float]]
-        """
-
-    def transformUV(self, matid, matrix, uv_index=-1, uv_index_from=-1):
-        """Transforms the vertices UV's of a mesh.
-        
-        :param matid: material index, -1 transforms all.
-        :type matid: int
-        :param matrix: transformation matrix.
-        :type matrix: 4x4 matrix [[float]]
-        :param uv_index: optional uv index, -1 for all, otherwise 0 or 1.
-        :type uv_index: int
-        :param uv_index_from: optional uv index to copy from, -1 to transform the current uv.
-        :type uv_index_from: int
-        """
-
-
-class KX_PolyProxy(SCA_IObject):
-    """A polygon holds the index of the vertex forming the poylgon.
-    Note:
-                        The polygon attributes are read-only, you need to retrieve the vertex proxy if you want
-                        to change the vertex settings.
-    """
-
-    material_name = ""
-    """The name of polygon material, empty if no material.
-    
-    :type: str
-    """
-
-    material = None
-    """The material of the polygon.
-    (type: bge.types.KX_BlenderMaterial)
-    
-    :type: KX_BlenderMaterial
-    """
-
-    texture_name = ""
-    """The texture name of the polygon.
-    
-    :type: str
-    """
-
-    material_id = None
-    """The material index of the polygon, use this to retrieve vertex proxy from mesh proxy.
-    
-    :type: int
-    """
-
-    v1 = None
-    """vertex index of the first vertex of the polygon, use this to retrieve vertex proxy from mesh proxy.
-    
-    :type: int
-    """
-
-    v2 = None
-    """vertex index of the second vertex of the polygon, use this to retrieve vertex proxy from mesh proxy.
-    
-    :type: int
-    """
-
-    v3 = None
-    """vertex index of the third vertex of the polygon, use this to retrieve vertex proxy from mesh proxy.
-    
-    :type: int
-    """
-
-    v4 = None
-    """Vertex index of the fourth vertex of the polygon, 0 if polygon has only 3 vertex
-                                Use this to retrieve vertex proxy from mesh proxy.
-    
-    :type: int
-    """
-
-    visible = None
-    """visible state of the polygon: 1=visible, 0=invisible.
-    
-    :type: int
-    """
-
-    collide = None
-    """collide state of the polygon: 1=receives collision, 0=collision free.
-    
-    :type: int
-    """
-
-    def getMaterialName(self):
-        """Returns the polygon material name with MA prefix
-        
-        :return: material name
-        :rtype: str
-        """
-
-    def getMaterial(self):
-        """
-        :return: The polygon material
-        :param : (type: bge.types.KX_BlenderMaterial)
-        :rtype: KX_BlenderMaterial
-        """
-
-    def getTextureName(self):
-        """
-        :return: The texture name
-        :rtype: str
-        """
-
-    def getMaterialIndex(self):
-        """Returns the material bucket index of the polygon.
-                                    This index and the ones returned by getVertexIndex() are needed to retrieve the vertex proxy from MeshProxy.
-        
-        :return: the material index in the mesh
-        :rtype: int
-        """
-
-    def getNumVertex(self):
-        """Returns the number of vertex of the polygon.
-        
-        :return: number of vertex, 3 or 4.
-        :rtype: int
-        """
-
-    def isVisible(self):
-        """Returns whether the polygon is visible or not
-        
-        :return: 0=invisible, 1=visible
-        :rtype: bool
-        """
-
-    def isCollider(self):
-        """Returns whether the polygon is receives collision or not
-        
-        :return: 0=collision free, 1=receives collision
-        :rtype: int
-        """
-
-    def getVertexIndex(self, vertex):
-        """Returns the mesh vertex index of a polygon vertex
-                                    This index and the one returned by getMaterialIndex() are needed to retrieve the vertex proxy from MeshProxy.
-        
-        :param vertex: index of the vertex in the polygon: 0->3
-        :param vertex: integer
-        :return: mesh vertex index
-        :rtype: int
-        """
-
-    def getMesh(self):
-        """Returns a mesh proxy
-        
-        :return: mesh proxy
-        :rtype: MeshProxy
-        """
-
-
-class KX_VertexProxy(SCA_IObject):
-    """A vertex holds position, UV, color and normal information.
-    Note:
-                        The physics simulation is NOT currently updated - physics will not respond
-                        to changes in the vertex position.
-    """
-
-    XYZ = None
-    """The position of the vertex.
-    
-    :type: Vector((x, y, z))
-    """
-
-    UV = None
-    """The texture coordinates of the vertex.
-    
-    :type: Vector((u, v))
-    """
-
-    normal = None
-    """The normal of the vertex.
-    
-    :type: Vector((nx, ny, nz))
-    """
-
-    color = None
-    """The color of the vertex.
-    Black = [0.0, 0.0, 0.0, 1.0], White = [1.0, 1.0, 1.0, 1.0]
-    
-    :type: Vector((r, g, b, a))
-    """
-
-    x = None
-    """The x coordinate of the vertex.
-    
-    :type: float
-    """
-
-    y = None
-    """The y coordinate of the vertex.
-    
-    :type: float
-    """
-
-    z = None
-    """The z coordinate of the vertex.
-    
-    :type: float
-    """
-
-    u = None
-    """The u texture coordinate of the vertex.
-    
-    :type: float
-    """
-
-    v = None
-    """The v texture coordinate of the vertex.
-    
-    :type: float
-    """
-
-    u2 = None
-    """The second u texture coordinate of the vertex.
-    
-    :type: float
-    """
-
-    v2 = None
-    """The second v texture coordinate of the vertex.
-    
-    :type: float
-    """
-
-    r = None
-    """The red component of the vertex color. 0.0 <= r <= 1.0.
-    
-    :type: float
-    """
-
-    g = None
-    """The green component of the vertex color. 0.0 <= g <= 1.0.
-    
-    :type: float
-    """
-
-    b = None
-    """The blue component of the vertex color. 0.0 <= b <= 1.0.
-    
-    :type: float
-    """
-
-    a = None
-    """The alpha component of the vertex color. 0.0 <= a <= 1.0.
-    
-    :type: float
-    """
-
-    def getXYZ(self):
-        """Gets the position of this vertex.
-        
-        :return: this vertexes position in local coordinates.
-        :rtype: Vector((x, y, z))
-        """
-
-    def setXYZ(self, pos):
-        """Sets the position of this vertex.
-        
-        :type: Vector((x, y, z))
-        :param pos: the new position for this vertex in local coordinates.
-        """
-
-    def getUV(self):
-        """Gets the UV (texture) coordinates of this vertex.
-        
-        :return: this vertexes UV (texture) coordinates.
-        :rtype: Vector((u, v))
-        """
-
-    def setUV(self, uv):
-        """Sets the UV (texture) coordinates of this vertex.
-        
-        :type: Vector((u, v))
-        """
-
-    def getUV2(self):
-        """Gets the 2nd UV (texture) coordinates of this vertex.
-        
-        :return: this vertexes UV (texture) coordinates.
-        :rtype: Vector((u, v))
-        """
-
-    def setUV2(self, uv, unit):
-        """Sets the 2nd UV (texture) coordinates of this vertex.
-        
-        :type: Vector((u, v))
-        :param unit: optional argument, FLAT==1, SECOND_UV==2, defaults to SECOND_UV
-        :param unit: integer
-        """
-
-    def getRGBA(self):
-        """Gets the color of this vertex.
-        The color is represented as four bytes packed into an integer value.  The color is
-                                    packed as RGBA.
-        Since Python offers no way to get each byte without shifting, you must use the struct module to
-                                    access color in an machine independent way.
-        Because of this, it is suggested you use the r, g, b and a attributes or the color attribute instead.
-        
-        :return: packed color. 4 byte integer with one byte per color channel in RGBA format.
-        :rtype: int
-        """
-
-    def setRGBA(self, col):
-        """Sets the color of this vertex.
-        See getRGBA() for the format of col, and its relevant problems.  Use the r, g, b and a attributes
-                                    or the color attribute instead.
-        setRGBA() also accepts a four component list as argument col.  The list represents the color as [r, g, b, a]
-                                    with black = [0.0, 0.0, 0.0, 1.0] and white = [1.0, 1.0, 1.0, 1.0]
-        
-        :param col: the new color of this vertex in packed RGBA format.
-            (type: integer or bpy.types.ThemeSpaceListGeneric.list [bge.types.KX_VertexProxy.r, bge.types.KX_VertexProxy.g, bge.types.KX_VertexProxy.b, bge.types.KX_VertexProxy.a])
-        :type col: integer or bpy.types.ThemeSpaceListGeneric.list [KX_VertexProxy.r, KX_VertexProxy.g, KX_VertexProxy.b, KX_VertexProxy.a]
-        """
-
-    def getNormal(self):
-        """Gets the normal vector of this vertex.
-        
-        :return: normalized normal vector.
-        :rtype: Vector((nx, ny, nz))
-        """
-
-    def setNormal(self, normal):
-        """Sets the normal vector of this vertex.
-        (type: sequence of floats [r, g, b])
-        
-        :type: collections.Sequence
-        :param normal: the new normal of this vertex.
-        """
-
-
-class SCA_IActuator(SCA_ILogicBrick):
-    """Base class for all actuator logic bricks."""
-
-
-class SCA_IController(SCA_ILogicBrick):
-    """Base class for all controller logic bricks."""
-
-    state = None
-    """The controllers state bitmask. This can be used with the GameObject's state to test if the controller is active.
-    
-    :type: int bitmask
-    """
-
-    sensors = None
-    """A list of sensors linked to this controller.
-    
-    :type: sequence supporting index/string lookups and iteration.
-    """
-
-    actuators = None
-    """A list of actuators linked to this controller.
-    
-    :type: sequence supporting index/string lookups and iteration.
-    """
-
-    useHighPriority = None
-    """When set the controller executes always before all other controllers that dont have this set.
-    
-    :type: boolen
-    """
-
-
-class SCA_ISensor(SCA_ILogicBrick):
-    """Base class for all sensor logic bricks."""
-
-    usePosPulseMode = None
-    """Flag to turn positive pulse mode on and off.
-    
-    :type: bool
-    """
-
-    useNegPulseMode = None
-    """Flag to turn negative pulse mode on and off.
-    
-    :type: bool
-    """
-
-    frequency = None
-    """The frequency for pulse mode sensors. (Deprecated: use SCA_ISensor.skippedTicks)
-    
-    :type: int
-    """
-
-    skippedTicks = None
-    """Number of logic ticks skipped between 2 active pulses
-    
-    :type: int
-    """
-
-    level = None
-    """level Option whether to detect level or edge transition when entering a state.
-                                It makes a difference only in case of logic state transition (state actuator).
-                                A level detector will immediately generate a pulse, negative or positive
-                                depending on the sensor condition, as soon as the state is activated.
-                                A edge detector will wait for a state change before generating a pulse.
-                                note: mutually exclusive with bge.types.SCA_ISensor.tap, enabling will disable bge.types.SCA_ISensor.tap.
-    
-    :type: bool
-    """
-
-    tap = None
-    """When enabled only sensors that are just activated will send a positive event,
-                                after this they will be detected as negative by the controllers.
-                                This will make a key thats held act as if its only tapped for an instant.
-                                note: mutually exclusive with bge.types.SCA_ISensor.level, enabling will disable bge.types.SCA_ISensor.level.
-    
-    :type: bool
-    """
-
-    invert = None
-    """Flag to set if this sensor activates on positive or negative events.
-    
-    :type: bool
-    """
-
-    triggered = None
-    """True if this sensor brick is in a positive state. (read-only).
-    
-    :type: bool
-    """
-
-    positive = None
-    """True if this sensor brick is in a positive state. (read-only).
-    
-    :type: bool
-    """
-
-    pos_ticks = None
-    """The number of ticks since the last positive pulse (read-only).
-    
-    :type: int
-    """
-
-    neg_ticks = None
-    """The number of ticks since the last negative pulse (read-only).
-    
-    :type: int
-    """
-
-    status = None
-    """The status of the sensor (read-only): can be one of bge.logic#sensor-statusthese constants.
-    
-    :type: int
-    """
-
-    def reset(self):
-        """Reset sensor internal state, effect depends on the type of sensor and settings.
-        The sensor is put in its initial state as if it was just activated.
-        """
-
-
-class BL_ActionActuator(SCA_IActuator):
-    """Action Actuators apply an action to an actor."""
-
-    action = ""
-    """The name of the action to set as the current action.
-    
-    :type: str
-    """
-
-    frameStart = None
-    """Specifies the starting frame of the animation.
-    
-    :type: float
-    """
-
-    frameEnd = None
-    """Specifies the ending frame of the animation.
-    
-    :type: float
-    """
-
-    blendIn = None
-    """Specifies the number of frames of animation to generate when making transitions between actions.
-    
-    :type: float
-    """
-
-    priority = None
-    """Sets the priority of this actuator. Actuators will lower priority numbers will override actuators with higher numbers.
-    
-    :type: int
-    """
-
-    frame = None
-    """Sets the current frame for the animation.
-    
-    :type: float
-    """
-
-    propName = ""
-    """Sets the property to be used in FromProp playback mode.
-    
-    :type: str
-    """
-
-    blendTime = None
-    """Sets the internal frame timer. This property must be in the range from 0.0 to blendIn.
-    
-    :type: float
-    """
-
-    mode = None
-    """The operation mode of the actuator. Can be one of bge.logic#action-actuatorthese constants.
-    
-    :type: int
-    """
-
-    useContinue = None
-    """The actions continue option, True or False. When True, the action will always play from where last left off,
-                                otherwise negative events to this actuator will reset it to its start frame.
-    
-    :type: bool
-    """
-
-    framePropName = ""
-    """The name of the property that is set to the current frame number.
-    
-    :type: str
-    """
-
-
-class BL_ArmatureActuator(SCA_IActuator):
-    """Armature Actuators change constraint condition on armatures."""
-
-    type = None
-    """The type of action that the actuator executes when it is active.
-    Can be one of bge.logic#armatureactuator-constants-typethese constants
-    
-    :type: int
-    """
-
-    constraint = None
-    """The constraint object this actuator is controlling.
-    (type: bge.types.BL_ArmatureConstraint)
-    
-    :type: BL_ArmatureConstraint
-    """
-
-    target = None
-    """The object that this actuator will set as primary target to the constraint it controls.
-    (type: bge.types.KX_GameObject)
-    
-    :type: KX_GameObject
-    """
-
-    subtarget = None
-    """The object that this actuator will set as secondary target to the constraint it controls.
-    (type: bge.types.KX_GameObject.)
-    
-    :type: KX_GameObject.
-    """
-
-    weight = None
-    """The weight this actuator will set on the constraint it controls.
-    
-    :type: float.
-    """
-
-    influence = None
-    """The influence this actuator will set on the constraint it controls.
-    
-    :type: float.
-    """
-
-
-class BL_ArmatureObject(KX_GameObject):
-    """An armature object."""
-
-    constraints = None
-    """The list of armature constraint defined on this armature.
-                                Elements of the list can be accessed by index or string.
-                                The key format for string access is '<bone_name>:<constraint_name>'.
-    (type: list of bge.types.BL_ArmatureConstraint)
-    
-    :type: list
-    """
-
-    channels = None
-    """The list of armature channels.
-                                Elements of the list can be accessed by index or name the bone.
-    (type: list of bge.types.BL_ArmatureChannel)
-    
-    :type: list
-    """
-
-    def update(self):
-        """Ensures that the armature will be updated on next graphic frame.
-        This action is unecessary if a KX_ArmatureActuator with mode run is active
-                                    or if an action is playing. Use this function in other cases. It must be called
-                                    on each frame to ensure that the armature is updated continously.
-        """
-
-
 class BL_ShapeActionActuator(SCA_IActuator):
     """ShapeAction Actuators apply an shape action to an mesh object."""
 
@@ -3001,6 +851,61 @@ class BL_ShapeActionActuator(SCA_IActuator):
     """
 
 
+class CListValue(CPropValue):
+    """This is a list like object used in the game engine internally that behaves similar to a python list in most ways.
+    As well as the normal index lookup (val= clist[i]), CListValue supports string lookups (val= scene.objects["Cube"])
+    Other operations such as len(clist), list(clist), clist[0:10] are also supported.
+    """
+
+    def append(self, val):
+        """Add an item to the list (like pythons append)"""
+
+    def count(self, val):
+        """Count the number of instances of a value in the list.
+        
+        :return: number of instances
+        :rtype: int
+        """
+
+    def index(self, val):
+        """Return the index of a value in the list.
+        
+        :return: The index of the value in the list.
+        :rtype: int
+        """
+
+    def reverse(self):
+        """Reverse the order of the list."""
+
+    def get(self, key, default=None):
+        """Return the value matching key, or the default value if its not found.
+        
+        :return: The key value or a default.
+        """
+
+    def from_id(self, id):
+        """This is a funtion especially for the game engine to return a value with a spesific id.
+        Since object names are not always unique, the id of an object can be used to get an object from the CValueList.
+        Example:
+        Where myObID is an int or long from the id function.
+        This has the advantage that you can store the id in places you could not store a gameObject.
+        """
+
+
+class CPropValue(CValue):
+    """This class has no python functions"""
+
+
+class CValue(PyObjectPlus):
+    """This class is a basis for other classes."""
+
+    name = ""
+    """The name of this CValue derived object (read-only).
+    
+    :type: str
+    """
+
+
 class KX_ArmatureSensor(SCA_ISensor):
     """Armature sensor detect conditions on armatures."""
 
@@ -3030,6 +935,132 @@ class KX_ArmatureSensor(SCA_ISensor):
     """
 
 
+class KX_BlenderMaterial(PyObjectPlus):
+    """This is the interface to materials in the game engine.
+    Materials define the render state to be applied to mesh objects.
+    The example below shows a simple GLSL shader setup allowing to dynamically mix two texture channels
+                        in a material. All materials of the object executing this script should have two textures using
+                        separate UV maps in the two first texture channels.
+    The code works for both Multitexture and GLSL rendering modes.
+    """
+
+    shader = None
+    """The material’s shader.
+    (type: bge.types.BL_Shader)
+    
+    :type: BL_Shader
+    """
+
+    blending = None
+    """Ints used for pixel blending, (src, dst), matching the setBlending method.
+    
+    :type: (integer, integer)
+    """
+
+    material_index = None
+    """The material’s index.
+    
+    :type: int
+    """
+
+    def getShader(self):
+        """Returns the material’s shader.
+        
+        :return: the material’s shader
+        :param : (type: bge.types.BL_Shader)
+        :rtype: BL_Shader
+        """
+
+    def getTextureBindcode(self, textureslot):
+        """Returns the material’s texture OpenGL bind code/id/number/name.
+        
+        :param textureslot: Specifies the texture slot number
+        :type textureslot: int
+        :return: the material’s texture OpenGL bind code/id/number/name
+        :rtype: int
+        """
+
+    alpha = None
+    """The material’s alpha transparency.
+    
+    :type: float between 0.0 and 1.0 inclusive
+    """
+
+    hardness = None
+    """How hard (sharp) the material’s specular reflection is.
+    
+    :type: integer between 1 and 511 inclusive
+    """
+
+    emit = None
+    """Amount of light to emit.
+    
+    :type: float between 0.0 and 2.0 inclusive
+    """
+
+    specularIntensity = None
+    """How intense (bright) the material’s specular reflection is.
+    
+    :type: float between 0.0 and 1.0 inclusive
+    """
+
+    diffuseIntensity = None
+    """The material’s amount of diffuse reflection.
+    
+    :type: float between 0.0 and 1.0 inclusive
+    """
+
+    specularColor = None
+    """The material’s specular color.
+    
+    :type: mathutils.Color
+    """
+
+    diffuseColor = None
+    """The material’s diffuse color.
+    
+    :type: mathutils.Color
+    """
+
+    def setBlending(self, src, dest):
+        """Set the pixel color arithmetic functions.
+        
+        :param src: Specifies how the red, green, blue, and alpha source blending factors are computed, one of…
+            * 'GL_ZERO':
+            * 'GL_ONE':
+            * 'GL_SRC_COLOR':
+            * 'GL_ONE_MINUS_SRC_COLOR':
+            * 'GL_DST_COLOR':
+            * 'GL_ONE_MINUS_DST_COLOR':
+            * 'GL_SRC_ALPHA':
+            * 'GL_ONE_MINUS_SRC_ALPHA':
+            * 'GL_DST_ALPHA':
+            * 'GL_ONE_MINUS_DST_ALPHA':
+            * 'GL_SRC_ALPHA_SATURATE':
+        :type src: int
+        :param dest: Specifies how the red, green, blue, and alpha destination blending factors are computed, one of…
+            * 'GL_ZERO':
+            * 'GL_ONE':
+            * 'GL_SRC_COLOR':
+            * 'GL_ONE_MINUS_SRC_COLOR':
+            * 'GL_DST_COLOR':
+            * 'GL_ONE_MINUS_DST_COLOR':
+            * 'GL_SRC_ALPHA':
+            * 'GL_ONE_MINUS_SRC_ALPHA':
+            * 'GL_DST_ALPHA':
+            * 'GL_ONE_MINUS_DST_ALPHA':
+            * 'GL_SRC_ALPHA_SATURATE':
+        :type dest: int
+        """
+
+    def getMaterialIndex(self):
+        """Returns the material’s index.
+        
+        :return: the material’s index
+        :rtype: int
+        """
+
+
 class KX_Camera(KX_GameObject):
     """A Camera object."""
 
@@ -3043,43 +1074,43 @@ class KX_Camera(KX_GameObject):
     """See bge.types.KX_Camera.sphereInsideFrustum and bge.types.KX_Camera.boxInsideFrustum"""
 
     lens = None
-    """The camera's lens value.
+    """The camera’s lens value.
     
     :type: float
     """
 
     fov = None
-    """The camera's field of view value.
+    """The camera’s field of view value.
     
     :type: float
     """
 
     ortho_scale = None
-    """The camera's view scale when in orthographic mode.
+    """The camera’s view scale when in orthographic mode.
     
     :type: float
     """
 
     near = None
-    """The camera's near clip distance.
+    """The camera’s near clip distance.
     
     :type: float
     """
 
     far = None
-    """The camera's far clip distance.
+    """The camera’s far clip distance.
     
     :type: float
     """
 
     shift_x = None
-    """The camera's horizontal shift.
+    """The camera’s horizontal shift.
     
     :type: float
     """
 
     shift_y = None
-    """The camera's vertical shift.
+    """The camera’s vertical shift.
     
     :type: float
     """
@@ -3097,25 +1128,25 @@ class KX_Camera(KX_GameObject):
     """
 
     projection_matrix = None
-    """This camera's 4x4 projection matrix.
+    """This camera’s 4x4 projection matrix.
     
     :type: 4x4 Matrix [[float]]
     """
 
     modelview_matrix = None
-    """This camera's 4x4 model view matrix. (read-only).
+    """This camera’s 4x4 model view matrix. (read-only).
     
     :type: 4x4 Matrix [[float]]
     """
 
     camera_to_world = None
-    """This camera's camera to world transform. (read-only).
+    """This camera’s camera to world transform. (read-only).
     
     :type: 4x4 Matrix [[float]]
     """
 
     world_to_camera = None
-    """This camera's world to camera transform. (read-only).
+    """This camera’s world to camera transform. (read-only).
     
     :type: 4x4 Matrix [[float]]
     """
@@ -3155,7 +1186,7 @@ class KX_Camera(KX_GameObject):
         
         :param point: The point to test (in world coordinates.)
         :type point: 3D Vector
-        :return: True if the given point is inside this camera's viewing frustum.
+        :return: True if the given point is inside this camera’s viewing frustum.
         :rtype: bool
         """
 
@@ -3197,7 +1228,7 @@ class KX_Camera(KX_GameObject):
         :param object: object name or list [x, y, z]
             (type: bge.types.KX_GameObject or 3D Vector)
         :type object: KX_GameObject or 3D Vector
-        :return: the object's position in screen coordinates.
+        :return: the object’s position in screen coordinates.
         :rtype: list [x, y]
         """
 
@@ -3271,6 +1302,44 @@ class KX_CameraActuator(SCA_IActuator):
     """
 
 
+class KX_CharacterWrapper(PyObjectPlus):
+    """A wrapper to expose character physics options."""
+
+    onGround = None
+    """Whether or not the character is on the ground. (read-only)
+    
+    :type: bool
+    """
+
+    gravity = None
+    """The gravity value used for the character.
+    
+    :type: float
+    """
+
+    maxJumps = 1
+    """The maximum number of jumps a character can perform before having to touch the ground. By default this is set to 1. 2 allows for a double jump, etc.
+    (type: int in [0, 255], default 1)
+    
+    :type: int
+    """
+
+    jumpCount = None
+    """The current jump count. This can be used to have different logic for a single jump versus a double jump. For example, a different animation for the second jump.
+    
+    :type: int
+    """
+
+    walkDirection = None
+    """The speed and direction the character is traveling in using world coordinates. This should be used instead of applyMovement() to properly move the character.
+    
+    :type: Vector((x, y, z))
+    """
+
+    def jump(self):
+        """The character jumps based on it’s jump speed."""
+
+
 class KX_ConstraintActuator(SCA_IActuator):
     """A constraint actuator limits the position, rotation, distance or orientation of an object."""
 
@@ -3341,6 +1410,67 @@ class KX_ConstraintActuator(SCA_IActuator):
     """
 
 
+class KX_ConstraintWrapper(PyObjectPlus):
+    """KX_ConstraintWrapper"""
+
+    def getConstraintId(self, val):
+        """Returns the contraint ID
+        
+        :return: the constraint ID
+        :rtype: int
+        """
+
+    def setParam(self, axis, value0, value1):
+        """Set the contraint limits
+        <Note> * Lowerlimit == Upperlimit -> axis is locked
+            * Lowerlimit > Upperlimit -> axis is free
+            * Lowerlimit < Upperlimit -> axis it limited in that range
+        For PHY_LINEHINGE_CONSTRAINT = 2 or PHY_ANGULAR_CONSTRAINT = 3:
+        For PHY_CONE_TWIST_CONSTRAINT = 4:
+        For PHY_GENERIC_6DOF_CONSTRAINT = 12:
+        
+        :type axis: int
+        :param (min) (value0): Set the minimum limit of the axis
+        :param (max) (value1): Set the maximum limit of the axis
+        :param (min) (value0): Set the minimum limit of the axis
+        :param (max) (value1): Set the maximum limit of the axis
+        :param (min) (value0): Set the minimum limit of the axis
+        :param (max) (value1): Set the maximum limit of the axis
+        :param (speed) (value0): Set the linear velocity of the axis
+        :param (force) (value1): Set the maximum force limit of the axis
+        :param (stiffness) (value0): Set the stiffness of the spring
+        :param (damping) (value1): Tendency of the spring to return to it’s original position
+        """
+
+    def getParam(self, axis):
+        """Get the contraint position or euler angle of a generic 6DOF constraint
+        
+        :type axis: int
+        :return: position
+        :rtype: float
+        :return: angle
+        :rtype: float
+        """
+
+    constraint_id = None
+    """Returns the contraint ID  (read only)
+    
+    :type: int
+    """
+
+    constraint_type = None
+    """Returns the contraint type (read only)
+    
+    :type: integer
+        - bge.constraints.POINTTOPOINT_CONSTRAINT
+        - bge.constraints.LINEHINGE_CONSTRAINT
+        - bge.constraints.ANGULAR_CONSTRAINT
+        - bge.constraints.CONETWIST_CONSTRAINT
+        - bge.constraints.VEHICLE_CONSTRAINT
+        - bge.constraints.GENERIC_6DOF_CONSTRAINT
+    """
+
+
 class KX_FontObject(KX_GameObject):
     """A Font object."""
 
@@ -3364,6 +1494,822 @@ class KX_GameActuator(SCA_IActuator):
     """The mode of this actuator. Can be on of bge.logic#game-actuatorthese constants
     
     :type: Int
+    """
+
+
+class KX_GameObject(SCA_IObject):
+    """All game objects are derived from this class.
+    Properties assigned to game objects are accessible as attributes of this class.
+    <Note> Calling ANY method or attribute on an object that has been removed from a scene will raise a SystemError,
+                                if an object may have been removed since last accessing it use the invalid attribute to check.
+    KX_GameObject can be subclassed to extend functionality. For example:
+    When subclassing objects other than empties and meshes, the specific type
+                        should be used - e.g. inherit from bge.types.BL_ArmatureObject when the object
+                        to mutate is an armature.
+    """
+
+    name = ""
+    """The object’s name. (read-only).
+    
+    :type: str
+    """
+
+    mass = None
+    """The object’s mass
+    
+    :type: float
+    """
+
+    isSuspendDynamics = None
+    """The object’s dynamic state (read-only).
+    
+    :type: bool
+    """
+
+    linearDamping = None
+    """The object’s linear damping, also known as translational damping. Can be set simultaneously with angular damping using the bge.types.KX_GameObject.setDamping method.
+    
+    :type: float between 0 and 1 inclusive.
+    """
+
+    angularDamping = None
+    """The object’s angular damping, also known as rotationation damping. Can be set simultaneously with linear damping using the bge.types.KX_GameObject.setDamping method.
+    
+    :type: float between 0 and 1 inclusive.
+    """
+
+    linVelocityMin = None
+    """Enforces the object keeps moving at a minimum velocity.
+    
+    :type: float
+    """
+
+    linVelocityMax = None
+    """Clamp the maximum linear velocity to prevent objects moving beyond a set speed.
+    
+    :type: float
+    """
+
+    angularVelocityMin = None
+    """Enforces the object keeps rotating at a minimum velocity. A value of 0.0 disables this.
+    
+    :type: non-negative float
+    """
+
+    angularVelocityMax = None
+    """Clamp the maximum angular velocity to prevent objects rotating beyond a set speed.
+                                A value of 0.0 disables clamping; it does not stop rotation.
+    
+    :type: non-negative float
+    """
+
+    localInertia = None
+    """the object’s inertia vector in local coordinates. Read only.
+    
+    :type: Vector((ix, iy, iz))
+    """
+
+    parent = None
+    """The object’s parent object. (read-only).
+    (type: bge.types.KX_GameObject or None)
+    
+    :type: KX_GameObject or None
+    """
+
+    groupMembers = None
+    """Returns the list of group members if the object is a group object (dupli group instance), otherwise None is returned.
+    (type: bge.types.CListValue of bge.types.KX_GameObject or None)
+    
+    :type: CListValue
+    """
+
+    groupObject = None
+    """Returns the group object (dupli group instance) that the object belongs to or None if the object is not part of a group.
+    (type: bge.types.KX_GameObject or None)
+    
+    :type: KX_GameObject or None
+    """
+
+    collisionGroup = None
+    """The object’s collision group.
+    
+    :type: bitfield
+    """
+
+    collisionMask = None
+    """The object’s collision mask.
+    
+    :type: bitfield
+    """
+
+    collisionCallbacks = None
+    """A list of functions to be called when a collision occurs.
+    Callbacks should either accept one argument (object), or three
+                                arguments (object, point, normal). For simplicity, per
+                                colliding object only the first collision point is reported.
+    (type: list of functions and/or methods)
+    
+    :type: list
+    """
+
+    scene = None
+    """The object’s scene. (read-only).
+    (type: bge.types.KX_Scene or None)
+    
+    :type: KX_Scene or None
+    """
+
+    visible = None
+    """visibility flag.
+    
+    :type: bool
+    """
+
+    record_animation = None
+    """Record animation for this object.
+    
+    :type: bool
+    """
+
+    color = None
+    """The object color of the object. [r, g, b, a]
+    
+    :type: mathutils.Vector
+    """
+
+    occlusion = None
+    """occlusion capability flag.
+    
+    :type: bool
+    """
+
+    position = None
+    """The object’s position. [x, y, z] On write: local position, on read: world position
+    
+    :type: mathutils.Vector
+    """
+
+    orientation = None
+    """The object’s orientation. 3x3 Matrix. You can also write a Quaternion or Euler vector. On write: local orientation, on read: world orientation
+    
+    :type: mathutils.Matrix
+    """
+
+    scaling = None
+    """The object’s scaling factor. [sx, sy, sz] On write: local scaling, on read: world scaling
+    
+    :type: mathutils.Vector
+    """
+
+    localOrientation = None
+    """The object’s local orientation. 3x3 Matrix. You can also write a Quaternion or Euler vector.
+    
+    :type: mathutils.Matrix
+    """
+
+    worldOrientation = None
+    """The object’s world orientation. 3x3 Matrix.
+    
+    :type: mathutils.Matrix
+    """
+
+    localScale = None
+    """The object’s local scaling factor. [sx, sy, sz]
+    
+    :type: mathutils.Vector
+    """
+
+    worldScale = None
+    """The object’s world scaling factor. [sx, sy, sz]
+    
+    :type: mathutils.Vector
+    """
+
+    localPosition = None
+    """The object’s local position. [x, y, z]
+    
+    :type: mathutils.Vector
+    """
+
+    worldPosition = None
+    """The object’s world position. [x, y, z]
+    
+    :type: mathutils.Vector
+    """
+
+    localTransform = None
+    """The object’s local space transform matrix. 4x4 Matrix.
+    
+    :type: mathutils.Matrix
+    """
+
+    worldTransform = None
+    """The object’s world space transform matrix. 4x4 Matrix.
+    
+    :type: mathutils.Matrix
+    """
+
+    localLinearVelocity = None
+    """The object’s local linear velocity. [x, y, z]
+    
+    :type: mathutils.Vector
+    """
+
+    worldLinearVelocity = None
+    """The object’s world linear velocity. [x, y, z]
+    
+    :type: mathutils.Vector
+    """
+
+    localAngularVelocity = None
+    """The object’s local angular velocity. [x, y, z]
+    
+    :type: mathutils.Vector
+    """
+
+    worldAngularVelocity = None
+    """The object’s world angular velocity. [x, y, z]
+    
+    :type: mathutils.Vector
+    """
+
+    timeOffset = None
+    """adjust the slowparent delay at runtime.
+    
+    :type: float
+    """
+
+    state = None
+    """the game object’s state bitmask, using the first 30 bits, one bit must always be set.
+    
+    :type: int
+    """
+
+    meshes = None
+    """a list meshes for this object.
+    (type: list of bge.types.KX_MeshProxy)
+    
+    :type: list
+    """
+
+    sensors = None
+    """a sequence of bge.types.SCA_ISensor objects with string/index lookups and iterator support.
+    
+    :type: list
+    """
+
+    controllers = None
+    """a sequence of bge.types.SCA_IController objects with string/index lookups and iterator support.
+    (type: list of bge.types.SCA_ISensor)
+    
+    :type: list
+    """
+
+    actuators = None
+    """a list of bge.types.SCA_IActuator with string/index lookups and iterator support.
+    
+    :type: list
+    """
+
+    attrDict = None
+    """get the objects internal python attribute dictionary for direct (faster) access.
+    
+    :type: dict
+    """
+
+    children = None
+    """direct children of this object, (read-only).
+    (type: bge.types.CListValue of bge.types.KX_GameObject’s)
+    
+    :type: CListValue
+    """
+
+    childrenRecursive = None
+    """all children of this object including children’s children, (read-only).
+    (type: bge.types.CListValue of bge.types.KX_GameObject’s)
+    
+    :type: CListValue
+    """
+
+    life = None
+    """The number of seconds until the object ends, assumes 50fps.
+                                (when added with an add object actuator), (read-only).
+    
+    :type: float
+    """
+
+    debug = None
+    """If true, the object’s debug properties will be displayed on screen.
+    
+    :type: bool
+    """
+
+    debugRecursive = None
+    """If true, the object’s and children’s debug properties will be displayed on screen.
+    
+    :type: bool
+    """
+
+    currentLodLevel = None
+    """The index of the level of detail (LOD) currently used by this object (read-only).
+    
+    :type: int
+    """
+
+    def endObject(self):
+        """Delete this object, can be used in place of the EndObject Actuator.
+        The actual removal of the object from the scene is delayed.
+        """
+
+    def replaceMesh(self, mesh, useDisplayMesh=True, usePhysicsMesh=False):
+        """Replace the mesh of this object with a new mesh. This works the same was as the actuator.
+        
+        :param mesh: mesh to replace or the meshes name.
+        :type mesh: MeshProxy or string
+        :param useDisplayMesh: when enabled the display mesh will be replaced (optional argument).
+        :type useDisplayMesh: bool
+        :param usePhysicsMesh: when enabled the physics mesh will be replaced (optional argument).
+        :type usePhysicsMesh: bool
+        """
+
+    def setVisible(self, visible, recursive):
+        """Sets the game object’s visible flag.
+        
+        :param visible: the visible state to set.
+        :type visible: bool
+        :param recursive: optional argument to set all childrens visibility flag too.
+        :type recursive: bool
+        """
+
+    def setOcclusion(self, occlusion, recursive):
+        """Sets the game object’s occlusion capability.
+        
+        :param occlusion: the state to set the occlusion to.
+        :type occlusion: bool
+        :param recursive: optional argument to set all childrens occlusion flag too.
+        :type recursive: bool
+        """
+
+    def alignAxisToVect(self, vect, axis=2, factor=1.0):
+        """Aligns any of the game object’s axis along the given vector.
+        
+        :param vect: a vector to align the axis.
+        :type vect: 3D vector
+        :param axis: The axis you want to align
+            * 0: X axis
+            * 1: Y axis
+            * 2: Z axis
+        :type axis: int
+        :param factor: Only rotate a feaction of the distance to the target vector (0.0 - 1.0)
+        :type factor: float
+        """
+
+    def getAxisVect(self, vect):
+        """Returns the axis vector rotates by the object’s worldspace orientation.
+                                    This is the equivalent of multiplying the vector by the orientation matrix.
+        
+        :param vect: a vector to align the axis.
+        :type vect: 3D Vector
+        :return: The vector in relation to the objects rotation.
+        :rtype: 3d vector.
+        """
+
+    def applyMovement(self, movement, local=False):
+        """Sets the game object’s movement.
+        
+        :param movement: movement vector.
+        :type movement: 3D Vector
+        :param local:
+            * False: you get the “global” movement ie: relative to world orientation.
+            * True: you get the “local” movement ie: relative to object orientation.
+        :param local: boolean
+        """
+
+    def applyRotation(self, rotation, local=False):
+        """Sets the game object’s rotation.
+        
+        :param rotation: rotation vector.
+        :type rotation: 3D Vector
+        :param local:
+            * False: you get the “global” rotation ie: relative to world orientation.
+            * True: you get the “local” rotation ie: relative to object orientation.
+        :param local: boolean
+        """
+
+    def applyForce(self, force, local=False):
+        """Sets the game object’s force.
+        This requires a dynamic object.
+        
+        :param force: force vector.
+        :type force: 3D Vector
+        :param local:
+            * False: you get the “global” force ie: relative to world orientation.
+            * True: you get the “local” force ie: relative to object orientation.
+        :type local: bool
+        """
+
+    def applyTorque(self, torque, local=False):
+        """Sets the game object’s torque.
+        This requires a dynamic object.
+        
+        :param torque: torque vector.
+        :type torque: 3D Vector
+        :param local:
+            * False: you get the “global” torque ie: relative to world orientation.
+            * True: you get the “local” torque ie: relative to object orientation.
+        :type local: bool
+        """
+
+    def getLinearVelocity(self, local=False):
+        """Gets the game object’s linear velocity.
+        This method returns the game object’s velocity through it’s center of mass, ie no angular velocity component.
+        
+        :param local:
+            * False: you get the “global” velocity ie: relative to world orientation.
+            * True: you get the “local” velocity ie: relative to object orientation.
+        :type local: bool
+        :return: the object’s linear velocity.
+        :rtype: Vector((vx, vy, vz))
+        """
+
+    def setLinearVelocity(self, velocity, local=False):
+        """Sets the game object’s linear velocity.
+        This method sets game object’s velocity through it’s center of mass,
+                                    ie no angular velocity component.
+        This requires a dynamic object.
+        
+        :param velocity: linear velocity vector.
+        :type velocity: 3D Vector
+        :param local:
+            * False: you get the “global” velocity ie: relative to world orientation.
+            * True: you get the “local” velocity ie: relative to object orientation.
+        :type local: bool
+        """
+
+    def getAngularVelocity(self, local=False):
+        """Gets the game object’s angular velocity.
+        
+        :param local:
+            * False: you get the “global” velocity ie: relative to world orientation.
+            * True: you get the “local” velocity ie: relative to object orientation.
+        :type local: bool
+        :return: the object’s angular velocity.
+        :rtype: Vector((vx, vy, vz))
+        """
+
+    def setAngularVelocity(self, velocity, local=False):
+        """Sets the game object’s angular velocity.
+        This requires a dynamic object.
+        
+        :param velocity: angular velocity vector.
+        :type velocity: bool
+        :param local:
+            * False: you get the “global” velocity ie: relative to world orientation.
+            * True: you get the “local” velocity ie: relative to object orientation.
+        """
+
+    def getVelocity(self, point=(0, 0, 0)):
+        """Gets the game object’s velocity at the specified point.
+        Gets the game object’s velocity at the specified point, including angular
+                                    components.
+        
+        :param point: optional point to return the velocity for, in local coordinates.
+        :type point: 3D Vector
+        :return: the velocity at the specified point.
+        :rtype: Vector((vx, vy, vz))
+        """
+
+    def getReactionForce(self):
+        """Gets the game object’s reaction force.
+        The reaction force is the force applied to this object over the last simulation timestep.
+                                    This also includes impulses, eg from collisions.
+        <Note> This is not implimented at the moment.
+        
+        :return: the reaction force of this object.
+        :rtype: Vector((fx, fy, fz))
+        """
+
+    def applyImpulse(self, point, impulse, local=False):
+        """Applies an impulse to the game object.
+        This will apply the specified impulse to the game object at the specified point.
+                                    If point != position, applyImpulse will also change the object’s angular momentum.
+                                    Otherwise, only linear momentum will change.
+        
+        :param point: the point to apply the impulse to (in world or local coordinates)
+        :type point: freestyle.types.StrokeVertex.point [ix, iy, iz] the point to apply the impulse to (in world or local coordinates)
+        :param impulse: impulse vector.
+        :type impulse: 3D Vector
+        :param local:
+            * False: you get the “global” impulse ie: relative to world coordinates with world orientation.
+            * True: you get the “local” impulse ie: relative to local coordinates with object orientation.
+        :type local: bool
+        """
+
+    def setDamping(self, linear_damping, angular_damping):
+        """Sets both the bge.types.KX_GameObject.linearDamping and bge.types.KX_GameObject.angularDamping simultaneously. This is more efficient than setting both properties individually.
+        
+        :param linear_damping: Linear (“translational”) damping factor.
+        :type linear_damping: float ∈ [0, 1]
+        :param angular_damping: Angular (“rotational”) damping factor.
+        :type angular_damping: float ∈ [0, 1]
+        """
+
+    def suspendDynamics(self, ghost:"Optional"):
+        """Suspends physics for this object.
+        <See also> bge.types.KX_GameObject.isSuspendDynamics allows you to inspect whether the object is in a suspended state.
+        
+        :param ghost: When set to True, collisions with the object will be ignored, similar to the “ghost” checkbox in
+                                                    Blender. When False (the default), the object becomes static but still collide with other objects.
+        :type ghost: bool
+        """
+
+    def restoreDynamics(self):
+        """Resumes physics for this object. Also reinstates collisions; the object will no longer be a ghost.
+        <Note> The objects linear velocity will be applied from when the dynamics were suspended.
+        """
+
+    def enableRigidBody(self):
+        """Enables rigid body physics for this object.
+        Rigid body physics allows the object to roll on collisions.
+        """
+
+    def disableRigidBody(self):
+        """Disables rigid body physics for this object."""
+
+    def setParent(self, parent, compound=True, ghost=True):
+        """Sets this object’s parent.
+                                    Control the shape status with the optional compound and ghost parameters:
+        In that case you can control if it should be ghost or not:
+        <Note> If the object type is sensor, it stays ghost regardless of ghost parameter
+        
+        :param parent: new parent object.
+            (type: bge.types.KX_GameObject)
+        :type parent: KX_GameObject
+        :param compound: whether the shape should be added to the parent compound shape.
+            * True: the object shape should be added to the parent compound shape.
+            * False: the object should keep its individual shape.
+        :type compound: bool
+        :param ghost: whether the object should be ghost while parented.
+            * True: if the object should be made ghost while parented.
+            * False: if the object should be solid while parented.
+        :type ghost: bool
+        """
+
+    def removeParent(self):
+        """Removes this objects parent."""
+
+    def getPhysicsId(self):
+        """Returns the user data object associated with this game object’s physics controller."""
+
+    def getPropertyNames(self):
+        """Gets a list of all property names.
+        
+        :return: All property names for this object.
+        :rtype: list
+        """
+
+    def getDistanceTo(self, other):
+        """
+        :param other: a point or another bge.types.KX_GameObject to measure the distance to.
+            (type: bge.types.KX_GameObject or list [x, y, z])
+        :type other: KX_GameObject or list [x, y, z]
+        :return: distance to another object or point.
+        :rtype: float
+        """
+
+    def getVectTo(self, other):
+        """Returns the vector and the distance to another object or point.
+                                    The vector is normalized unless the distance is 0, in which a zero length vector is returned.
+        
+        :param other: a point or another bge.types.KX_GameObject to get the vector and distance to.
+            (type: bge.types.KX_GameObject or list [x, y, z])
+        :type other: KX_GameObject or list [x, y, z]
+        :return: (distance, globalVector(3), localVector(3))
+        :rtype: 3-tuple (float, 3-tuple (x, y, z), 3-tuple (x, y, z))
+        """
+
+    def rayCastTo(self, other, dist, prop):
+        """Look towards another point/object and find first object hit within dist that matches prop.
+        The ray is always casted from the center of the object, ignoring the object itself.
+                                    The ray is casted towards the center of another object or an explicit [x, y, z] point.
+                                    Use rayCast() if you need to retrieve the hit point
+        
+        :param other: [x, y, z] or object towards which the ray is casted
+            (type: bge.types.KX_GameObject or 3-tuple)
+        :type other: KX_GameObject or 3-tuple
+        :param dist: max distance to look (can be negative => look behind); 0 or omitted => detect up to other
+        :type dist: float
+        :param prop: property name that object must have; can be omitted => detect any object
+        :type prop: str
+        :return: the first object hit or None if no object or object does not match prop
+        :param : (type: bge.types.KX_GameObject)
+        :rtype: KX_GameObject
+        """
+
+    def rayCast(self, objto, objfrom, dist, prop, face, xray, poly, mask):
+        """Look from a point/object to another point/object and find first object hit within dist that matches prop.
+                                    if poly is 0, returns a 3-tuple with object reference, hit point and hit normal or (None, None, None) if no hit.
+                                    if poly is 1, returns a 4-tuple with in addition a bge.types.KX_PolyProxy as 4th element.
+                                    if poly is 2, returns a 5-tuple with in addition a 2D vector with the UV mapping of the hit point as 5th element.
+        The face parameter determines the orientation of the normal.
+        * 0 => hit normal is always oriented towards the ray origin (as if you casted the ray from outside)
+        * 1 => hit normal is the real face normal (only for mesh object, otherwise face has no effect)
+        The ray has X-Ray capability if xray parameter is 1, otherwise the first object hit (other than self object) stops the ray.
+                                    The prop and xray parameters interact as follow.
+        * prop off, xray off: return closest hit or no hit if there is no object on the full extend of the ray.
+        * prop off, xray on : idem.
+        * prop on, xray off: return closest hit if it matches prop, no hit otherwise.
+        * prop on, xray on : return closest hit matching prop or no hit if there is no object matching prop on the full extend of the ray.
+        The bge.types.KX_PolyProxy 4th element of the return tuple when poly=1 allows to retrieve information on the polygon hit by the ray.
+                                    If there is no hit or the hit object is not a static mesh, None is returned as 4th element.
+        The ray ignores collision-free objects and faces that dont have the collision flag enabled, you can however use ghost objects.
+        <Note> The ray ignores the object on which the method is called. It is casted from/to object center or explicit [x, y, z] points.
+        
+        :param objto: [x, y, z] or object to which the ray is casted
+            (type: bge.types.KX_GameObject or 3-tuple)
+        :type objto: KX_GameObject or 3-tuple
+        :param objfrom: [x, y, z] or object from which the ray is casted; None or omitted => use self object center
+            (type: bge.types.KX_GameObject or 3-tuple or None)
+        :type objfrom: KX_GameObject or 3-tuple or None
+        :param dist: max distance to look (can be negative => look behind); 0 or omitted => detect up to to
+        :type dist: float
+        :param prop: property name that object must have; can be omitted or “” => detect any object
+        :type prop: str
+        :param face: normal option: 1=>return face normal; 0 or omitted => normal is oriented towards origin
+        :type face: int
+        :param xray: X-ray option: 1=>skip objects that don’t match prop; 0 or omitted => stop on first object
+        :type xray: int
+        :param poly: polygon option: 0, 1 or 2 to return a 3-, 4- or 5-tuple with information on the face hit.
+            * 0 or omitted: return value is a 3-tuple (object, hitpoint, hitnormal) or (None, None, None) if no hit
+            * 1: return value is a 4-tuple and the 4th element is a bge.types.KX_PolyProxy or None if no hit or the object doesn’t use a mesh collision shape.
+            * 2: return value is a 5-tuple and the 5th element is a 2-tuple (u, v) with the UV mapping of the hit point or None if no hit, or the object doesn’t use a mesh collision shape, or doesn’t have a UV mapping.
+        :type poly: int
+        :param mask: collision mask: The collision mask (16 layers mapped to a 16-bit integer) is combined with each object’s collision group, to hit only a subset of the objects in the scene. Only those objects for which collisionGroup & mask is true can be hit.
+        :type mask: bitfield
+        :return: (object, hitpoint, hitnormal) or (object, hitpoint, hitnormal, polygon) or (object, hitpoint, hitnormal, polygon, hituv).
+            * object, hitpoint and hitnormal are None if no hit.
+            * polygon is valid only if the object is valid and is a static object, a dynamic object using mesh collision shape or a soft body object, otherwise it is None
+            * hituv is valid only if polygon is valid and the object has a UV mapping, otherwise it is None
+        :param : (type: * 3-tuple (bge.types.KX_GameObject, 3-tuple (x, y, z), 3-tuple (nx, ny, nz))
+            * or 4-tuple (bge.types.KX_GameObject, 3-tuple (x, y, z), 3-tuple (nx, ny, nz), bge.types.KX_PolyProxy)
+            * or 5-tuple (bge.types.KX_GameObject, 3-tuple (x, y, z), 3-tuple (nx, ny, nz), bge.types.KX_PolyProxy, 2-tuple (u, v)))
+        :rtype: * 3-tuple (KX_GameObject, 3-tuple (x, y, z), 3-tuple (nx, ny, nz))
+            * or 4-tuple (KX_GameObject, 3-tuple (x, y, z), 3-tuple (nx, ny, nz), KX_PolyProxy)
+            * or 5-tuple (KX_GameObject, 3-tuple (x, y, z), 3-tuple (nx, ny, nz), KX_PolyProxy, 2-tuple (u, v))
+        """
+
+    def setCollisionMargin(self, margin):
+        """Set the objects collision margin.
+        <Note> If this object has no physics controller (a physics ID of zero), this function will raise RuntimeError.
+        
+        :param margin: the collision margin distance in blender units.
+        :type margin: float
+        """
+
+    def sendMessage(self, subject, body=”“, to=”“):
+        """Sends a message.
+        
+        :param subject: The subject of the message
+        :type subject: str
+        :param body: The body of the message (optional)
+        :type body: str
+        :param to: The name of the object to send the message to (optional)
+        :type to: str
+        """
+
+    def reinstancePhysicsMesh(self, gameObject, meshObject):
+        """Updates the physics system with the changed mesh.
+        If no arguments are given the physics mesh will be re-created from the first mesh assigned to the game object.
+        <Note> If this object has instances the other instances will be updated too.
+        <Note> The gameObject argument has an advantage that it can convert from a mesh with modifiers applied (such as the Subdivision Surface modifier).
+        
+        :param gameObject: optional argument, set the physics shape from this gameObjets mesh.
+            (type: string, bge.types.KX_GameObject or None)
+        :type gameObject: string, KX_GameObject or None
+        :param meshObject: optional argument, set the physics shape from this mesh.
+        :type meshObject: string, MeshProxy or None
+        :return: True if reinstance succeeded, False if it failed.
+        :rtype: bool
+        """
+
+    def get(self, key, default=None):
+        """Return the value matching key, or the default value if its not found.
+                                    :return: The key value or a default.
+        """
+
+    def playAction(self, name, start_frame, end_frame, layer=0, priority=0, blendin=0, play_mode=logic.KX_ACTION_MODE_PLAY, layer_weight=0.0, ipo_flags=0, speed=1.0, blend_mode=logic.KX_ACTION_BLEND_BLEND):
+        """Plays an action.
+        
+        :param name: the name of the action
+        :type name: str
+        :param start: the start frame of the action
+        :type start: float
+        :param end: the end frame of the action
+        :type end: float
+        :param layer: the layer the action will play in (actions in different layers are added/blended together)
+        :type layer: int
+        :param priority: only play this action if there isn’t an action currently playing in this layer with a higher (lower number) priority
+        :type priority: int
+        :param blendin: the amount of blending between this animation and the previous one on this layer
+        :type blendin: float
+        :param play_mode: the play mode
+            (type: one of bge.logic#gameobject-playaction-modethese constants)
+        :type play_mode: one
+        :param layer_weight: how much of the previous layer to use for blending
+        :type layer_weight: float
+        :param ipo_flags: flags for the old IPO behaviors (force, etc)
+        :type ipo_flags: int bitfield
+        :param speed: the playback speed of the action as a factor (1.0 = normal speed, 2.0 = 2x speed, etc)
+        :type speed: float
+        :param blend_mode: how to blend this layer with previous layers
+            (type: one of bge.logic#gameobject-playaction-blendthese constants)
+        :type blend_mode: one
+        """
+
+    def stopAction(self, layer=0):
+        """Stop playing the action on the given layer.
+        
+        :param layer: The layer to stop playing.
+        :type layer: int
+        """
+
+    def getActionFrame(self, layer=0):
+        """Gets the current frame of the action playing in the supplied layer.
+        
+        :param layer: The layer that you want to get the frame from.
+        :type layer: int
+        :return: The current frame of the action
+        :rtype: float
+        """
+
+    def getActionName(self, layer=0):
+        """Gets the name of the current action playing in the supplied layer.
+        
+        :param layer: The layer that you want to get the action name from.
+        :type layer: int
+        :return: The name of the current action
+        :rtype: str
+        """
+
+    def setActionFrame(self, frame, layer=0):
+        """Set the current frame of the action playing in the supplied layer.
+        
+        :param layer: The layer where you want to set the frame
+        :type layer: int
+        :param frame: The frame to set the action to
+        :type frame: float
+        """
+
+    def isPlayingAction(self, layer=0):
+        """Checks to see if there is an action playing in the given layer.
+        
+        :param layer: The layer to check for a playing action.
+        :type layer: int
+        :return: Whether or not the action is playing
+        :rtype: bool
+        """
+
+    def addDebugProperty(self, name, debug = True):
+        """Adds a single debug property to the debug list.
+        
+        :param name: name of the property that added to the debug list.
+        :type name: str
+        :param debug: the debug state.
+        :type debug: bool
+        """
+
+
+class KX_LibLoadStatus(PyObjectPlus):
+    """An object providing information about a LibLoad() operation."""
+
+    onFinish = None
+    """A callback that gets called when the lib load is done.
+    
+    :type: callable
+    """
+
+    finished = None
+    """The current status of the lib load.
+    
+    :type: bool
+    """
+
+    progress = None
+    """The current progress of the lib load as a normalized value from 0.0 to 1.0.
+    
+    :type: float
+    """
+
+    libraryName = ""
+    """The name of the library being loaded (the first argument to LibLoad).
+    
+    :type: str
+    """
+
+    timeTaken = None
+    """The amount of time, in seconds, the lib load took (0 until the operation is complete).
+    
+    :type: float
     """
 
 
@@ -3468,13 +2414,13 @@ class KX_LightObject(KX_GameObject):
     """
 
     lin_attenuation = None
-    """The linear component of this light's attenuation. (SPOT and NORMAL lights only).
+    """The linear component of this light’s attenuation. (SPOT and NORMAL lights only).
     
     :type: float
     """
 
     quad_attenuation = None
-    """The quadratic component of this light's attenuation (SPOT and NORMAL lights only).
+    """The quadratic component of this light’s attenuation (SPOT and NORMAL lights only).
     
     :type: float
     """
@@ -3492,6 +2438,98 @@ class KX_LightObject(KX_GameObject):
     
     :type: float
     """
+
+
+class KX_MeshProxy(SCA_IObject):
+    """A mesh object.
+    You can only change the vertex properties of a mesh object, not the mesh topology.
+    To use mesh objects effectively, you should know a bit about how the game engine handles them.
+    The correct method of iterating over every bge.types.KX_VertexProxy in a game object
+    """
+
+    materials = None
+    """(type: list of bge.types.KX_BlenderMaterial type)
+    
+    :type: list
+    """
+
+    numPolygons = None
+    """:type: int"""
+
+    numMaterials = None
+    """:type: int"""
+
+    def getMaterialName(self, matid):
+        """Gets the name of the specified material.
+        
+        :param matid: the specified material.
+        :type matid: int
+        :return: the attached material name.
+        :rtype: str
+        """
+
+    def getTextureName(self, matid):
+        """Gets the name of the specified material’s texture.
+        
+        :param matid: the specified material
+        :type matid: int
+        :return: the attached material’s texture name.
+        :rtype: str
+        """
+
+    def getVertexArrayLength(self, matid):
+        """Gets the length of the vertex array associated with the specified material.
+        There is one vertex array for each material.
+        
+        :param matid: the specified material
+        :type matid: int
+        :return: the number of verticies in the vertex array.
+        :rtype: int
+        """
+
+    def getVertex(self, matid, index):
+        """Gets the specified vertex from the mesh object.
+        
+        :param matid: the specified material
+        :type matid: int
+        :param index: the index into the vertex array.
+        :type index: int
+        :return: a vertex object.
+        :param : (type: bge.types.KX_VertexProxy)
+        :rtype: KX_VertexProxy
+        """
+
+    def getPolygon(self, index):
+        """Gets the specified polygon from the mesh.
+        
+        :param index: polygon number
+        :type index: int
+        :return: a polygon object.
+        :param : (type: bge.types.KX_PolyProxy)
+        :rtype: KX_PolyProxy
+        """
+
+    def transform(self, matid, matrix):
+        """Transforms the vertices of a mesh.
+        
+        :param matid: material index, -1 transforms all.
+        :type matid: int
+        :param matrix: transformation matrix.
+        :type matrix: 4x4 matrix [[float]]
+        """
+
+    def transformUV(self, matid, matrix, uv_index=-1, uv_index_from=-1):
+        """Transforms the vertices UV’s of a mesh.
+        
+        :param matid: material index, -1 transforms all.
+        :type matid: int
+        :param matrix: transformation matrix.
+        :type matrix: 4x4 matrix [[float]]
+        :param uv_index: optional uv index, -1 for all, otherwise 0 or 1.
+        :type uv_index: int
+        :param uv_index_from: optional uv index to copy from, -1 to transform the current uv.
+        :type uv_index_from: int
+        """
 
 
 class KX_MouseActuator(SCA_IActuator):
@@ -3538,7 +2576,7 @@ class KX_MouseActuator(SCA_IActuator):
     """
 
     object_axis = None
-    """The object's 3D axis to rotate with the mouse movement. ([x, y])
+    """The object’s 3D axis to rotate with the mouse movement. ([x, y])
     * KX_ACT_MOUSE_OBJECT_AXIS_X
     * KX_ACT_MOUSE_OBJECT_AXIS_Y
     * KX_ACT_MOUSE_OBJECT_AXIS_Z
@@ -3586,6 +2624,73 @@ class KX_MouseActuator(SCA_IActuator):
     """
 
 
+class KX_MouseFocusSensor(SCA_MouseSensor):
+    """The mouse focus sensor detects when the mouse is over the current game object.
+    The mouse focus sensor works by transforming the mouse coordinates from 2d device
+                        space to 3d space then raycasting away from the camera.
+    """
+
+    raySource = None
+    """The worldspace source of the ray (the view position).
+    
+    :type: list (vector of 3 floats)
+    """
+
+    rayTarget = None
+    """The worldspace target of the ray.
+    
+    :type: list (vector of 3 floats)
+    """
+
+    rayDirection = None
+    """The bge.types.KX_MouseFocusSensor.rayTarget - bge.types.KX_MouseFocusSensor.raySource normalized.
+    
+    :type: list (normalized vector of 3 floats)
+    """
+
+    hitObject = None
+    """the last object the mouse was over.
+    (type: bge.types.KX_GameObject or None)
+    
+    :type: KX_GameObject or None
+    """
+
+    hitPosition = None
+    """The worldspace position of the ray intersecton.
+    
+    :type: list (vector of 3 floats)
+    """
+
+    hitNormal = None
+    """the worldspace normal from the face at point of intersection.
+    
+    :type: list (normalized vector of 3 floats)
+    """
+
+    hitUV = None
+    """the UV coordinates at the point of intersection.
+    If the object has no UV mapping, it returns [0, 0].
+    The UV coordinates are not normalized, they can be < 0 or > 1 depending on the UV mapping.
+    
+    :type: list (vector of 2 floats)
+    """
+
+    usePulseFocus = None
+    """When enabled, moving the mouse over a different object generates a pulse. (only used when the ‘Mouse Over Any’ sensor option is set).
+    
+    :type: bool
+    """
+
+    useXRay = None
+    """:type: bool"""
+
+    propName = ""
+    """:type: str"""
+
+    useMaterial = None
+    """:type: bool"""
+
+
 class KX_NavMeshObject(KX_GameObject):
     """Python interface for using and controlling navigation meshes."""
 
@@ -3625,6 +2730,22 @@ class KX_NavMeshObject(KX_GameObject):
         
         :return: None
         """
+
+
+class KX_NearSensor(KX_TouchSensor):
+    """A near sensor is a specialised form of touch sensor."""
+
+    distance = None
+    """The near sensor activates when an object is within this distance.
+    
+    :type: float
+    """
+
+    resetDistance = None
+    """The near sensor deactivates when the object exceeds this distance.
+    
+    :type: float
+    """
 
 
 class KX_NetworkMessageActuator(SCA_IActuator):
@@ -3688,7 +2809,7 @@ class KX_NetworkMessageSensor(SCA_ISensor):
 
 
 class KX_ObjectActuator(SCA_IActuator):
-    """The object actuator ("Motion Actuator") applies force, torque, displacement, angular displacement,
+    """The object actuator (“Motion Actuator”) applies force, torque, displacement, angular displacement,
                         velocity, or angular velocity to an object.
                         Servo control allows to regulate force to achieve a certain speed target.
     """
@@ -3832,6 +2953,180 @@ class KX_ParentActuator(SCA_IActuator):
                                 Effective only if the shape is not added to the parent compound shape.
     
     :type: bool
+    """
+
+
+class KX_PolyProxy(SCA_IObject):
+    """A polygon holds the index of the vertex forming the poylgon.
+    Note:
+                        The polygon attributes are read-only, you need to retrieve the vertex proxy if you want
+                        to change the vertex settings.
+    """
+
+    material_name = ""
+    """The name of polygon material, empty if no material.
+    
+    :type: str
+    """
+
+    material = None
+    """The material of the polygon.
+    (type: bge.types.KX_BlenderMaterial)
+    
+    :type: KX_BlenderMaterial
+    """
+
+    texture_name = ""
+    """The texture name of the polygon.
+    
+    :type: str
+    """
+
+    material_id = None
+    """The material index of the polygon, use this to retrieve vertex proxy from mesh proxy.
+    
+    :type: int
+    """
+
+    v1 = None
+    """vertex index of the first vertex of the polygon, use this to retrieve vertex proxy from mesh proxy.
+    
+    :type: int
+    """
+
+    v2 = None
+    """vertex index of the second vertex of the polygon, use this to retrieve vertex proxy from mesh proxy.
+    
+    :type: int
+    """
+
+    v3 = None
+    """vertex index of the third vertex of the polygon, use this to retrieve vertex proxy from mesh proxy.
+    
+    :type: int
+    """
+
+    v4 = None
+    """Vertex index of the fourth vertex of the polygon, 0 if polygon has only 3 vertex
+                                Use this to retrieve vertex proxy from mesh proxy.
+    
+    :type: int
+    """
+
+    visible = None
+    """visible state of the polygon: 1=visible, 0=invisible.
+    
+    :type: int
+    """
+
+    collide = None
+    """collide state of the polygon: 1=receives collision, 0=collision free.
+    
+    :type: int
+    """
+
+    def getMaterialName(self):
+        """Returns the polygon material name with MA prefix
+        
+        :return: material name
+        :rtype: str
+        """
+
+    def getMaterial(self):
+        """
+        :return: The polygon material
+        :param : (type: bge.types.KX_BlenderMaterial)
+        :rtype: KX_BlenderMaterial
+        """
+
+    def getTextureName(self):
+        """
+        :return: The texture name
+        :rtype: str
+        """
+
+    def getMaterialIndex(self):
+        """Returns the material bucket index of the polygon.
+                                    This index and the ones returned by getVertexIndex() are needed to retrieve the vertex proxy from MeshProxy.
+        
+        :return: the material index in the mesh
+        :rtype: int
+        """
+
+    def getNumVertex(self):
+        """Returns the number of vertex of the polygon.
+        
+        :return: number of vertex, 3 or 4.
+        :rtype: int
+        """
+
+    def isVisible(self):
+        """Returns whether the polygon is visible or not
+        
+        :return: 0=invisible, 1=visible
+        :rtype: bool
+        """
+
+    def isCollider(self):
+        """Returns whether the polygon is receives collision or not
+        
+        :return: 0=collision free, 1=receives collision
+        :rtype: int
+        """
+
+    def getVertexIndex(self, vertex):
+        """Returns the mesh vertex index of a polygon vertex
+                                    This index and the one returned by getMaterialIndex() are needed to retrieve the vertex proxy from MeshProxy.
+        
+        :param vertex: index of the vertex in the polygon: 0->3
+        :param vertex: integer
+        :return: mesh vertex index
+        :rtype: int
+        """
+
+    def getMesh(self):
+        """Returns a mesh proxy
+        
+        :return: mesh proxy
+        :rtype: MeshProxy
+        """
+
+
+class KX_RadarSensor(KX_NearSensor):
+    """Radar sensor is a near sensor with a conical sensor object."""
+
+    coneOrigin = None
+    """The origin of the cone with which to test. The origin is in the middle of the cone. (read-only).
+    (type: list of floats [x, y, z])
+    
+    :type: list
+    """
+
+    coneTarget = None
+    """The center of the bottom face of the cone with which to test. (read-only).
+    (type: list of floats [x, y, z])
+    
+    :type: list
+    """
+
+    distance = None
+    """The height of the cone with which to test.
+    
+    :type: float
+    """
+
+    angle = None
+    """The angle of the cone (in degrees) with which to test.
+    
+    :type: float
+    """
+
+    axis = None
+    """The axis on which the radar cone is cast.
+    KX_RADAR_AXIS_POS_X, KX_RADAR_AXIS_POS_Y, KX_RADAR_AXIS_POS_Z,
+                                KX_RADAR_AXIS_NEG_X, KX_RADAR_AXIS_NEG_Y, KX_RADAR_AXIS_NEG_Z
+    
+    :type: integer from 0 to 5
     """
 
 
@@ -3998,6 +3293,156 @@ class KX_SCA_ReplaceMeshActuator(SCA_IActuator):
 
     def instantReplaceMesh(self):
         """Immediately replace mesh without delay."""
+
+
+class KX_Scene(PyObjectPlus):
+    """An active scene that gives access to objects, cameras, lights and scene attributes.
+    The activity culling stuff is supposed to disable logic bricks when their owner gets too far
+                        from the active camera.  It was taken from some code lurking at the back of KX_Scene - who knows
+                        what it does!
+    @bug: All attributes are read only at the moment.
+    """
+
+    name = ""
+    """The scene’s name, (read-only).
+    
+    :type: str
+    """
+
+    objects = None
+    """A list of objects in the scene, (read-only).
+    (type: bge.types.CListValue of bge.types.KX_GameObject)
+    
+    :type: CListValue
+    """
+
+    objectsInactive = None
+    """A list of objects on background layers (used for the addObject actuator), (read-only).
+    (type: bge.types.CListValue of bge.types.KX_GameObject)
+    
+    :type: CListValue
+    """
+
+    lights = None
+    """A list of lights in the scene, (read-only).
+    (type: bge.types.CListValue of bge.types.KX_LightObject)
+    
+    :type: CListValue
+    """
+
+    cameras = None
+    """A list of cameras in the scene, (read-only).
+    (type: bge.types.CListValue of bge.types.KX_Camera)
+    
+    :type: CListValue
+    """
+
+    active_camera = None
+    """The current active camera.
+    (type: bge.types.KX_Camera)
+    
+    :type: KX_Camera
+    """
+
+    world = None
+    """The current active world, (read-only).
+    (type: bge.types.KX_WorldInfo)
+    
+    :type: KX_WorldInfo
+    """
+
+    suspended = None
+    """True if the scene is suspended, (read-only).
+    
+    :type: bool
+    """
+
+    activity_culling = None
+    """True if the scene is activity culling.
+    
+    :type: bool
+    """
+
+    activity_culling_radius = None
+    """The distance outside which to do activity culling. Measured in manhattan distance.
+    
+    :type: float
+    """
+
+    dbvt_culling = None
+    """True when Dynamic Bounding box Volume Tree is set (read-only).
+    
+    :type: bool
+    """
+
+    pre_draw = None
+    """A list of callables to be run before the render step.
+    
+    :type: list
+    """
+
+    post_draw = None
+    """A list of callables to be run after the render step.
+    
+    :type: list
+    """
+
+    pre_draw_setup = None
+    """A list of callables to be run before the drawing setup (i.e., before the model view and projection matrices are computed).
+    
+    :type: list
+    """
+
+    gravity = None
+    """The scene gravity using the world x, y and z axis.
+    
+    :type: Vector((gx, gy, gz))
+    """
+
+    def addObject(self, object, reference, time=0):
+        """Adds an object to the scene like the Add Object Actuator would.
+        
+        :param object: The (name of the) object to add.
+            (type: bge.types.KX_GameObject or string)
+        :type object: KX_GameObject or string
+        :param reference: The (name of the) object which position, orientation, and scale to copy (optional), if the object to add is a light and there is not reference the light’s layer will be the same that the active layer in the blender scene.
+            (type: bge.types.KX_GameObject or string)
+        :type reference: KX_GameObject or string
+        :param time: The lifetime of the added object, in frames. A time of 0 means the object will last forever (optional).
+        :type time: int
+        :return: The newly added object.
+        :param : (type: bge.types.KX_GameObject)
+        :rtype: KX_GameObject
+        """
+
+    def end(self):
+        """Removes the scene from the game."""
+
+    def restart(self):
+        """Restarts the scene."""
+
+    def replace(self, scene):
+        """Replaces this scene with another one.
+        
+        :param scene: The name of the scene to replace this scene with.
+        :type scene: str
+        :return: True if the scene exists and was scheduled for addition, False otherwise.
+        :rtype: bool
+        """
+
+    def suspend(self):
+        """Suspends this scene."""
+
+    def resume(self):
+        """Resume this scene."""
+
+    def get(self, key, default=None):
+        """Return the value matching key, or the default value if its not found.
+                                    :return: The key value or a default.
+        """
+
+    def drawObstacleSimulation(self):
+        """Draw debug visualization of obstacle simulation."""
 
 
 class KX_SceneActuator(SCA_IActuator):
@@ -4309,6 +3754,336 @@ class KX_TrackToActuator(SCA_IActuator):
     """
 
 
+class KX_VehicleWrapper(PyObjectPlus):
+    """KX_VehicleWrapper
+    TODO - description
+    """
+
+    def addWheel(self, wheel, attachPos, downDir, axleDir, suspensionRestLength, wheelRadius, hasSteering):
+        """Add a wheel to the vehicle
+        
+        :param wheel: The object to use as a wheel.
+            (type: bge.types.KX_GameObject or a bge.types.KX_GameObject name)
+        :type wheel: KX_GameObject or a KX_GameObject name
+        :param attachPos: The position to attach the wheel, relative to the chassis object center.
+            (type: vector of 3 floats)
+        :type attachPos: vector
+        :param downDir: The direction vector pointing down to where the vehicle should collide with the floor.
+            (type: vector of 3 floats)
+        :type downDir: vector
+        :param axleDir: The axis the wheel rotates around, relative to the chassis.
+            (type: vector of 3 floats)
+        :type axleDir: vector
+        :param suspensionRestLength: The length of the suspension when no forces are being applied.
+        :type suspensionRestLength: float
+        :param wheelRadius: The radius of the wheel (half the diameter).
+        :type wheelRadius: float
+        :param hasSteering: True if the wheel should turn with steering, typically used in front wheels.
+        :type hasSteering: bool
+        """
+
+    def applyBraking(self, force, wheelIndex):
+        """Apply a braking force to the specified wheel
+        
+        :param force: the brake force
+        :type force: float
+        :param wheelIndex: index of the wheel where the force needs to be applied
+        :type wheelIndex: int
+        """
+
+    def applyEngineForce(self, force, wheelIndex):
+        """Apply an engine force to the specified wheel
+        
+        :param force: the engine force
+        :type force: float
+        :param wheelIndex: index of the wheel where the force needs to be applied
+        :type wheelIndex: int
+        """
+
+    def getConstraintId(self):
+        """Get the constraint ID
+        
+        :return: the constraint id
+        :rtype: int
+        """
+
+    def getConstraintType(self):
+        """Returns the constraint type.
+        
+        :return: constraint type
+        :rtype: int
+        """
+
+    def getNumWheels(self):
+        """Returns the number of wheels.
+        
+        :return: the number of wheels for this vehicle
+        :rtype: int
+        """
+
+    def getWheelOrientationQuaternion(self, wheelIndex):
+        """Returns the wheel orientation as a quaternion.
+        
+        :param wheelIndex: the wheel index
+        :type wheelIndex: int
+        :return: TODO Description
+        :rtype: TODO - type should be quat as per method name but from the code it looks like a matrix
+        """
+
+    def getWheelPosition(self, wheelIndex):
+        """Returns the position of the specified wheel
+        
+        :param wheelIndex: the wheel index
+        :type wheelIndex: int
+        :return: position vector
+        :rtype: list[x, y, z]
+        """
+
+    def getWheelRotation(self, wheelIndex):
+        """Returns the rotation of the specified wheel
+        
+        :param wheelIndex: the wheel index
+        :type wheelIndex: int
+        :return: the wheel rotation
+        :rtype: float
+        """
+
+    def setRollInfluence(self, rollInfluece, wheelIndex):
+        """Set the specified wheel’s roll influence.
+                                    The higher the roll influence the more the vehicle will tend to roll over in corners.
+        
+        :param rollInfluece: the wheel roll influence
+        :type rollInfluece: float
+        :param wheelIndex: the wheel index
+        :type wheelIndex: int
+        """
+
+    def setSteeringValue(self, steering, wheelIndex):
+        """Set the specified wheel’s steering
+        
+        :param steering: the wheel steering
+        :type steering: float
+        :param wheelIndex: the wheel index
+        :type wheelIndex: int
+        """
+
+    def setSuspensionCompression(self, compression, wheelIndex):
+        """Set the specified wheel’s compression
+        
+        :param compression: the wheel compression
+        :type compression: float
+        :param wheelIndex: the wheel index
+        :type wheelIndex: int
+        """
+
+    def setSuspensionDamping(self, damping, wheelIndex):
+        """Set the specified wheel’s damping
+        
+        :param damping: the wheel damping
+        :type damping: float
+        :param wheelIndex: the wheel index
+        :type wheelIndex: int
+        """
+
+    def setSuspensionStiffness(self, stiffness, wheelIndex):
+        """Set the specified wheel’s stiffness
+        
+        :param stiffness: the wheel stiffness
+        :type stiffness: float
+        :param wheelIndex: the wheel index
+        :type wheelIndex: int
+        """
+
+    def setTyreFriction(self, friction, wheelIndex):
+        """Set the specified wheel’s tyre friction
+        
+        :param friction: the tyre friction
+        :type friction: float
+        :param wheelIndex: the wheel index
+        :type wheelIndex: int
+        """
+
+
+class KX_VertexProxy(SCA_IObject):
+    """A vertex holds position, UV, color and normal information.
+    Note:
+                        The physics simulation is NOT currently updated - physics will not respond
+                        to changes in the vertex position.
+    """
+
+    XYZ = None
+    """The position of the vertex.
+    
+    :type: Vector((x, y, z))
+    """
+
+    UV = None
+    """The texture coordinates of the vertex.
+    
+    :type: Vector((u, v))
+    """
+
+    normal = None
+    """The normal of the vertex.
+    
+    :type: Vector((nx, ny, nz))
+    """
+
+    color = None
+    """The color of the vertex.
+    Black = [0.0, 0.0, 0.0, 1.0], White = [1.0, 1.0, 1.0, 1.0]
+    
+    :type: Vector((r, g, b, a))
+    """
+
+    x = None
+    """The x coordinate of the vertex.
+    
+    :type: float
+    """
+
+    y = None
+    """The y coordinate of the vertex.
+    
+    :type: float
+    """
+
+    z = None
+    """The z coordinate of the vertex.
+    
+    :type: float
+    """
+
+    u = None
+    """The u texture coordinate of the vertex.
+    
+    :type: float
+    """
+
+    v = None
+    """The v texture coordinate of the vertex.
+    
+    :type: float
+    """
+
+    u2 = None
+    """The second u texture coordinate of the vertex.
+    
+    :type: float
+    """
+
+    v2 = None
+    """The second v texture coordinate of the vertex.
+    
+    :type: float
+    """
+
+    r = None
+    """The red component of the vertex color. 0.0 <= r <= 1.0.
+    
+    :type: float
+    """
+
+    g = None
+    """The green component of the vertex color. 0.0 <= g <= 1.0.
+    
+    :type: float
+    """
+
+    b = None
+    """The blue component of the vertex color. 0.0 <= b <= 1.0.
+    
+    :type: float
+    """
+
+    a = None
+    """The alpha component of the vertex color. 0.0 <= a <= 1.0.
+    
+    :type: float
+    """
+
+    def getXYZ(self):
+        """Gets the position of this vertex.
+        
+        :return: this vertexes position in local coordinates.
+        :rtype: Vector((x, y, z))
+        """
+
+    def setXYZ(self, pos):
+        """Sets the position of this vertex.
+        
+        :type: Vector((x, y, z))
+        :param pos: the new position for this vertex in local coordinates.
+        """
+
+    def getUV(self):
+        """Gets the UV (texture) coordinates of this vertex.
+        
+        :return: this vertexes UV (texture) coordinates.
+        :rtype: Vector((u, v))
+        """
+
+    def setUV(self, uv):
+        """Sets the UV (texture) coordinates of this vertex.
+        
+        :type: Vector((u, v))
+        """
+
+    def getUV2(self):
+        """Gets the 2nd UV (texture) coordinates of this vertex.
+        
+        :return: this vertexes UV (texture) coordinates.
+        :rtype: Vector((u, v))
+        """
+
+    def setUV2(self, uv, unit):
+        """Sets the 2nd UV (texture) coordinates of this vertex.
+        
+        :type: Vector((u, v))
+        :param unit: optional argument, FLAT==1, SECOND_UV==2, defaults to SECOND_UV
+        :param unit: integer
+        """
+
+    def getRGBA(self):
+        """Gets the color of this vertex.
+        The color is represented as four bytes packed into an integer value.  The color is
+                                    packed as RGBA.
+        Since Python offers no way to get each byte without shifting, you must use the struct module to
+                                    access color in an machine independent way.
+        Because of this, it is suggested you use the r, g, b and a attributes or the color attribute instead.
+        
+        :return: packed color. 4 byte integer with one byte per color channel in RGBA format.
+        :rtype: int
+        """
+
+    def setRGBA(self, col):
+        """Sets the color of this vertex.
+        See getRGBA() for the format of col, and its relevant problems.  Use the r, g, b and a attributes
+                                    or the color attribute instead.
+        setRGBA() also accepts a four component list as argument col.  The list represents the color as [r, g, b, a]
+                                    with black = [0.0, 0.0, 0.0, 1.0] and white = [1.0, 1.0, 1.0, 1.0]
+        
+        :param col: the new color of this vertex in packed RGBA format.
+            (type: integer or bpy.types.ThemeSpaceListGeneric.list [bge.types.KX_VertexProxy.r, bge.types.KX_VertexProxy.g, bge.types.KX_VertexProxy.b, bge.types.KX_VertexProxy.a])
+        :type col: integer or bpy.types.ThemeSpaceListGeneric.list [KX_VertexProxy.r, KX_VertexProxy.g, KX_VertexProxy.b, KX_VertexProxy.a]
+        """
+
+    def getNormal(self):
+        """Gets the normal vector of this vertex.
+        
+        :return: normalized normal vector.
+        :rtype: Vector((nx, ny, nz))
+        """
+
+    def setNormal(self, normal):
+        """Sets the normal vector of this vertex.
+        (type: sequence of floats [r, g, b])
+        
+        :type: collections.Sequence
+        :param normal: the new normal of this vertex.
+        """
+
+
 class KX_VisibilityActuator(SCA_IActuator):
     """Visibility Actuator."""
 
@@ -4331,12 +4106,86 @@ class KX_VisibilityActuator(SCA_IActuator):
     """
 
 
+class KX_WorldInfo(PyObjectPlus):
+    """A world object."""
+
+    KX_MIST_QUADRATIC = None
+    """Type of quadratic attenuation used to fade mist."""
+
+    KX_MIST_LINEAR = None
+    """Type of linear attenuation used to fade mist."""
+
+    KX_MIST_INV_QUADRATIC = None
+    """Type of inverse quadratic attenuation used to fade mist."""
+
+    mistEnable = None
+    """Return the state of the mist.
+    
+    :type: bool
+    """
+
+    mistStart = None
+    """The mist start point.
+    
+    :type: float
+    """
+
+    mistDistance = None
+    """The mist distance fom the start point to reach 100% mist.
+    
+    :type: float
+    """
+
+    mistIntensity = None
+    """The mist intensity.
+    
+    :type: float
+    """
+
+    mistType = None
+    """The type of mist - must be KX_MIST_QUADRATIC, KX_MIST_LINEAR or KX_MIST_INV_QUADRATIC"""
+
+    mistColor = None
+    """The color of the mist. Black = [0.0, 0.0, 0.0], White = [1.0, 1.0, 1.0].
+                                Mist and background color sould always set to the same color.
+    
+    :type: mathutils.Color
+    """
+
+    backgroundColor = None
+    """The color of the background. Black = [0.0, 0.0, 0.0], White = [1.0, 1.0, 1.0].
+                                Mist and background color sould always set to the same color.
+    
+    :type: mathutils.Color
+    """
+
+    ambientColor = None
+    """The color of the ambient light. Black = [0.0, 0.0, 0.0], White = [1.0, 1.0, 1.0].
+    
+    :type: mathutils.Color
+    """
+
+
+class PyObjectPlus:
+    """PyObjectPlus base class of most other types in the Game Engine."""
+
+    invalid = None
+    """Test if the object has been freed by the game engine and is no longer valid.
+    Normally this is not a problem but when storing game engine data in the GameLogic module,
+                                KX_Scenes or other KX_GameObjects its possible to hold a reference to invalid data.
+                                Calling an attribute or method on an invalid object will raise a SystemError.
+    The invalid attribute allows testing for this case without exception handling.
+    
+    :type: bool
+    """
+
+
 class SCA_2DFilterActuator(SCA_IActuator):
     """Create, enable and disable 2D filters.
-    The following properties don't have an immediate effect.
+    The following properties don’t have an immediate effect.
                         You must active the actuator to get the result.
                         The actuator is not persistent: it automatically stops itself after setting up the filter
-                        but the filter remains active. To stop a filter you must activate the actuator with 'type'
+                        but the filter remains active. To stop a filter you must activate the actuator with ‘type’
                         set to bge.logic.RAS_2DFILTER_DISABLED or bge.logic.RAS_2DFILTER_NOFILTER.
     """
 
@@ -4424,6 +4273,154 @@ class SCA_DelaySensor(SCA_ISensor):
     """
 
 
+class SCA_IActuator(SCA_ILogicBrick):
+    """Base class for all actuator logic bricks."""
+
+
+class SCA_IController(SCA_ILogicBrick):
+    """Base class for all controller logic bricks."""
+
+    state = None
+    """The controllers state bitmask. This can be used with the GameObject’s state to test if the controller is active.
+    
+    :type: int bitmask
+    """
+
+    sensors = None
+    """A list of sensors linked to this controller.
+    
+    :type: sequence supporting index/string lookups and iteration.
+    """
+
+    actuators = None
+    """A list of actuators linked to this controller.
+    
+    :type: sequence supporting index/string lookups and iteration.
+    """
+
+    useHighPriority = None
+    """When set the controller executes always before all other controllers that dont have this set.
+    
+    :type: boolen
+    """
+
+
+class SCA_ILogicBrick(CValue):
+    """Base class for all logic bricks."""
+
+    executePriority = None
+    """This determines the order controllers are evaluated, and actuators are activated (lower priority is executed first).
+    
+    :type: executePriority: int
+    """
+
+    owner = None
+    """The game object this logic brick is attached to (read-only).
+    (type: bge.types.KX_GameObject or None in exceptional cases.)
+    
+    :type: KX_GameObject or None in exceptional cases.
+    """
+
+    name = ""
+    """The name of this logic brick (read-only).
+    
+    :type: str
+    """
+
+
+class SCA_IObject(CValue):
+    """This class has no python functions"""
+
+
+class SCA_ISensor(SCA_ILogicBrick):
+    """Base class for all sensor logic bricks."""
+
+    usePosPulseMode = None
+    """Flag to turn positive pulse mode on and off.
+    
+    :type: bool
+    """
+
+    useNegPulseMode = None
+    """Flag to turn negative pulse mode on and off.
+    
+    :type: bool
+    """
+
+    frequency = None
+    """The frequency for pulse mode sensors. (Deprecated: use SCA_ISensor.skippedTicks)
+    
+    :type: int
+    """
+
+    skippedTicks = None
+    """Number of logic ticks skipped between 2 active pulses
+    
+    :type: int
+    """
+
+    level = None
+    """level Option whether to detect level or edge transition when entering a state.
+                                It makes a difference only in case of logic state transition (state actuator).
+                                A level detector will immediately generate a pulse, negative or positive
+                                depending on the sensor condition, as soon as the state is activated.
+                                A edge detector will wait for a state change before generating a pulse.
+                                note: mutually exclusive with bge.types.SCA_ISensor.tap, enabling will disable bge.types.SCA_ISensor.tap.
+    
+    :type: bool
+    """
+
+    tap = None
+    """When enabled only sensors that are just activated will send a positive event,
+                                after this they will be detected as negative by the controllers.
+                                This will make a key thats held act as if its only tapped for an instant.
+                                note: mutually exclusive with bge.types.SCA_ISensor.level, enabling will disable bge.types.SCA_ISensor.level.
+    
+    :type: bool
+    """
+
+    invert = None
+    """Flag to set if this sensor activates on positive or negative events.
+    
+    :type: bool
+    """
+
+    triggered = None
+    """True if this sensor brick is in a positive state. (read-only).
+    
+    :type: bool
+    """
+
+    positive = None
+    """True if this sensor brick is in a positive state. (read-only).
+    
+    :type: bool
+    """
+
+    pos_ticks = None
+    """The number of ticks since the last positive pulse (read-only).
+    
+    :type: int
+    """
+
+    neg_ticks = None
+    """The number of ticks since the last negative pulse (read-only).
+    
+    :type: int
+    """
+
+    status = None
+    """The status of the sensor (read-only): can be one of bge.logic#sensor-statusthese constants.
+    
+    :type: int
+    """
+
+    def reset(self):
+        """Reset sensor internal state, effect depends on the type of sensor and settings.
+        The sensor is put in its initial state as if it was just activated.
+        """
+
+
 class SCA_JoystickSensor(SCA_ISensor):
     """This sensor detects player joystick events."""
 
@@ -4431,10 +4428,10 @@ class SCA_JoystickSensor(SCA_ISensor):
     """The state of the joysticks axis as a list of values bge.types.SCA_JoystickSensor.numAxis long. (read-only).
     Each specifying the value of an axis between -32767 and 32767 depending on how far the axis is pushed, 0 for nothing.
                                 The first 2 values are used by most joysticks and gamepads for directional control. 3rd and 4th values are only on some joysticks and can be used for arbitary controls.
-    * left:[-32767, 0, ...]
-    * right:[32767, 0, ...]
-    * up:[0, -32767, ...]
-    * down:[0, 32767, ...]
+    * left:[-32767, 0, …]
+    * right:[32767, 0, …]
+    * up:[0, -32767, …]
+    * down:[0, 32767, …]
     (type: list of ints.)
     
     :type: list
@@ -4449,7 +4446,7 @@ class SCA_JoystickSensor(SCA_ISensor):
     hatValues = None
     """The state of the joysticks hats as a list of values bge.types.SCA_JoystickSensor.numHats long. (read-only).
     Each specifying the direction of the hat from 1 to 12, 0 when inactive.
-    Hat directions are as follows...
+    Hat directions are as follows…
     * 0:None
     * 1:Up
     * 2:Right
@@ -4507,7 +4504,7 @@ class SCA_JoystickSensor(SCA_ISensor):
     """
 
     button = None
-    """The button index the sensor reacts to (first button = 0). When the "All Events" toggle is set, this option has no effect.
+    """The button index the sensor reacts to (first button = 0). When the “All Events” toggle is set, this option has no effect.
     
     :type: int
     """
@@ -4587,7 +4584,7 @@ class SCA_KeyboardSensor(SCA_ISensor):
     events = None
     """a list of pressed keys that have either been pressed, or just released, or are active this frame. (read-only).
     
-    :type: list [[bge.events#keyboard-keyskeycode, bge.logic#input-statusstatus], ...]
+    :type: list [[bge.events#keyboard-keyskeycode, bge.logic#input-statusstatus], …]
     """
 
     def getKeyStatus(self, keycode):
@@ -4706,8 +4703,8 @@ class SCA_PropertySensor(SCA_ISensor):
 
 
 class SCA_PythonController(SCA_IController):
-    """A Python controller uses a Python script to activate it's actuators,
-                        based on it's sensors.
+    """A Python controller uses a Python script to activate it’s actuators,
+                        based on it’s sensors.
     """
 
     owner = None
@@ -4719,8 +4716,8 @@ class SCA_PythonController(SCA_IController):
 
     script = ""
     """The value of this variable depends on the execution methid.
-    * When 'Script' execution mode is set this value contains the entire python script as a single string (not the script name as you might expect) which can be modified to run different scripts.
-    * When 'Module' execution mode is set this value will contain a single line string - module name and function "module.func" or "package.modile.func" where the module names are python textblocks or external scripts.
+    * When ‘Script’ execution mode is set this value contains the entire python script as a single string (not the script name as you might expect) which can be modified to run different scripts.
+    * When ‘Module’ execution mode is set this value will contain a single line string - module name and function “module.func” or “package.modile.func” where the module names are python textblocks or external scripts.
     
     :type: str
     """
@@ -4748,6 +4745,130 @@ class SCA_PythonController(SCA_IController):
             (type: bge.types.SCA_ActuatorSensor.actuator or the actuator name as a string)
         :type actuator: SCA_ActuatorSensor.actuator or the actuator name as a string
         """
+
+
+class SCA_PythonJoystick(PyObjectPlus):
+    """A Python interface to a joystick."""
+
+    name = ""
+    """The name assigned to the joystick by the operating system. (read-only)
+    
+    :type: str
+    """
+
+    activeButtons = None
+    """A list of active button values. (read-only)
+    
+    :type: list
+    """
+
+    axisValues = None
+    """The state of the joysticks axis as a list of values bge.types.SCA_PythonJoystick.numAxis long. (read-only).
+    Each specifying the value of an axis between -1.0 and 1.0
+                                depending on how far the axis is pushed, 0 for nothing.
+                                The first 2 values are used by most joysticks and gamepads for directional control.
+                                3rd and 4th values are only on some joysticks and can be used for arbitary controls.
+    * left:[-1.0, 0.0, …]
+    * right:[1.0, 0.0, …]
+    * up:[0.0, -1.0, …]
+    * down:[0.0, 1.0, …]
+    (type: list of ints.)
+    
+    :type: list
+    """
+
+    hatValues = None
+    """The state of the joysticks hats as a list of values bge.types.SCA_PythonJoystick.numHats long. (read-only).
+    Each specifying the direction of the hat from 1 to 12, 0 when inactive.
+    Hat directions are as follows…
+    * 0:None
+    * 1:Up
+    * 2:Right
+    * 4:Down
+    * 8:Left
+    * 3:Up - Right
+    * 6:Down - Right
+    * 12:Down - Left
+    * 9:Up - Left
+    (type: list of ints)
+    
+    :type: list
+    """
+
+    numAxis = None
+    """The number of axes for the joystick at this index. (read-only).
+    
+    :type: int
+    """
+
+    numButtons = None
+    """The number of buttons for the joystick at this index. (read-only).
+    
+    :type: int
+    """
+
+    numHats = None
+    """The number of hats for the joystick at this index. (read-only).
+    
+    :type: int
+    """
+
+
+class SCA_PythonKeyboard(PyObjectPlus):
+    """The current keyboard."""
+
+    events = None
+    """A dictionary containing the status of each keyboard event or key. (read-only).
+    
+    :type: dictionary {bge.events#keyboard-keyskeycode:bge.logic#input-statusstatus, …}
+    """
+
+    active_events = None
+    """A dictionary containing the status of only the active keyboard events or keys. (read-only).
+    
+    :type: dictionary {bge.events#keyboard-keyskeycode:bge.logic#input-statusstatus, …}
+    """
+
+    def getClipboard(self):
+        """Gets the clipboard text.
+        
+        :rtype: str
+        """
+
+    def setClipboard(self, text):
+        """Sets the clipboard text.
+        
+        :param text: New clipboard text
+        :type text: str
+        """
+
+
+class SCA_PythonMouse(PyObjectPlus):
+    """The current mouse."""
+
+    events = None
+    """a dictionary containing the status of each mouse event. (read-only).
+    
+    :type: dictionary {bge.events#mouse-keyskeycode:bge.logic#input-statusstatus, …}
+    """
+
+    active_events = None
+    """a dictionary containing the status of only the active mouse events. (read-only).
+    
+    :type: dictionary {bge.events#mouse-keyskeycode:bge.logic#input-statusstatus, …}
+    """
+
+    position = None
+    """The normalized x and y position of the mouse cursor.
+    
+    :type: tuple (x, y)
+    """
+
+    visible = None
+    """The visibility of the mouse cursor.
+    
+    :type: bool
+    """
 
 
 class SCA_RandomActuator(SCA_IActuator):
@@ -4845,7 +4966,7 @@ class SCA_RandomActuator(SCA_IActuator):
 
     def setFloatNegativeExponential(self, half_life):
         """Generate negative-exponentially distributed numbers.
-        The half-life 'time' is characterized by half_life.
+        The half-life ‘time’ is characterized by half_life.
         """
 
 
@@ -4874,125 +4995,4 @@ class SCA_XNORController(SCA_IController):
 class SCA_XORController(SCA_IController):
     """An XOR controller activates when there is the input is mixed, but not when all are on or off.
     There are no special python methods for this controller.
-    """
-
-
-class KX_MouseFocusSensor(SCA_MouseSensor):
-    """The mouse focus sensor detects when the mouse is over the current game object.
-    The mouse focus sensor works by transforming the mouse coordinates from 2d device
-                        space to 3d space then raycasting away from the camera.
-    """
-
-    raySource = None
-    """The worldspace source of the ray (the view position).
-    
-    :type: list (vector of 3 floats)
-    """
-
-    rayTarget = None
-    """The worldspace target of the ray.
-    
-    :type: list (vector of 3 floats)
-    """
-
-    rayDirection = None
-    """The bge.types.KX_MouseFocusSensor.rayTarget - bge.types.KX_MouseFocusSensor.raySource normalized.
-    
-    :type: list (normalized vector of 3 floats)
-    """
-
-    hitObject = None
-    """the last object the mouse was over.
-    (type: bge.types.KX_GameObject or None)
-    
-    :type: KX_GameObject or None
-    """
-
-    hitPosition = None
-    """The worldspace position of the ray intersecton.
-    
-    :type: list (vector of 3 floats)
-    """
-
-    hitNormal = None
-    """the worldspace normal from the face at point of intersection.
-    
-    :type: list (normalized vector of 3 floats)
-    """
-
-    hitUV = None
-    """the UV coordinates at the point of intersection.
-    If the object has no UV mapping, it returns [0, 0].
-    The UV coordinates are not normalized, they can be < 0 or > 1 depending on the UV mapping.
-    
-    :type: list (vector of 2 floats)
-    """
-
-    usePulseFocus = None
-    """When enabled, moving the mouse over a different object generates a pulse. (only used when the 'Mouse Over Any' sensor option is set).
-    
-    :type: bool
-    """
-
-    useXRay = None
-    """:type: bool"""
-
-    propName = ""
-    """:type: str"""
-
-    useMaterial = None
-    """:type: bool"""
-
-
-class KX_NearSensor(KX_TouchSensor):
-    """A near sensor is a specialised form of touch sensor."""
-
-    distance = None
-    """The near sensor activates when an object is within this distance.
-    
-    :type: float
-    """
-
-    resetDistance = None
-    """The near sensor deactivates when the object exceeds this distance.
-    
-    :type: float
-    """
-
-
-class KX_RadarSensor(KX_NearSensor):
-    """Radar sensor is a near sensor with a conical sensor object."""
-
-    coneOrigin = None
-    """The origin of the cone with which to test. The origin is in the middle of the cone. (read-only).
-    (type: list of floats [x, y, z])
-    
-    :type: list
-    """
-
-    coneTarget = None
-    """The center of the bottom face of the cone with which to test. (read-only).
-    (type: list of floats [x, y, z])
-    
-    :type: list
-    """
-
-    distance = None
-    """The height of the cone with which to test.
-    
-    :type: float
-    """
-
-    angle = None
-    """The angle of the cone (in degrees) with which to test.
-    
-    :type: float
-    """
-
-    axis = None
-    """The axis on which the radar cone is cast.
-    KX_RADAR_AXIS_POS_X, KX_RADAR_AXIS_POS_Y, KX_RADAR_AXIS_POS_Z,
-                                KX_RADAR_AXIS_NEG_X, KX_RADAR_AXIS_NEG_Y, KX_RADAR_AXIS_NEG_Z
-    
-    :type: integer from 0 to 5
     """

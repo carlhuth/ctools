@@ -53,7 +53,7 @@ def duplicate(*args, frames=0):
     return {'FINISHED'}
 
 
-def make_links_scene(*args, scene=''):
+def make_links_scene(*args, scene=”):
     """Copy selected markers to another scene
     
     :param args: (override_context, execution_context, undo)
@@ -85,7 +85,7 @@ def move(*args, frames=0):
     return {'FINISHED'}
 
 
-def rename(*args, name="RenamedMarker"):
+def rename(*args, name=”RenamedMarker”):
     """Rename first selected time marker
     
     :param args: (override_context, execution_context, undo)
@@ -120,7 +120,7 @@ def select(*args, extend=False, camera=False):
     return {'FINISHED'}
 
 
-def select_all(*args, action='TOGGLE'):
+def select_all(*args, action=’TOGGLE’):
     """Change selection of all time markers
     
     :param args: (override_context, execution_context, undo)

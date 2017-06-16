@@ -170,8 +170,17 @@ class VideoFFmpeg:
 
     filter = None
     """Pixel filter.
+    (type: one of…
+    * bge.texture.FilterBGR24
+    * bge.texture.FilterBlueScreen
+    * bge.texture.FilterColor
+    * bge.texture.FilterGray
+    * bge.texture.FilterLevel
+    * bge.texture.FilterNormal
+    * bge.texture.FilterRGB24
+    * bge.texture.FilterRGBA32)
     
-    :type: one of...
+    :type: one of…
         * FilterBGR24
         * FilterBlueScreen
         * FilterColor
@@ -215,14 +224,14 @@ class VideoFFmpeg:
         :rtype: bool
         """
 
-    def refresh(self, buffer=None, format="RGBA", timestamp=-1.0):
+    def refresh(self, buffer=None, format=”RGBA”, timestamp=-1.0):
         """Refresh video - get its status and optionally copy the frame to an external buffer.
         
         :param buffer: An optional object that implements the buffer protocol.
                                                                 If specified, the image is copied to the buffer, which must be big enough or an exception is thrown.
         :type buffer: any buffer type
         :param format: An optional image format specifier for the image that will be copied to the buffer.
-                                                                Only valid values are "RGBA" or "BGRA"
+                                                                Only valid values are “RGBA” or “BGRA”
         :type format: str
         :param timestamp: An optional timestamp (in seconds from the start of the movie)
                                                                 of the frame to be copied to the buffer.
@@ -280,8 +289,17 @@ class ImageFFmpeg:
 
     filter = None
     """Pixel filter.
+    (type: one of…
+    * bge.texture.FilterBGR24
+    * bge.texture.FilterBlueScreen
+    * bge.texture.FilterColor
+    * bge.texture.FilterGray
+    * bge.texture.FilterLevel
+    * bge.texture.FilterNormal
+    * bge.texture.FilterRGB24
+    * bge.texture.FilterRGBA32)
     
-    :type: one of...
+    :type: one of…
         * FilterBGR24
         * FilterBlueScreen
         * FilterColor
@@ -292,14 +310,14 @@ class ImageFFmpeg:
         * FilterRGBA32
     """
 
-    def refresh(self, buffer=None, format="RGBA"):
+    def refresh(self, buffer=None, format=”RGBA”):
         """Refresh image, get its status and optionally copy the frame to an external buffer.
         
         :param buffer: An optional object that implements the buffer protocol.
                                                                 If specified, the image is copied to the buffer, which must be big enough or an exception is thrown.
         :type buffer: any buffer type
         :param format: An optional image format specifier for the image that will be copied to the buffer.
-                                                                Only valid values are "RGBA" or "BGRA"
+                                                                Only valid values are “RGBA” or “BGRA”
         :type format: str
         :return: see FFmpeg Video and Image Status.
         :rtype: int
@@ -332,8 +350,17 @@ class ImageBuff:
 
     filter = None
     """Pixel filter.
+    (type: one of…
+    * bge.texture.FilterBGR24
+    * bge.texture.FilterBlueScreen
+    * bge.texture.FilterColor
+    * bge.texture.FilterGray
+    * bge.texture.FilterLevel
+    * bge.texture.FilterNormal
+    * bge.texture.FilterRGB24
+    * bge.texture.FilterRGBA32)
     
-    :type: one of...
+    :type: one of…
         * FilterBGR24
         * FilterBlueScreen
         * FilterColor
@@ -418,7 +445,7 @@ class ImageMirror:
         :type observer: bge.types.KX_GameObject
         :param mirror: Object holding the mirror.
         :type mirror: bge.types.KX_GameObject
-        :param material: ID of the mirror's material to be used for mirroring. (optional)
+        :param material: ID of the mirror’s material to be used for mirroring. (optional)
         :type material: int
         """
         return super().__new__(cls)
@@ -451,8 +478,17 @@ class ImageMirror:
 
     filter = None
     """Pixel filter.
+    (type: one of…
+    * bge.texture.FilterBGR24
+    * bge.texture.FilterBlueScreen
+    * bge.texture.FilterColor
+    * bge.texture.FilterGray
+    * bge.texture.FilterLevel
+    * bge.texture.FilterNormal
+    * bge.texture.FilterRGB24
+    * bge.texture.FilterRGBA32)
     
-    :type: one of...
+    :type: one of…
         * FilterBGR24
         * FilterBlueScreen
         * FilterColor
@@ -475,7 +511,7 @@ class ImageMirror:
     :type: bgl.Buffer or None
     """
 
-    def refresh(self, buffer=None, format="RGBA"):
+    def refresh(self, buffer=None, format=”RGBA”):
         """Refresh image - render and copy the image to an external buffer (optional)
                                         then invalidate its current content.
         
@@ -484,7 +520,7 @@ class ImageMirror:
                                                                 which must be big enough or an exception is thrown.
         :type buffer: any buffer type
         :param format: An optional image format specifier for the image that will be copied to the buffer.
-                                                                Only valid values are "RGBA" or "BGRA"
+                                                                Only valid values are “RGBA” or “BGRA”
         :type format: str
         """
 
@@ -519,8 +555,17 @@ class ImageMix:
 
     filter = None
     """Pixel filter.
+    (type: one of…
+    * bge.texture.FilterBGR24
+    * bge.texture.FilterBlueScreen
+    * bge.texture.FilterColor
+    * bge.texture.FilterGray
+    * bge.texture.FilterLevel
+    * bge.texture.FilterNormal
+    * bge.texture.FilterRGB24
+    * bge.texture.FilterRGBA32)
     
-    :type: one of...
+    :type: one of…
         * FilterBGR24
         * FilterBlueScreen
         * FilterColor
@@ -543,7 +588,15 @@ class ImageMix:
         :param id: Identifier of the source to get.
         :type id: str
         :return: Image source.
-        :rtype: one of...
+        :param : (type: one of…
+            * bge.texture.VideoFFmpeg
+            * bge.texture.ImageFFmpeg
+            * bge.texture.ImageBuff
+            * bge.texture.ImageMirror
+            * bge.texture.ImageMix
+            * bge.texture.ImageRender
+            * bge.texture.ImageViewport)
+        :rtype: one of…
             * VideoFFmpeg
             * ImageFFmpeg
             * ImageBuff
@@ -568,7 +621,7 @@ class ImageMix:
     :type: bgl.Buffer or None
     """
 
-    def refresh(self, buffer=None, format="RGBA"):
+    def refresh(self, buffer=None, format=”RGBA”):
         """Refresh image - calculate and copy the image to an external buffer (optional)
                                         then invalidate its current content.
         
@@ -577,7 +630,7 @@ class ImageMix:
                                                                 which must be big enough or an exception is thrown.
         :type buffer: any buffer type
         :param format: An optional image format specifier for the image that will be copied to the buffer.
-                                                                Only valid values are "RGBA" or "BGRA"
+                                                                Only valid values are “RGBA” or “BGRA”
         :type format: str
         """
 
@@ -599,7 +652,7 @@ class ImageMix:
         
         :param id: Identifier of the source to set.
         :type id: str
-        :param image: Image source of type...
+        :param image: Image source of type…
             * bge.texture.VideoFFmpeg
             * bge.texture.ImageFFmpeg
             * bge.texture.ImageBuff
@@ -661,8 +714,17 @@ class ImageRender:
 
     filter = None
     """Pixel filter.
+    (type: one of…
+    * bge.texture.FilterBGR24
+    * bge.texture.FilterBlueScreen
+    * bge.texture.FilterColor
+    * bge.texture.FilterGray
+    * bge.texture.FilterLevel
+    * bge.texture.FilterNormal
+    * bge.texture.FilterRGB24
+    * bge.texture.FilterRGBA32)
     
-    :type: one of...
+    :type: one of…
         * FilterBGR24
         * FilterBlueScreen
         * FilterColor
@@ -712,7 +774,7 @@ class ImageRender:
 
     depth = None
     """Use depth component of render as array of float - not suitable for texture source,
-                                    should only be used with bge.texture.imageToArray(mode='F').
+                                    should only be used with bge.texture.imageToArray(mode=’F’).
     
     :type: bool
     """
@@ -740,7 +802,7 @@ class ImageRender:
     def refresh(self):
         """"""
 
-    def refresh(self, buffer, format="RGBA"):
+    def refresh(self, buffer, format=”RGBA”):
         """Refresh video - render and optionally copy the image to an external buffer then invalidate its current content.
                                         The render may have been started earlier with the bge.texture.ImageRender.render method,
                                         in which case this function simply waits for the render operations to complete.
@@ -755,7 +817,7 @@ class ImageRender:
                                                                 and no filter is set.
         :type buffer: any buffer type of sufficient size
         :param format: An optional image format specifier for the image that will be copied to the buffer.
-                                                                Only valid values are "RGBA" or "BGRA"
+                                                                Only valid values are “RGBA” or “BGRA”
         :type format: str
         :return: True if the render is complete, False if the render cannot be performed (e.g. the camera is active)
         :rtype: bool
@@ -780,8 +842,17 @@ class ImageViewport:
 
     filter = None
     """Pixel filter.
+    (type: one of…
+    * bge.texture.FilterBGR24
+    * bge.texture.FilterBlueScreen
+    * bge.texture.FilterColor
+    * bge.texture.FilterGray
+    * bge.texture.FilterLevel
+    * bge.texture.FilterNormal
+    * bge.texture.FilterRGB24
+    * bge.texture.FilterRGBA32)
     
-    :type: one of...
+    :type: one of…
         * FilterBGR24
         * FilterBlueScreen
         * FilterColor
@@ -811,7 +882,7 @@ class ImageViewport:
     :type: collections.Sequence
     """
 
-    def refresh(self, buffer=None, format="RGBA"):
+    def refresh(self, buffer=None, format=”RGBA”):
         """Refresh video - copy the viewport to an external buffer (optional) then invalidate its current content.
         
         :param buffer: An optional object that implements the buffer protocol.
@@ -821,7 +892,7 @@ class ImageViewport:
                                                                 and no filter is set.
         :type buffer: any buffer type
         :param format: An optional image format specifier for the image that will be copied to the buffer.
-                                                                Only valid values are "RGBA" or "BGRA"
+                                                                Only valid values are “RGBA” or “BGRA”
         :type format: str
         """
 
@@ -869,26 +940,26 @@ class VideoDeckLink:
         """Image source from an external video stream captured with a DeckLink video card from
                                 Black Magic Design.
                                 Before this source can be used, a DeckLink hardware device must be installed, it can be a PCIe card
-                                or a USB device, and the 'Desktop Video' software package (version 10.4 or above must be installed)
+                                or a USB device, and the ‘Desktop Video’ software package (version 10.4 or above must be installed)
                                 on the host as described in the DeckLink documentation.
-                                If in addition you have a recent nVideo Quadro card, you can benefit from the 'GPUDirect' technology
+                                If in addition you have a recent nVideo Quadro card, you can benefit from the ‘GPUDirect’ technology
                                 to push the captured video frame very efficiently to the GPU. For this you need to install the
-                                'DeckLink SDK' version 10.4 or above and copy the 'dvp.dll' runtime library to Blender's
+                                ‘DeckLink SDK’ version 10.4 or above and copy the ‘dvp.dll’ runtime library to Blender’s
                                 installation directory or to any other place where Blender can load a DLL from.
         The format argument must be written as <displayMode>/<pixelFormat>[/3D][:<cacheSize>] where <displayMode>
                                 describes the frame size and rate and <pixelFormat> the encoding of the pixels.
                                 The optional /3D suffix is to be used if the video stream is stereo with a left and right eye feed.
                                 The optional :<cacheSize> suffix determines the number of the video frames kept in cache, by default 8.
-                                Some DeckLink cards won't work below a certain cache size.
+                                Some DeckLink cards won’t work below a certain cache size.
                                 The default value 8 should be sufficient for all cards.
                                 You may try to reduce the cache size to reduce the memory footprint. For example the The 4K Extreme is known
                                 to work with 3 frames only, the Extreme 2 needs 4 frames and the Intensity Shuttle needs 6 frames, etc.
                                 Reducing the cache size may be useful when Decklink is used in conjunction with GPUDirect:
                                 all frames must be locked in memory in that case and that puts a lot of pressure on memory.
                                 If you reduce the cache size too much,
-                                you'll get no error but no video feed either.
+                                you’ll get no error but no video feed either.
         The valid <displayMode> values are copied from the BMDDisplayMode enum in the DeckLink API
-                                without the 'bmdMode' prefix. In case a mode that is not in this list is added in a later version
+                                without the ‘bmdMode’ prefix. In case a mode that is not in this list is added in a later version
                                 of the SDK, it is also possible to specify the 4 letters of the internal code for that mode.
                                 You will find the internal code in the DeckLinkAPIModes.h file that is part of the SDK.
                                 Here is for reference the full list of supported display modes with their equivalent internal code:
@@ -898,8 +969,8 @@ class VideoDeckLink:
         Refer to the DeckLink SDK documentation for a full description of these pixel format.
                                 It is important to understand them as the decoding of the pixels is NOT done in VideoTexture
                                 for performance reason. Instead a specific shader must be used to decode the pixel in the GPU.
-                                Only the '8BitARGB', '8BitBGRA' and '10BitRGBXLE' pixel formats are mapped directly to OpenGL RGB float textures.
-                                The '8BitYUV' and '10BitYUV' pixel formats are mapped to openGL RGB float texture but require a shader to decode.
+                                Only the ‘8BitARGB’, ‘8BitBGRA’ and ‘10BitRGBXLE’ pixel formats are mapped directly to OpenGL RGB float textures.
+                                The ‘8BitYUV’ and ‘10BitYUV’ pixel formats are mapped to openGL RGB float texture but require a shader to decode.
                                 The other pixel formats are sent as a GL_RED_INTEGER texture (i.e. a texture with only the
                                 red channel coded as an unsigned 32 bit integer) and are not recommended for use.
         Example: HD1080p24/10BitYUV/3D:4 is equivalent to 24ps/v210/3D:4
@@ -909,7 +980,7 @@ class VideoDeckLink:
                                 matches exactly the video feed. If the format is wrong, no frame will be captured.
                                 It should be noted that the pixel format that you need to specify is not necessarily the actual
                                 format in the video feed. For example, the 4K Extreme card delivers 8bit RGBs pixels in the
-                                '10BitRGBXLE' format. Use the 'Media Express' application included in 'Desktop Video' to discover
+                                ‘10BitRGBXLE’ format. Use the ‘Media Express’ application included in ‘Desktop Video’ to discover
                                 which pixel format works for a particular video stream.
         
         :param format: string describing the video format to be captured.
@@ -1033,8 +1104,17 @@ class Texture:
 
     source = None
     """Source of texture.
+    (type: one of…
+    * bge.texture.VideoFFmpeg
+    * bge.texture.VideoDeckLink
+    * bge.texture.ImageFFmpeg
+    * bge.texture.ImageBuff
+    * bge.texture.ImageMirror
+    * bge.texture.ImageMix
+    * bge.texture.ImageRender
+    * bge.texture.ImageViewport)
     
-    :type: one of...
+    :type: one of…
         * VideoFFmpeg
         * VideoDeckLink
         * ImageFFmpeg
@@ -1047,7 +1127,7 @@ class Texture:
 
 
 class DeckLink:
-    def __new__(cls, cardIdx=0, format=""):
+    def __new__(cls, cardIdx=0, format=”“):
         """Certain DeckLink devices can be used to playback video: the host sends video frames regularly
                                 for immediate or scheduled playback. The video feed is outputted on HDMI or SDI interfaces.
                                 This class supports the immediate playback mode: it has a source attribute that is assigned
@@ -1063,7 +1143,7 @@ class DeckLink:
                                 The format of the string is <displayMode>[/3D].
         Refer to bge.texture.VideoDeckLink to get the list of acceptable <displayMode>.
                                 The optional /3D suffix is used to create a stereo 3D feed.
-                                In that case the 'right' attribute must also be set to specify the image source for the right eye.
+                                In that case the ‘right’ attribute must also be set to specify the image source for the right eye.
         Note: The pixel format is not specified here because it is always BGRA. The alpha channel is
                                 used in keying to mix the source with the input video feed, otherwise it is not used.
                                 If a conversion is needed to match the native video format, it is done inside the DeckLink driver
@@ -1086,8 +1166,17 @@ class DeckLink:
                                     set for whole viewport, flip disabled and no filter: the GL frame buffer is copied directly
                                     to the image buffer and directly from there to the DeckLink card (hence no buffer to buffer
                                     copy inside VideoTexture).
+    (type: one of…
+                                                - bge.texture.VideoFFmpeg
+                                                - bge.texture.VideoDeckLink
+                                                - bge.texture.ImageFFmpeg
+                                                - bge.texture.ImageBuff
+                                                - bge.texture.ImageMirror
+                                                - bge.texture.ImageMix
+                                                - bge.texture.ImageRender
+                                                - bge.texture.ImageViewport)
     
-    :type: one of...
+    :type: one of…
                                                     - VideoFFmpeg
                                                     - VideoDeckLink
                                                     - ImageFFmpeg
@@ -1103,8 +1192,17 @@ class DeckLink:
                                     that will produce the right eye images.  If the goal is to render the BGE scene in 3D,
                                     it can be achieved with 2 cameras, one for each eye, used by 2 ImageRender with an offscreen
                                     render buffer that is just the size of the video frame.
+    (type: one of…
+                                                - bge.texture.VideoFFmpeg
+                                                - bge.texture.VideoDeckLink
+                                                - bge.texture.ImageFFmpeg
+                                                - bge.texture.ImageBuff
+                                                - bge.texture.ImageMirror
+                                                - bge.texture.ImageMix
+                                                - bge.texture.ImageRender
+                                                - bge.texture.ImageViewport)
     
-    :type: one of...
+    :type: one of…
                                                     - VideoFFmpeg
                                                     - VideoDeckLink
                                                     - ImageFFmpeg
@@ -1175,9 +1273,9 @@ class FilterBlueScreen:
     """Filter for Blue Screen.
                             The RGB channels of the color are left unchanged, while the output alpha is obtained as follows:
     - if the square of the euclidian distance between the RGB color
-                                    and the filter's reference color is smaller than the filter's lower limit,
+                                    and the filter’s reference color is smaller than the filter’s lower limit,
                                     the output alpha is set to 0;
-    - if that square is bigger than the filter's upper limit, the output alpha is set to 255;
+    - if that square is bigger than the filter’s upper limit, the output alpha is set to 255;
     - otherwise the output alpha is linarly extrapoled between 0 and 255 in the interval of the limits.
     """
 
@@ -1197,8 +1295,17 @@ class FilterBlueScreen:
 
     previous = None
     """Previous pixel filter.
+    (type: one of…
+    * bge.texture.FilterBGR24
+    * bge.texture.FilterBlueScreen
+    * bge.texture.FilterColor
+    * bge.texture.FilterGray
+    * bge.texture.FilterLevel
+    * bge.texture.FilterNormal
+    * bge.texture.FilterRGB24
+    * bge.texture.FilterRGBA32)
     
-    :type: one of...
+    :type: one of…
         * FilterBGR24
         * FilterBlueScreen
         * FilterColor
@@ -1225,8 +1332,17 @@ class FilterColor:
 
     previous = None
     """Previous pixel filter.
+    (type: one of…
+    * bge.texture.FilterBGR24
+    * bge.texture.FilterBlueScreen
+    * bge.texture.FilterColor
+    * bge.texture.FilterGray
+    * bge.texture.FilterLevel
+    * bge.texture.FilterNormal
+    * bge.texture.FilterRGB24
+    * bge.texture.FilterRGBA32)
     
-    :type: one of...
+    :type: one of…
         * FilterBGR24
         * FilterBlueScreen
         * FilterColor
@@ -1245,8 +1361,17 @@ class FilterGray:
 
     previous = None
     """Previous pixel filter.
+    (type: one of…
+    * bge.texture.FilterBGR24
+    * bge.texture.FilterBlueScreen
+    * bge.texture.FilterColor
+    * bge.texture.FilterGray
+    * bge.texture.FilterLevel
+    * bge.texture.FilterNormal
+    * bge.texture.FilterRGB24
+    * bge.texture.FilterRGBA32)
     
-    :type: one of...
+    :type: one of…
         * FilterBGR24
         * FilterBlueScreen
         * FilterColor
@@ -1274,8 +1399,17 @@ class FilterLevel:
 
     previous = None
     """Previous pixel filter.
+    (type: one of…
+    * bge.texture.FilterBGR24
+    * bge.texture.FilterBlueScreen
+    * bge.texture.FilterColor
+    * bge.texture.FilterGray
+    * bge.texture.FilterLevel
+    * bge.texture.FilterNormal
+    * bge.texture.FilterRGB24
+    * bge.texture.FilterRGBA32)
     
-    :type: one of...
+    :type: one of…
         * FilterBGR24
         * FilterBlueScreen
         * FilterColor
@@ -1305,8 +1439,17 @@ class FilterNormal:
 
     previous = None
     """Previous pixel filter.
+    (type: one of…
+    * bge.texture.FilterBGR24
+    * bge.texture.FilterBlueScreen
+    * bge.texture.FilterColor
+    * bge.texture.FilterGray
+    * bge.texture.FilterLevel
+    * bge.texture.FilterNormal
+    * bge.texture.FilterRGB24
+    * bge.texture.FilterRGBA32)
     
-    :type: one of...
+    :type: one of…
         * FilterBGR24
         * FilterBlueScreen
         * FilterColor
@@ -1339,7 +1482,7 @@ def getLastError():
 def imageToArray(image, mode):
     """Returns a bgl.Buffer corresponding to the current image stored in a texture source object.
     
-    :param image: Image source object of type ...
+    :param image: Image source object of type …
         * bge.texture.VideoFFmpeg
         * bge.texture.ImageFFmpeg
         * bge.texture.ImageBuff
@@ -1351,18 +1494,18 @@ def imageToArray(image, mode):
         - You can use the characters R, G, B for the 3 color channels, A for the alpha channel,
                                                                 0 to force a fixed 0 color channel and 1 to force a fixed 255 color channel.
         - Examples:
-        - "BGR" will return 3 bytes per pixel with the
+        - ”BGR” will return 3 bytes per pixel with the
                                                                         Blue, Green and Red channels in that order.
-        - "RGB1" will return 4 bytes per pixel with the
+        - ”RGB1” will return 4 bytes per pixel with the
                                                                         Red, Green, Blue channels in that order and the alpha channel forced to 255.
-        - A special mode "F" allows to return the image as an array of float.
+        - A special mode “F” allows to return the image as an array of float.
                                                                 This mode should only be used to retrieve the depth buffer of the
                                                                 class:ImageViewport and bge.texture.ImageRender objects.
-                                                                The default mode is "RGBA".
+                                                                The default mode is “RGBA”.
     :type mode: str
     :return: An object representing the image as one dimensional array of bytes of size (pixel_size*width*height),
                                             line by line starting from the bottom of the image. The pixel size and format is determined by the mode
-                                            parameter. For mode 'F', the array is a one dimensional array of float of size (width*height).
+                                            parameter. For mode ‘F’, the array is a one dimensional array of float of size (width*height).
     :rtype: bgl.Buffer
     """
 

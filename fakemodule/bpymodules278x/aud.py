@@ -68,7 +68,7 @@ AUD_STATUS_STOPPED = None
 class Device:
     """Device objects represent an audio output backend like OpenAL or SDL, but might also represent a file output or RAM buffer output.
     lock()
-    Locks the device so that it's guaranteed, that no samples are read from the streams until unlock() is called.
+    Locks the device so that it’s guaranteed, that no samples are read from the streams until unlock() is called.
                             This is useful if you want to do start/stop/pause/resume some sounds at the same time.
     <Note> The device has to be unlocked as often as locked to be able to continue playback.
     play(factory, keep=False)
@@ -103,13 +103,13 @@ class Device:
     """The native sample format of the device."""
 
     listener_location = None
-    """The listeners's location in 3D space, a 3D tuple of floats."""
+    """The listeners’s location in 3D space, a 3D tuple of floats."""
 
     listener_orientation = None
-    """The listener's orientation in 3D space as quaternion, a 4 float tuple."""
+    """The listener’s orientation in 3D space as quaternion, a 4 float tuple."""
 
     listener_velocity = None
-    """The listener's velocity in 3D space, a 3D tuple of floats."""
+    """The listener’s velocity in 3D space, a 3D tuple of floats."""
 
     rate = None
     """The sampling rate of the device in Hz."""
@@ -134,7 +134,7 @@ class Factory:
                             This saves CPU usage needed for decoding and file access if the underlying factory reads from a file on the harddisk, but it consumes a lot of memory.
     <Note> Only known-length factories can be buffered.
     delay(time)
-    Delays by playing adding silence in front of the other factory's data.
+    Delays by playing adding silence in front of the other factory’s data.
     fadein(start, length)
     Fades a factory in by raising the volume linearly in the given time interval.
     <Note> Before the fade starts it plays silence.
@@ -143,9 +143,9 @@ class Factory:
     <Note> After the fade this factory plays silence, so that the length of the factory is not altered.
     filter(b, a = (1))
     Filters a factory with the supplied IIR filter coefficients.
-                            Without the second parameter you'll get a FIR filter.
+                            Without the second parameter you’ll get a FIR filter.
                             If the first value of the a sequence is 0 it will be set to 1 automatically.
-                            If the first value of the a sequence is neither 0 nor 1, all filter coefficients will be scaled by this value so that it is 1 in the end, you don't have to scale yourself.
+                            If the first value of the a sequence is neither 0 nor 1, all filter coefficients will be scaled by this value so that it is 1 in the end, you don’t have to scale yourself.
     highpass(frequency, Q=0.5)
     Creates a second order highpass filter based on the transfer function H(s) = s^2 / (s^2 + s/Q + 1)
     join(factory)
@@ -170,7 +170,7 @@ class Factory:
     <Note> This is a filter function, you might consider using aud.Handle.pitch instead.
     reverse()
     Plays a factory reversed.
-    <Note> The factory has to have a finite length and has to be seekable. It's recommended to use this only with factories    with fast and accurate seeking, which is not true for encoded audio files, such ones should be buffered using buffer() before being played reversed.
+    <Note> The factory has to have a finite length and has to be seekable. It’s recommended to use this only with factories    with fast and accurate seeking, which is not true for encoded audio files, such ones should be buffered using buffer() before being played reversed.
     square(threshold = 0)
     Makes a square wave out of an audio wave by setting all samples with a amplitude >= threshold to 1, all <= -threshold to -1 and all between to 0.
     volume(volume)
@@ -202,7 +202,7 @@ class Factory:
     :rtype: Factory
     :param frequency: The frequency of the sine wave in Hz.
     :type frequency: float
-    :param rate: The sampling rate in Hz. It's recommended to set this value to the playback device's samling rate to avoid resamping.
+    :param rate: The sampling rate in Hz. It’s recommended to set this value to the playback device’s samling rate to avoid resamping.
     :type rate: int
     :return: The created aud.Factory object.
     :rtype: Factory
@@ -305,7 +305,7 @@ class Handle:
     """This factor is used for distance based attenuation of the source."""
 
     cone_angle_inner = None
-    """The opening angle of the inner cone of the source. If the cone values of a source are set there are two (audible) cones with the apex at the aud.Handle.location of the source and with infinite height, heading in the direction of the source's aud.Handle.orientation.
+    """The opening angle of the inner cone of the source. If the cone values of a source are set there are two (audible) cones with the apex at the aud.Handle.location of the source and with infinite height, heading in the direction of the source’s aud.Handle.orientation.
                                     In the inner cone the volume is normal. Outside the outer cone the volume will be aud.Handle.cone_volume_outer and in the area between the volume will be interpolated linearly.
     """
 
@@ -331,13 +331,13 @@ class Handle:
     """
 
     location = None
-    """The source's location in 3D space, a 3D tuple of floats."""
+    """The source’s location in 3D space, a 3D tuple of floats."""
 
     loop_count = None
     """The (remaining) loop count of the sound. A negative value indicates infinity."""
 
     orientation = None
-    """The source's orientation in 3D space as quaternion, a 4 float tuple."""
+    """The source’s orientation in 3D space as quaternion, a 4 float tuple."""
 
     pitch = None
     """The pitch of the sound."""
@@ -346,13 +346,13 @@ class Handle:
     """The playback position of the sound in seconds."""
 
     relative = None
-    """Whether the source's location, velocity and orientation is relative or absolute to the listener."""
+    """Whether the source’s location, velocity and orientation is relative or absolute to the listener."""
 
     status = None
     """Whether the sound is playing, paused or stopped (=invalid)."""
 
     velocity = None
-    """The source's velocity in 3D space, a 3D tuple of floats."""
+    """The source’s velocity in 3D space, a 3D tuple of floats."""
 
     volume = None
     """The volume of the sound."""

@@ -53,7 +53,7 @@ def bookmark_delete(*args, index=-1):
     return {'FINISHED'}
 
 
-def bookmark_move(*args, direction='TOP'):
+def bookmark_move(*args, direction=’TOP’):
     """Move the active bookmark up/down in the list
     
     :param args: (override_context, execution_context, undo)
@@ -112,7 +112,7 @@ def delete(*args):
     return {'FINISHED'}
 
 
-def directory_new(*args, directory="", open=False):
+def directory_new(*args, directory=”“, open=False):
     """Create a new directory
     
     :param args: (override_context, execution_context, undo)
@@ -138,7 +138,7 @@ def execute(*args, need_active=False):
         override_context (dict)
         execution_context (str) -- enum in ['INVOKE_DEFAULT', 'INVOKE_REGION_WIN', 'INVOKE_REGION_CHANNELS', 'INVOKE_REGION_PREVIEW', 'INVOKE_AREA', 'INVOKE_SCREEN', 'EXEC_DEFAULT', 'EXEC_REGION_WIN', 'EXEC_REGION_CHANNELS', 'EXEC_REGION_PREVIEW', 'EXEC_AREA', 'EXEC_SCREEN']
         undo (bool)
-    :param need_active: Need Active, Only execute if there's an active selected file in the file list
+    :param need_active: Need Active, Only execute if there’s an active selected file in the file list
         (type: boolean, (optional))
     :type need_active: bool
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
@@ -163,7 +163,7 @@ def filenum(*args, increment=1):
     return {'FINISHED'}
 
 
-def filepath_drop(*args, filepath="Path"):
+def filepath_drop(*args, filepath=”Path”):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -176,7 +176,7 @@ def filepath_drop(*args, filepath="Path"):
     return {'FINISHED'}
 
 
-def find_missing_files(*args, find_all=False, directory="", filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=False, filter_blenlib=False, filemode=9, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA'):
+def find_missing_files(*args, find_all=False, directory=”“, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=False, filter_blenlib=False, filemode=9, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’):
     """Try to find missing external files
     
     :param args: (override_context, execution_context, undo)
@@ -455,7 +455,7 @@ def select_all_toggle(*args):
     return {'FINISHED'}
 
 
-def select_bookmark(*args, dir=""):
+def select_bookmark(*args, dir=”“):
     """Select a bookmarked directory
     
     :param args: (override_context, execution_context, undo)
@@ -502,7 +502,7 @@ def select_border(*args, gesture_mode=0, xmin=0, xmax=0, ymin=0, ymax=0, extend=
     return {'FINISHED'}
 
 
-def select_walk(*args, direction='UP', extend=False, fill=False):
+def select_walk(*args, direction=’UP’, extend=False, fill=False):
     """Select/Deselect files by walking through them
     
     :param args: (override_context, execution_context, undo)
@@ -537,7 +537,7 @@ def smoothscroll(*args):
     return {'FINISHED'}
 
 
-def unpack_all(*args, method='USE_LOCAL'):
+def unpack_all(*args, method=’USE_LOCAL’):
     """Unpack all files packed into this .blend to external ones
     
     :param args: (override_context, execution_context, undo)
@@ -553,7 +553,7 @@ def unpack_all(*args, method='USE_LOCAL'):
     return {'FINISHED'}
 
 
-def unpack_item(*args, method='USE_LOCAL', id_name="", id_type=19785):
+def unpack_item(*args, method=’USE_LOCAL’, id_name=”“, id_type=19785):
     """Unpack this file to an external file
     
     :param args: (override_context, execution_context, undo)

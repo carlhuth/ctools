@@ -152,7 +152,7 @@ def feather_weight_clear(*args):
     return {'FINISHED'}
 
 
-def handle_type_set(*args, type='AUTO'):
+def handle_type_set(*args, type=’AUTO’):
     """Set type of handles for selected control points
     
     :param args: (override_context, execution_context, undo)
@@ -197,7 +197,7 @@ def hide_view_set(*args, unselected=False):
     return {'FINISHED'}
 
 
-def layer_move(*args, direction='UP'):
+def layer_move(*args, direction=’UP’):
     """Move the active layer up/down in the list
     
     :param args: (override_context, execution_context, undo)
@@ -213,7 +213,7 @@ def layer_move(*args, direction='UP'):
     return {'FINISHED'}
 
 
-def layer_new(*args, name=""):
+def layer_new(*args, name=”“):
     """Add new mask layer for masking
     
     :param args: (override_context, execution_context, undo)
@@ -242,7 +242,7 @@ def layer_remove(*args):
     return {'FINISHED'}
 
 
-def new(*args, name=""):
+def new(*args, name=”“):
     """Create new mask
     
     :param args: (override_context, execution_context, undo)
@@ -272,7 +272,7 @@ def normals_make_consistent(*args):
 
 
 def parent_clear(*args):
-    """Clear the mask's parenting
+    """Clear the mask’s parenting
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -285,7 +285,7 @@ def parent_clear(*args):
 
 
 def parent_set(*args):
-    """Set the mask's parenting
+    """Set the mask’s parenting
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -373,7 +373,7 @@ def select(*args, extend=False, deselect=False, toggle=False, location=(0.0, 0.0
     return {'FINISHED'}
 
 
-def select_all(*args, action='TOGGLE'):
+def select_all(*args, action=’TOGGLE’):
     """Change selection of all curve points
     
     :param args: (override_context, execution_context, undo)
@@ -604,7 +604,7 @@ def slide_point(*args, slide_feather=False, is_new_point=False):
 
 
 def slide_spline_curvature(*args):
-    """Slide a point on the spline to define it's curvature
+    """Slide a point on the spline to define it’s curvature
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)

@@ -14,7 +14,7 @@ def bake_action(frame_start, frame_end, frame_step=1, only_selected=False, do_po
     :type do_pose: bool
     :param do_object: Bake objects.
     :type do_object: bool
-    :param do_visual_keying: Use the final transformations for baking ('visual keying')
+    :param do_visual_keying: Use the final transformations for baking (‘visual keying’)
     :type do_visual_keying: bool
     :param do_constraint_clear: Remove constraints after baking.
     :type do_constraint_clear: bool

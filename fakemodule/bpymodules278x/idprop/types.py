@@ -5,7 +5,7 @@ class IDPropertyArray:
         """Return the array as a list."""
 
     typecode = None
-    """The type of the data in the array {'f': float, 'd': double, 'i': int}."""
+    """The type of the data in the array {‘f’: float, ‘d’: double, ‘i’: int}."""
 
 
 class IDPropertyGroup:

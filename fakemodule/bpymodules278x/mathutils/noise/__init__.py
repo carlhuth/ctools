@@ -51,7 +51,7 @@ def hetero_terrain(position, H, lacunarity, octaves, offset, noise_basis=types.S
     :type lacunarity: float
     :param octaves: The number of different noise frequencies used.
     :type octaves: int
-    :param offset: The height of the terrain above 'sea level'.
+    :param offset: The height of the terrain above ‘sea level’.
     :type offset: float
     :param noise_basis: The type of noise to be evaluated.
     :type noise_basis: Value in noise.types or int
@@ -71,7 +71,7 @@ def hybrid_multi_fractal(position, H, lacunarity, octaves, offset, gain, noise_b
     :type lacunarity: float
     :param octaves: The number of different noise frequencies used.
     :type octaves: int
-    :param offset: The height of the terrain above 'sea level'.
+    :param offset: The height of the terrain above ‘sea level’.
     :type offset: float
     :param gain: Scaling applied to the values.
     :type gain: float
@@ -153,7 +153,7 @@ def ridged_multi_fractal(position, H, lacunarity, octaves, offset, gain, noise_b
     :type lacunarity: float
     :param octaves: The number of different noise frequencies used.
     :type octaves: int
-    :param offset: The height of the terrain above 'sea level'.
+    :param offset: The height of the terrain above ‘sea level’.
     :type offset: float
     :param gain: Scaling applied to the values.
     :type gain: float

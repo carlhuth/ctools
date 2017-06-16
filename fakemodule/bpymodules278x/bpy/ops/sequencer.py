@@ -1,4 +1,4 @@
-def change_effect_input(*args, swap='A_B'):
+def change_effect_input(*args, swap=’A_B’):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -14,7 +14,7 @@ def change_effect_input(*args, swap='A_B'):
     return {'FINISHED'}
 
 
-def change_effect_type(*args, type='CROSS'):
+def change_effect_type(*args, type=’CROSS’):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -47,7 +47,7 @@ def change_effect_type(*args, type='CROSS'):
     return {'FINISHED'}
 
 
-def change_path(*args, filepath="", directory="", files=None, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', use_placeholders=False):
+def change_path(*args, filepath=”“, directory=”“, files=None, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, use_placeholders=False):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -157,7 +157,7 @@ def crossfade_sounds(*args):
     return {'FINISHED'}
 
 
-def cut(*args, frame=0, type='SOFT', side='BOTH'):
+def cut(*args, frame=0, type=’SOFT’, side=’BOTH’):
     """Cut the selected strips
     
     :param args: (override_context, execution_context, undo)
@@ -221,7 +221,7 @@ def delete(*args):
     return {'FINISHED'}
 
 
-def duplicate(*args, mode='TRANSLATION'):
+def duplicate(*args, mode=’TRANSLATION’):
     """Duplicate the selected strips
     
     :param args: (override_context, execution_context, undo)
@@ -256,7 +256,7 @@ def duplicate_move(*args, SEQUENCER_OT_duplicate=None, TRANSFORM_OT_seq_slide=No
     return {'FINISHED'}
 
 
-def effect_strip_add(*args, frame_start=0, frame_end=0, channel=1, replace_sel=True, overlap=False, type='CROSS', color=(0.0, 0.0, 0.0)):
+def effect_strip_add(*args, frame_start=0, frame_end=0, channel=1, replace_sel=True, overlap=False, type=’CROSS’, color=(0.0, 0.0, 0.0)):
     """Add an effect to the sequencer, most are applied on top of existing strips
     
     :param args: (override_context, execution_context, undo)
@@ -275,7 +275,7 @@ def effect_strip_add(*args, frame_start=0, frame_end=0, channel=1, replace_sel=T
     :param replace_sel: Replace Selection, Replace the current selection
         (type: boolean, (optional))
     :type replace_sel: bool
-    :param overlap: Allow Overlap, Don't correct overlap on new sequence strips
+    :param overlap: Allow Overlap, Don’t correct overlap on new sequence strips
         (type: boolean, (optional))
     :type overlap: bool
     :param type: Type, Sequencer effect type
@@ -298,7 +298,7 @@ def effect_strip_add(*args, frame_start=0, frame_end=0, channel=1, replace_sel=T
         * 'TEXT': Text.
         (type: enum in ['CROSS', 'ADD', 'SUBTRACT', 'ALPHA_OVER', 'ALPHA_UNDER', 'GAMMA_CROSS', 'MULTIPLY', 'OVER_DROP', 'WIPE', 'GLOW', 'TRANSFORM', 'COLOR', 'SPEED', 'MULTICAM', 'ADJUSTMENT', 'GAUSSIAN_BLUR', 'TEXT'], (optional))
     :type type: str
-    :param color: Color, Initialize the strip with this color (only used when type='COLOR')
+    :param color: Color, Initialize the strip with this color (only used when type=’COLOR’)
         (type: float array of 3 items in [0, 1], (optional))
     :type color: mathutils.Vector
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
@@ -335,7 +335,7 @@ def enable_proxies(*args, proxy_25=False, proxy_50=False, proxy_75=False, proxy_
     return {'FINISHED'}
 
 
-def export_subtitles(*args, filepath="", check_existing=True, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=8, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA'):
+def export_subtitles(*args, filepath=”“, check_existing=True, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=8, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’):
     """Export .srt file containing text strips
     
     :param args: (override_context, execution_context, undo)
@@ -442,7 +442,7 @@ def gap_remove(*args, all=False):
     return {'FINISHED'}
 
 
-def image_strip_add(*args, directory="", files=None, filter_blender=False, filter_backup=False, filter_image=True, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', frame_start=0, frame_end=0, channel=1, replace_sel=True, overlap=False, use_placeholders=False):
+def image_strip_add(*args, directory=”“, files=None, filter_blender=False, filter_backup=False, filter_image=True, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, frame_start=0, frame_end=0, channel=1, replace_sel=True, overlap=False, use_placeholders=False):
     """Add an image or image sequence to the sequencer
     
     :param args: (override_context, execution_context, undo)
@@ -532,7 +532,7 @@ def image_strip_add(*args, directory="", files=None, filter_blender=False, filte
     :param replace_sel: Replace Selection, Replace the current selection
         (type: boolean, (optional))
     :type replace_sel: bool
-    :param overlap: Allow Overlap, Don't correct overlap on new sequence strips
+    :param overlap: Allow Overlap, Don’t correct overlap on new sequence strips
         (type: boolean, (optional))
     :type overlap: bool
     :param use_placeholders: Use Placeholders, Use placeholders for missing frames of the strip
@@ -561,7 +561,7 @@ def images_separate(*args, length=1):
 
 
 def lock(*args):
-    """Lock the active strip so that it can't be transformed
+    """Lock the active strip so that it can’t be transformed
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -573,7 +573,7 @@ def lock(*args):
     return {'FINISHED'}
 
 
-def mask_strip_add(*args, frame_start=0, channel=1, replace_sel=True, overlap=False, mask=''):
+def mask_strip_add(*args, frame_start=0, channel=1, replace_sel=True, overlap=False, mask=”):
     """Add a mask strip to the sequencer
     
     :param args: (override_context, execution_context, undo)
@@ -589,7 +589,7 @@ def mask_strip_add(*args, frame_start=0, channel=1, replace_sel=True, overlap=Fa
     :param replace_sel: Replace Selection, Replace the current selection
         (type: boolean, (optional))
     :type replace_sel: bool
-    :param overlap: Allow Overlap, Don't correct overlap on new sequence strips
+    :param overlap: Allow Overlap, Don’t correct overlap on new sequence strips
         (type: boolean, (optional))
     :type overlap: bool
     :param mask: Mask
@@ -640,7 +640,7 @@ def meta_toggle(*args):
     return {'FINISHED'}
 
 
-def movie_strip_add(*args, filepath="", files=None, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', frame_start=0, channel=1, replace_sel=True, overlap=False, sound=True, use_framerate=True):
+def movie_strip_add(*args, filepath=”“, files=None, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, frame_start=0, channel=1, replace_sel=True, overlap=False, sound=True, use_framerate=True):
     """Add a movie strip to the sequencer
     
     :param args: (override_context, execution_context, undo)
@@ -727,7 +727,7 @@ def movie_strip_add(*args, filepath="", files=None, filter_blender=False, filter
     :param replace_sel: Replace Selection, Replace the current selection
         (type: boolean, (optional))
     :type replace_sel: bool
-    :param overlap: Allow Overlap, Don't correct overlap on new sequence strips
+    :param overlap: Allow Overlap, Don’t correct overlap on new sequence strips
         (type: boolean, (optional))
     :type overlap: bool
     :param sound: Sound, Load sound with the movie
@@ -742,7 +742,7 @@ def movie_strip_add(*args, filepath="", files=None, filter_blender=False, filter
     return {'FINISHED'}
 
 
-def movieclip_strip_add(*args, frame_start=0, channel=1, replace_sel=True, overlap=False, clip=''):
+def movieclip_strip_add(*args, frame_start=0, channel=1, replace_sel=True, overlap=False, clip=”):
     """Add a movieclip strip to the sequencer
     
     :param args: (override_context, execution_context, undo)
@@ -758,7 +758,7 @@ def movieclip_strip_add(*args, frame_start=0, channel=1, replace_sel=True, overl
     :param replace_sel: Replace Selection, Replace the current selection
         (type: boolean, (optional))
     :type replace_sel: bool
-    :param overlap: Allow Overlap, Don't correct overlap on new sequence strips
+    :param overlap: Allow Overlap, Don’t correct overlap on new sequence strips
         (type: boolean, (optional))
     :type overlap: bool
     :param clip: Clip
@@ -906,7 +906,7 @@ def sample(*args):
     return {'FINISHED'}
 
 
-def scene_strip_add(*args, frame_start=0, channel=1, replace_sel=True, overlap=False, scene=''):
+def scene_strip_add(*args, frame_start=0, channel=1, replace_sel=True, overlap=False, scene=”):
     """Add a strip to the sequencer using a blender scene as a source
     
     :param args: (override_context, execution_context, undo)
@@ -922,7 +922,7 @@ def scene_strip_add(*args, frame_start=0, channel=1, replace_sel=True, overlap=F
     :param replace_sel: Replace Selection, Replace the current selection
         (type: boolean, (optional))
     :type replace_sel: bool
-    :param overlap: Allow Overlap, Don't correct overlap on new sequence strips
+    :param overlap: Allow Overlap, Don’t correct overlap on new sequence strips
         (type: boolean, (optional))
     :type overlap: bool
     :param scene: Scene
@@ -934,8 +934,8 @@ def scene_strip_add(*args, frame_start=0, channel=1, replace_sel=True, overlap=F
     return {'FINISHED'}
 
 
-def select(*args, extend=False, linked_handle=False, left_right='NONE', linked_time=False):
-    """Select a strip (last selected becomes the "active strip")
+def select(*args, extend=False, linked_handle=False, left_right=’NONE’, linked_time=False):
+    """Select a strip (last selected becomes the “active strip”)
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -948,7 +948,7 @@ def select(*args, extend=False, linked_handle=False, left_right='NONE', linked_t
         (type: boolean, (optional))
     :type linked_handle: bool
     :param left_right: Left/Right, Select based on the current frame side the cursor is on
-        * 'NONE': None, Don't do left-right selection.
+        * 'NONE': None, Don’t do left-right selection.
         * 'MOUSE': Mouse, Use mouse position for selection.
         * 'LEFT': Left, Select left.
         * 'RIGHT': Right, Select right.
@@ -963,7 +963,7 @@ def select(*args, extend=False, linked_handle=False, left_right='NONE', linked_t
     return {'FINISHED'}
 
 
-def select_active_side(*args, side='BOTH'):
+def select_active_side(*args, side=’BOTH’):
     """Select strips on the nominated side of the active strip
     
     :param args: (override_context, execution_context, undo)
@@ -979,7 +979,7 @@ def select_active_side(*args, side='BOTH'):
     return {'FINISHED'}
 
 
-def select_all(*args, action='TOGGLE'):
+def select_all(*args, action=’TOGGLE’):
     """Select or deselect all strips
     
     :param args: (override_context, execution_context, undo)
@@ -1030,7 +1030,7 @@ def select_border(*args, gesture_mode=0, xmin=0, xmax=0, ymin=0, ymax=0, extend=
     return {'FINISHED'}
 
 
-def select_grouped(*args, type='TYPE', extend=False, use_active_channel=False):
+def select_grouped(*args, type=’TYPE’, extend=False, use_active_channel=False):
     """Select all strips grouped by various properties
     
     :param args: (override_context, execution_context, undo)
@@ -1059,7 +1059,7 @@ def select_grouped(*args, type='TYPE', extend=False, use_active_channel=False):
     return {'FINISHED'}
 
 
-def select_handles(*args, side='BOTH'):
+def select_handles(*args, side=’BOTH’):
     """Select manipulator handles on the sides of the selected strip
     
     :param args: (override_context, execution_context, undo)
@@ -1162,7 +1162,7 @@ def snap(*args, frame=0):
     return {'FINISHED'}
 
 
-def sound_strip_add(*args, filepath="", files=None, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=True, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', frame_start=0, channel=1, replace_sel=True, overlap=False, cache=False, mono=False):
+def sound_strip_add(*args, filepath=”“, files=None, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=True, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, frame_start=0, channel=1, replace_sel=True, overlap=False, cache=False, mono=False):
     """Add a sound strip to the sequencer
     
     :param args: (override_context, execution_context, undo)
@@ -1243,13 +1243,13 @@ def sound_strip_add(*args, filepath="", files=None, filter_blender=False, filter
     :param replace_sel: Replace Selection, Replace the current selection
         (type: boolean, (optional))
     :type replace_sel: bool
-    :param overlap: Allow Overlap, Don't correct overlap on new sequence strips
+    :param overlap: Allow Overlap, Don’t correct overlap on new sequence strips
         (type: boolean, (optional))
     :type overlap: bool
     :param cache: Cache, Cache the sound in memory
         (type: boolean, (optional))
     :type cache: bool
-    :param mono: Mono, Merge all the sound's channels into one
+    :param mono: Mono, Merge all the sound’s channels into one
         (type: boolean, (optional))
     :type mono: bool
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
@@ -1277,7 +1277,7 @@ def strip_jump(*args, next=True, center=True):
     return {'FINISHED'}
 
 
-def strip_modifier_add(*args, type='COLOR_BALANCE'):
+def strip_modifier_add(*args, type=’COLOR_BALANCE’):
     """Add a modifier to the strip
     
     :param args: (override_context, execution_context, undo)
@@ -1293,7 +1293,7 @@ def strip_modifier_add(*args, type='COLOR_BALANCE'):
     return {'FINISHED'}
 
 
-def strip_modifier_copy(*args, type='REPLACE'):
+def strip_modifier_copy(*args, type=’REPLACE’):
     """Copy modifiers of the active strip to all selected strips
     
     :param args: (override_context, execution_context, undo)
@@ -1311,7 +1311,7 @@ def strip_modifier_copy(*args, type='REPLACE'):
     return {'FINISHED'}
 
 
-def strip_modifier_move(*args, name="Name", direction='UP'):
+def strip_modifier_move(*args, name=”Name”, direction=’UP’):
     """Move modifier up and down in the stack
     
     :param args: (override_context, execution_context, undo)
@@ -1332,7 +1332,7 @@ def strip_modifier_move(*args, name="Name", direction='UP'):
     return {'FINISHED'}
 
 
-def strip_modifier_remove(*args, name="Name"):
+def strip_modifier_remove(*args, name=”Name”):
     """Remove a modifier from the strip
     
     :param args: (override_context, execution_context, undo)
@@ -1348,7 +1348,7 @@ def strip_modifier_remove(*args, name="Name"):
     return {'FINISHED'}
 
 
-def swap(*args, side='RIGHT'):
+def swap(*args, side=’RIGHT’):
     """Swap active strip with strip to the right or left
     
     :param args: (override_context, execution_context, undo)
@@ -1391,7 +1391,7 @@ def swap_inputs(*args):
 
 
 def unlock(*args):
-    """Unlock the active strip so that it can't be transformed
+    """Unlock the active strip so that it can’t be transformed
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)

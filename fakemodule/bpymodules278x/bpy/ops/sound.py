@@ -11,8 +11,8 @@ def bake_animation(*args):
     return {'FINISHED'}
 
 
-def mixdown(*args, filepath="", check_existing=True, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=True, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', accuracy=1024, container='FLAC', codec='FLAC', format='S16', bitrate=192, split_channels=False):
-    """Mixes the scene's audio to a sound file
+def mixdown(*args, filepath=”“, check_existing=True, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=True, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, accuracy=1024, container=’FLAC’, codec=’FLAC’, format=’S16’, bitrate=192, split_channels=False):
+    """Mix the scene’s audio to a sound file
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -87,24 +87,16 @@ def mixdown(*args, filepath="", check_existing=True, filter_blender=False, filte
         (type: int in [1, inf], (optional))
     :type accuracy: int
     :param container: Container, File format
-        * 'AC3': ac3, Dolby Digital ATRAC 3.
         * 'FLAC': flac, Free Lossless Audio Codec.
-        * 'MATROSKA': mkv, Matroska.
-        * 'MP2': mp2, MPEG-1 Audio Layer II.
-        * 'MP3': mp3, MPEG-2 Audio Layer III.
         * 'OGG': ogg, Xiph.Org Ogg Container.
         * 'WAV': wav, Waveform Audio File Format.
-        (type: enum in ['AC3', 'FLAC', 'MATROSKA', 'MP2', 'MP3', 'OGG', 'WAV'], (optional))
+        (type: enum in ['FLAC', 'OGG', 'WAV'], (optional))
     :type container: str
     :param codec: Codec, Audio Codec
-        * 'AAC': AAC, Advanced Audio Coding.
-        * 'AC3': AC3, Dolby Digital ATRAC 3.
         * 'FLAC': FLAC, Free Lossless Audio Codec.
-        * 'MP2': MP2, MPEG-1 Audio Layer II.
-        * 'MP3': MP3, MPEG-2 Audio Layer III.
         * 'PCM': PCM, Pulse Code Modulation (RAW).
         * 'VORBIS': Vorbis, Xiph.Org Vorbis Codec.
-        (type: enum in ['AAC', 'AC3', 'FLAC', 'MP2', 'MP3', 'PCM', 'VORBIS'], (optional))
+        (type: enum in ['FLAC', 'PCM', 'VORBIS'], (optional))
     :type codec: str
     :param format: Format, Sample format
         * 'U8': U8, 8 bit unsigned.
@@ -127,7 +119,7 @@ def mixdown(*args, filepath="", check_existing=True, filter_blender=False, filte
     return {'FINISHED'}
 
 
-def open(*args, filepath="", filter_blender=False, filter_backup=False, filter_image=False, filter_movie=True, filter_python=False, filter_font=False, filter_sound=True, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', cache=False, mono=False):
+def open(*args, filepath=”“, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=True, filter_python=False, filter_font=False, filter_sound=True, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, cache=False, mono=False):
     """Load a sound file
     
     :param args: (override_context, execution_context, undo)
@@ -205,7 +197,7 @@ def open(*args, filepath="", filter_blender=False, filter_backup=False, filter_i
     :param cache: Cache, Cache the sound in memory
         (type: boolean, (optional))
     :type cache: bool
-    :param mono: Mono, Merge all the sound's channels into one
+    :param mono: Mono, Merge all the sound’s channels into one
         (type: boolean, (optional))
     :type mono: bool
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
@@ -214,7 +206,7 @@ def open(*args, filepath="", filter_blender=False, filter_backup=False, filter_i
     return {'FINISHED'}
 
 
-def open_mono(*args, filepath="", filter_blender=False, filter_backup=False, filter_image=False, filter_movie=True, filter_python=False, filter_font=False, filter_sound=True, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', cache=False, mono=True):
+def open_mono(*args, filepath=”“, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=True, filter_python=False, filter_font=False, filter_sound=True, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, cache=False, mono=True):
     """Load a sound file as mono
     
     :param args: (override_context, execution_context, undo)
@@ -314,7 +306,7 @@ def pack(*args):
     return {'FINISHED'}
 
 
-def unpack(*args, method='USE_LOCAL', id=""):
+def unpack(*args, method=’USE_LOCAL’, id=”“):
     """Unpack the sound to the samples filename
     
     :param args: (override_context, execution_context, undo)

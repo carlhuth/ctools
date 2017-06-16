@@ -11,7 +11,7 @@ def armature_apply(*args):
     return {'FINISHED'}
 
 
-def autoside_names(*args, axis='XAXIS'):
+def autoside_names(*args, axis=’XAXIS’):
     """Automatically renames the selected bones according to which side of the target axis they fall on
     
     :param args: (override_context, execution_context, undo)
@@ -46,7 +46,7 @@ def bone_layers(*args, layers=(False, False, False, False, False, False, False, 
     return {'FINISHED'}
 
 
-def breakdown(*args, percentage=0.5, prev_frame=0, next_frame=0, channels='ALL', axis_lock='FREE'):
+def breakdown(*args, percentage=0.5, prev_frame=0, next_frame=0, channels=’ALL’, axis_lock=’FREE’):
     """Create a suitable breakdown pose on the current frame
     
     :param args: (override_context, execution_context, undo)
@@ -84,7 +84,7 @@ def breakdown(*args, percentage=0.5, prev_frame=0, next_frame=0, channels='ALL',
     return {'FINISHED'}
 
 
-def constraint_add(*args, type=''):
+def constraint_add(*args, type=”):
     """Add a constraint to the active bone
     
     :param args: (override_context, execution_context, undo)
@@ -106,22 +106,21 @@ def constraint_add(*args, type=''):
         * 'MAINTAIN_VOLUME': Maintain Volume, Compensate for scaling one axis by applying suitable scaling to the other two axes.
         * 'TRANSFORM': Transformation, Use one transform property from target to control another (or same) property on owner.
         * 'TRANSFORM_CACHE': Transform Cache, Look up the transformation matrix from an external file.
-        * 'CLAMP_TO': Clamp To, Restrict movements to lie along a curve by remapping location along curve's longest axis.
+        * 'CLAMP_TO': Clamp To, Restrict movements to lie along a curve by remapping location along curve’s longest axis.
         * 'DAMPED_TRACK': Damped Track, Point towards a target by performing the smallest rotation necessary.
         * 'IK': Inverse Kinematics, Control a chain of bones by specifying the endpoint target (Bones only).
-        * 'LOCKED_TRACK': Locked Track, Rotate around the specified ('locked') axis to point towards a target.
+        * 'LOCKED_TRACK': Locked Track, Rotate around the specified (‘locked’) axis to point towards a target.
         * 'SPLINE_IK': Spline IK, Align chain of bones along a curve (Bones only).
         * 'STRETCH_TO': Stretch To, Stretch along Y-Axis to point towards a target.
         * 'TRACK_TO': Track To, Legacy tracking constraint prone to twisting artifacts.
         * 'ACTION': Action, Use transform property of target to look up pose for owner from an Action.
-        * 'CHILD_OF': Child Of, Make target the 'detachable' parent of owner.
-        * 'FLOOR': Floor, Use position (and optionally rotation) of target to define a 'wall' or 'floor' that the owner can not cross.
+        * 'CHILD_OF': Child Of, Make target the ‘detachable’ parent of owner.
+        * 'FLOOR': Floor, Use position (and optionally rotation) of target to define a ‘wall’ or ‘floor’ that the owner can not cross.
         * 'FOLLOW_PATH': Follow Path, Use to animate an object/bone following a path.
         * 'PIVOT': Pivot, Change pivot point for transforms (buggy).
         * 'RIGID_BODY_JOINT': Rigid Body Joint, Use to define a Rigid Body Constraint (for Game Engine use only).
-        * 'SCRIPT': Script, Custom constraint(s) written in Python (Not yet implemented).
         * 'SHRINKWRAP': Shrinkwrap, Restrict movements to surface of target mesh.
-        (type: enum in ['CAMERA_SOLVER', 'FOLLOW_TRACK', 'OBJECT_SOLVER', 'COPY_LOCATION', 'COPY_ROTATION', 'COPY_SCALE', 'COPY_TRANSFORMS', 'LIMIT_DISTANCE', 'LIMIT_LOCATION', 'LIMIT_ROTATION', 'LIMIT_SCALE', 'MAINTAIN_VOLUME', 'TRANSFORM', 'TRANSFORM_CACHE', 'CLAMP_TO', 'DAMPED_TRACK', 'IK', 'LOCKED_TRACK', 'SPLINE_IK', 'STRETCH_TO', 'TRACK_TO', 'ACTION', 'CHILD_OF', 'FLOOR', 'FOLLOW_PATH', 'PIVOT', 'RIGID_BODY_JOINT', 'SCRIPT', 'SHRINKWRAP'], (optional))
+        (type: enum in ['CAMERA_SOLVER', 'FOLLOW_TRACK', 'OBJECT_SOLVER', 'COPY_LOCATION', 'COPY_ROTATION', 'COPY_SCALE', 'COPY_TRANSFORMS', 'LIMIT_DISTANCE', 'LIMIT_LOCATION', 'LIMIT_ROTATION', 'LIMIT_SCALE', 'MAINTAIN_VOLUME', 'TRANSFORM', 'TRANSFORM_CACHE', 'CLAMP_TO', 'DAMPED_TRACK', 'IK', 'LOCKED_TRACK', 'SPLINE_IK', 'STRETCH_TO', 'TRACK_TO', 'ACTION', 'CHILD_OF', 'FLOOR', 'FOLLOW_PATH', 'PIVOT', 'RIGID_BODY_JOINT', 'SHRINKWRAP'], (optional))
     :type type: str
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
     :rtype: set[str]
@@ -129,7 +128,7 @@ def constraint_add(*args, type=''):
     return {'FINISHED'}
 
 
-def constraint_add_with_targets(*args, type=''):
+def constraint_add_with_targets(*args, type=”):
     """Add a constraint to the active bone, with target (where applicable) set to the selected Objects/Bones
     
     :param args: (override_context, execution_context, undo)
@@ -151,22 +150,21 @@ def constraint_add_with_targets(*args, type=''):
         * 'MAINTAIN_VOLUME': Maintain Volume, Compensate for scaling one axis by applying suitable scaling to the other two axes.
         * 'TRANSFORM': Transformation, Use one transform property from target to control another (or same) property on owner.
         * 'TRANSFORM_CACHE': Transform Cache, Look up the transformation matrix from an external file.
-        * 'CLAMP_TO': Clamp To, Restrict movements to lie along a curve by remapping location along curve's longest axis.
+        * 'CLAMP_TO': Clamp To, Restrict movements to lie along a curve by remapping location along curve’s longest axis.
         * 'DAMPED_TRACK': Damped Track, Point towards a target by performing the smallest rotation necessary.
         * 'IK': Inverse Kinematics, Control a chain of bones by specifying the endpoint target (Bones only).
-        * 'LOCKED_TRACK': Locked Track, Rotate around the specified ('locked') axis to point towards a target.
+        * 'LOCKED_TRACK': Locked Track, Rotate around the specified (‘locked’) axis to point towards a target.
         * 'SPLINE_IK': Spline IK, Align chain of bones along a curve (Bones only).
         * 'STRETCH_TO': Stretch To, Stretch along Y-Axis to point towards a target.
         * 'TRACK_TO': Track To, Legacy tracking constraint prone to twisting artifacts.
         * 'ACTION': Action, Use transform property of target to look up pose for owner from an Action.
-        * 'CHILD_OF': Child Of, Make target the 'detachable' parent of owner.
-        * 'FLOOR': Floor, Use position (and optionally rotation) of target to define a 'wall' or 'floor' that the owner can not cross.
+        * 'CHILD_OF': Child Of, Make target the ‘detachable’ parent of owner.
+        * 'FLOOR': Floor, Use position (and optionally rotation) of target to define a ‘wall’ or ‘floor’ that the owner can not cross.
         * 'FOLLOW_PATH': Follow Path, Use to animate an object/bone following a path.
         * 'PIVOT': Pivot, Change pivot point for transforms (buggy).
         * 'RIGID_BODY_JOINT': Rigid Body Joint, Use to define a Rigid Body Constraint (for Game Engine use only).
-        * 'SCRIPT': Script, Custom constraint(s) written in Python (Not yet implemented).
         * 'SHRINKWRAP': Shrinkwrap, Restrict movements to surface of target mesh.
-        (type: enum in ['CAMERA_SOLVER', 'FOLLOW_TRACK', 'OBJECT_SOLVER', 'COPY_LOCATION', 'COPY_ROTATION', 'COPY_SCALE', 'COPY_TRANSFORMS', 'LIMIT_DISTANCE', 'LIMIT_LOCATION', 'LIMIT_ROTATION', 'LIMIT_SCALE', 'MAINTAIN_VOLUME', 'TRANSFORM', 'TRANSFORM_CACHE', 'CLAMP_TO', 'DAMPED_TRACK', 'IK', 'LOCKED_TRACK', 'SPLINE_IK', 'STRETCH_TO', 'TRACK_TO', 'ACTION', 'CHILD_OF', 'FLOOR', 'FOLLOW_PATH', 'PIVOT', 'RIGID_BODY_JOINT', 'SCRIPT', 'SHRINKWRAP'], (optional))
+        (type: enum in ['CAMERA_SOLVER', 'FOLLOW_TRACK', 'OBJECT_SOLVER', 'COPY_LOCATION', 'COPY_ROTATION', 'COPY_SCALE', 'COPY_TRANSFORMS', 'LIMIT_DISTANCE', 'LIMIT_LOCATION', 'LIMIT_ROTATION', 'LIMIT_SCALE', 'MAINTAIN_VOLUME', 'TRANSFORM', 'TRANSFORM_CACHE', 'CLAMP_TO', 'DAMPED_TRACK', 'IK', 'LOCKED_TRACK', 'SPLINE_IK', 'STRETCH_TO', 'TRACK_TO', 'ACTION', 'CHILD_OF', 'FLOOR', 'FOLLOW_PATH', 'PIVOT', 'RIGID_BODY_JOINT', 'SHRINKWRAP'], (optional))
     :type type: str
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
     :rtype: set[str]
@@ -268,7 +266,7 @@ def group_deselect(*args):
     return {'FINISHED'}
 
 
-def group_move(*args, direction='UP'):
+def group_move(*args, direction=’UP’):
     """Change position of active Bone Group in list of Bone Groups
     
     :param args: (override_context, execution_context, undo)
@@ -413,7 +411,7 @@ def paste(*args, flipped=False, selected_mask=False):
     return {'FINISHED'}
 
 
-def paths_calculate(*args, start_frame=1, end_frame=250, bake_location='TAILS'):
+def paths_calculate(*args, start_frame=1, end_frame=250, bake_location=’TAILS’):
     """Calculate paths for the selected bones
     
     :param args: (override_context, execution_context, undo)
@@ -466,7 +464,7 @@ def paths_update(*args):
     return {'FINISHED'}
 
 
-def propagate(*args, mode='WHILE_HELD', end_frame=250.0):
+def propagate(*args, mode=’WHILE_HELD’, end_frame=250.0):
     """Copy selected aspects of the current pose to subsequent poses already keyframed
     
     :param args: (override_context, execution_context, undo)
@@ -474,16 +472,16 @@ def propagate(*args, mode='WHILE_HELD', end_frame=250.0):
         execution_context (str) -- enum in ['INVOKE_DEFAULT', 'INVOKE_REGION_WIN', 'INVOKE_REGION_CHANNELS', 'INVOKE_REGION_PREVIEW', 'INVOKE_AREA', 'INVOKE_SCREEN', 'EXEC_DEFAULT', 'EXEC_REGION_WIN', 'EXEC_REGION_CHANNELS', 'EXEC_REGION_PREVIEW', 'EXEC_AREA', 'EXEC_SCREEN']
         undo (bool)
     :param mode: Terminate Mode, Method used to determine when to stop propagating pose to keyframes
-        * 'WHILE_HELD': While Held, Propagate pose to all keyframes after current frame that don't change (Default behavior).
+        * 'WHILE_HELD': While Held, Propagate pose to all keyframes after current frame that don’t change (Default behavior).
         * 'NEXT_KEY': To Next Keyframe, Propagate pose to first keyframe following the current frame only.
         * 'LAST_KEY': To Last Keyframe, Propagate pose to the last keyframe only (i.e. making action cyclic).
-        * 'BEFORE_FRAME': Before Frame, Propagate pose to all keyframes between current frame and 'Frame' property.
+        * 'BEFORE_FRAME': Before Frame, Propagate pose to all keyframes between current frame and ‘Frame’ property.
         * 'BEFORE_END': Before Last Keyframe, Propagate pose to all keyframes from current frame until no more are found.
         * 'SELECTED_KEYS': On Selected Keyframes, Propagate pose to all selected keyframes.
         * 'SELECTED_MARKERS': On Selected Markers, Propagate pose to all keyframes occurring on frames with Scene Markers after the current frame.
         (type: enum in ['WHILE_HELD', 'NEXT_KEY', 'LAST_KEY', 'BEFORE_FRAME', 'BEFORE_END', 'SELECTED_KEYS', 'SELECTED_MARKERS'], (optional))
     :type mode: str
-    :param end_frame: End Frame, Frame to stop propagating frames to (for 'Before Frame' mode)
+    :param end_frame: End Frame, Frame to stop propagating frames to (for ‘Before Frame’ mode)
         (type: float in [1.17549e-38, inf], (optional))
     :type end_frame: float
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
@@ -492,7 +490,7 @@ def propagate(*args, mode='WHILE_HELD', end_frame=250.0):
     return {'FINISHED'}
 
 
-def push(*args, percentage=0.5, prev_frame=0, next_frame=0, channels='ALL', axis_lock='FREE'):
+def push(*args, percentage=0.5, prev_frame=0, next_frame=0, channels=’ALL’, axis_lock=’FREE’):
     """Exaggerate the current pose
     
     :param args: (override_context, execution_context, undo)
@@ -543,7 +541,7 @@ def quaternions_flip(*args):
     return {'FINISHED'}
 
 
-def relax(*args, percentage=0.5, prev_frame=0, next_frame=0, channels='ALL', axis_lock='FREE'):
+def relax(*args, percentage=0.5, prev_frame=0, next_frame=0, channels=’ALL’, axis_lock=’FREE’):
     """Make the current pose more similar to its surrounding ones
     
     :param args: (override_context, execution_context, undo)
@@ -607,7 +605,7 @@ def rot_clear(*args):
     return {'FINISHED'}
 
 
-def rotation_mode_set(*args, type='QUATERNION'):
+def rotation_mode_set(*args, type=’QUATERNION’):
     """Set the rotation representation used by selected bones
     
     :param args: (override_context, execution_context, undo)
@@ -644,7 +642,7 @@ def scale_clear(*args):
     return {'FINISHED'}
 
 
-def select_all(*args, action='TOGGLE'):
+def select_all(*args, action=’TOGGLE’):
     """Toggle selection status of all bones
     
     :param args: (override_context, execution_context, undo)
@@ -677,7 +675,7 @@ def select_constraint_target(*args):
     return {'FINISHED'}
 
 
-def select_grouped(*args, extend=False, type='LAYER'):
+def select_grouped(*args, extend=False, type=’LAYER’):
     """Select all visible bones grouped by similar properties
     
     :param args: (override_context, execution_context, undo)
@@ -699,7 +697,7 @@ def select_grouped(*args, extend=False, type='LAYER'):
     return {'FINISHED'}
 
 
-def select_hierarchy(*args, direction='PARENT', extend=False):
+def select_hierarchy(*args, direction=’PARENT’, extend=False):
     """Select immediate parent/children of selected bones
     
     :param args: (override_context, execution_context, undo)

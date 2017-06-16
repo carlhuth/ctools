@@ -42,7 +42,7 @@ def edge_loops_from_tessfaces(mesh, tessfaces=None, seams=()):
                         1 quad, note: not connected will make 2 edge loops,
                         both only containing 2 edges.
     return a list of edge key lists
-                        [[(0, 1), (4, 8), (3, 8)], ...]
+                        [[(0, 1), (4, 8), (3, 8)], …]
     
     :param mesh: the mesh used to get edge loops from.
     :type mesh: bpy.types.Mesh
@@ -57,7 +57,7 @@ def edge_loops_from_edges(mesh, edges=None):
     """Edge loops defined by edges
     Takes me.edges or a list of edges and returns the edge loops
     return a list of vertex indices.
-                        [ [1, 6, 7, 2], ...]
+                        [ [1, 6, 7, 2], …]
     closed loops have matching start and end values.
     """
 

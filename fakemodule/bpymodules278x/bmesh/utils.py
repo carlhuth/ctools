@@ -159,7 +159,7 @@ def vert_separate(vert, edges):
 
 def vert_splice(vert, vert_target):
     """Splice vert into vert_target.
-    <Note> The verts mustn't share an edge or face.
+    <Note> The verts mustn’t share an edge or face.
     
     :param vert: The vertex to be removed.
     :type vert: bmesh.types.BMVert

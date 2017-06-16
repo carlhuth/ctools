@@ -1,5 +1,5 @@
 def new(*args):
-    """Add a new world
+    """Create a new world Data-Block
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)

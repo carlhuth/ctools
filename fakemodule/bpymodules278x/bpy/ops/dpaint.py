@@ -11,7 +11,7 @@ def bake(*args):
     return {'FINISHED'}
 
 
-def output_toggle(*args, output='A'):
+def output_toggle(*args, output=’A’):
     """Add or remove Dynamic Paint output data layer
     
     :param args: (override_context, execution_context, undo)
@@ -53,7 +53,7 @@ def surface_slot_remove(*args):
     return {'FINISHED'}
 
 
-def type_toggle(*args, type='CANVAS'):
+def type_toggle(*args, type=’CANVAS’):
     """Toggle whether given type is active or not
     
     :param args: (override_context, execution_context, undo)

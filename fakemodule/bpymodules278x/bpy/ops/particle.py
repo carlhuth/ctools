@@ -30,7 +30,7 @@ def connect_hair(*args, all=False):
     return {'FINISHED'}
 
 
-def copy_particle_systems(*args, space='OBJECT', remove_target_particles=True, use_active=False):
+def copy_particle_systems(*args, space=’OBJECT’, remove_target_particles=True, use_active=False):
     """Copy particle systems from the active object to selected objects
     
     :param args: (override_context, execution_context, undo)
@@ -38,7 +38,7 @@ def copy_particle_systems(*args, space='OBJECT', remove_target_particles=True, u
         execution_context (str) -- enum in ['INVOKE_DEFAULT', 'INVOKE_REGION_WIN', 'INVOKE_REGION_CHANNELS', 'INVOKE_REGION_PREVIEW', 'INVOKE_AREA', 'INVOKE_SCREEN', 'EXEC_DEFAULT', 'EXEC_REGION_WIN', 'EXEC_REGION_CHANNELS', 'EXEC_REGION_PREVIEW', 'EXEC_AREA', 'EXEC_SCREEN']
         undo (bool)
     :param space: Space, Space transform for copying from one object to another
-        * 'OBJECT': Object, Copy inside each object's local space.
+        * 'OBJECT': Object, Copy inside each object’s local space.
         * 'WORLD': World, Copy in world space.
         (type: enum in ['OBJECT', 'WORLD'], (optional))
     :type space: str
@@ -54,7 +54,7 @@ def copy_particle_systems(*args, space='OBJECT', remove_target_particles=True, u
     return {'FINISHED'}
 
 
-def delete(*args, type='PARTICLE'):
+def delete(*args, type=’PARTICLE’):
     """Delete selected particles or keys
     
     :param args: (override_context, execution_context, undo)
@@ -167,7 +167,7 @@ def edited_clear(*args):
     return {'FINISHED'}
 
 
-def hair_dynamics_preset_add(*args, name="", remove_active=False):
+def hair_dynamics_preset_add(*args, name=”“, remove_active=False):
     """Add or remove a Hair Dynamics Preset
     
     :param args: (override_context, execution_context, undo)
@@ -299,8 +299,8 @@ def reveal(*args):
     return {'FINISHED'}
 
 
-def select_all(*args, action='TOGGLE'):
-    """(De)select all particles' keys
+def select_all(*args, action=’TOGGLE’):
+    """(De)select all particles’ keys
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -364,7 +364,7 @@ def select_more(*args):
     return {'FINISHED'}
 
 
-def select_random(*args, percent=50.0, seed=0, action='SELECT', type='HAIR'):
+def select_random(*args, percent=50.0, seed=0, action=’SELECT’, type=’HAIR’):
     """Select a randomly distributed set of hair or points
     
     :param args: (override_context, execution_context, undo)
@@ -391,7 +391,7 @@ def select_random(*args, percent=50.0, seed=0, action='SELECT', type='HAIR'):
     return {'FINISHED'}
 
 
-def select_roots(*args, action='SELECT'):
+def select_roots(*args, action=’SELECT’):
     """Select roots of all visible particles
     
     :param args: (override_context, execution_context, undo)
@@ -411,7 +411,7 @@ def select_roots(*args, action='SELECT'):
     return {'FINISHED'}
 
 
-def select_tips(*args, action='SELECT'):
+def select_tips(*args, action=’SELECT’):
     """Select tips of all visible particles
     
     :param args: (override_context, execution_context, undo)
@@ -516,7 +516,7 @@ def weight_set(*args, factor=1.0):
         override_context (dict)
         execution_context (str) -- enum in ['INVOKE_DEFAULT', 'INVOKE_REGION_WIN', 'INVOKE_REGION_CHANNELS', 'INVOKE_REGION_PREVIEW', 'INVOKE_AREA', 'INVOKE_SCREEN', 'EXEC_DEFAULT', 'EXEC_REGION_WIN', 'EXEC_REGION_CHANNELS', 'EXEC_REGION_PREVIEW', 'EXEC_AREA', 'EXEC_SCREEN']
         undo (bool)
-    :param factor: Factor, Interpolation factor between current brush weight, and keys' weights
+    :param factor: Factor, Interpolation factor between current brush weight, and keys’ weights
         (type: float in [0, 1], (optional))
     :type factor: float
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})

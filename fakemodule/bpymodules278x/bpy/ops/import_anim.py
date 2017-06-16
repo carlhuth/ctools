@@ -1,4 +1,4 @@
-def bvh(*args, filepath="", axis_forward='-Z', axis_up='Y', filter_glob="*.bvh", target='ARMATURE', global_scale=1.0, frame_start=1, use_fps_scale=False, update_scene_fps=False, update_scene_duration=False, use_cyclic=False, rotate_mode='NATIVE'):
+def bvh(*args, filepath=”“, axis_forward=’-Z’, axis_up=’Y’, filter_glob=”*.bvh”, target=’ARMATURE’, global_scale=1.0, frame_start=1, use_fps_scale=False, update_scene_fps=False, update_scene_duration=False, use_cyclic=False, rotate_mode=’NATIVE’):
     """Load a BVH motion capture file
     
     :param args: (override_context, execution_context, undo)
@@ -29,10 +29,10 @@ def bvh(*args, filepath="", axis_forward='-Z', axis_up='Y', filter_glob="*.bvh",
     :param use_fps_scale: Scale FPS, Scale the framerate from the BVH to the current scenes, otherwise each BVH frame maps directly to a Blender frame
         (type: boolean, (optional))
     :type use_fps_scale: bool
-    :param update_scene_fps: Update Scene FPS, Set the scene framerate to that of the BVH file (note that this nullifies the 'Scale FPS' option, as the scale will be 1:1)
+    :param update_scene_fps: Update Scene FPS, Set the scene framerate to that of the BVH file (note that this nullifies the ‘Scale FPS’ option, as the scale will be 1:1)
         (type: boolean, (optional))
     :type update_scene_fps: bool
-    :param update_scene_duration: Update Scene Duration, Extend the scene's duration to the BVH duration (never shortens the scene)
+    :param update_scene_duration: Update Scene Duration, Extend the scene’s duration to the BVH duration (never shortens the scene)
         (type: boolean, (optional))
     :type update_scene_duration: bool
     :param use_cyclic: Loop, Loop the animation playback

@@ -21,7 +21,7 @@ def region_2d_to_origin_3d(region, rv3d, coord, clamp=None):
                                 Since far clip can be a very large value,
                                 the result may give with numeric precision issues.
         To avoid this problem, you can optionally clamp the far clip to a
-                                smaller value based on the data you're operating on.
+                                smaller value based on the data you’re operating on.
     
     :param region: region of the 3D viewport, typically bpy.context.region.
     :type region: bpy.types.Region

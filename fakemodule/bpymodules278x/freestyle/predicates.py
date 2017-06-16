@@ -59,7 +59,7 @@ class EqualToChainingTimeStampUP1D:
         """
 
     def __call__(self, inter):
-        """Returns true if the Interface1D's time stamp is equal to a certain
+        """Returns true if the Interface1D’s time stamp is equal to a certain
                                     user-defined value.
         
         :param inter: An Interface1D object.
@@ -80,7 +80,7 @@ class EqualToTimeStampUP1D:
         """
 
     def __call__(self, inter):
-        """Returns true if the Interface1D's time stamp is equal to a certain
+        """Returns true if the Interface1D’s time stamp is equal to a certain
                                     user-defined value.
         
         :param inter: An Interface1D object.

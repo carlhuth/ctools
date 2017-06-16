@@ -11,7 +11,7 @@ def add_simple_uvs(*args):
     return {'FINISHED'}
 
 
-def add_texture_paint_slot(*args, type='DIFFUSE_COLOR', name="Untitled", width=1024, height=1024, color=(0.0, 0.0, 0.0, 1.0), alpha=True, generated_type='BLANK', float=False):
+def add_texture_paint_slot(*args, type=’DIFFUSE_COLOR’, name=”Untitled”, width=1024, height=1024, color=(0.0, 0.0, 0.0, 1.0), alpha=True, generated_type=’BLANK’, float=False):
     """Add a texture paint slot
     
     :param args: (override_context, execution_context, undo)
@@ -64,8 +64,8 @@ def brush_colors_flip(*args):
     return {'FINISHED'}
 
 
-def brush_select(*args, paint_mode='ACTIVE', sculpt_tool='BLOB', vertex_paint_tool='MIX', weight_paint_tool='MIX', texture_paint_tool='DRAW', toggle=False, create_missing=False):
-    """Select a paint mode's brush by tool type
+def brush_select(*args, paint_mode=’ACTIVE’, sculpt_tool=’BLOB’, vertex_paint_tool=’MIX’, weight_paint_tool=’MIX’, texture_paint_tool=’DRAW’, toggle=False, create_missing=False):
+    """Select a paint mode’s brush by tool type
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -130,7 +130,7 @@ def delete_texture_paint_slot(*args):
     return {'FINISHED'}
 
 
-def face_select_all(*args, action='TOGGLE'):
+def face_select_all(*args, action=’TOGGLE’):
     """Change selection for all faces
     
     :param args: (override_context, execution_context, undo)
@@ -227,7 +227,7 @@ def grab_clone(*args, delta=(0.0, 0.0)):
     return {'FINISHED'}
 
 
-def hide_show(*args, action='HIDE', area='INSIDE', xmin=0, xmax=0, ymin=0, ymax=0):
+def hide_show(*args, action=’HIDE’, area=’INSIDE’, xmin=0, xmax=0, ymin=0, ymax=0):
     """Hide/show some vertices
     
     :param args: (override_context, execution_context, undo)
@@ -264,7 +264,7 @@ def hide_show(*args, action='HIDE', area='INSIDE', xmin=0, xmax=0, ymin=0, ymax=
     return {'FINISHED'}
 
 
-def image_from_view(*args, filepath=""):
+def image_from_view(*args, filepath=”“):
     """Make an image from the current 3D view for re-projection
     
     :param args: (override_context, execution_context, undo)
@@ -280,7 +280,7 @@ def image_from_view(*args, filepath=""):
     return {'FINISHED'}
 
 
-def image_paint(*args, stroke=None, mode='NORMAL'):
+def image_paint(*args, stroke=None, mode=’NORMAL’):
     """Paint a stroke into the image
     
     :param args: (override_context, execution_context, undo)
@@ -302,7 +302,7 @@ def image_paint(*args, stroke=None, mode='NORMAL'):
     return {'FINISHED'}
 
 
-def mask_flood_fill(*args, mode='VALUE', value=0.0):
+def mask_flood_fill(*args, mode=’VALUE’, value=0.0):
     """Fill the whole mask with a given value, or invert its values
     
     :param args: (override_context, execution_context, undo)
@@ -310,12 +310,12 @@ def mask_flood_fill(*args, mode='VALUE', value=0.0):
         execution_context (str) -- enum in ['INVOKE_DEFAULT', 'INVOKE_REGION_WIN', 'INVOKE_REGION_CHANNELS', 'INVOKE_REGION_PREVIEW', 'INVOKE_AREA', 'INVOKE_SCREEN', 'EXEC_DEFAULT', 'EXEC_REGION_WIN', 'EXEC_REGION_CHANNELS', 'EXEC_REGION_PREVIEW', 'EXEC_AREA', 'EXEC_SCREEN']
         undo (bool)
     :param mode: Mode
-        * 'VALUE': Value, Set mask to the level specified by the 'value' property.
-        * 'VALUE_INVERSE': Value Inverted, Set mask to the level specified by the inverted 'value' property.
+        * 'VALUE': Value, Set mask to the level specified by the ‘value’ property.
+        * 'VALUE_INVERSE': Value Inverted, Set mask to the level specified by the inverted ‘value’ property.
         * 'INVERT': Invert, Invert the mask.
         (type: enum in ['VALUE', 'VALUE_INVERSE', 'INVERT'], (optional))
     :type mode: str
-    :param value: Value, Mask level to use when mode is 'Value'; zero means no masking and one is fully masked
+    :param value: Value, Mask level to use when mode is ‘Value’; zero means no masking and one is fully masked
         (type: float in [0, 1], (optional))
     :type value: float
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
@@ -324,7 +324,7 @@ def mask_flood_fill(*args, mode='VALUE', value=0.0):
     return {'FINISHED'}
 
 
-def mask_lasso_gesture(*args, path=None, mode='VALUE', value=1.0):
+def mask_lasso_gesture(*args, path=None, mode=’VALUE’, value=1.0):
     """Add mask within the lasso as you move the brush
     
     :param args: (override_context, execution_context, undo)
@@ -335,12 +335,12 @@ def mask_lasso_gesture(*args, path=None, mode='VALUE', value=1.0):
         (type: bpy_prop_collection of OperatorMousePath, (optional))
     :type path: bpy_prop_collection
     :param mode: Mode
-        * 'VALUE': Value, Set mask to the level specified by the 'value' property.
-        * 'VALUE_INVERSE': Value Inverted, Set mask to the level specified by the inverted 'value' property.
+        * 'VALUE': Value, Set mask to the level specified by the ‘value’ property.
+        * 'VALUE_INVERSE': Value Inverted, Set mask to the level specified by the inverted ‘value’ property.
         * 'INVERT': Invert, Invert the mask.
         (type: enum in ['VALUE', 'VALUE_INVERSE', 'INVERT'], (optional))
     :type mode: str
-    :param value: Value, Mask level to use when mode is 'Value'; zero means no masking and one is fully masked
+    :param value: Value, Mask level to use when mode is ‘Value’; zero means no masking and one is fully masked
         (type: float in [0, 1], (optional))
     :type value: float
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
@@ -349,7 +349,7 @@ def mask_lasso_gesture(*args, path=None, mode='VALUE', value=1.0):
     return {'FINISHED'}
 
 
-def project_image(*args, image=''):
+def project_image(*args, image=”):
     """Project an edited render from the active camera back onto the object
     
     :param args: (override_context, execution_context, undo)
@@ -400,7 +400,7 @@ def texture_paint_toggle(*args):
     return {'FINISHED'}
 
 
-def vert_select_all(*args, action='TOGGLE'):
+def vert_select_all(*args, action=’TOGGLE’):
     """Change selection for all vertices
     
     :param args: (override_context, execution_context, undo)
@@ -474,7 +474,7 @@ def vertex_color_dirt(*args, blur_strength=1.0, blur_iterations=1, clean_angle=3
     :param dirt_angle: Dirt Angle, Less than 90 limits the angle used in the tonal range
         (type: float in [0, 3.14159], (optional))
     :type dirt_angle: float
-    :param dirt_only: Dirt Only, Don't calculate cleans for convex areas
+    :param dirt_only: Dirt Only, Don’t calculate cleans for convex areas
         (type: boolean, (optional))
     :type dirt_only: bool
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
@@ -563,7 +563,7 @@ def vertex_color_smooth(*args):
     return {'FINISHED'}
 
 
-def vertex_paint(*args, stroke=None, mode='NORMAL'):
+def vertex_paint(*args, stroke=None, mode=’NORMAL’):
     """Paint a stroke in the active vertex color layer
     
     :param args: (override_context, execution_context, undo)
@@ -598,8 +598,8 @@ def vertex_paint_toggle(*args):
     return {'FINISHED'}
 
 
-def weight_from_bones(*args, type='AUTOMATIC'):
-    """Set the weights of the groups matching the attached armature's selected bones, using the distance between the vertices and the bones
+def weight_from_bones(*args, type=’AUTOMATIC’):
+    """Set the weights of the groups matching the attached armature’s selected bones, using the distance between the vertices and the bones
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -616,7 +616,7 @@ def weight_from_bones(*args, type='AUTOMATIC'):
     return {'FINISHED'}
 
 
-def weight_gradient(*args, type='LINEAR', xstart=0, xend=0, ystart=0, yend=0, cursor=1002):
+def weight_gradient(*args, type=’LINEAR’, xstart=0, xend=0, ystart=0, yend=0, cursor=1002):
     """Draw a line to apply a weight gradient to selected vertices
     
     :param args: (override_context, execution_context, undo)
@@ -647,8 +647,8 @@ def weight_gradient(*args, type='LINEAR', xstart=0, xend=0, ystart=0, yend=0, cu
     return {'FINISHED'}
 
 
-def weight_paint(*args, stroke=None, mode='NORMAL'):
-    """Paint a stroke in the current vertex group's weights
+def weight_paint(*args, stroke=None, mode=’NORMAL’):
+    """Paint a stroke in the current vertex group’s weights
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -695,7 +695,7 @@ def weight_sample(*args):
     return {'FINISHED'}
 
 
-def weight_sample_group(*args, group='DEFAULT'):
+def weight_sample_group(*args, group=’DEFAULT’):
     """Select one of the vertex groups available under current mouse position
     
     :param args: (override_context, execution_context, undo)

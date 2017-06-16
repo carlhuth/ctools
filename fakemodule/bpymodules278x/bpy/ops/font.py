@@ -1,4 +1,4 @@
-def case_set(*args, case='LOWER'):
+def case_set(*args, case=’LOWER’):
     """Set font case
     
     :param args: (override_context, execution_context, undo)
@@ -59,7 +59,7 @@ def change_spacing(*args, delta=1):
     return {'FINISHED'}
 
 
-def delete(*args, type='ALL'):
+def delete(*args, type=’ALL’):
     """Delete text by cursor position
     
     :param args: (override_context, execution_context, undo)
@@ -88,7 +88,7 @@ def line_break(*args):
     return {'FINISHED'}
 
 
-def move(*args, type='LINE_BEGIN'):
+def move(*args, type=’LINE_BEGIN’):
     """Move cursor to position type
     
     :param args: (override_context, execution_context, undo)
@@ -104,7 +104,7 @@ def move(*args, type='LINE_BEGIN'):
     return {'FINISHED'}
 
 
-def move_select(*args, type='LINE_BEGIN'):
+def move_select(*args, type=’LINE_BEGIN’):
     """Move the cursor while selecting
     
     :param args: (override_context, execution_context, undo)
@@ -120,7 +120,7 @@ def move_select(*args, type='LINE_BEGIN'):
     return {'FINISHED'}
 
 
-def open(*args, filepath="", filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=True, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA'):
+def open(*args, filepath=”“, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=True, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’):
     """Load a new font from a file
     
     :param args: (override_context, execution_context, undo)
@@ -208,7 +208,7 @@ def select_all(*args):
     return {'FINISHED'}
 
 
-def style_set(*args, style='BOLD', clear=False):
+def style_set(*args, style=’BOLD’, clear=False):
     """Set font style
     
     :param args: (override_context, execution_context, undo)
@@ -227,7 +227,7 @@ def style_set(*args, style='BOLD', clear=False):
     return {'FINISHED'}
 
 
-def style_toggle(*args, style='BOLD'):
+def style_toggle(*args, style=’BOLD’):
     """Toggle font style
     
     :param args: (override_context, execution_context, undo)
@@ -269,7 +269,7 @@ def text_cut(*args):
     return {'FINISHED'}
 
 
-def text_insert(*args, text="", accent=False):
+def text_insert(*args, text=”“, accent=False):
     """Insert text at cursor position
     
     :param args: (override_context, execution_context, undo)
@@ -301,7 +301,7 @@ def text_paste(*args):
     return {'FINISHED'}
 
 
-def text_paste_from_file(*args, filepath="", filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=True, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA'):
+def text_paste_from_file(*args, filepath=”“, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=True, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’):
     """Paste contents from file
     
     :param args: (override_context, execution_context, undo)

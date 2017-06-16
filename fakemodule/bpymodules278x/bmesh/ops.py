@@ -51,7 +51,7 @@ def smooth_laplacian_vert(bm, verts, lambda_factor, lambda_border, use_x, use_y,
 
 def recalc_face_normals(bm, faces):
     """Right-Hand Faces.
-    Computes an "outside" normal for the specified input faces.
+    Computes an “outside” normal for the specified input faces.
     
     :param bm: The bmesh to operate on.
     :type bm: bmesh.types.BMesh
@@ -104,7 +104,7 @@ def region_extend(bm, geom, use_contract, use_faces, use_face_step):
 
 def rotate_edges(bm, edges, use_ccw):
     """Edge Rotate.
-    Rotates edges topologically.  Also known as "spin edge" to some people.
+    Rotates edges topologically.  Also known as “spin edge” to some people.
                             Simple example: [/] becomes [|] then [\].
     
     :param bm: The bmesh to operate on.
@@ -135,7 +135,7 @@ def reverse_faces(bm, faces, flip_multires):
 
 def bisect_edges(bm, edges, cuts, edge_percents):
     """Edge Bisect.
-    Splits input edges (but doesn't do anything else).
+    Splits input edges (but doesn’t do anything else).
                             This creates a 2-valence vert.
     
     :param bm: The bmesh to operate on.
@@ -257,7 +257,7 @@ def pointmerge_facedata(bm, verts, vert_snap):
 def average_vert_facedata(bm, verts):
     """Average Vertices Facevert Data.
     Merge uv/vcols associated with the input vertices at
-                            the bounding box center. (I know, it's not averaging but
+                            the bounding box center. (I know, it’s not averaging but
                             the vert_snap_to_bb_center is just too long).
     
     :param bm: The bmesh to operate on.
@@ -281,7 +281,7 @@ def pointmerge(bm, verts, merge_co):
 
 
 def collapse_uvs(bm, edges):
-    """Collapse Connected UV's.
+    """Collapse Connected UV’s.
     Collapses connected UV vertices.
     
     :param bm: The bmesh to operate on.
@@ -492,7 +492,7 @@ def edgenet_fill(bm, edges, mat_nr, use_smooth, sides):
 def edgenet_prepare(bm, edges):
     """Edgenet Prepare.
     Identifies several useful edge loop cases and modifies them so
-                            they'll become a face when edgenet_fill is called.  The cases covered are:
+                            they’ll become a face when edgenet_fill is called.  The cases covered are:
     - One single loop; an edge is added to connect the ends
     - Two loops; two edges are added to connect the endpoints (based on the
                                     shortest distance between each endpont).
@@ -572,7 +572,7 @@ def transform(bm, matrix, space, verts):
 
 def object_load_bmesh(bm, scene, object):
     """Object Load BMesh.
-    Loads a bmesh into an object/mesh.  This is a "private"
+    Loads a bmesh into an object/mesh.  This is a “private”
                             bmop.
     
     :param bm: The bmesh to operate on.
@@ -594,14 +594,14 @@ def bmesh_to_mesh(bm, mesh, object, skip_tessface):
     :type mesh: bpy.types.Mesh
     :param object: Undocumented.
     :type object: bpy.types.Object
-    :param skip_tessface: don't calculate mfaces
+    :param skip_tessface: don’t calculate mfaces
     :type skip_tessface: bool
     """
 
 
 def mesh_to_bmesh(bm, mesh, object, use_shapekey):
     """Mesh to BMesh.
-    Load the contents of a mesh into the bmesh.  this bmop is private, it's
+    Load the contents of a mesh into the bmesh.  this bmop is private, it’s
                             reserved exclusively for entering editmode.
     
     :param bm: The bmesh to operate on.
@@ -633,7 +633,7 @@ def extrude_discrete_faces(bm, faces, use_select_history):
 
 def extrude_edge_only(bm, edges, use_select_history):
     """Extrude Only Edges.
-    Extrudes Edges into faces, note that this is very simple, there's no fancy
+    Extrudes Edges into faces, note that this is very simple, there’s no fancy
                             winged extrusion.
     
     :param bm: The bmesh to operate on.
@@ -981,7 +981,7 @@ def delete(bm, geom, context):
     :type bm: bmesh.types.BMesh
     :param geom: Undocumented.
     :type geom: list of (bmesh.types.BMVert, bmesh.types.BMEdge, bmesh.types.BMFace)
-    :param context: enum DEL_VERTS ...
+    :param context: enum DEL_VERTS …
     :type context: int
     """
 
@@ -1028,7 +1028,7 @@ def split(bm, geom, dest, use_only_faces):
     :type geom: list of (bmesh.types.BMVert, bmesh.types.BMEdge, bmesh.types.BMFace)
     :param dest: Undocumented.
     :type dest: bmesh.types.BMesh
-    :param use_only_faces: when enabled. don't duplicate loose verts/edges
+    :param use_only_faces: when enabled. don’t duplicate loose verts/edges
     :type use_only_faces: bool
     :return: - geom:
         - type list of (bmesh.types.BMVert, bmesh.types.BMEdge, bmesh.types.BMFace)
@@ -1071,7 +1071,7 @@ def spin(bm, geom, cent, axis, dvec, angle, space, steps, use_duplicate):
 
 def similar_faces(bm, faces, type, thresh, compare):
     """Similar Faces Search.
-    Find similar faces (area/material/perimeter, ...).
+    Find similar faces (area/material/perimeter, …).
     
     :param bm: The bmesh to operate on.
     :type bm: bmesh.types.BMesh
@@ -1110,7 +1110,7 @@ def similar_edges(bm, edges, type, thresh, compare):
 
 def similar_verts(bm, verts, type, thresh, compare):
     """Similar Verts Search.
-    Find similar vertices (normal, face, vertex group, ...).
+    Find similar vertices (normal, face, vertex group, …).
     
     :param bm: The bmesh to operate on.
     :type bm: bmesh.types.BMesh
@@ -1130,7 +1130,7 @@ def similar_verts(bm, verts, type, thresh, compare):
 
 def rotate_uvs(bm, faces, use_ccw):
     """UV Rotation.
-    Cycle the loop UV's
+    Cycle the loop UV’s
     
     :param bm: The bmesh to operate on.
     :type bm: bmesh.types.BMesh
@@ -1143,7 +1143,7 @@ def rotate_uvs(bm, faces, use_ccw):
 
 def reverse_uvs(bm, faces):
     """UV Reverse.
-    Reverse the UV's
+    Reverse the UV’s
     
     :param bm: The bmesh to operate on.
     :type bm: bmesh.types.BMesh
@@ -1186,7 +1186,7 @@ def split_edges(bm, edges, verts, use_verts):
     :type edges: list of (bmesh.types.BMEdge)
     :param verts: optional tag verts, use to have greater control of splits
     :type verts: list of (bmesh.types.BMVert)
-    :param use_verts: use 'verts' for splitting, else just find verts to split from edges
+    :param use_verts: use ‘verts’ for splitting, else just find verts to split from edges
     :type use_verts: bool
     :return: - edges: old output disconnected edges
         - type list of (bmesh.types.BMEdge)
@@ -1369,6 +1369,10 @@ def bevel(bm, geom, offset, offset_type, segments, profile, vertex_only, clamp_o
     :type loop_slide: bool
     :return: - faces: output faces
         - type list of (bmesh.types.BMFace)
+        - edges: output edges
+        - type list of (bmesh.types.BMEdge)
+        - verts: output verts
+        - type list of (bmesh.types.BMVert)
     :rtype: dict with string keys
     """
 
@@ -1557,14 +1561,14 @@ def poke(bm, faces, offset, center_mode, use_relative_offset):
 
 def convex_hull(bm, input, use_existing_faces):
     """Convex Hull
-    Builds a convex hull from the vertices in 'input'.
-    If 'use_existing_faces' is true, the hull will not output triangles
+    Builds a convex hull from the vertices in ‘input’.
+    If ‘use_existing_faces’ is true, the hull will not output triangles
                             that are covered by a pre-existing face.
-    All hull vertices, faces, and edges are added to 'geom.out'. Any
+    All hull vertices, faces, and edges are added to ‘geom.out’. Any
                             input elements that end up inside the hull (i.e. are not used by an
-                            output face) are added to the 'interior_geom' slot. The
-                            'unused_geom' slot will contain all interior geometry that is
-                            completely unused. Lastly, 'holes_geom' contains edges and faces
+                            output face) are added to the ‘interior_geom’ slot. The
+                            ‘unused_geom’ slot will contain all interior geometry that is
+                            completely unused. Lastly, ‘holes_geom’ contains edges and faces
                             that were in the input and are part of the hull.
     
     :param bm: The bmesh to operate on.
@@ -1587,11 +1591,11 @@ def convex_hull(bm, input, use_existing_faces):
 
 def symmetrize(bm, input, direction, dist):
     """Symmetrize.
-    Makes the mesh elements in the "input" slot symmetrical. Unlike
+    Makes the mesh elements in the “input” slot symmetrical. Unlike
                             normal mirroring, it only copies in one direction, as specified by
-                            the "direction" slot. The edges and faces that cross the plane of
+                            the “direction” slot. The edges and faces that cross the plane of
                             symmetry are split as needed to enforce symmetry.
-    All new vertices, edges, and faces are added to the "geom.out" slot.
+    All new vertices, edges, and faces are added to the “geom.out” slot.
     
     :param bm: The bmesh to operate on.
     :type bm: bmesh.types.BMesh

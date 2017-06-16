@@ -27,7 +27,7 @@ def clear_render_border(*args):
     return {'FINISHED'}
 
 
-def curves_point_set(*args, point='BLACK_POINT'):
+def curves_point_set(*args, point=’BLACK_POINT’):
     """Set black point or white point for curves
     
     :param args: (override_context, execution_context, undo)
@@ -59,7 +59,7 @@ def cycle_render_slot(*args, reverse=False):
     return {'FINISHED'}
 
 
-def external_edit(*args, filepath=""):
+def external_edit(*args, filepath=”“):
     """Edit image in an external application
     
     :param args: (override_context, execution_context, undo)
@@ -76,7 +76,7 @@ def external_edit(*args, filepath=""):
 
 
 def invert(*args, invert_r=False, invert_g=False, invert_b=False, invert_a=False):
-    """Invert image's channels
+    """Invert image’s channels
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -101,7 +101,7 @@ def invert(*args, invert_r=False, invert_g=False, invert_b=False, invert_a=False
 
 
 def match_movie_length(*args):
-    """Set image's user's length to the one of this video
+    """Set image’s user’s length to the one of this video
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -113,7 +113,7 @@ def match_movie_length(*args):
     return {'FINISHED'}
 
 
-def new(*args, name="Untitled", width=1024, height=1024, color=(0.0, 0.0, 0.0, 1.0), alpha=True, generated_type='BLANK', float=False, gen_context='NONE', use_stereo_3d=False):
+def new(*args, name=”Untitled”, width=1024, height=1024, color=(0.0, 0.0, 0.0, 1.0), alpha=True, generated_type=’BLANK’, float=False, gen_context=’NONE’, use_stereo_3d=False):
     """Create a new image
     
     :param args: (override_context, execution_context, undo)
@@ -156,7 +156,7 @@ def new(*args, name="Untitled", width=1024, height=1024, color=(0.0, 0.0, 0.0, 1
     return {'FINISHED'}
 
 
-def open(*args, filepath="", directory="", files=None, filter_blender=False, filter_backup=False, filter_image=True, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA'):
+def open(*args, filepath=”“, directory=”“, files=None, filter_blender=False, filter_backup=False, filter_image=True, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’):
     """Open image
     
     :param args: (override_context, execution_context, undo)
@@ -299,7 +299,7 @@ def properties(*args):
 
 
 def read_renderlayers(*args):
-    """Read all the current scene's render layers from cache, as needed
+    """Read all the current scene’s render layers from cache, as needed
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -349,7 +349,7 @@ def render_border(*args, xmin=0, xmax=0, ymin=0, ymax=0):
     return {'FINISHED'}
 
 
-def replace(*args, filepath="", filter_blender=False, filter_backup=False, filter_image=True, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA'):
+def replace(*args, filepath=”“, filter_blender=False, filter_backup=False, filter_image=True, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’):
     """Replace current image by another one from disk
     
     :param args: (override_context, execution_context, undo)
@@ -484,7 +484,7 @@ def save(*args):
     return {'FINISHED'}
 
 
-def save_as(*args, save_as_render=False, copy=False, filepath="", check_existing=True, filter_blender=False, filter_backup=False, filter_image=True, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA'):
+def save_as(*args, save_as_render=False, copy=False, filepath=”“, check_existing=True, filter_blender=False, filter_backup=False, filter_image=True, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’):
     """Save the image with another name and/or settings
     
     :param args: (override_context, execution_context, undo)
@@ -613,7 +613,7 @@ def toolshelf(*args):
     return {'FINISHED'}
 
 
-def unpack(*args, method='USE_LOCAL', id=""):
+def unpack(*args, method=’USE_LOCAL’, id=”“):
     """Save an image packed in the .blend file to disk
     
     :param args: (override_context, execution_context, undo)

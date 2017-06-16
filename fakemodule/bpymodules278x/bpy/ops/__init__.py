@@ -11,6 +11,7 @@ from . import cloth
 from . import console
 from . import constraint
 from . import curve
+from . import cycles
 from . import dpaint
 from . import ed
 from . import export_anim

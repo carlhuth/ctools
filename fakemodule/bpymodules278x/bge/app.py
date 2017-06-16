@@ -6,7 +6,7 @@ version = None
 """
 
 version_string = ""
-"""The Blender/BGE version formatted as a string, eg. "2.75 (sub 1)".
+"""The Blender/BGE version formatted as a string, eg. “2.75 (sub 1)”.
 
 :type: str
 """

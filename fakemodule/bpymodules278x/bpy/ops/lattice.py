@@ -1,4 +1,4 @@
-def flip(*args, axis='U'):
+def flip(*args, axis=’U’):
     """Mirror all control points without inverting the lattice deform
     
     :param args: (override_context, execution_context, undo)
@@ -27,7 +27,7 @@ def make_regular(*args):
     return {'FINISHED'}
 
 
-def select_all(*args, action='TOGGLE'):
+def select_all(*args, action=’TOGGLE’):
     """Change selection of all UVW control points
     
     :param args: (override_context, execution_context, undo)
@@ -60,7 +60,7 @@ def select_less(*args):
     return {'FINISHED'}
 
 
-def select_mirror(*args, axis={'X'}, extend=False):
+def select_mirror(*args, axis={‘X’}, extend=False):
     """Select mirrored lattice points
     
     :param args: (override_context, execution_context, undo)
@@ -92,7 +92,7 @@ def select_more(*args):
     return {'FINISHED'}
 
 
-def select_random(*args, percent=50.0, seed=0, action='SELECT'):
+def select_random(*args, percent=50.0, seed=0, action=’SELECT’):
     """Randomly select UVW control points
     
     :param args: (override_context, execution_context, undo)

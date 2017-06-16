@@ -27,7 +27,7 @@ def armature_layers(*args, layers=(False, False, False, False, False, False, Fal
     return {'FINISHED'}
 
 
-def autoside_names(*args, type='XAXIS'):
+def autoside_names(*args, type=’XAXIS’):
     """Automatically renames the selected bones according to which side of the target axis they fall on
     
     :param args: (override_context, execution_context, undo)
@@ -62,7 +62,7 @@ def bone_layers(*args, layers=(False, False, False, False, False, False, False, 
     return {'FINISHED'}
 
 
-def bone_primitive_add(*args, name="Bone"):
+def bone_primitive_add(*args, name=”Bone”):
     """Add a new bone located at the 3D-Cursor
     
     :param args: (override_context, execution_context, undo)
@@ -78,8 +78,8 @@ def bone_primitive_add(*args, name="Bone"):
     return {'FINISHED'}
 
 
-def calculate_roll(*args, type='POS_X', axis_flip=False, axis_only=False):
-    """Automatically fix alignment of select bones' axes
+def calculate_roll(*args, type=’POS_X’, axis_flip=False, axis_only=False):
+    """Automatically fix alignment of select bones’ axes
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -283,7 +283,7 @@ def layers_show_all(*args, all=True):
     return {'FINISHED'}
 
 
-def merge(*args, type='WITHIN_CHAIN'):
+def merge(*args, type=’WITHIN_CHAIN’):
     """Merge continuous chains of selected bones
     
     :param args: (override_context, execution_context, undo)
@@ -299,7 +299,7 @@ def merge(*args, type='WITHIN_CHAIN'):
     return {'FINISHED'}
 
 
-def parent_clear(*args, type='CLEAR'):
+def parent_clear(*args, type=’CLEAR’):
     """Remove the parent-child relationship between selected bones and their parents
     
     :param args: (override_context, execution_context, undo)
@@ -315,7 +315,7 @@ def parent_clear(*args, type='CLEAR'):
     return {'FINISHED'}
 
 
-def parent_set(*args, type='CONNECTED'):
+def parent_set(*args, type=’CONNECTED’):
     """Set the active bone as the parent of the selected bones
     
     :param args: (override_context, execution_context, undo)
@@ -360,7 +360,7 @@ def roll_clear(*args, roll=0.0):
     return {'FINISHED'}
 
 
-def select_all(*args, action='TOGGLE'):
+def select_all(*args, action=’TOGGLE’):
     """Toggle selection status of all bones
     
     :param args: (override_context, execution_context, undo)
@@ -380,7 +380,7 @@ def select_all(*args, action='TOGGLE'):
     return {'FINISHED'}
 
 
-def select_hierarchy(*args, direction='PARENT', extend=False):
+def select_hierarchy(*args, direction=’PARENT’, extend=False):
     """Select immediate parent/children of selected bones
     
     :param args: (override_context, execution_context, undo)
@@ -460,7 +460,7 @@ def select_more(*args):
     return {'FINISHED'}
 
 
-def select_similar(*args, type='LENGTH', threshold=0.1):
+def select_similar(*args, type=’LENGTH’, threshold=0.1):
     """Select similar bones by property types
     
     :param args: (override_context, execution_context, undo)
@@ -547,7 +547,7 @@ def switch_direction(*args):
     return {'FINISHED'}
 
 
-def symmetrize(*args, direction='NEGATIVE_X'):
+def symmetrize(*args, direction=’NEGATIVE_X’):
     """Enforce symmetry, make copies of the selection or use existing
     
     :param args: (override_context, execution_context, undo)

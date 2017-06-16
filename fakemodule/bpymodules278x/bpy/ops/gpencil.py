@@ -25,7 +25,7 @@ def active_frames_delete_all(*args):
 
 
 def blank_frame_add(*args, all_layers=False):
-    """Add a new frame with nothing in it on the current frame. If there is already a frame, all existing frames are shifted one frame later
+    """Inserts a blank frame on the current frame (all subsequently existing frames, if any, are shifted right by one frame)
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -53,7 +53,7 @@ def brush_add(*args):
     return {'FINISHED'}
 
 
-def brush_change(*args, brush='DEFAULT'):
+def brush_change(*args, brush=’DEFAULT’):
     """Change active Grease Pencil drawing brush
     
     :param args: (override_context, execution_context, undo)
@@ -82,7 +82,7 @@ def brush_copy(*args):
     return {'FINISHED'}
 
 
-def brush_move(*args, type='UP'):
+def brush_move(*args, type=’UP’):
     """Move the active Grease Pencil drawing brush up/down in the list
     
     :param args: (override_context, execution_context, undo)
@@ -108,7 +108,7 @@ def brush_paint(*args, stroke=None, wait_for_input=True):
     :param stroke: Stroke
         (type: bpy_prop_collection of OperatorStrokeElement, (optional))
     :type stroke: bpy_prop_collection
-    :param wait_for_input: Wait for Input, Enter a mini 'sculpt-mode' if enabled, otherwise, exit after drawing a single stroke
+    :param wait_for_input: Wait for Input, Enter a mini ‘sculpt-mode’ if enabled, otherwise, exit after drawing a single stroke
         (type: boolean, (optional))
     :type wait_for_input: bool
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
@@ -159,7 +159,7 @@ def brush_select(*args, index=0):
     return {'FINISHED'}
 
 
-def convert(*args, type='PATH', use_normalize_weights=True, radius_multiplier=1.0, use_link_strokes=True, timing_mode='FULL', frame_range=100, start_frame=1, use_realtime=False, end_frame=250, gap_duration=0.0, gap_randomness=0.0, seed=0, use_timing_data=False):
+def convert(*args, type=’PATH’, use_normalize_weights=True, radius_multiplier=1.0, use_link_strokes=True, timing_mode=’FULL’, frame_range=100, start_frame=1, use_realtime=False, end_frame=250, gap_duration=0.0, gap_randomness=0.0, seed=0, use_timing_data=False):
     """Convert the active Grease Pencil layer to a new Curve Object
     
     :param args: (override_context, execution_context, undo)
@@ -175,7 +175,7 @@ def convert(*args, type='PATH', use_normalize_weights=True, radius_multiplier=1.
     :param use_normalize_weights: Normalize Weight, Normalize weight (set from stroke width)
         (type: boolean, (optional))
     :type use_normalize_weights: bool
-    :param radius_multiplier: Radius Fac, Multiplier for the points' radii (set from stroke width)
+    :param radius_multiplier: Radius Fac, Multiplier for the points’ radii (set from stroke width)
         (type: float in [0, 1000], (optional))
     :type radius_multiplier: float
     :param use_link_strokes: Link Strokes, Whether to link strokes with zero-radius sections of curves
@@ -257,7 +257,7 @@ def data_unlink(*args):
     return {'FINISHED'}
 
 
-def delete(*args, type='POINTS'):
+def delete(*args, type=’POINTS’):
     """Delete selected Grease Pencil strokes, vertices, or frames
     
     :param args: (override_context, execution_context, undo)
@@ -289,7 +289,7 @@ def dissolve(*args):
     return {'FINISHED'}
 
 
-def draw(*args, mode='DRAW', stroke=None, wait_for_input=True):
+def draw(*args, mode=’DRAW’, stroke=None, wait_for_input=True):
     """Make annotations on the active data
     
     :param args: (override_context, execution_context, undo)
@@ -406,7 +406,7 @@ def interpolate_reverse(*args):
 
 
 def interpolate_sequence(*args):
-    """Generate 'in-betweens' to smoothly interpolate between Grease Pencil frames
+    """Generate ‘in-betweens’ to smoothly interpolate between Grease Pencil frames
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -431,7 +431,7 @@ def layer_add(*args):
     return {'FINISHED'}
 
 
-def layer_change(*args, layer='DEFAULT'):
+def layer_change(*args, layer=’DEFAULT’):
     """Change active Grease Pencil layer
     
     :param args: (override_context, execution_context, undo)
@@ -489,7 +489,7 @@ def layer_merge(*args):
     return {'FINISHED'}
 
 
-def layer_move(*args, type='UP'):
+def layer_move(*args, type=’UP’):
     """Move the active Grease Pencil layer up/down in the list
     
     :param args: (override_context, execution_context, undo)
@@ -531,7 +531,7 @@ def lock_all(*args):
     return {'FINISHED'}
 
 
-def move_to_layer(*args, layer='DEFAULT'):
+def move_to_layer(*args, layer=’DEFAULT’):
     """Move selected strokes to another layer
     
     :param args: (override_context, execution_context, undo)
@@ -560,7 +560,7 @@ def palette_add(*args):
     return {'FINISHED'}
 
 
-def palette_change(*args, palette='DEFAULT'):
+def palette_change(*args, palette=’DEFAULT’):
     """Change active Grease Pencil palette
     
     :param args: (override_context, execution_context, undo)
@@ -673,7 +673,7 @@ def palettecolor_lock_all(*args):
     return {'FINISHED'}
 
 
-def palettecolor_move(*args, direction='UP'):
+def palettecolor_move(*args, direction=’UP’):
     """Move the active Grease Pencil palette color up/down in the list
     
     :param args: (override_context, execution_context, undo)
@@ -741,7 +741,7 @@ def palettecolor_unlock_all(*args):
     return {'FINISHED'}
 
 
-def paste(*args, type='COPY'):
+def paste(*args, type=’COPY’):
     """Paste previously copied strokes or copy and merge in active layer
     
     :param args: (override_context, execution_context, undo)
@@ -757,7 +757,7 @@ def paste(*args, type='COPY'):
     return {'FINISHED'}
 
 
-def reproject(*args, type='PLANAR'):
+def reproject(*args, type=’PLANAR’):
     """Reproject the selected strokes from the current viewpoint as if they had been newly drawn (e.g. to fix problems from accidental 3D cursor movement or accidental viewport changes, or for matching deforming geometry)
     
     :param args: (override_context, execution_context, undo)
@@ -765,8 +765,8 @@ def reproject(*args, type='PLANAR'):
         execution_context (str) -- enum in ['INVOKE_DEFAULT', 'INVOKE_REGION_WIN', 'INVOKE_REGION_CHANNELS', 'INVOKE_REGION_PREVIEW', 'INVOKE_AREA', 'INVOKE_SCREEN', 'EXEC_DEFAULT', 'EXEC_REGION_WIN', 'EXEC_REGION_CHANNELS', 'EXEC_REGION_PREVIEW', 'EXEC_AREA', 'EXEC_SCREEN']
         undo (bool)
     :param type: Projection Type
-        * 'PLANAR': Planar, Reproject the strokes to end up on the same plane, as if drawn from the current viewpoint using 'Cursor' Stroke Placement.
-        * 'SURFACE': Surface, Reproject the strokes on to the scene geometry, as if drawn using 'Surface' placement.
+        * 'PLANAR': Planar, Reproject the strokes to end up on the same plane, as if drawn from the current viewpoint using ‘Cursor’ Stroke Placement.
+        * 'SURFACE': Surface, Reproject the strokes on to the scene geometry, as if drawn using ‘Surface’ placement.
         (type: enum in ['PLANAR', 'SURFACE'], (optional))
     :type type: str
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
@@ -816,7 +816,7 @@ def select(*args, extend=False, deselect=False, toggle=False, entire_strokes=Fal
     return {'FINISHED'}
 
 
-def select_all(*args, action='TOGGLE'):
+def select_all(*args, action=’TOGGLE’):
     """Change selection of all Grease Pencil strokes currently visible
     
     :param args: (override_context, execution_context, undo)
@@ -911,7 +911,7 @@ def select_first(*args, only_selected_strokes=False, extend=False):
     return {'FINISHED'}
 
 
-def select_grouped(*args, type='LAYER'):
+def select_grouped(*args, type=’LAYER’):
     """Select all strokes with similar characteristics
     
     :param args: (override_context, execution_context, undo)
@@ -1077,7 +1077,7 @@ def stroke_apply_thickness(*args):
     return {'FINISHED'}
 
 
-def stroke_arrange(*args, direction='UP'):
+def stroke_arrange(*args, direction=’UP’):
     """Arrange selected strokes up/down in the drawing order of the active layer
     
     :param args: (override_context, execution_context, undo)
@@ -1106,7 +1106,7 @@ def stroke_change_color(*args):
     return {'FINISHED'}
 
 
-def stroke_cyclical_set(*args, type='TOGGLE'):
+def stroke_cyclical_set(*args, type=’TOGGLE’):
     """Close or open the selected stroke adding an edge from last to first point
     
     :param args: (override_context, execution_context, undo)
@@ -1135,7 +1135,7 @@ def stroke_flip(*args):
     return {'FINISHED'}
 
 
-def stroke_join(*args, type='JOIN', leave_gaps=False):
+def stroke_join(*args, type=’JOIN’, leave_gaps=False):
     """Join selected strokes (optionally as new stroke)
     
     :param args: (override_context, execution_context, undo)

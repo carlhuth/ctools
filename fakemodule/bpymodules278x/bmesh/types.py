@@ -1,9 +1,6 @@
 class BMesh:
     """The BMesh data structure"""
 
-    def calc_tessellation(self):
-        """Calc tessellation (use BMEdit_RecalcTessellation())."""
-
     def calc_tessface(self):
         """Calculate triangle tessellation from quads/ngons.
         
@@ -89,7 +86,7 @@ class BMesh:
         
         :param matrix: transform matrix.
         :type matrix: 4x4 mathutils.Matrix
-        :param filter: set of values in ('SELECT', 'HIDE', 'SEAM', 'SMOOTH', 'TAG').
+        :param filter: set of values in (‘SELECT’, ‘HIDE’, ‘SEAM’, ‘SMOOTH’, ‘TAG’).
         :type filter: set
         """
 
@@ -108,7 +105,7 @@ class BMesh:
     """
 
     is_valid = None
-    """True when this element is valid (hasn't been removed).
+    """True when this element is valid (hasn’t been removed).
     
     :type: bool
     """
@@ -134,7 +131,7 @@ class BMesh:
     """
 
     select_mode = None
-    """The selection mode, values can be {'VERT', 'EDGE', 'FACE'}, can't be assigned an empty set.
+    """The selection mode, values can be {‘VERT’, ‘EDGE’, ‘FACE’}, can’t be assigned an empty set.
     
     :type: set
     """
@@ -151,9 +148,9 @@ class BMVert:
     """The BMesh vertex type"""
 
     def calc_edge_angle(self, fallback=None):
-        """Return the angle between this vert's two connected edges.
+        """Return the angle between this vert’s two connected edges.
         
-        :param fallback: return this when the vert doesn't have 2 edges
+        :param fallback: return this when the vert doesn’t have 2 edges
                                                         (instead of raising a ValueError).
         :type fallback: bpy.types.KeyMapItem.any
         :return: Angle between edges in radians.
@@ -202,7 +199,7 @@ class BMVert:
     def select_set(self, select):
         """Set the selection.
                                         This is different from the select attribute because it updates the selection state of associated geometry.
-        <Note> Currently this only flushes down, so selecting a face will select all its vertices but de-selecting a vertex       won't de-select all the faces that use it, before finishing with a mesh typically flushing is still needed.
+        <Note> Currently this only flushes down, so selecting a face will select all its vertices but de-selecting a vertex       won’t de-select all the faces that use it, before finishing with a mesh typically flushing is still needed.
         
         :param select: Select or de-select.
         :type select: bool
@@ -239,7 +236,7 @@ class BMVert:
     """
 
     is_valid = None
-    """True when this element is valid (hasn't been removed).
+    """True when this element is valid (hasn’t been removed).
     
     :type: bool
     """
@@ -295,7 +292,7 @@ class BMEdge:
 
     def calc_face_angle(self, fallback=None):
         """
-        :param fallback: return this when the edge doesn't have 2 faces
+        :param fallback: return this when the edge doesn’t have 2 faces
                                                         (instead of raising a ValueError).
         :type fallback: bpy.types.KeyMapItem.any
         :return: The angle between 2 connected faces in radians.
@@ -304,7 +301,7 @@ class BMEdge:
 
     def calc_face_angle_signed(self, fallback=None):
         """
-        :param fallback: return this when the edge doesn't have 2 faces
+        :param fallback: return this when the edge doesn’t have 2 faces
                                                         (instead of raising a ValueError).
         :type fallback: bpy.types.KeyMapItem.any
         :return: The angle between 2 connected faces in radians (negative for concave join).
@@ -356,7 +353,7 @@ class BMEdge:
     def select_set(self, select):
         """Set the selection.
                                         This is different from the select attribute because it updates the selection state of associated geometry.
-        <Note> Currently this only flushes down, so selecting a face will select all its vertices but de-selecting a vertex       won't de-select all the faces that use it, before finishing with a mesh typically flushing is still needed.
+        <Note> Currently this only flushes down, so selecting a face will select all its vertices but de-selecting a vertex       won’t de-select all the faces that use it, before finishing with a mesh typically flushing is still needed.
         
         :param select: Select or de-select.
         :type select: bool
@@ -399,7 +396,7 @@ class BMEdge:
     """
 
     is_valid = None
-    """True when this element is valid (hasn't been removed).
+    """True when this element is valid (hasn’t been removed).
     
     :type: bool
     """
@@ -562,12 +559,12 @@ class BMFace:
         """Reverses winding of a face, which flips its normal."""
 
     def normal_update(self):
-        """Update face's normal."""
+        """Update face’s normal."""
 
     def select_set(self, select):
         """Set the selection.
                                         This is different from the select attribute because it updates the selection state of associated geometry.
-        <Note> Currently this only flushes down, so selecting a face will select all its vertices but de-selecting a vertex       won't de-select all the faces that use it, before finishing with a mesh typically flushing is still needed.
+        <Note> Currently this only flushes down, so selecting a face will select all its vertices but de-selecting a vertex       won’t de-select all the faces that use it, before finishing with a mesh typically flushing is still needed.
         
         :param select: Select or de-select.
         :type select: bool
@@ -593,7 +590,7 @@ class BMFace:
     """
 
     is_valid = None
-    """True when this element is valid (hasn't been removed).
+    """True when this element is valid (hasn’t been removed).
     
     :type: bool
     """
@@ -606,7 +603,7 @@ class BMFace:
     """
 
     material_index = None
-    """The face's material index.
+    """The face’s material index.
     
     :type: int
     """
@@ -686,7 +683,7 @@ class BMLoop:
         """
 
     edge = None
-    """The loop's edge (between this loop and the next), (read-only).
+    """The loop’s edge (between this loop and the next), (read-only).
     (type: bmesh.types.BMEdge)
     
     :type: BMEdge
@@ -712,7 +709,7 @@ class BMLoop:
     """
 
     is_valid = None
-    """True when this element is valid (hasn't been removed).
+    """True when this element is valid (hasn’t been removed).
     
     :type: bool
     """
@@ -759,7 +756,7 @@ class BMLoop:
     """
 
     vert = None
-    """The loop's vertex (read-only).
+    """The loop’s vertex (read-only).
     (type: bmesh.types.BMVert)
     
     :type: BMVert
@@ -815,7 +812,7 @@ class BMVertSeq:
     def sort(self, key=None, reverse=False):
         """Sort the elements of this sequence, using an optional custom sort key.
                                         Indices of elements are not changed, BMElemeSeq.index_update() can be used for that.
-        <Note> When the 'key' argument is not provided, the elements are reordered following their current index value.
+        <Note> When the ‘key’ argument is not provided, the elements are reordered following their current index value.
                                                 In particular this can be used by setting indices manually before calling this method.
         
         :param key: The key that sets the ordering of the elements.
@@ -877,7 +874,7 @@ class BMEdgeSeq:
     def sort(self, key=None, reverse=False):
         """Sort the elements of this sequence, using an optional custom sort key.
                                         Indices of elements are not changed, BMElemeSeq.index_update() can be used for that.
-        <Note> When the 'key' argument is not provided, the elements are reordered following their current index value.
+        <Note> When the ‘key’ argument is not provided, the elements are reordered following their current index value.
                                                 In particular this can be used by setting indices manually before calling this method.
         
         :param key: The key that sets the ordering of the elements.
@@ -939,7 +936,7 @@ class BMFaceSeq:
     def sort(self, key=None, reverse=False):
         """Sort the elements of this sequence, using an optional custom sort key.
                                         Indices of elements are not changed, BMElemeSeq.index_update() can be used for that.
-        <Note> When the 'key' argument is not provided, the elements are reordered following their current index value.
+        <Note> When the ‘key’ argument is not provided, the elements are reordered following their current index value.
                                                 In particular this can be used by setting indices manually before calling this method.
         
         :param key: The key that sets the ordering of the elements.
@@ -989,7 +986,7 @@ class BMEditSelSeq:
 
     def discard(self, element):
         """Discard an element from the selection history.
-        Like remove but doesn't raise an error when the elements not in the selection list.
+        Like remove but doesn’t raise an error when the elements not in the selection list.
         """
 
     def remove(self, element):

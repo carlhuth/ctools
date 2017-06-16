@@ -1,8 +1,8 @@
 categories = None
-"""constant value bpy.utils.units.categories(NONE='NONE', LENGTH='LENGTH', AREA='AREA', VOLUME='VOLUME', MASS='MASS', ROTATION='ROTATION', TIME='TIME', VELOCITY='VELOCITY', ACCELERATION='ACCELERATION', CAMERA='CAMERA')"""
+"""constant value bpy.utils.units.categories(NONE=’NONE’, LENGTH=’LENGTH’, AREA=’AREA’, VOLUME=’VOLUME’, MASS=’MASS’, ROTATION=’ROTATION’, TIME=’TIME’, VELOCITY=’VELOCITY’, ACCELERATION=’ACCELERATION’, CAMERA=’CAMERA’)"""
 
 systems = None
-"""constant value bpy.utils.units.systems(NONE='NONE', METRIC='METRIC', IMPERIAL='IMPERIAL')"""
+"""constant value bpy.utils.units.systems(NONE=’NONE’, METRIC=’METRIC’, IMPERIAL=’IMPERIAL’)"""
 
 
 def to_string(unit_system, unit_category, value, precision=3, split_unit=False, compatible_unit=False):

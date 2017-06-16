@@ -1,5 +1,5 @@
-def active_index_set(*args, mode="", index=0):
-    """Set active sculpt/paint brush from it's number
+def active_index_set(*args, mode=”“, index=0):
+    """Set active sculpt/paint brush from it’s number
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -30,7 +30,7 @@ def add(*args):
     return {'FINISHED'}
 
 
-def curve_preset(*args, shape='SMOOTH'):
+def curve_preset(*args, shape=’SMOOTH’):
     """Set brush shape
     
     :param args: (override_context, execution_context, undo)
@@ -75,7 +75,7 @@ def scale_size(*args, scalar=1.0):
     return {'FINISHED'}
 
 
-def stencil_control(*args, mode='TRANSLATION', texmode='PRIMARY'):
+def stencil_control(*args, mode=’TRANSLATION’, texmode=’PRIMARY’):
     """Control the stencil brush
     
     :param args: (override_context, execution_context, undo)
@@ -132,7 +132,7 @@ def stencil_reset_transform(*args, mask=False):
     return {'FINISHED'}
 
 
-def uv_sculpt_tool_set(*args, tool='PINCH'):
+def uv_sculpt_tool_set(*args, tool=’PINCH’):
     """Set the UV sculpt tool
     
     :param args: (override_context, execution_context, undo)

@@ -17,7 +17,7 @@ def remove(pcoll):
 
 class ImagePreviewCollection:
     """Dictionary-like class of previews.
-    This is a subclass of Python's built-in dict type,
+    This is a subclass of Python’s built-in dict type,
                             used to store multiple image previews.
     <Note> - instance with bpy.utils.previews.new
         - keys must be str type.
@@ -37,7 +37,7 @@ class ImagePreviewCollection:
         :type name: str
         :param filepath: The file path to generate the preview from.
         :type filepath: str
-        :param filetype: The type of file, needed to generate the preview in ['IMAGE', 'MOVIE', 'BLEND', 'FONT'].
+        :param filetype: The type of file, needed to generate the preview in [‘IMAGE’, ‘MOVIE’, ‘BLEND’, ‘FONT’].
         :type filetype: str
         :param force_reload: If True, force running thumbnail manager even if preview already exists in cache.
         :type force_reload: bool

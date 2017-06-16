@@ -114,7 +114,7 @@ def eyedropper_depth(*args):
     return {'FINISHED'}
 
 
-def eyedropper_driver(*args, mapping_type='SINGLE_MANY'):
+def eyedropper_driver(*args, mapping_type=’SINGLE_MANY’):
     """Pick a property to use as a driver target
     
     :param args: (override_context, execution_context, undo)
@@ -175,7 +175,7 @@ def reports_to_textblock(*args):
 
 
 def reset_default_button(*args, all=True):
-    """Reset this property's value to its default value
+    """Reset this property’s value to its default value
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)

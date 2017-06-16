@@ -27,7 +27,7 @@ class BezierCurveShader:
     def __init__(self, error=4.0):
         """Builds a BezierCurveShader object.
         
-        :param error: The error we're allowing for the approximation.  This
+        :param error: The error we’re allowing for the approximation.  This
                                                     error is the max distance allowed between the new curve and the
                                                     original geometry.
         :type error: float
@@ -178,13 +178,13 @@ class ConstrainedIncreasingThicknessShader:
         :type thickness_min: float
         :param thickness_max: The maximum thickness.
         :type thickness_max: float
-        :param ratio: The thickness/length ratio that we don't want to exceed.
+        :param ratio: The thickness/length ratio that we don’t want to exceed.
         :type ratio: float
         """
 
     def shade(self, stroke):
         """Same as the freestyle.shaders.IncreasingThicknessShader, but here we allow
-                                    the user to control the thickness/length ratio so that we don't get
+                                    the user to control the thickness/length ratio so that we don’t get
                                     fat short lines.
         
         :param stroke: A Stroke object.
@@ -212,7 +212,7 @@ class GuidingLinesShader:
                                     main direction line.  This shader must be used together with the
                                     splitting operator using the curvature criterion. Indeed, the
                                     precision of the approximation will depend on the size of the
-                                    stroke's pieces.  The bigger the pieces are, the rougher the
+                                    stroke’s pieces.  The bigger the pieces are, the rougher the
                                     approximation is.
         
         :param stroke: A Stroke object.
@@ -298,7 +298,7 @@ class PolygonalizationShader:
         """
 
     def shade(self, stroke):
-        """Modifies the Stroke geometry so that it looks more "polygonal".
+        """Modifies the Stroke geometry so that it looks more “polygonal”.
                                     The basic idea is to start from the minimal stroke approximation
                                     consisting in a line joining the first vertex to the last one and
                                     to subdivide using the original stroke vertices until a certain
@@ -392,7 +392,7 @@ class SpatialNoiseShader:
         :type num_octaves: int
         :param smooth: True if you want the noise to be smooth.
         :type smooth: bool
-        :param pure_random: True if you don't want any coherence.
+        :param pure_random: True if you don’t want any coherence.
         :type pure_random: bool
         """
 
@@ -468,7 +468,7 @@ class TipRemoverShader:
         """
 
     def shade(self, stroke):
-        """Removes the stroke's extremities.
+        """Removes the stroke’s extremities.
         
         :param stroke: A Stroke object.
         :type stroke: freestyle.types.Stroke
@@ -485,14 +485,14 @@ class py2DCurvatureColorShader:
 
 
 class pyBackboneStretcherNoCuspShader:
-    """Stretches the stroke's backbone, excluding cusp vertices (end junctions)."""
+    """Stretches the stroke’s backbone, excluding cusp vertices (end junctions)."""
 
     def shade(self, stroke):
         """"""
 
 
 class pyBackboneStretcherShader:
-    """Stretches the stroke's backbone by a given length (in pixels)."""
+    """Stretches the stroke’s backbone by a given length (in pixels)."""
 
     def shade(self, stroke):
         """"""
@@ -542,7 +542,7 @@ class pyConstantThicknessShader:
 
 class pyConstrainedIncreasingThicknessShader:
     """Increasingly thickens the stroke, constrained by a ratio of the
-                        stroke's length.
+                        stroke’s length.
     """
 
     def shade(self, stroke):
@@ -557,7 +557,7 @@ class pyDecreasingThicknessShader:
 
 
 class pyDepthDiscontinuityThicknessShader:
-    """Assigns a thickness to the stroke based on the stroke's distance
+    """Assigns a thickness to the stroke based on the stroke’s distance
                         to the camera (Z-value).
     """
 
@@ -638,8 +638,8 @@ class pyInterpolateColorShader:
 
 
 class pyLengthDependingBackboneStretcherShader:
-    """Stretches the stroke's backbone proportional to the stroke's length
-                        NOTE: you'll probably want an l somewhere between (0.5 - 0). A value that
+    """Stretches the stroke’s backbone proportional to the stroke’s length
+                        NOTE: you’ll probably want an l somewhere between (0.5 - 0). A value that
                         is too high may yield unexpected results.
     """
 
@@ -655,7 +655,7 @@ class pyMaterialColorShader:
 
 
 class pyModulateAlphaShader:
-    """Limits the stroke's alpha between a min and max value."""
+    """Limits the stroke’s alpha between a min and max value."""
 
     def shade(self, stroke):
         """"""
@@ -752,7 +752,7 @@ class pyTipRemoverShader:
 
 
 class pyZDependingThicknessShader:
-    """Assigns thickness based on an object's local Z depth (point
+    """Assigns thickness based on an object’s local Z depth (point
                         closest to camera is 1, point furthest from camera is zero).
     """
 

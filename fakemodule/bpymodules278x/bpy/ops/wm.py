@@ -1,4 +1,4 @@
-def addon_disable(*args, module=""):
+def addon_disable(*args, module=”“):
     """Disable an add-on
     
     :param args: (override_context, execution_context, undo)
@@ -14,7 +14,7 @@ def addon_disable(*args, module=""):
     return {'FINISHED'}
 
 
-def addon_enable(*args, module=""):
+def addon_enable(*args, module=”“):
     """Enable an add-on
     
     :param args: (override_context, execution_context, undo)
@@ -30,7 +30,7 @@ def addon_enable(*args, module=""):
     return {'FINISHED'}
 
 
-def addon_expand(*args, module=""):
+def addon_expand(*args, module=”“):
     """Display information and preferences for this add-on
     
     :param args: (override_context, execution_context, undo)
@@ -46,7 +46,7 @@ def addon_expand(*args, module=""):
     return {'FINISHED'}
 
 
-def addon_install(*args, overwrite=True, target='DEFAULT', filepath="", filter_folder=True, filter_python=True, filter_glob="*.py;*.zip"):
+def addon_install(*args, overwrite=True, target=’DEFAULT’, filepath=”“, filter_folder=True, filter_python=True, filter_glob=”*.py;*.zip”):
     """Install an add-on
     
     :param args: (override_context, execution_context, undo)
@@ -90,7 +90,7 @@ def addon_refresh(*args):
     return {'FINISHED'}
 
 
-def addon_remove(*args, module=""):
+def addon_remove(*args, module=”“):
     """Delete the add-on from the file system
     
     :param args: (override_context, execution_context, undo)
@@ -106,7 +106,7 @@ def addon_remove(*args, module=""):
     return {'FINISHED'}
 
 
-def addon_userpref_show(*args, module=""):
+def addon_userpref_show(*args, module=”“):
     """Show add-on user preferences
     
     :param args: (override_context, execution_context, undo)
@@ -122,7 +122,7 @@ def addon_userpref_show(*args, module=""):
     return {'FINISHED'}
 
 
-def app_template_install(*args, overwrite=True, filepath="", filter_folder=True, filter_glob="*.zip"):
+def app_template_install(*args, overwrite=True, filepath=”“, filter_folder=True, filter_glob=”*.zip”):
     """Install an application-template
     
     :param args: (override_context, execution_context, undo)
@@ -147,7 +147,7 @@ def app_template_install(*args, overwrite=True, filepath="", filter_folder=True,
     return {'FINISHED'}
 
 
-def appconfig_activate(*args, filepath=""):
+def appconfig_activate(*args, filepath=”“):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -176,7 +176,7 @@ def appconfig_default(*args):
     return {'FINISHED'}
 
 
-def append(*args, filepath="", directory="", filename="", files=None, filter_blender=True, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=True, filemode=1, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', link=False, autoselect=True, active_layer=True, instance_groups=False, set_fake=False, use_recursive=True):
+def append(*args, filepath=”“, directory=”“, filename=”“, files=None, filter_blender=True, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=True, filemode=1, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, link=False, autoselect=True, active_layer=True, instance_groups=False, set_fake=False, use_recursive=True):
     """Append from a Library .blend file
     
     :param args: (override_context, execution_context, undo)
@@ -288,7 +288,7 @@ def blenderplayer_start(*args):
     return {'FINISHED'}
 
 
-def call_menu(*args, name=""):
+def call_menu(*args, name=”“):
     """Call (draw) a pre-defined menu
     
     :param args: (override_context, execution_context, undo)
@@ -304,7 +304,7 @@ def call_menu(*args, name=""):
     return {'FINISHED'}
 
 
-def call_menu_pie(*args, name=""):
+def call_menu_pie(*args, name=”“):
     """Call (draw) a pre-defined pie menu
     
     :param args: (override_context, execution_context, undo)
@@ -320,7 +320,7 @@ def call_menu_pie(*args, name=""):
     return {'FINISHED'}
 
 
-def context_collection_boolean_set(*args, data_path_iter="", data_path_item="", type='TOGGLE'):
+def context_collection_boolean_set(*args, data_path_iter=”“, data_path_item=”“, type=’TOGGLE’):
     """Set boolean values for a collection of items
     
     :param args: (override_context, execution_context, undo)
@@ -342,7 +342,7 @@ def context_collection_boolean_set(*args, data_path_iter="", data_path_item="", 
     return {'FINISHED'}
 
 
-def context_cycle_array(*args, data_path="", reverse=False):
+def context_cycle_array(*args, data_path=”“, reverse=False):
     """Set a context array value (useful for cycling the active mesh edit mode)
     
     :param args: (override_context, execution_context, undo)
@@ -361,7 +361,7 @@ def context_cycle_array(*args, data_path="", reverse=False):
     return {'FINISHED'}
 
 
-def context_cycle_enum(*args, data_path="", reverse=False, wrap=False):
+def context_cycle_enum(*args, data_path=”“, reverse=False, wrap=False):
     """Toggle a context value
     
     :param args: (override_context, execution_context, undo)
@@ -383,7 +383,7 @@ def context_cycle_enum(*args, data_path="", reverse=False, wrap=False):
     return {'FINISHED'}
 
 
-def context_cycle_int(*args, data_path="", reverse=False, wrap=False):
+def context_cycle_int(*args, data_path=”“, reverse=False, wrap=False):
     """Set a context value (useful for cycling active material, vertex keys, groups, etc.)
     
     :param args: (override_context, execution_context, undo)
@@ -405,7 +405,7 @@ def context_cycle_int(*args, data_path="", reverse=False, wrap=False):
     return {'FINISHED'}
 
 
-def context_menu_enum(*args, data_path=""):
+def context_menu_enum(*args, data_path=”“):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -421,7 +421,7 @@ def context_menu_enum(*args, data_path=""):
     return {'FINISHED'}
 
 
-def context_modal_mouse(*args, data_path_iter="", data_path_item="", header_text="", input_scale=0.01, invert=False, initial_x=0):
+def context_modal_mouse(*args, data_path_iter=”“, data_path_item=”“, header_text=”“, input_scale=0.01, invert=False, initial_x=0):
     """Adjust arbitrary values with mouse input
     
     :param args: (override_context, execution_context, undo)
@@ -452,7 +452,7 @@ def context_modal_mouse(*args, data_path_iter="", data_path_item="", header_text
     return {'FINISHED'}
 
 
-def context_pie_enum(*args, data_path=""):
+def context_pie_enum(*args, data_path=”“):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -468,7 +468,7 @@ def context_pie_enum(*args, data_path=""):
     return {'FINISHED'}
 
 
-def context_scale_float(*args, data_path="", value=1.0):
+def context_scale_float(*args, data_path=”“, value=1.0):
     """Scale a float context value
     
     :param args: (override_context, execution_context, undo)
@@ -487,7 +487,7 @@ def context_scale_float(*args, data_path="", value=1.0):
     return {'FINISHED'}
 
 
-def context_scale_int(*args, data_path="", value=1.0, always_step=True):
+def context_scale_int(*args, data_path=”“, value=1.0, always_step=True):
     """Scale an int context value
     
     :param args: (override_context, execution_context, undo)
@@ -500,7 +500,7 @@ def context_scale_int(*args, data_path="", value=1.0, always_step=True):
     :param value: Value, Assign value
         (type: float in [-inf, inf], (optional))
     :type value: float
-    :param always_step: Always Step, Always adjust the value by a minimum of 1 when 'value' is not 1.0
+    :param always_step: Always Step, Always adjust the value by a minimum of 1 when ‘value’ is not 1.0
         (type: boolean, (optional))
     :type always_step: bool
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
@@ -509,7 +509,7 @@ def context_scale_int(*args, data_path="", value=1.0, always_step=True):
     return {'FINISHED'}
 
 
-def context_set_boolean(*args, data_path="", value=True):
+def context_set_boolean(*args, data_path=”“, value=True):
     """Set a context value
     
     :param args: (override_context, execution_context, undo)
@@ -528,7 +528,7 @@ def context_set_boolean(*args, data_path="", value=True):
     return {'FINISHED'}
 
 
-def context_set_enum(*args, data_path="", value=""):
+def context_set_enum(*args, data_path=”“, value=”“):
     """Set a context value
     
     :param args: (override_context, execution_context, undo)
@@ -547,7 +547,7 @@ def context_set_enum(*args, data_path="", value=""):
     return {'FINISHED'}
 
 
-def context_set_float(*args, data_path="", value=0.0, relative=False):
+def context_set_float(*args, data_path=”“, value=0.0, relative=False):
     """Set a context value
     
     :param args: (override_context, execution_context, undo)
@@ -569,7 +569,7 @@ def context_set_float(*args, data_path="", value=0.0, relative=False):
     return {'FINISHED'}
 
 
-def context_set_id(*args, data_path="", value=""):
+def context_set_id(*args, data_path=”“, value=”“):
     """Set a context value to an ID data-block
     
     :param args: (override_context, execution_context, undo)
@@ -588,7 +588,7 @@ def context_set_id(*args, data_path="", value=""):
     return {'FINISHED'}
 
 
-def context_set_int(*args, data_path="", value=0, relative=False):
+def context_set_int(*args, data_path=”“, value=0, relative=False):
     """Set a context value
     
     :param args: (override_context, execution_context, undo)
@@ -610,7 +610,7 @@ def context_set_int(*args, data_path="", value=0, relative=False):
     return {'FINISHED'}
 
 
-def context_set_string(*args, data_path="", value=""):
+def context_set_string(*args, data_path=”“, value=”“):
     """Set a context value
     
     :param args: (override_context, execution_context, undo)
@@ -629,7 +629,7 @@ def context_set_string(*args, data_path="", value=""):
     return {'FINISHED'}
 
 
-def context_set_value(*args, data_path="", value=""):
+def context_set_value(*args, data_path=”“, value=”“):
     """Set a context value
     
     :param args: (override_context, execution_context, undo)
@@ -648,7 +648,7 @@ def context_set_value(*args, data_path="", value=""):
     return {'FINISHED'}
 
 
-def context_toggle(*args, data_path=""):
+def context_toggle(*args, data_path=”“):
     """Toggle a context value
     
     :param args: (override_context, execution_context, undo)
@@ -664,7 +664,7 @@ def context_toggle(*args, data_path=""):
     return {'FINISHED'}
 
 
-def context_toggle_enum(*args, data_path="", value_1="", value_2=""):
+def context_toggle_enum(*args, data_path=”“, value_1=”“, value_2=”“):
     """Toggle a context value
     
     :param args: (override_context, execution_context, undo)
@@ -728,7 +728,7 @@ def dependency_relations(*args):
     return {'FINISHED'}
 
 
-def doc_view(*args, doc_id=""):
+def doc_view(*args, doc_id=”“):
     """Load online reference docs
     
     :param args: (override_context, execution_context, undo)
@@ -744,7 +744,7 @@ def doc_view(*args, doc_id=""):
     return {'FINISHED'}
 
 
-def doc_view_manual(*args, doc_id=""):
+def doc_view_manual(*args, doc_id=”“):
     """Load online manual
     
     :param args: (override_context, execution_context, undo)
@@ -773,7 +773,7 @@ def doc_view_manual_ui_context(*args):
     return {'FINISHED'}
 
 
-def interaction_preset_add(*args, name="", remove_active=False):
+def interaction_preset_add(*args, name=”“, remove_active=False):
     """Add or remove an Application Interaction Preset
     
     :param args: (override_context, execution_context, undo)
@@ -792,7 +792,7 @@ def interaction_preset_add(*args, name="", remove_active=False):
     return {'FINISHED'}
 
 
-def interface_theme_preset_add(*args, name="", remove_active=False):
+def interface_theme_preset_add(*args, name=”“, remove_active=False):
     """Add or remove a theme preset
     
     :param args: (override_context, execution_context, undo)
@@ -811,7 +811,7 @@ def interface_theme_preset_add(*args, name="", remove_active=False):
     return {'FINISHED'}
 
 
-def keyconfig_activate(*args, filepath=""):
+def keyconfig_activate(*args, filepath=”“):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -827,7 +827,7 @@ def keyconfig_activate(*args, filepath=""):
     return {'FINISHED'}
 
 
-def keyconfig_export(*args, filepath="keymap.py", filter_folder=True, filter_text=True, filter_python=True):
+def keyconfig_export(*args, filepath=”keymap.py”, filter_folder=True, filter_text=True, filter_python=True):
     """Export key configuration to a python script
     
     :param args: (override_context, execution_context, undo)
@@ -852,7 +852,7 @@ def keyconfig_export(*args, filepath="keymap.py", filter_folder=True, filter_tex
     return {'FINISHED'}
 
 
-def keyconfig_import(*args, filepath="keymap.py", filter_folder=True, filter_text=True, filter_python=True, keep_original=True):
+def keyconfig_import(*args, filepath=”keymap.py”, filter_folder=True, filter_text=True, filter_python=True, keep_original=True):
     """Import key configuration from a python script
     
     :param args: (override_context, execution_context, undo)
@@ -880,7 +880,7 @@ def keyconfig_import(*args, filepath="keymap.py", filter_folder=True, filter_tex
     return {'FINISHED'}
 
 
-def keyconfig_preset_add(*args, name="", remove_active=False):
+def keyconfig_preset_add(*args, name=”“, remove_active=False):
     """Add or remove a Key-config Preset
     
     :param args: (override_context, execution_context, undo)
@@ -986,7 +986,7 @@ def keymap_restore(*args, all=False):
     return {'FINISHED'}
 
 
-def lib_reload(*args, library="", filepath="", directory="", filename="", filter_blender=True, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=8, relative_path=True, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA'):
+def lib_reload(*args, library=”“, filepath=”“, directory=”“, filename=”“, filter_blender=True, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=8, relative_path=True, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’):
     """Reload the given library
     
     :param args: (override_context, execution_context, undo)
@@ -1070,7 +1070,7 @@ def lib_reload(*args, library="", filepath="", directory="", filename="", filter
     return {'FINISHED'}
 
 
-def lib_relocate(*args, library="", filepath="", directory="", filename="", files=None, filter_blender=True, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=8, relative_path=True, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA'):
+def lib_relocate(*args, library=”“, filepath=”“, directory=”“, filename=”“, files=None, filter_blender=True, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=8, relative_path=True, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’):
     """Relocate the given library to one or several others
     
     :param args: (override_context, execution_context, undo)
@@ -1157,7 +1157,7 @@ def lib_relocate(*args, library="", filepath="", directory="", filename="", file
     return {'FINISHED'}
 
 
-def link(*args, filepath="", directory="", filename="", files=None, filter_blender=True, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=True, filemode=1, relative_path=True, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', link=True, autoselect=True, active_layer=True, instance_groups=True):
+def link(*args, filepath=”“, directory=”“, filename=”“, files=None, filter_blender=True, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=True, filemode=1, relative_path=True, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, link=True, autoselect=True, active_layer=True, instance_groups=True):
     """Link from a Library .blend file
     
     :param args: (override_context, execution_context, undo)
@@ -1266,7 +1266,7 @@ def memory_statistics(*args):
     return {'FINISHED'}
 
 
-def open_mainfile(*args, filepath="", filter_blender=True, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=8, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', load_ui=True, use_scripts=True):
+def open_mainfile(*args, filepath=”“, filter_blender=True, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=8, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, load_ui=True, use_scripts=True):
     """Open a Blender file
     
     :param args: (override_context, execution_context, undo)
@@ -1345,7 +1345,7 @@ def open_mainfile(*args, filepath="", filter_blender=True, filter_backup=False, 
 
 
 def operator_cheat_sheet(*args):
-    """Undocumented
+    """List all the Operators in a text-block, useful for scripting
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -1370,7 +1370,7 @@ def operator_defaults(*args):
     return {'FINISHED'}
 
 
-def operator_pie_enum(*args, data_path="", prop_string=""):
+def operator_pie_enum(*args, data_path=”“, prop_string=”“):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -1389,7 +1389,7 @@ def operator_pie_enum(*args, data_path="", prop_string=""):
     return {'FINISHED'}
 
 
-def operator_preset_add(*args, name="", remove_active=False, operator=""):
+def operator_preset_add(*args, name=”“, remove_active=False, operator=”“):
     """Add or remove an Operator Preset
     
     :param args: (override_context, execution_context, undo)
@@ -1411,7 +1411,7 @@ def operator_preset_add(*args, name="", remove_active=False, operator=""):
     return {'FINISHED'}
 
 
-def path_open(*args, filepath=""):
+def path_open(*args, filepath=”“):
     """Open a path in a file browser
     
     :param args: (override_context, execution_context, undo)
@@ -1427,8 +1427,8 @@ def path_open(*args, filepath=""):
     return {'FINISHED'}
 
 
-def previews_batch_clear(*args, files=None, directory="", filter_blender=True, filter_folder=True, use_scenes=True, use_groups=True, use_objects=True, use_intern_data=True, use_trusted=False, use_backups=True):
-    """Clear selected .blend file's previews
+def previews_batch_clear(*args, files=None, directory=”“, filter_blender=True, filter_folder=True, use_scenes=True, use_groups=True, use_objects=True, use_intern_data=True, use_trusted=False, use_backups=True):
+    """Clear selected .blend file’s previews
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -1446,16 +1446,16 @@ def previews_batch_clear(*args, files=None, directory="", filter_blender=True, f
     :param filter_folder: filter_folder
         (type: boolean, (optional))
     :type filter_folder: bool
-    :param use_scenes: Scenes, Clear scenes' previews
+    :param use_scenes: Scenes, Clear scenes’ previews
         (type: boolean, (optional))
     :type use_scenes: bool
-    :param use_groups: Groups, Clear groups' previews
+    :param use_groups: Groups, Clear groups’ previews
         (type: boolean, (optional))
     :type use_groups: bool
-    :param use_objects: Objects, Clear objects' previews
+    :param use_objects: Objects, Clear objects’ previews
         (type: boolean, (optional))
     :type use_objects: bool
-    :param use_intern_data: Mat/Tex/..., Clear 'internal' previews (materials, textures, images, etc.)
+    :param use_intern_data: Mat/Tex/…, Clear ‘internal’ previews (materials, textures, images, etc.)
         (type: boolean, (optional))
     :type use_intern_data: bool
     :param use_trusted: Trusted Blend Files, Enable python evaluation for selected files
@@ -1470,8 +1470,8 @@ def previews_batch_clear(*args, files=None, directory="", filter_blender=True, f
     return {'FINISHED'}
 
 
-def previews_batch_generate(*args, files=None, directory="", filter_blender=True, filter_folder=True, use_scenes=True, use_groups=True, use_objects=True, use_intern_data=True, use_trusted=False, use_backups=True):
-    """Generate selected .blend file's previews
+def previews_batch_generate(*args, files=None, directory=”“, filter_blender=True, filter_folder=True, use_scenes=True, use_groups=True, use_objects=True, use_intern_data=True, use_trusted=False, use_backups=True):
+    """Generate selected .blend file’s previews
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -1489,16 +1489,16 @@ def previews_batch_generate(*args, files=None, directory="", filter_blender=True
     :param filter_folder: filter_folder
         (type: boolean, (optional))
     :type filter_folder: bool
-    :param use_scenes: Scenes, Generate scenes' previews
+    :param use_scenes: Scenes, Generate scenes’ previews
         (type: boolean, (optional))
     :type use_scenes: bool
-    :param use_groups: Groups, Generate groups' previews
+    :param use_groups: Groups, Generate groups’ previews
         (type: boolean, (optional))
     :type use_groups: bool
-    :param use_objects: Objects, Generate objects' previews
+    :param use_objects: Objects, Generate objects’ previews
         (type: boolean, (optional))
     :type use_objects: bool
-    :param use_intern_data: Mat/Tex/..., Generate 'internal' previews (materials, textures, images, etc.)
+    :param use_intern_data: Mat/Tex/…, Generate ‘internal’ previews (materials, textures, images, etc.)
         (type: boolean, (optional))
     :type use_intern_data: bool
     :param use_trusted: Trusted Blend Files, Enable python evaluation for selected files
@@ -1513,7 +1513,7 @@ def previews_batch_generate(*args, files=None, directory="", filter_blender=True
     return {'FINISHED'}
 
 
-def previews_clear(*args, id_type={'GROUP', 'IMAGE', 'LAMP', 'MATERIAL', 'OBJECT', 'SCENE', 'TEXTURE', 'WORLD'}):
+def previews_clear(*args, id_type={‘GROUP’, ’IMAGE’, ’LAMP’, ’MATERIAL’, ’OBJECT’, ’SCENE’, ’TEXTURE’, ’WORLD’}):
     """Clear data-block previews (only for some types like objects, materials, textures, etc.)
     
     :param args: (override_context, execution_context, undo)
@@ -1542,7 +1542,7 @@ def previews_ensure(*args):
     return {'FINISHED'}
 
 
-def properties_add(*args, data_path=""):
+def properties_add(*args, data_path=”“):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -1558,7 +1558,7 @@ def properties_add(*args, data_path=""):
     return {'FINISHED'}
 
 
-def properties_context_change(*args, context=""):
+def properties_context_change(*args, context=”“):
     """Jump to a different tab inside the properties editor
     
     :param args: (override_context, execution_context, undo)
@@ -1574,7 +1574,7 @@ def properties_context_change(*args, context=""):
     return {'FINISHED'}
 
 
-def properties_edit(*args, data_path="", property="", value="", min=-10000, max=10000.0, use_soft_limits=False, soft_min=-10000, soft_max=10000.0, description=""):
+def properties_edit(*args, data_path=”“, property=”“, value=”“, min=-10000, max=10000.0, use_soft_limits=False, soft_min=-10000, soft_max=10000.0, description=”“):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -1614,7 +1614,7 @@ def properties_edit(*args, data_path="", property="", value="", min=-10000, max=
     return {'FINISHED'}
 
 
-def properties_remove(*args, data_path="", property=""):
+def properties_remove(*args, data_path=”“, property=”“):
     """Internal use (edit a property data_path)
     
     :param args: (override_context, execution_context, undo)
@@ -1646,7 +1646,7 @@ def quit_blender(*args):
     return {'FINISHED'}
 
 
-def radial_control(*args, data_path_primary="", data_path_secondary="", use_secondary="", rotation_path="", color_path="", fill_color_path="", fill_color_override_path="", fill_color_override_test_path="", zoom_path="", image_id="", secondary_tex=False):
+def radial_control(*args, data_path_primary=”“, data_path_secondary=”“, use_secondary=”“, rotation_path=”“, color_path=”“, fill_color_path=”“, fill_color_override_path=”“, fill_color_override_test_path=”“, zoom_path=”“, image_id=”“, secondary_tex=False):
     """Set some size property (like e.g. brush size) with mouse wheel
     
     :param args: (override_context, execution_context, undo)
@@ -1692,7 +1692,7 @@ def radial_control(*args, data_path_primary="", data_path_secondary="", use_seco
     return {'FINISHED'}
 
 
-def read_factory_settings(*args, app_template="Template", use_empty=False):
+def read_factory_settings(*args, app_template=”Template”, use_empty=False):
     """Load default file and user preferences
     
     :param args: (override_context, execution_context, undo)
@@ -1721,8 +1721,8 @@ def read_history(*args):
     return {'FINISHED'}
 
 
-def read_homefile(*args, filepath="", load_ui=True, use_empty=False, use_splash=False, app_template="Template"):
-    """Open the default file (doesn't save the current file)
+def read_homefile(*args, filepath=”“, load_ui=True, use_empty=False, use_splash=False, app_template=”Template”):
+    """Open the default file (doesn’t save the current file)
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -1746,7 +1746,7 @@ def read_homefile(*args, filepath="", load_ui=True, use_empty=False, use_splash=
     return {'FINISHED'}
 
 
-def recover_auto_save(*args, filepath="", filter_blender=True, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=False, filter_blenlib=False, filemode=8, display_type='LIST_LONG', sort_method='FILE_SORT_TIME'):
+def recover_auto_save(*args, filepath=”“, filter_blender=True, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=False, filter_blenlib=False, filemode=8, display_type=’LIST_LONG’, sort_method=’FILE_SORT_TIME’):
     """Open an automatically saved file to recover it
     
     :param args: (override_context, execution_context, undo)
@@ -1819,7 +1819,7 @@ def recover_auto_save(*args, filepath="", filter_blender=True, filter_backup=Fal
 
 
 def recover_last_session(*args):
-    """Open the last closed file ("quit.blend")
+    """Open the last closed file (“quit.blend”)
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -1831,7 +1831,7 @@ def recover_last_session(*args):
     return {'FINISHED'}
 
 
-def redraw_timer(*args, type='DRAW', iterations=10, time_limit=0.0):
+def redraw_timer(*args, type=’DRAW’, iterations=10, time_limit=0.0):
     """Simple redraw timer to test the speed of updating the interface
     
     :param args: (override_context, execution_context, undo)
@@ -1876,7 +1876,7 @@ def revert_mainfile(*args, use_scripts=True):
     return {'FINISHED'}
 
 
-def save_as_mainfile(*args, filepath="", check_existing=True, filter_blender=True, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=8, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', compress=False, relative_remap=True, copy=False, use_mesh_compat=False):
+def save_as_mainfile(*args, filepath=”“, check_existing=True, filter_blender=True, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=8, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, compress=False, relative_remap=True, copy=False, use_mesh_compat=False):
     """Save the current file in the desired location
     
     :param args: (override_context, execution_context, undo)
@@ -1976,7 +1976,7 @@ def save_homefile(*args):
     return {'FINISHED'}
 
 
-def save_mainfile(*args, filepath="", check_existing=True, filter_blender=True, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=8, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', compress=False, relative_remap=False):
+def save_mainfile(*args, filepath=”“, check_existing=True, filter_blender=True, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=8, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, compress=False, relative_remap=False):
     """Save the current Blender file
     
     :param args: (override_context, execution_context, undo)
@@ -2083,7 +2083,7 @@ def search_menu(*args):
     return {'FINISHED'}
 
 
-def set_stereo_3d(*args, display_mode='ANAGLYPH', anaglyph_type='RED_CYAN', interlace_type='ROW_INTERLEAVED', use_interlace_swap=False, use_sidebyside_crosseyed=False):
+def set_stereo_3d(*args, display_mode=’ANAGLYPH’, anaglyph_type=’RED_CYAN’, interlace_type=’ROW_INTERLEAVED’, use_interlace_swap=False, use_sidebyside_crosseyed=False):
     """Toggle 3D stereo support for current window (or change the display mode)
     
     :param args: (override_context, execution_context, undo)
@@ -2129,7 +2129,7 @@ def splash(*args):
     return {'FINISHED'}
 
 
-def sysinfo(*args, filepath=""):
+def sysinfo(*args, filepath=”“):
     """Generate system information, saved into a text file
     
     :param args: (override_context, execution_context, undo)
@@ -2145,7 +2145,7 @@ def sysinfo(*args, filepath=""):
     return {'FINISHED'}
 
 
-def theme_install(*args, overwrite=True, filepath="", filter_folder=True, filter_glob="*.xml"):
+def theme_install(*args, overwrite=True, filepath=”“, filter_folder=True, filter_glob=”*.xml”):
     """Load and apply a Blender XML theme file
     
     :param args: (override_context, execution_context, undo)
@@ -2170,7 +2170,7 @@ def theme_install(*args, overwrite=True, filepath="", filter_folder=True, filter
     return {'FINISHED'}
 
 
-def url_open(*args, url=""):
+def url_open(*args, url=”“):
     """Open a website in the web-browser
     
     :param args: (override_context, execution_context, undo)

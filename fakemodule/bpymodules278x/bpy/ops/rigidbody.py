@@ -20,7 +20,7 @@ def bake_to_keyframes(*args, frame_start=1, frame_end=250, step=1):
     return {'FINISHED'}
 
 
-def connect(*args, con_type='FIXED', pivot_type='CENTER', connection_pattern='SELECTED_TO_ACTIVE'):
+def connect(*args, con_type=’FIXED’, pivot_type=’CENTER’, connection_pattern=’SELECTED_TO_ACTIVE’):
     """Create rigid body constraints between selected rigid bodies
     
     :param args: (override_context, execution_context, undo)
@@ -55,7 +55,7 @@ def connect(*args, con_type='FIXED', pivot_type='CENTER', connection_pattern='SE
     return {'FINISHED'}
 
 
-def constraint_add(*args, type='FIXED'):
+def constraint_add(*args, type=’FIXED’):
     """Add Rigid Body Constraint to active object
     
     :param args: (override_context, execution_context, undo)
@@ -92,7 +92,7 @@ def constraint_remove(*args):
     return {'FINISHED'}
 
 
-def mass_calculate(*args, material='DEFAULT', density=1.0):
+def mass_calculate(*args, material=’DEFAULT’, density=1.0):
     """Automatically calculate mass values for Rigid Body Objects based on volume
     
     :param args: (override_context, execution_context, undo)
@@ -111,7 +111,7 @@ def mass_calculate(*args, material='DEFAULT', density=1.0):
     return {'FINISHED'}
 
 
-def object_add(*args, type='ACTIVE'):
+def object_add(*args, type=’ACTIVE’):
     """Add active object as Rigid Body
     
     :param args: (override_context, execution_context, undo)
@@ -155,7 +155,7 @@ def object_settings_copy(*args):
     return {'FINISHED'}
 
 
-def objects_add(*args, type='ACTIVE'):
+def objects_add(*args, type=’ACTIVE’):
     """Add selected objects as Rigid Bodies
     
     :param args: (override_context, execution_context, undo)
@@ -186,7 +186,7 @@ def objects_remove(*args):
     return {'FINISHED'}
 
 
-def shape_change(*args, type='MESH'):
+def shape_change(*args, type=’MESH’):
     """Change collision shapes for selected Rigid Body Objects
     
     :param args: (override_context, execution_context, undo)

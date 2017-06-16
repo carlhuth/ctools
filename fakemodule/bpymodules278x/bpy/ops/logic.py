@@ -1,4 +1,4 @@
-def actuator_add(*args, type='', name="", object=""):
+def actuator_add(*args, type=”, name=”“, object=”“):
     """Add an actuator to the active object
     
     :param args: (override_context, execution_context, undo)
@@ -20,7 +20,7 @@ def actuator_add(*args, type='', name="", object=""):
     return {'FINISHED'}
 
 
-def actuator_move(*args, actuator="", object="", direction='UP'):
+def actuator_move(*args, actuator=”“, object=”“, direction=’UP’):
     """Move Actuator
     
     :param args: (override_context, execution_context, undo)
@@ -42,7 +42,7 @@ def actuator_move(*args, actuator="", object="", direction='UP'):
     return {'FINISHED'}
 
 
-def actuator_remove(*args, actuator="", object=""):
+def actuator_remove(*args, actuator=”“, object=”“):
     """Remove an actuator from the active object
     
     :param args: (override_context, execution_context, undo)
@@ -61,7 +61,7 @@ def actuator_remove(*args, actuator="", object=""):
     return {'FINISHED'}
 
 
-def controller_add(*args, type='LOGIC_AND', name="", object=""):
+def controller_add(*args, type=’LOGIC_AND’, name=”“, object=”“):
     """Add a controller to the active object
     
     :param args: (override_context, execution_context, undo)
@@ -91,7 +91,7 @@ def controller_add(*args, type='LOGIC_AND', name="", object=""):
     return {'FINISHED'}
 
 
-def controller_move(*args, controller="", object="", direction='UP'):
+def controller_move(*args, controller=”“, object=”“, direction=’UP’):
     """Move Controller
     
     :param args: (override_context, execution_context, undo)
@@ -113,7 +113,7 @@ def controller_move(*args, controller="", object="", direction='UP'):
     return {'FINISHED'}
 
 
-def controller_remove(*args, controller="", object=""):
+def controller_remove(*args, controller=”“, object=”“):
     """Remove a controller from the active object
     
     :param args: (override_context, execution_context, undo)
@@ -164,7 +164,7 @@ def properties(*args):
     return {'FINISHED'}
 
 
-def sensor_add(*args, type='', name="", object=""):
+def sensor_add(*args, type=”, name=”“, object=”“):
     """Add a sensor to the active object
     
     :param args: (override_context, execution_context, undo)
@@ -186,7 +186,7 @@ def sensor_add(*args, type='', name="", object=""):
     return {'FINISHED'}
 
 
-def sensor_move(*args, sensor="", object="", direction='UP'):
+def sensor_move(*args, sensor=”“, object=”“, direction=’UP’):
     """Move Sensor
     
     :param args: (override_context, execution_context, undo)
@@ -208,7 +208,7 @@ def sensor_move(*args, sensor="", object="", direction='UP'):
     return {'FINISHED'}
 
 
-def sensor_remove(*args, sensor="", object=""):
+def sensor_remove(*args, sensor=”“, object=”“):
     """Remove a sensor from the active object
     
     :param args: (override_context, execution_context, undo)

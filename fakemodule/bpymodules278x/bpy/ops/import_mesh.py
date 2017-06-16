@@ -1,4 +1,4 @@
-def ply(*args, filepath="", files=None, directory="", filter_glob="*.ply"):
+def ply(*args, filepath=”“, files=None, directory=”“, filter_glob=”*.ply”):
     """Load a PLY geometry file
     
     :param args: (override_context, execution_context, undo)
@@ -23,7 +23,7 @@ def ply(*args, filepath="", files=None, directory="", filter_glob="*.ply"):
     return {'FINISHED'}
 
 
-def stl(*args, filepath="", axis_forward='Y', axis_up='Z', filter_glob="*.stl", files=None, directory="", global_scale=1.0, use_scene_unit=False, use_facet_normal=False):
+def stl(*args, filepath=”“, axis_forward=’Y’, axis_up=’Z’, filter_glob=”*.stl”, files=None, directory=”“, global_scale=1.0, use_scene_unit=False, use_facet_normal=False):
     """Load STL triangle mesh data
     
     :param args: (override_context, execution_context, undo)
@@ -51,7 +51,7 @@ def stl(*args, filepath="", axis_forward='Y', axis_up='Z', filter_glob="*.stl", 
     :param global_scale: Scale
         (type: float in [1e-06, 1e+06], (optional))
     :type global_scale: float
-    :param use_scene_unit: Scene Unit, Apply current scene's unit (as defined by unit scale) to imported data
+    :param use_scene_unit: Scene Unit, Apply current scene’s unit (as defined by unit scale) to imported data
         (type: boolean, (optional))
     :type use_scene_unit: bool
     :param use_facet_normal: Facet Normals, Use (import) facet normals (note that this will still give flat shading)

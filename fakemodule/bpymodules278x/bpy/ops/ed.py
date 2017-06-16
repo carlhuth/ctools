@@ -53,7 +53,7 @@ def undo_history(*args, item=0):
     return {'FINISHED'}
 
 
-def undo_push(*args, message="Add an undo step *function may be moved*"):
+def undo_push(*args, message=”Add an undo step *function may be moved*”):
     """Add an undo state (internal use only)
     
     :param args: (override_context, execution_context, undo)

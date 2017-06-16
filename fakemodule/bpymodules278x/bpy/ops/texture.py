@@ -24,7 +24,7 @@ def envmap_clear_all(*args):
     return {'FINISHED'}
 
 
-def envmap_save(*args, layout=(0.0, 0.0, 1.0, 0.0, 2.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 1.0), filepath="", check_existing=True, filter_blender=False, filter_backup=False, filter_image=True, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, show_multiview=False, use_multiview=False, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA'):
+def envmap_save(*args, layout=(0.0, 0.0, 1.0, 0.0, 2.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 1.0), filepath=”“, check_existing=True, filter_blender=False, filter_backup=False, filter_image=True, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, show_multiview=False, use_multiview=False, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’):
     """Save the current generated Environment map to an image file
     
     :param args: (override_context, execution_context, undo)
@@ -134,7 +134,7 @@ def slot_copy(*args):
     return {'FINISHED'}
 
 
-def slot_move(*args, type='UP'):
+def slot_move(*args, type=’UP’):
     """Move texture slots up and down
     
     :param args: (override_context, execution_context, undo)

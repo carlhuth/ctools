@@ -148,7 +148,7 @@ def driver_variables_paste(*args, replace=False):
     return {'FINISHED'}
 
 
-def duplicate(*args, mode='TRANSLATION'):
+def duplicate(*args, mode=’TRANSLATION’):
     """Make a copy of all selected keyframes
     
     :param args: (override_context, execution_context, undo)
@@ -183,7 +183,7 @@ def duplicate_move(*args, GRAPH_OT_duplicate=None, TRANSFORM_OT_transform=None):
     return {'FINISHED'}
 
 
-def easing_type(*args, type='AUTO'):
+def easing_type(*args, type=’AUTO’):
     """Set easing type for the F-Curve segments starting from the selected keyframes
     
     :param args: (override_context, execution_context, undo)
@@ -191,7 +191,7 @@ def easing_type(*args, type='AUTO'):
         execution_context (str) -- enum in ['INVOKE_DEFAULT', 'INVOKE_REGION_WIN', 'INVOKE_REGION_CHANNELS', 'INVOKE_REGION_PREVIEW', 'INVOKE_AREA', 'INVOKE_SCREEN', 'EXEC_DEFAULT', 'EXEC_REGION_WIN', 'EXEC_REGION_CHANNELS', 'EXEC_REGION_PREVIEW', 'EXEC_AREA', 'EXEC_SCREEN']
         undo (bool)
     :param type: Type
-        * 'AUTO': Automatic Easing, Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects).
+        * 'AUTO': Automatic Easing, Easing type is chosen automatically based on what the type of interpolation used (e.g. ‘Ease In’ for transitional types, and ‘Ease Out’ for dynamic effects).
         * 'EASE_IN': Ease In, Only on the end closest to the next keyframe.
         * 'EASE_OUT': Ease Out, Only on the end closest to the first keyframe.
         * 'EASE_IN_OUT': Ease In and Out, Segment between both keyframes.
@@ -216,7 +216,7 @@ def euler_filter(*args):
     return {'FINISHED'}
 
 
-def extrapolation_type(*args, type='CONSTANT'):
+def extrapolation_type(*args, type=’CONSTANT’):
     """Set extrapolation mode for selected F-Curves
     
     :param args: (override_context, execution_context, undo)
@@ -226,7 +226,7 @@ def extrapolation_type(*args, type='CONSTANT'):
     :param type: Type
         * 'CONSTANT': Constant Extrapolation, Values on endpoint keyframes are held.
         * 'LINEAR': Linear Extrapolation, Straight-line slope of end segments are extended past the endpoint keyframes.
-        * 'MAKE_CYCLIC': Make Cyclic (F-Modifier), Add Cycles F-Modifier if one doesn't exist already.
+        * 'MAKE_CYCLIC': Make Cyclic (F-Modifier), Add Cycles F-Modifier if one doesn’t exist already.
         * 'CLEAR_CYCLIC': Clear Cyclic (F-Modifier), Remove Cycles F-Modifier if not needed anymore.
         (type: enum in ['CONSTANT', 'LINEAR', 'MAKE_CYCLIC', 'CLEAR_CYCLIC'], (optional))
     :type type: str
@@ -236,7 +236,7 @@ def extrapolation_type(*args, type='CONSTANT'):
     return {'FINISHED'}
 
 
-def fmodifier_add(*args, type='NULL', only_active=True):
+def fmodifier_add(*args, type=’NULL’, only_active=True):
     """Add F-Modifier to the active/selected F-Curves
     
     :param args: (override_context, execution_context, undo)
@@ -334,7 +334,7 @@ def ghost_curves_create(*args):
     return {'FINISHED'}
 
 
-def handle_type(*args, type='FREE'):
+def handle_type(*args, type=’FREE’):
     """Set type of handle for selected keyframes
     
     :param args: (override_context, execution_context, undo)
@@ -371,7 +371,7 @@ def hide(*args, unselected=False):
     return {'FINISHED'}
 
 
-def interpolation_type(*args, type='CONSTANT'):
+def interpolation_type(*args, type=’CONSTANT’):
     """Set interpolation mode for the F-Curve segments starting from the selected keyframes
     
     :param args: (override_context, execution_context, undo)
@@ -400,7 +400,7 @@ def interpolation_type(*args, type='CONSTANT'):
     return {'FINISHED'}
 
 
-def keyframe_insert(*args, type='ALL'):
+def keyframe_insert(*args, type=’ALL’):
     """Insert keyframes for the specified channels
     
     :param args: (override_context, execution_context, undo)
@@ -408,8 +408,8 @@ def keyframe_insert(*args, type='ALL'):
         execution_context (str) -- enum in ['INVOKE_DEFAULT', 'INVOKE_REGION_WIN', 'INVOKE_REGION_CHANNELS', 'INVOKE_REGION_PREVIEW', 'INVOKE_AREA', 'INVOKE_SCREEN', 'EXEC_DEFAULT', 'EXEC_REGION_WIN', 'EXEC_REGION_CHANNELS', 'EXEC_REGION_PREVIEW', 'EXEC_AREA', 'EXEC_SCREEN']
         undo (bool)
     :param type: Type
-        * 'ALL': All Channels, Insert a keyframe on all visible and editable F-Curves using each curve's current value.
-        * 'SEL': Only Selected Channels, Insert a keyframe on selected F-Curves using each curve's current value.
+        * 'ALL': All Channels, Insert a keyframe on all visible and editable F-Curves using each curve’s current value.
+        * 'SEL': Only Selected Channels, Insert a keyframe on selected F-Curves using each curve’s current value.
         * 'CURSOR_ACTIVE': Active Channels At Cursor, Insert a keyframe for the active F-Curve at the cursor point.
         * 'CURSOR_SEL': Selected Channels At Cursor, Insert a keyframe for selected F-Curves at the cursor point.
         (type: enum in ['ALL', 'SEL', 'CURSOR_ACTIVE', 'CURSOR_SEL'], (optional))
@@ -420,7 +420,7 @@ def keyframe_insert(*args, type='ALL'):
     return {'FINISHED'}
 
 
-def mirror(*args, type='CFRA'):
+def mirror(*args, type=’CFRA’):
     """Flip selected keyframes over the selected mirror line
     
     :param args: (override_context, execution_context, undo)
@@ -441,7 +441,7 @@ def mirror(*args, type='CFRA'):
     return {'FINISHED'}
 
 
-def paste(*args, offset='START', merge='MIX', flipped=False):
+def paste(*args, offset=’START’, merge=’MIX’, flipped=False):
     """Paste keyframes from copy/paste buffer for the selected channels, starting on the current frame
     
     :param args: (override_context, execution_context, undo)
@@ -601,7 +601,7 @@ def select_circle(*args, x=0, y=0, radius=1, gesture_mode=0):
     return {'FINISHED'}
 
 
-def select_column(*args, mode='KEYS'):
+def select_column(*args, mode=’KEYS’):
     """Select all keyframes on the specified frame(s)
     
     :param args: (override_context, execution_context, undo)
@@ -639,7 +639,7 @@ def select_lasso(*args, path=None, deselect=False, extend=True):
     return {'FINISHED'}
 
 
-def select_leftright(*args, mode='CHECK', extend=False):
+def select_leftright(*args, mode=’CHECK’, extend=False):
     """Select keyframes to the left or the right of the current frame
     
     :param args: (override_context, execution_context, undo)
@@ -710,7 +710,7 @@ def smooth(*args):
     return {'FINISHED'}
 
 
-def snap(*args, type='CFRA'):
+def snap(*args, type=’CFRA’):
     """Snap selected keyframes to the chosen times/values
     
     :param args: (override_context, execution_context, undo)
@@ -732,7 +732,7 @@ def snap(*args, type='CFRA'):
     return {'FINISHED'}
 
 
-def sound_bake(*args, filepath="", filter_blender=False, filter_backup=False, filter_image=False, filter_movie=True, filter_python=False, filter_font=False, filter_sound=True, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, show_multiview=False, use_multiview=False, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', low=0.0, high=100000.0, attack=0.005, release=0.2, threshold=0.0, use_accumulate=False, use_additive=False, use_square=False, sthreshold=0.1):
+def sound_bake(*args, filepath=”“, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=True, filter_python=False, filter_font=False, filter_sound=True, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, show_multiview=False, use_multiview=False, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, low=0.0, high=100000.0, attack=0.005, release=0.2, threshold=0.0, use_accumulate=False, use_additive=False, use_square=False, sthreshold=0.1):
     """Bakes a sound wave to selected F-Curves
     
     :param args: (override_context, execution_context, undo)

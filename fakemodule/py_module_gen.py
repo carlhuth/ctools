@@ -47,6 +47,8 @@ sys.path.append(os.path.dirname(__file__))
 import bgl_functions
 
 
+VERSION = 1.0
+
 REPLACE_MOD = True
 
 
@@ -423,19 +425,20 @@ class AttributeParser(list):
         if field_name == 'Parameters':
             def parse(paragraph_elem):
                 t = ''.join(get_itertext(paragraph_elem))
-                m = re.match('(\w+) --[ \n](.*)', t, re.DOTALL)
+                # NOTE: `–` is en dash not hyphen minus `-`
+                m = re.match('(\w+) –[ \n](.*)', t, re.DOTALL)
                 if m:
                     name, param_str = m.groups()
                     type_str = ''
                 else:
-                    m = re.match('(\w+) \((.*)\) --[ \n](.*)', t, re.DOTALL)
+                    m = re.match('(\w+) \((.*)\) –[ \n](.*)', t, re.DOTALL)
                     if m:
                         name, type_str, param_str = m.groups()
                     else:
                         # 書式不明で判別不能。
                         # bge.types.KX_ConstraintWrapper.setParam(axis, value0, value1)
                         # bgl.glClearAccum(red, green, blue, alpha)
-                        m = re.match('(.*?) --[ \n](.*)', t, re.DOTALL)
+                        m = re.match('(.*?) –[ \n](.*)', t, re.DOTALL)
                         name, param_str = m.groups()
                         type_str = ''
 
@@ -1426,7 +1429,7 @@ def make_xml_trees(names):
         else:
             tree = trees['bge.types.' + name]
             for element in tree.findall(".//paragraph"):
-                if element.text.startswith('base class ---'):
+                if element.text and element.text.startswith('base class ---'):
                     elem = element.find('.//literal')
                     i, _ = get_order_bge_types(elem.text)
                     bge_order[name] = i + 1

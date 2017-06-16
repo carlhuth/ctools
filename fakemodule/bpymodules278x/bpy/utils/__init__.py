@@ -43,7 +43,7 @@ def register_class(cls):
 def resource_path(type, major=bpy.app.version[0], minor=bpy.app.version[1]):
     """Return the base path for storing system files.
     
-    :param type: string in ['USER', 'LOCAL', 'SYSTEM'].
+    :param type: string in [‘USER’, ‘LOCAL’, ‘SYSTEM’].
     :type type: str
     :param major: major version, defaults to current.
     :type major: int
@@ -90,7 +90,7 @@ def modules_from_path(path, loaded_modules):
     """
 
 
-def preset_find(name, preset_path, display_name=False, ext='.py'):
+def preset_find(name, preset_path, display_name=False, ext=’.py’):
     """"""
 
 
@@ -131,16 +131,16 @@ def unregister_manual_map(manual_hook):
 
 
 def make_rna_paths(struct_name, prop_name, enum_name):
-    """Create RNA "paths" from given names.
+    """Create RNA “paths” from given names.
     
-    :param struct_name: Name of a RNA struct (like e.g. "Scene").
+    :param struct_name: Name of a RNA struct (like e.g. “Scene”).
     :type struct_name: str
-    :param prop_name: Name of a RNA struct's property.
+    :param prop_name: Name of a RNA struct’s property.
     :type prop_name: str
     :param enum_name: Name of a RNA enum identifier.
     :type enum_name: str
-    :return: A triple of three "RNA paths"
-                                        (most_complete_path, "struct.prop", "struct.prop:'enum'").
+    :return: A triple of three “RNA paths”
+                                        (most_complete_path, “struct.prop”, “struct.prop:’enum’”).
                                         If no enum_name is given, the third element will always be void.
     :param : (type: tuple of strings)
     :rtype: tuple
@@ -202,10 +202,10 @@ def unregister_module(module, verbose=False):
     """"""
 
 
-def user_resource(resource_type, path='', create=False):
+def user_resource(resource_type, path=”, create=False):
     """Return a user resource path (normally from the users home directory).
     
-    :param type: Resource type in ['DATAFILES', 'CONFIG', 'SCRIPTS', 'AUTOSAVE'].
+    :param type: Resource type in [‘DATAFILES’, ‘CONFIG’, ‘SCRIPTS’, ‘AUTOSAVE’].
     :type type: str
     :param subdir: Optional subdirectory.
     :type subdir: str

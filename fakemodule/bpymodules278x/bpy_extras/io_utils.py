@@ -1,9 +1,9 @@
-def orientation_helper_factory(name, axis_forward='Y', axis_up='Z'):
+def orientation_helper_factory(name, axis_forward=’Y’, axis_up=’Z’):
     """"""
 
 
-def axis_conversion(from_forward='Y', from_up='Z', to_forward='Y', to_up='Z'):
-    """Each argument us an axis in ['X', 'Y', 'Z', '-X', '-Y', '-Z']
+def axis_conversion(from_forward=’Y’, from_up=’Z’, to_forward=’Y’, to_up=’Z’):
+    """Each argument us an axis in [‘X’, ‘Y’, ‘Z’, ‘-X’, ‘-Y’, ‘-Z’]
                         where the first 2 are a source and the second 2 are the target.
     """
 
@@ -39,12 +39,12 @@ def unpack_face_list(list_of_tuples):
     """"""
 
 
-def path_reference(filepath, base_src, base_dst, mode='AUTO', copy_subdir='', copy_set=None, library=None):
+def path_reference(filepath, base_src, base_dst, mode=’AUTO’, copy_subdir=”, copy_set=None, library=None):
     """Return a filepath relative to a destination directory, for use with
                         exporters.
     
     :param filepath: the file path to return,
-                                                supporting blenders relative '//' prefix.
+                                                supporting blenders relative ‘//’ prefix.
     :type filepath: str
     :param base_src: the directory the filepath is relative too
                                                 (normally the blend file).
@@ -53,11 +53,11 @@ def path_reference(filepath, base_src, base_dst, mode='AUTO', copy_subdir='', co
                                                 (normally the export path).
     :type base_dst: str
     :param mode: the method used get the path in
-                                                ['AUTO', 'ABSOLUTE', 'RELATIVE', 'MATCH', 'STRIP', 'COPY']
+                                                [‘AUTO’, ‘ABSOLUTE’, ‘RELATIVE’, ‘MATCH’, ‘STRIP’, ‘COPY’]
     :type mode: str
-    :param copy_subdir: the subdirectory of base_dst to use when mode='COPY'.
+    :param copy_subdir: the subdirectory of base_dst to use when mode=’COPY’.
     :type copy_subdir: str
-    :param copy_set: collect from/to pairs when mode='COPY',
+    :param copy_set: collect from/to pairs when mode=’COPY’,
                                                 pass to path_reference_copy when exporting is done.
     :type copy_set: set
     :param library: The library this path is relative to.
@@ -77,7 +77,7 @@ def path_reference_copy(copy_set, report="<built-in function print>"):
     """
 
 
-def unique_name(key, name, name_dict, name_max=-1, clean_func=None, sep='.'):
+def unique_name(key, name, name_dict, name_max=-1, clean_func=None, sep=’.’):
     """Helper function for storing unique names which may have special characters
                         stripped and restricted to a maximum length.
     
@@ -100,7 +100,7 @@ def unique_name(key, name, name_dict, name_max=-1, clean_func=None, sep='.'):
 
 
 path_reference_mode = None
-"""constant value (<built-in function EnumProperty>, {'name': 'Path Mode', 'description': 'Method used to reference paths', 'items': (('AUTO', 'Auto', 'Use Relative paths with subdirectories only'), ('ABSOLUTE', 'Absolute', 'Always write absolute paths'), ('RELATIVE', 'Relative', 'Always write relative paths (where possible)'), ('MATCH', 'Match', 'Match Absolute/Relative setting with input path'), ('STRIP', 'Strip Path', 'Filename only'), ('COPY', 'Copy', 'Copy the file to the destination path (or subdirectory)')), 'default': 'AUTO', 'attr': 'path_mode'})"""
+"""constant value (<built-in function EnumProperty>, {‘name’: ‘Path Mode’, ‘description’: ‘Method used to reference paths’, ‘items’: ((‘AUTO’, ‘Auto’, ‘Use Relative paths with subdirectories only’), (‘ABSOLUTE’, ‘Absolute’, ‘Always write absolute paths’), (‘RELATIVE’, ‘Relative’, ‘Always write relative paths (where possible)’), (‘MATCH’, ‘Match’, ‘Match Absolute/Relative setting with input path’), (‘STRIP’, ‘Strip Path’, ‘Filename only’), (‘COPY’, ‘Copy’, ‘Copy the file to the destination path (or subdirectory)’)), ‘default’: ‘AUTO’, ‘attr’: ‘path_mode’})"""
 
 
 class ExportHelper:

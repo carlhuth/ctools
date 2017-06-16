@@ -1,6 +1,6 @@
 def abspath(path, start=None, library=None):
     """Returns the absolute path relative to the current blend file
-                        using the "//" prefix.
+                        using the “//” prefix.
     
     :param start: Relative to this path,
                                                 when not set the current filename is used.
@@ -12,16 +12,16 @@ def abspath(path, start=None, library=None):
 
 
 def basename(path):
-    """Equivalent to os.path.basename, but skips a "//" prefix.
+    """Equivalent to os.path.basename, but skips a “//” prefix.
     Use for Windows compatibility.
     """
 
 
-def clean_name(name, replace='_'):
+def clean_name(name, replace=’_’):
     """Returns a name with characters replaced that
                         may cause problems under various circumstances,
                         such as writing to a file.
-                        All characters besides A-Z/a-z, 0-9 are replaced with "_"
+                        All characters besides A-Z/a-z, 0-9 are replaced with “_”
                         or the replace argument if defined.
     """
 
@@ -44,7 +44,7 @@ def ensure_ext(filepath, ext, case_sensitive=False):
     """Return the path with the extension added if it is not already set.
     
     :param ext: The extension to check for, can be a compound extension. Should
-                                                start with a dot, such as '.blend' or '.tar.gz'.
+                                                start with a dot, such as ‘.blend’ or ‘.tar.gz’.
     :type ext: str
     :param case_sensitive: Check for matching case when comparing extensions.
     :type case_sensitive: bool
@@ -90,7 +90,7 @@ def reduce_dirs(dirs):
 
 
 def relpath(path, start=None):
-    """Returns the path relative to the current blend file using the "//" prefix.
+    """Returns the path relative to the current blend file using the “//” prefix.
     
     :param path: An absolute path.
     :type path: str or bytes

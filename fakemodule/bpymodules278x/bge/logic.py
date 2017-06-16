@@ -69,17 +69,17 @@ def LibLoad(blend, type, data, load_actions=False, verbose=False, load_scripts=T
     
     :param blend: The path to the blend file (or the name to use for the library if data is supplied)
     :type blend: str
-    :param type: The datablock type (currently only "Action", "Mesh" and "Scene" are supported)
+    :param type: The datablock type (currently only “Action”, “Mesh” and “Scene” are supported)
     :type type: str
     :param data: Binary data from a blend file (optional)
     :type data: bytes
-    :param load_actions: Search for and load all actions in a given Scene and not just the "active" actions (Scene type only)
+    :param load_actions: Search for and load all actions in a given Scene and not just the “active” actions (Scene type only)
     :type load_actions: bool
-    :param verbose: Whether or not to print debugging information (e.g., "SceneName: Scene")
+    :param verbose: Whether or not to print debugging information (e.g., “SceneName: Scene”)
     :type verbose: bool
     :param load_scripts: Whether or not to load text datablocks as well (can be disabled for some extra security)
     :type load_scripts: bool
-    :param async: Whether or not to do the loading asynchronously (in another thread). Only the "Scene" type is currently supported for this feature.
+    :param async: Whether or not to do the loading asynchronously (in another thread). Only the “Scene” type is currently supported for this feature.
     :type async: bool
     :rtype: bge.types.KX_LibLoadStatus
     """
@@ -90,7 +90,7 @@ def LibNew(name, type, data):
     
     :param name: A unique library name used for removal later
     :type name: str
-    :param type: The datablock type (currently only "Mesh" is supported)
+    :param type: The datablock type (currently only “Mesh” is supported)
     :type type: str
     :param data: A list of names of the datablocks to load
         (type: list of strings)
@@ -126,7 +126,7 @@ def addScene(name, overlay=1):
     """
 
 
-def sendMessage(subject, body="", to="", message_from=""):
+def sendMessage(subject, body=”“, to=”“, message_from=”“):
     """Sends a message to sensors in any active scene.
     
     :param subject: The subject of the message
@@ -230,8 +230,8 @@ def setPhysicsTicRate(ticrate):
 
 def getAnimRecordFrame():
     """Gets the current frame number used for recording animations. This
-                            number is incremented automatically by Blender when the "Record
-                            animation" feature is turned on.
+                            number is incremented automatically by Blender when the “Record
+                            animation” feature is turned on.
     
     :rtype: int
     """
@@ -239,8 +239,8 @@ def getAnimRecordFrame():
 
 def setAnimRecordFrame(framenr):
     """Sets the current frame number used for recording animations. This
-                            number is automatically incremented by Blender when the "Record
-                            animation" feature is turned on.
+                            number is automatically incremented by Blender when the “Record
+                            animation” feature is turned on.
     The frame number Must be non-negative, unless Blender has
                             bpy.types.UserPreferencesEdit.use_negative_frames enabled
                             in its user preferences. Only use non-negative numbers to be on
@@ -368,7 +368,7 @@ def setClockTime(new_time):
 def expandPath(path):
     """Converts a blender internal path into a proper file system path.
     Use / as directory separator in path
-                            You can use '//' at the start of the string to define a relative path;
+                            You can use ‘//’ at the start of the string to define a relative path;
                             Blender replaces that string by the directory of the current .blend or runtime file
                             to make a full path name. The function also converts the directory separator to
                             the local file system format.
@@ -388,7 +388,7 @@ def getAverageFrameRate():
     """
 
 
-def getBlendFileList(path = "//"):
+def getBlendFileList(path = “//”):
     """Returns a list of blend files in the same directory as the open blend file, or from using the option argument.
     
     :param path: Optional directory argument, will be expanded (like expandPath) into the full path.
@@ -835,37 +835,37 @@ ROT_MODE_QUAT = 0
 """
 
 ROT_MODE_XYZ = 1
-"""Use euler_rotation and apply angles on bone's Z, Y, X axis successively.
+"""Use euler_rotation and apply angles on bone’s Z, Y, X axis successively.
 
 :type: int
 """
 
 ROT_MODE_XZY = 2
-"""Use euler_rotation and apply angles on bone's Y, Z, X axis successively.
+"""Use euler_rotation and apply angles on bone’s Y, Z, X axis successively.
 
 :type: int
 """
 
 ROT_MODE_YXZ = 3
-"""Use euler_rotation and apply angles on bone's Z, X, Y axis successively.
+"""Use euler_rotation and apply angles on bone’s Z, X, Y axis successively.
 
 :type: int
 """
 
 ROT_MODE_YZX = 4
-"""Use euler_rotation and apply angles on bone's X, Z, Y axis successively.
+"""Use euler_rotation and apply angles on bone’s X, Z, Y axis successively.
 
 :type: int
 """
 
 ROT_MODE_ZXY = 5
-"""Use euler_rotation and apply angles on bone's Y, X, Z axis successively.
+"""Use euler_rotation and apply angles on bone’s Y, X, Z axis successively.
 
 :type: int
 """
 
 ROT_MODE_ZYX = 6
-"""Use euler_rotation and apply angles on bone's X, Y, Z axis successively.
+"""Use euler_rotation and apply angles on bone’s X, Y, Z axis successively.
 
 :type: int
 """

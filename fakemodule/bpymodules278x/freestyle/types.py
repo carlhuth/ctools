@@ -173,9 +173,9 @@ class ChainingIterator:
                         description of chaining rules easier.  The two main methods that need
                         to overloaded are traverse() and init().  traverse() tells which
                         freestyle.types.ViewEdge to follow, among the adjacent ones.  If you specify
-                        restriction rules (such as "Chain only ViewEdges of the selection"),
+                        restriction rules (such as “Chain only ViewEdges of the selection”),
                         they will be included in the adjacency iterator (i.e, the adjacent
-                        iterator will only stop on "valid" edges).
+                        iterator will only stop on “valid” edges).
     """
 
     def __init__(self, restrict_to_selection=True, restrict_to_unvisited=True, begin=None, orientation=True):
@@ -288,7 +288,7 @@ class Curve:
         """
 
     is_empty = None
-    """True if the Curve doesn't have any Vertex yet.
+    """True if the Curve doesn’t have any Vertex yet.
     
     :type: bool
     """
@@ -303,7 +303,7 @@ class Curve:
 class CurvePoint:
     """Class hierarchy: freestyle.types.Interface0D > freestyle.types.CurvePoint
     Class to represent a point of a curve.  A CurvePoint can be any point
-                        of a 1D curve (it doesn't have to be a vertex of the curve).  Any
+                        of a 1D curve (it doesn’t have to be a vertex of the curve).  Any
                         freestyle.types.Interface1D is built upon ViewEdges, themselves built upon
                         FEdges.  Therefore, a curve is basically a polyline made of a list of
                         freestyle.types.SVertex objects.  Thus, a CurvePoint is built by linearly
@@ -527,7 +527,7 @@ class FEdgeSharp:
                         edge of the input mesh.  It can be a silhouette, a crease or a border.
                         If it is a crease edge, then it is borded by two faces of the mesh.
                         Face a lies on its right whereas Face b lies on its left.  If it is a
-                        border edge, then it doesn't have any face on its right, and thus Face
+                        border edge, then it doesn’t have any face on its right, and thus Face
                         a is None.
     """
 
@@ -1054,7 +1054,7 @@ class MediumType:
                         media-medium:
     * Stroke.DRY_MEDIUM: To simulate a dry medium such as Pencil or Charcoal.
     * Stroke.HUMID_MEDIUM: To simulate ink painting (color substraction blending).
-    * Stroke.OPAQUE_MEDIUM: To simulate an opaque medium (oil, spray...).
+    * Stroke.OPAQUE_MEDIUM: To simulate an opaque medium (oil, spray…).
     """
 
 
@@ -1227,7 +1227,7 @@ class Operators:
 
     def bidirectional_chain(self, it):
         """The only difference with the above bidirectional chaining algorithm
-                                    is that we don't need to pass a stopping criterion.  This might be
+                                    is that we don’t need to pass a stopping criterion.  This might be
                                     desirable when the stopping criterion is already contained in the
                                     iterator definition.  Builds a set of chains from the current set of
                                     ViewEdges.  Each ViewEdge of the current list potentially starts a new
@@ -1276,7 +1276,7 @@ class Operators:
                                     operator then iterates over the ViewEdges of the ViewMap using the
                                     user specified iterator.  This operator only iterates using the
                                     increment operator and is therefore unidirectional.  This chaining
-                                    operator is different from the previous one because it doesn't take
+                                    operator is different from the previous one because it doesn’t take
                                     any modifier as argument.  Indeed, the time stamp (insuring that a
                                     ViewEdge is processed one time) is automatically managed in this
                                     case.
@@ -1369,7 +1369,7 @@ class Operators:
         :type func: UnaryFunction0DDouble
         :param pred_1d: The Unary Predicate expressing the recursivity stopping
                                                             condition.  This predicate is evaluated for each curve before it
-                                                            actually gets split.  If pred_1d(chain) is true, the curve won't be
+                                                            actually gets split.  If pred_1d(chain) is true, the curve won’t be
                                                             split anymore.
             (type: freestyle.types.UnaryPredicate1D)
         :type pred_1d: UnaryPredicate1D
@@ -1386,8 +1386,8 @@ class Operators:
                                     minimizing a specified function.  The chain is split in two at this
                                     point and the two new chains are processed in the same way.  The user
                                     can specify a 0D predicate to make a first selection on the points
-                                    that can potentially be split.  A point that doesn't verify the 0D
-                                    predicate won't be candidate in realizing the min.  The recursivity
+                                    that can potentially be split.  A point that doesn’t verify the 0D
+                                    predicate won’t be candidate in realizing the min.  The recursivity
                                     level is controlled through a predicate 1D that expresses a stopping
                                     condition on the chain that is about to be processed.
         
@@ -1404,7 +1404,7 @@ class Operators:
         :type pred_0d: UnaryPredicate0D
         :param pred_1d: The Unary Predicate expressing the recursivity stopping
                                                             condition. This predicate is evaluated for each curve before it
-                                                            actually gets split.  If pred_1d(chain) is true, the curve won't be
+                                                            actually gets split.  If pred_1d(chain) is true, the curve won’t be
                                                             split anymore.
             (type: freestyle.types.UnaryPredicate1D)
         :type pred_1d: UnaryPredicate1D
@@ -1591,7 +1591,7 @@ class SVertex:
         """
 
     def add_normal(self, normal):
-        """Adds a normal to the SVertex's set of normals.  If the same normal
+        """Adds a normal to the SVertex’s set of normals.  If the same normal
                                     is already in the set, nothing changes.
         
         :param normal: A three-dimensional vector.
@@ -1717,8 +1717,8 @@ class Stroke:
     """Class hierarchy: freestyle.types.Interface1D > freestyle.types.Stroke
     Class to define a stroke.  A stroke is made of a set of 2D vertices
                         (freestyle.types.StrokeVertex), regularly spaced out.  This set of vertices
-                        defines the stroke's backbone geometry.  Each of these stroke vertices
-                        defines the stroke's shape and appearance at this vertex position.
+                        defines the stroke’s backbone geometry.  Each of these stroke vertices
+                        defines the stroke’s shape and appearance at this vertex position.
     """
 
     def Stroke(self):
@@ -2120,7 +2120,7 @@ class StrokeVertex:
 
     stroke_length = None
     """Stroke length (it is only a value retained by the StrokeVertex,
-                                and it won't change the real stroke length).
+                                and it won’t change the real stroke length).
     
     :type: float
     """
@@ -2273,7 +2273,7 @@ class UnaryFunction0D:
                         freestyle.types.Interface0DIterator.  A unary function will be used by
                         invoking __call__() on an Interface0DIterator.  In Python, several
                         different subclasses of UnaryFunction0D are used depending on the
-                        types of functors' return values.  For example, you would inherit from
+                        types of functors’ return values.  For example, you would inherit from
                         a freestyle.types.UnaryFunction0DDouble if you wish to define a function that
                         returns a double value.  Available UnaryFunction0D subclasses are:
     * freestyle.types.UnaryFunction0DDouble
@@ -2400,7 +2400,7 @@ class UnaryFunction1D:
     """Base class for Unary Functions (functors) working on
                         freestyle.types.Interface1D.  A unary function will be used by invoking
                         __call__() on an Interface1D.  In Python, several different subclasses
-                        of UnaryFunction1D are used depending on the types of functors' return
+                        of UnaryFunction1D are used depending on the types of functors’ return
                         values.  For example, you would inherit from a
                         freestyle.types.UnaryFunction1DDouble if you wish to define a function that
                         returns a double value.  Available UnaryFunction1D subclasses are:
@@ -2790,7 +2790,7 @@ class ViewEdgeIterator:
     """Class hierarchy: freestyle.types.Iterator > freestyle.types.ViewEdgeIterator
     Base class for iterators over ViewEdges of the freestyle.types.ViewMap Graph.
                         Basically the increment() operator of this class should be able to
-                        take the decision of "where" (on which ViewEdge) to go when pointing
+                        take the decision of “where” (on which ViewEdge) to go when pointing
                         on a given ViewEdge.
     """
 
@@ -2801,9 +2801,9 @@ class ViewEdgeIterator:
         :param begin: The ViewEdge from where to start the iteration.
             (type: freestyle.types.ViewEdge or None)
         :type begin: ViewEdge or None
-        :param orientation: If true, we'll look for the next ViewEdge among
+        :param orientation: If true, we’ll look for the next ViewEdge among
                                                             the ViewEdges that surround the ending ViewVertex of begin.  If
-                                                            false, we'll search over the ViewEdges surrounding the ending
+                                                            false, we’ll search over the ViewEdges surrounding the ending
                                                             ViewVertex of begin.
         :type orientation: bool
         """
@@ -2843,9 +2843,9 @@ class ViewEdgeIterator:
     orientation = None
     """The orientation of the pointed ViewEdge in the iteration.
                                 If true, the iterator looks for the next ViewEdge among those ViewEdges
-                                that surround the ending ViewVertex of the "begin" ViewEdge.  If false,
+                                that surround the ending ViewVertex of the “begin” ViewEdge.  If false,
                                 the iterator searches over the ViewEdges surrounding the ending ViewVertex
-                                of the "begin" ViewEdge.
+                                of the “begin” ViewEdge.
     
     :type: bool
     """

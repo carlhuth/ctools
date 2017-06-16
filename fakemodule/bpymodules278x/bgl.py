@@ -1167,7 +1167,7 @@ def glGetPixelMapfv(map, data):
 def glGetPolygonStipple(mask):
     """Return the polygon stipple pattern
     
-    :param mask: Returns the stipple pattern. The initial value is all 1's.
+    :param mask: Returns the stipple pattern. The initial value is all 1’s.
     :type mask: bgl.Buffer object I{type GL_BYTE}
     """
 
@@ -1478,7 +1478,7 @@ def glIndexMask(mask):
     
     :param mask: Specifies a bit mask to enable and disable the writing of individual bits
                                         in the color index buffers.
-                                        Initially, the mask is all 1's.
+                                        Initially, the mask is all 1’s.
     :type mask: int
     """
 
@@ -1607,7 +1607,7 @@ def glLineStipple(factor, pattern):
     :type factor: int
     :param pattern: Specifies a 16-bit integer whose bit pattern determines which fragments
                                                 of a line will be drawn when the line is rasterized. Bit zero is used first; the default
-                                                pattern is all 1's.
+                                                pattern is all 1’s.
     :type pattern: unsigned short int
     """
 
@@ -1910,7 +1910,7 @@ def glMaterial(face, pname, params):
                                                 or faces that is being updated. Must be GL_SHININESS.
     :type pname: Enumerated constant
     :param params: Specifies the value that parameter GL_SHININESS will be set to.
-                                                If function prototype ends in 'v' specifies a pointer to the value or values that
+                                                If function prototype ends in ‘v’ specifies a pointer to the value or values that
                                                 pname will be set to.
     :type params: int
     """
@@ -2853,7 +2853,7 @@ def glStencilFunc(func, ref, mask):
                                                 buffer. The initial value is 0.
     :type ref: int
     :param mask: Specifies a mask that is ANDed with both the reference value and
-                                                the stored stencil value when the test is done. The initial value is all 1's.
+                                                the stored stencil value when the test is done. The initial value is all 1’s.
     :type mask: unsigned int
     """
 
@@ -2862,7 +2862,7 @@ def glStencilMask(mask):
     """Control the writing of individual bits in the stencil planes
     
     :param mask: Specifies a bit mask to enable and disable writing of individual bits
-                                        in the stencil planes. Initially, the mask is all 1's.
+                                        in the stencil planes. Initially, the mask is all 1’s.
     :type mask: unsigned int
     """
 
@@ -4211,7 +4211,7 @@ class Buffer:
     """The Buffer object is simply a block of memory that is delineated and initialized by the
                         user. Many OpenGL functions return data to a C-style pointer, however, because this
                         is not possible in python the Buffer object can be used to this end. Wherever pointer
-                        notation is used in the OpenGL functions the Buffer object can be used in it's bgl
+                        notation is used in the OpenGL functions the Buffer object can be used in it’s bgl
                         wrapper. In some instances the Buffer object will need to be initialized with the template
                         parameter, while in other instances the user will want to create just a blank buffer
                         which will be zeroed by default.
@@ -4238,7 +4238,7 @@ class Buffer:
                                                             sequence. Example: [256,2] is a two- dimensional buffer while [256,256,4] creates
                                                             a three- dimensional buffer. You can think of each additional dimension as a sub-item
                                                             of the dimension to the left. i.e. [10,2] is a 10 element array each with 2 sub-items.
-                                                            [(0,0), (0,1), (1,0), (1,1), (2,0), ...] etc.
+                                                            [(0,0), (0,1), (1,0), (1,1), (2,0), …] etc.
         :type dimensions: An int or sequence object specifying the dimensions of the buffer.
         :param template: A sequence of matching dimensions which will be used to initialize
                                                             the Buffer. If a template is not passed in all fields will be initialized to 0.

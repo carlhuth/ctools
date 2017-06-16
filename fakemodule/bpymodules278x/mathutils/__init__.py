@@ -91,7 +91,7 @@ class Color:
 
 
 class Euler:
-    def __new__(cls, angles, order='XYZ'):
+    def __new__(cls, angles, order=’XYZ’):
         """This object gives access to Eulers in Blender.
         
         :param angles: Three angles, in radians.
@@ -136,7 +136,7 @@ class Euler:
         """Rotates the euler a certain amount and returning a unique euler rotation
                                     (no 720 degree pitches).
         
-        :param axis: single character in ['X, 'Y', 'Z'].
+        :param axis: single character in [‘X, ‘Y’, ‘Z’].
         :type axis: str
         :param angle: angle in radians.
         :type angle: float
@@ -175,7 +175,7 @@ class Euler:
 
     order = ""
     """Euler rotation order.
-    (type: string in ['XYZ', 'XZY', 'YXZ', 'YZX', 'ZXY', 'ZYX'])
+    (type: string in [‘XYZ’, ‘XZY’, ‘YXZ’, ‘YZX’, ‘ZXY’, ‘ZYX’])
     
     :type: str
     """
@@ -228,7 +228,7 @@ class Matrix:
         """Create a matrix to represent an orthographic projection.
         (type: Matrix Access)
         
-        :param axis: Can be any of the following: ['X', 'Y', 'XY', 'XZ', 'YZ'],
+        :param axis: Can be any of the following: [‘X’, ‘Y’, ‘XY’, ‘XZ’, ‘YZ’],
                                                             where a single axis is for a 2D matrix.
                                                             Or a vector for an arbitrary axis
             (type: string or mathutils.Vector)
@@ -248,7 +248,7 @@ class Matrix:
         :type angle: float
         :param size: The size of the rotation matrix to construct [2, 4].
         :type size: int
-        :param axis: a string in ['X', 'Y', 'Z'] or a 3D Vector Object
+        :param axis: a string in [‘X’, ‘Y’, ‘Z’] or a 3D Vector Object
                                                             (optional when size is 2).
             (type: string or mathutils.Vector)
         :type axis: string or Vector
@@ -277,7 +277,7 @@ class Matrix:
         """Create a matrix to represent an shear transformation.
         (type: Matrix Access)
         
-        :param plane: Can be any of the following: ['X', 'Y', 'XY', 'XZ', 'YZ'],
+        :param plane: Can be any of the following: [‘X’, ‘Y’, ‘XY’, ‘XZ’, ‘YZ’],
                                                             where a single axis is for a 2D matrix only.
         :type plane: str
         :param size: The size of the shear matrix to construct [2, 4].
@@ -329,10 +329,10 @@ class Matrix:
         """
 
     def decompose(self):
-        """Return the location, rotation and scale components of this matrix.
+        """Return the translation, rotation and scale components of this matrix.
         (type: Matrix Access)
         
-        :return: loc, rot, scale triple.
+        :return: trans, rot, scale triple.
         :param : (type: (mathutils.Vector, mathutils.Quaternion, mathutils.Vector))
         :rtype: (Vector, Quaternion, Vector)
         """
@@ -385,7 +385,7 @@ class Matrix:
         """Return an inverted copy of the matrix.
         (type: Matrix Access)
         
-        :param fallback: return this when the inverse can't be calculated
+        :param fallback: return this when the inverse can’t be calculated
                                                     (instead of raising a ValueError).
         :type fallback: bpy.types.KeyMapItem.any
         :return: the inverted matrix or fallback when given.
@@ -471,7 +471,7 @@ class Matrix:
         (type: Matrix Access)
         
         :param order: Optional rotation order argument in
-                                                            ['XYZ', 'XZY', 'YXZ', 'YZX', 'ZXY', 'ZYX'].
+                                                            [‘XYZ’, ‘XZY’, ‘YXZ’, ‘YZX’, ‘ZXY’, ‘ZYX’].
         :type order: str
         :param euler_compat: Optional euler argument the new euler will be made
                                                             compatible with (no axis flipping between them).
@@ -746,7 +746,7 @@ class Quaternion:
         """Return Euler representation of the quaternion.
         
         :param order: Optional rotation order argument in
-                                                            ['XYZ', 'XZY', 'YXZ', 'YZX', 'ZXY', 'ZYX'].
+                                                            [‘XYZ’, ‘XZY’, ‘YXZ’, ‘YZX’, ‘ZXY’, ‘ZYX’].
         :type order: str
         :param euler_compat: Optional euler argument the new euler will be made
                                                             compatible with (no axis flipping between them).
@@ -892,7 +892,7 @@ class Vector:
         :param other: another vector to compare the angle with
             (type: mathutils.Vector)
         :type other: Vector
-        :param fallback: return this when the angle can't be calculated (zero length vector),
+        :param fallback: return this when the angle can’t be calculated (zero length vector),
                                                             (instead of raising a ValueError).
         :type fallback: bpy.types.KeyMapItem.any
         :return: angle in radians or fallback when given
@@ -905,7 +905,7 @@ class Vector:
         :param other: another vector to compare the angle with
             (type: mathutils.Vector)
         :type other: Vector
-        :param fallback: return this when the angle can't be calculated (zero length vector),
+        :param fallback: return this when the angle can’t be calculated (zero length vector),
                                                             (instead of raising a ValueError).
         :type fallback: bpy.types.KeyMapItem.any
         :return: angle in radians or fallback when given
@@ -1062,7 +1062,7 @@ class Vector:
         :type other: Vector
         :param factor: The interpolation value typically in [0.0, 1.0].
         :type factor: float
-        :param fallback: return this when the vector can't be calculated (zero length vector or direct opposites),
+        :param fallback: return this when the vector can’t be calculated (zero length vector or direct opposites),
                                                             (instead of raising a ValueError).
         :type fallback: bpy.types.KeyMapItem.any
         :return: The interpolated vector.
@@ -1097,9 +1097,9 @@ class Vector:
     def to_track_quat(self, track, up):
         """Return a quaternion rotation from the vector and the track and up axis.
         
-        :param track: Track axis in ['X', 'Y', 'Z', '-X', '-Y', '-Z'].
+        :param track: Track axis in [‘X’, ‘Y’, ‘Z’, ‘-X’, ‘-Y’, ‘-Z’].
         :type track: str
-        :param up: Up axis in ['X', 'Y', 'Z'].
+        :param up: Up axis in [‘X’, ‘Y’, ‘Z’].
         :type up: str
         :return: rotation from the vector and the track and up axis.
         :param : (type: mathutils.Quaternion)

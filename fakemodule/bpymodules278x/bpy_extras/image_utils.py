@@ -1,4 +1,4 @@
-def load_image(imagepath, dirname='', place_holder=False, recursive=False, ncase_cmp=True, convert_callback=None, verbose=False, relpath=None, check_existing=False, force_reload=False):
+def load_image(imagepath, dirname=”, place_holder=False, recursive=False, ncase_cmp=True, convert_callback=None, verbose=False, relpath=None, check_existing=False, force_reload=False):
     """Return an image from the file path with options to search multiple paths
                         and return a placeholder if its not found.
     
@@ -20,7 +20,7 @@ def load_image(imagepath, dirname='', place_holder=False, recursive=False, ncase
     :param convert_callback: a function that takes an existing path and returns
                                                 a new one. Use this when loading image formats blender may not support,
                                                 the CONVERT_CALLBACK can take the path for a GIF (for example),
-                                                convert it to a PNG and return the PNG's path.
+                                                convert it to a PNG and return the PNG’s path.
                                                 For formats blender can read, simply return the path that is given.
     :type convert_callback: function
     :param relpath: If not None, make the file relative to this path.

@@ -26,7 +26,7 @@ def barycentric_transform(point, tri_a1, tri_a2, tri_a3, tri_b1, tri_b2, tri_b3)
     :param tri_a2: target triangle vertex.
     :param tri_a3: target triangle vertex.
     :return: The transformed point
-    :rtype: mathutils.Vector's
+    :rtype: mathutils.Vector’s
     """
 
 
@@ -43,7 +43,7 @@ def box_fit_2d(points):
 def box_pack_2d(boxes):
     """Returns the normal of the 3D tri or quad.
     
-    :param boxes: list of boxes, each box is a list where the first 4 items are [x, y, width, height, ...] other items are ignored.
+    :param boxes: list of boxes, each box is a list where the first 4 items are [x, y, width, height, …] other items are ignored.
     :type boxes: bpy.types.ThemeSpaceListGeneric.list
     :return: the width and height of the packed bounding box
     :rtype: tuple, pair of floats
@@ -88,7 +88,7 @@ def interpolate_bezier(knot1, handle1, handle2, knot2, resolution):
     :param resolution: Number of points to return.
     :type resolution: int
     :return: The interpolated points
-    :param : (type: list of mathutils.Vector's)
+    :param : (type: list of mathutils.Vector’s)
     :rtype: list
     """
 
@@ -104,7 +104,7 @@ def intersect_line_line(v1, v2, v3, v4):
     :type v3: mathutils.Vector
     :param v4: Second point of the second line
     :type v4: mathutils.Vector
-    :param : (type: tuple of mathutils.Vector's)
+    :param : (type: tuple of mathutils.Vector’s)
     :rtype: tuple
     """
 
@@ -188,7 +188,7 @@ def intersect_plane_plane(plane_a_co, plane_a_no, plane_b_co, plane_b_no):
     :param plane_b_no: Normal of the second plane
     :type plane_b_no: mathutils.Vector
     :return: The line of the intersection represented as a point and a vector
-    :param : (type: tuple pair of mathutils.Vector or None if the intersection can't be calculated)
+    :param : (type: tuple pair of mathutils.Vector or None if the intersection can’t be calculated)
     :rtype: tuple
     """
 
@@ -268,7 +268,7 @@ def intersect_ray_tri(v1, v2, v3, ray, orig, clip=True):
     :type ray: mathutils.Vector
     :param orig: Origin
     :type orig: mathutils.Vector
-    :param clip: When False, don't restrict the intersection to the area of the triangle, use the infinite plane defined by the triangle.
+    :param clip: When False, don’t restrict the intersection to the area of the triangle, use the infinite plane defined by the triangle.
     :type clip: bool
     :return: The point of intersection or None if no intersection is found
     :rtype: mathutils.Vector or None
@@ -286,7 +286,7 @@ def intersect_sphere_sphere_2d(p_a, radius_a, p_b, radius_b):
     :type p_b: mathutils.Vector
     :param radius_b: Radius of the second circle
     :type radius_b: float
-    :param : (type: tuple of mathutils.Vector's or None when there is no intersection)
+    :param : (type: tuple of mathutils.Vector’s or None when there is no intersection)
     :rtype: tuple
     """
 

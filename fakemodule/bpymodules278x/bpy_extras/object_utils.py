@@ -49,7 +49,7 @@ def world_to_camera_view(scene, obj, coord):
     Where (0, 0) is the bottom left and (1, 1)
                         is the top right of the camera frame.
                         values outside 0-1 are also supported.
-                        A negative 'z' value means the point is behind the camera.
+                        A negative ‘z’ value means the point is behind the camera.
     Takes shift-x/y, lens angle and sensor size into account
                         as well as perspective/ortho projections.
     

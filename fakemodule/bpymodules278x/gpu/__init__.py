@@ -360,7 +360,7 @@ def export_shader(scene, material):
     - vertex shader source code.["uniforms"]: sequence
     - list of uniforms used in fragment shader, can be empty list. Each element of the
                                                 sequence is a dictionary with the following elements:["varname"]: string
-    - name of the uniform in the fragment shader. Always of the form 'unf<number>'.["datatype"]: integer
+    - name of the uniform in the fragment shader. Always of the form ‘unf<number>’.["datatype"]: integer
     - data type of the uniform variable. Can be one of the following:
     gpu.GPU_DATA_1I : use glUniform1i
     gpu.GPU_DATA_1F : use glUniform1fv
@@ -417,24 +417,24 @@ def export_shader(scene, material):
     - texture data for uniform type gpu.GPU_DYNAMIC_SAMPLER_2DBUFFER.
                                                                     Although the corresponding uniform is a 2D sampler,
                                                                     the texture is always a 1D texture of n x 1 pixel.
-                                                                    The texture size n is provided in ["texsize"] element.
+                                                                    The texture size n is provided in [“texsize”] element.
                                                                     These texture are only used for computer generated texture (colorband, etc).
                                                                     The texture data is provided so that you can make a real image out of it in the exporter.["texsize"]: integer
     - horizontal size of texture for uniform type gpu.GPU_DYNAMIC_SAMPLER_2DBUFFER.
-                                                                    The texture data is in ["texpixels"].["attributes"]: sequence
-    - list of attributes used in vertex shader, can be empty. Blender doesn't use
+                                                                    The texture data is in [“texpixels”].["attributes"]: sequence
+    - list of attributes used in vertex shader, can be empty. Blender doesn’t use
                                                 standard attributes except for vertex position and normal. All other vertex
                                                 attributes must be passed using the generic glVertexAttrib functions.
                                                 The attribute data can be found in the derived mesh custom data using RNA.
                                                 Each element of the sequence is a dictionary containing the following elements:["varname"]: string
-    - name of the uniform in the vertex shader. Always of the form 'att<number>'.["datatype"]: integer
+    - name of the uniform in the vertex shader. Always of the form ‘att<number>’.["datatype"]: integer
     - data type of vertex attribute, can be one of the following:
     - gpu.GPU_DATA_2F: use glVertexAttrib2fv
     - gpu.GPU_DATA_3F: use glVertexAttrib3fv
     - gpu.GPU_DATA_4F: use glVertexAttrib4fv
     - gpu.GPU_DATA_4UB: use glVertexAttrib4ubv["number"]: integer
     - Generic attribute number. This is provided for information only.
-                                                                    Blender doesn't use glBindAttribLocation to place generic attributes at specific location,
+                                                                    Blender doesn’t use glBindAttribLocation to place generic attributes at specific location,
                                                                     it lets the shader compiler place the attributes automatically and query the
                                                                     placement with glGetAttribLocation.
                                                                     The result of this placement is returned in this element.

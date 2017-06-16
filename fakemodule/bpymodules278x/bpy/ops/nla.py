@@ -37,7 +37,7 @@ def action_unlink(*args, force_delete=False):
         override_context (dict)
         execution_context (str) -- enum in ['INVOKE_DEFAULT', 'INVOKE_REGION_WIN', 'INVOKE_REGION_CHANNELS', 'INVOKE_REGION_PREVIEW', 'INVOKE_AREA', 'INVOKE_SCREEN', 'EXEC_DEFAULT', 'EXEC_REGION_WIN', 'EXEC_REGION_CHANNELS', 'EXEC_REGION_PREVIEW', 'EXEC_AREA', 'EXEC_SCREEN']
         undo (bool)
-    :param force_delete: Force Delete, Clear Fake User and remove copy stashed in this datablock's NLA stack
+    :param force_delete: Force Delete, Clear Fake User and remove copy stashed in this datablock’s NLA stack
         (type: boolean, (optional))
     :type force_delete: bool
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
@@ -46,7 +46,7 @@ def action_unlink(*args, force_delete=False):
     return {'FINISHED'}
 
 
-def actionclip_add(*args, action=''):
+def actionclip_add(*args, action=”):
     """Add an Action-Clip strip (i.e. an NLA Strip referencing an Action) to the active track
     
     :param args: (override_context, execution_context, undo)
@@ -75,7 +75,7 @@ def apply_scale(*args):
     return {'FINISHED'}
 
 
-def bake(*args, frame_start=1, frame_end=250, step=1, only_selected=True, visual_keying=False, clear_constraints=False, clear_parents=False, use_current_action=False, bake_types={'POSE'}):
+def bake(*args, frame_start=1, frame_end=250, step=1, only_selected=True, visual_keying=False, clear_constraints=False, clear_parents=False, use_current_action=False, bake_types={‘POSE’}):
     """Bake object/pose loc/scale/rotation animation to a new action
     
     :param args: (override_context, execution_context, undo)
@@ -97,7 +97,7 @@ def bake(*args, frame_start=1, frame_end=250, step=1, only_selected=True, visual
     :param visual_keying: Visual Keying, Keyframe from the final transformations (with constraints applied)
         (type: boolean, (optional))
     :type visual_keying: bool
-    :param clear_constraints: Clear Constraints, Remove all constraints from keyed object/bones, and do 'visual' keying
+    :param clear_constraints: Clear Constraints, Remove all constraints from keyed object/bones, and do ‘visual’ keying
         (type: boolean, (optional))
     :type clear_constraints: bool
     :param clear_parents: Clear Parents, Bake animation onto the object then clear parents (objects only)
@@ -106,7 +106,7 @@ def bake(*args, frame_start=1, frame_end=250, step=1, only_selected=True, visual
     :param use_current_action: Overwrite Current Action, Bake animation into current action, instead of creating a new one (useful for baking only part of bones in an armature)
         (type: boolean, (optional))
     :type use_current_action: bool
-    :param bake_types: Bake Data, Which data's transformations to bake
+    :param bake_types: Bake Data, Which data’s transformations to bake
         * 'POSE': Pose, Bake bones transformations.
         * 'OBJECT': Object, Bake object transformations.
         (type: enum set in {'POSE', 'OBJECT'}, (optional))
@@ -175,7 +175,7 @@ def delete(*args):
     return {'FINISHED'}
 
 
-def duplicate(*args, linked=False, mode='TRANSLATION'):
+def duplicate(*args, linked=False, mode=’TRANSLATION’):
     """Duplicate selected NLA-Strips, adding the new strips in new tracks above the originals
     
     :param args: (override_context, execution_context, undo)
@@ -194,7 +194,7 @@ def duplicate(*args, linked=False, mode='TRANSLATION'):
     return {'FINISHED'}
 
 
-def fmodifier_add(*args, type='NULL', only_active=True):
+def fmodifier_add(*args, type=’NULL’, only_active=True):
     """Add F-Modifier to the active/selected NLA-Strips
     
     :param args: (override_context, execution_context, undo)
@@ -293,7 +293,7 @@ def meta_remove(*args):
 
 
 def move_down(*args):
-    """Move selected strips down a track if there's room
+    """Move selected strips down a track if there’s room
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -306,7 +306,7 @@ def move_down(*args):
 
 
 def move_up(*args):
-    """Move selected strips up a track if there's room
+    """Move selected strips up a track if there’s room
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -407,7 +407,7 @@ def select_border(*args, gesture_mode=0, xmin=0, xmax=0, ymin=0, ymax=0, extend=
     return {'FINISHED'}
 
 
-def select_leftright(*args, mode='CHECK', extend=False):
+def select_leftright(*args, mode=’CHECK’, extend=False):
     """Select strips to the left or the right of the current frame
     
     :param args: (override_context, execution_context, undo)
@@ -439,7 +439,7 @@ def selected_objects_add(*args):
     return {'FINISHED'}
 
 
-def snap(*args, type='CFRA'):
+def snap(*args, type=’CFRA’):
     """Move start of strips to specified time
     
     :param args: (override_context, execution_context, undo)
@@ -543,7 +543,7 @@ def tweakmode_enter(*args, isolate_action=False):
         override_context (dict)
         execution_context (str) -- enum in ['INVOKE_DEFAULT', 'INVOKE_REGION_WIN', 'INVOKE_REGION_CHANNELS', 'INVOKE_REGION_PREVIEW', 'INVOKE_AREA', 'INVOKE_SCREEN', 'EXEC_DEFAULT', 'EXEC_REGION_WIN', 'EXEC_REGION_CHANNELS', 'EXEC_REGION_PREVIEW', 'EXEC_AREA', 'EXEC_SCREEN']
         undo (bool)
-    :param isolate_action: Isolate Action, Enable 'solo' on the NLA Track containing the active strip, to edit it without seeing the effects of the NLA stack
+    :param isolate_action: Isolate Action, Enable ‘solo’ on the NLA Track containing the active strip, to edit it without seeing the effects of the NLA stack
         (type: boolean, (optional))
     :type isolate_action: bool
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
@@ -559,7 +559,7 @@ def tweakmode_exit(*args, isolate_action=False):
         override_context (dict)
         execution_context (str) -- enum in ['INVOKE_DEFAULT', 'INVOKE_REGION_WIN', 'INVOKE_REGION_CHANNELS', 'INVOKE_REGION_PREVIEW', 'INVOKE_AREA', 'INVOKE_SCREEN', 'EXEC_DEFAULT', 'EXEC_REGION_WIN', 'EXEC_REGION_CHANNELS', 'EXEC_REGION_PREVIEW', 'EXEC_AREA', 'EXEC_SCREEN']
         undo (bool)
-    :param isolate_action: Isolate Action, Disable 'solo' on any of the NLA Tracks after exiting tweak mode to get things back to normal
+    :param isolate_action: Isolate Action, Disable ‘solo’ on any of the NLA Tracks after exiting tweak mode to get things back to normal
         (type: boolean, (optional))
     :type isolate_action: bool
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})

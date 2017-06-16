@@ -111,7 +111,7 @@ def getDisplayDimensions():
 
 def makeScreenshot(filename):
     """Writes an image file with the current displayed frame.
-    The image is written to 'filename'.
+    The image is written to ‘filename’.
                             The path may be absolute (eg. /home/foo/image) or relative when started with
                             // (eg. //image). Note that absolute paths are not portable between platforms.
                             If the filename contains a #,
@@ -129,7 +129,7 @@ def makeScreenshot(filename):
 
 
 def enableVisibility(visible):
-    """Deprecated; doesn't do anything."""
+    """Deprecated; doesn’t do anything."""
 
 
 def showMouse(visible):
@@ -339,7 +339,7 @@ def offScreenCreate(width, height, samples=0, target=RAS_OFS_RENDER_BUFFER):
     :param target: the pixel storage: bge.render.RAS_OFS_RENDER_BUFFER to render on RenderBuffers (the default),
                                                     bge.render.RAS_OFS_RENDER_TEXTURE to render on texture.
                                                     The later is interesting if you want to access the texture directly (see bge.render.RASOffScreen.color).
-                                                    Otherwise the default is preferable as it's more widely supported by GPUs and more efficient.
+                                                    Otherwise the default is preferable as it’s more widely supported by GPUs and more efficient.
                                                     If the GPU does not support MSAA+Texture (e.g. Intel HD GPU), MSAA will be disabled.
     :type target: int
     :param : (type: bge.render.RASOffScreen)

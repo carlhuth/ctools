@@ -1,4 +1,4 @@
-def brush_stroke(*args, stroke=None, mode='NORMAL', ignore_background_click=False):
+def brush_stroke(*args, stroke=None, mode=’NORMAL’, ignore_background_click=False):
     """Sculpt a stroke into the geometry
     
     :param args: (override_context, execution_context, undo)
@@ -130,7 +130,7 @@ def symmetrize(*args):
     return {'FINISHED'}
 
 
-def uv_sculpt_stroke(*args, mode='NORMAL'):
+def uv_sculpt_stroke(*args, mode=’NORMAL’):
     """Sculpt UVs using a brush
     
     :param args: (override_context, execution_context, undo)

@@ -1,4 +1,4 @@
-def background_image_add(*args, name="Image", filepath="", filter_blender=False, filter_backup=False, filter_image=True, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA'):
+def background_image_add(*args, name=”Image”, filepath=”“, filter_blender=False, filter_backup=False, filter_image=True, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’):
     """Add a new background image (Ctrl for Empty Object)
     
     :param args: (override_context, execution_context, undo)
@@ -319,19 +319,6 @@ def layers(*args, nr=1, extend=False, toggle=True):
     return {'FINISHED'}
 
 
-def localgrid(*args):
-    """Enable / Disable / Toggle Local Gride
-    
-    :param args: (override_context, execution_context, undo)
-        override_context (dict)
-        execution_context (str) -- enum in ['INVOKE_DEFAULT', 'INVOKE_REGION_WIN', 'INVOKE_REGION_CHANNELS', 'INVOKE_REGION_PREVIEW', 'INVOKE_AREA', 'INVOKE_SCREEN', 'EXEC_DEFAULT', 'EXEC_REGION_WIN', 'EXEC_REGION_CHANNELS', 'EXEC_REGION_PREVIEW', 'EXEC_AREA', 'EXEC_SCREEN']
-        undo (bool)
-    :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
-    :rtype: set[str]
-    """
-    return {'FINISHED'}
-
-
 def localview(*args):
     """Toggle display of selected object(s) separately and centered in view
     
@@ -345,7 +332,7 @@ def localview(*args):
     return {'FINISHED'}
 
 
-def manipulator(*args, constraint_axis=(False, False, False), constraint_orientation='GLOBAL', release_confirm=False, use_accurate=False, use_planar_constraint=False):
+def manipulator(*args, constraint_axis=(False, False, False), constraint_orientation=’GLOBAL’, release_confirm=False, use_accurate=False, use_planar_constraint=False):
     """Manipulate selected item by axis
     
     :param args: (override_context, execution_context, undo)
@@ -662,7 +649,7 @@ def select_lasso(*args, path=None, deselect=False, extend=True):
     return {'FINISHED'}
 
 
-def select_menu(*args, name='', toggle=False):
+def select_menu(*args, name=”, toggle=False):
     """Menu object selection
     
     :param args: (override_context, execution_context, undo)
@@ -682,7 +669,7 @@ def select_menu(*args, name='', toggle=False):
 
 
 def select_or_deselect_all(*args, extend=False, toggle=False, deselect=False, center=False, enumerate=False, object=False):
-    """Select element under the mouse, deselect everything is there's nothing under the mouse
+    """Select element under the mouse, deselect everything is there’s nothing under the mouse
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -942,7 +929,7 @@ def view_lock_to_active(*args):
     return {'FINISHED'}
 
 
-def view_orbit(*args, angle=0.0, type='ORBITLEFT'):
+def view_orbit(*args, angle=0.0, type=’ORBITLEFT’):
     """Orbit the view
     
     :param args: (override_context, execution_context, undo)
@@ -957,9 +944,7 @@ def view_orbit(*args, angle=0.0, type='ORBITLEFT'):
         * 'ORBITRIGHT': Orbit Right, Orbit the view around to the Right.
         * 'ORBITUP': Orbit Up, Orbit the view Up.
         * 'ORBITDOWN': Orbit Down, Orbit the view Down.
-        * 'ORBITCW': Orbit CW, Orbit the view CW.
-        * 'ORBITCCW': Orbit CCW, Orbit the view CCW.
-        (type: enum in ['ORBITLEFT', 'ORBITRIGHT', 'ORBITUP', 'ORBITDOWN', 'ORBITCW', 'ORBITCCW'], (optional))
+        (type: enum in ['ORBITLEFT', 'ORBITRIGHT', 'ORBITUP', 'ORBITDOWN'], (optional))
     :type type: str
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
     :rtype: set[str]
@@ -967,7 +952,7 @@ def view_orbit(*args, angle=0.0, type='ORBITLEFT'):
     return {'FINISHED'}
 
 
-def view_pan(*args, type='PANLEFT'):
+def view_pan(*args, type=’PANLEFT’):
     """Pan the view
     
     :param args: (override_context, execution_context, undo)
@@ -1000,7 +985,7 @@ def view_persportho(*args):
     return {'FINISHED'}
 
 
-def view_roll(*args, angle=0.0, type='ANGLE'):
+def view_roll(*args, angle=0.0, type=’ANGLE’):
     """Roll the view
     
     :param args: (override_context, execution_context, undo)
@@ -1038,7 +1023,7 @@ def view_selected(*args, use_all_regions=False):
     return {'FINISHED'}
 
 
-def viewnumpad(*args, type='USER', align_active=False):
+def viewnumpad(*args, type=’LEFT’, align_active=False):
     """Use a preset viewpoint
     
     :param args: (override_context, execution_context, undo)
@@ -1053,10 +1038,9 @@ def viewnumpad(*args, type='USER', align_active=False):
         * 'FRONT': Front, View From the Front.
         * 'BACK': Back, View From the Back.
         * 'CAMERA': Camera, View From the Active Camera.
-        * 'USER': User, View Free.
-        (type: enum in ['LEFT', 'RIGHT', 'BOTTOM', 'TOP', 'FRONT', 'BACK', 'CAMERA', 'USER'], (optional))
+        (type: enum in ['LEFT', 'RIGHT', 'BOTTOM', 'TOP', 'FRONT', 'BACK', 'CAMERA'], (optional))
     :type type: str
-    :param align_active: Align Active, Align to the active object's axis
+    :param align_active: Align Active, Align to the active object’s axis
         (type: boolean, (optional))
     :type align_active: bool
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})

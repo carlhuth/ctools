@@ -97,7 +97,7 @@ def duplicate_move(*args, ACTION_OT_duplicate=None, TRANSFORM_OT_transform=None)
     return {'FINISHED'}
 
 
-def extrapolation_type(*args, type='CONSTANT'):
+def extrapolation_type(*args, type=’CONSTANT’):
     """Set extrapolation mode for selected F-Curves
     
     :param args: (override_context, execution_context, undo)
@@ -107,7 +107,7 @@ def extrapolation_type(*args, type='CONSTANT'):
     :param type: Type
         * 'CONSTANT': Constant Extrapolation, Values on endpoint keyframes are held.
         * 'LINEAR': Linear Extrapolation, Straight-line slope of end segments are extended past the endpoint keyframes.
-        * 'MAKE_CYCLIC': Make Cyclic (F-Modifier), Add Cycles F-Modifier if one doesn't exist already.
+        * 'MAKE_CYCLIC': Make Cyclic (F-Modifier), Add Cycles F-Modifier if one doesn’t exist already.
         * 'CLEAR_CYCLIC': Clear Cyclic (F-Modifier), Remove Cycles F-Modifier if not needed anymore.
         (type: enum in ['CONSTANT', 'LINEAR', 'MAKE_CYCLIC', 'CLEAR_CYCLIC'], (optional))
     :type type: str
@@ -130,7 +130,7 @@ def frame_jump(*args):
     return {'FINISHED'}
 
 
-def handle_type(*args, type='FREE'):
+def handle_type(*args, type=’FREE’):
     """Set type of handle for selected keyframes
     
     :param args: (override_context, execution_context, undo)
@@ -151,7 +151,7 @@ def handle_type(*args, type='FREE'):
     return {'FINISHED'}
 
 
-def interpolation_type(*args, type='CONSTANT'):
+def interpolation_type(*args, type=’CONSTANT’):
     """Set interpolation mode for the F-Curve segments starting from the selected keyframes
     
     :param args: (override_context, execution_context, undo)
@@ -180,7 +180,7 @@ def interpolation_type(*args, type='CONSTANT'):
     return {'FINISHED'}
 
 
-def keyframe_insert(*args, type='ALL'):
+def keyframe_insert(*args, type=’ALL’):
     """Insert keyframes for the specified channels
     
     :param args: (override_context, execution_context, undo)
@@ -196,7 +196,7 @@ def keyframe_insert(*args, type='ALL'):
     return {'FINISHED'}
 
 
-def keyframe_type(*args, type='KEYFRAME'):
+def keyframe_type(*args, type=’KEYFRAME’):
     """Set type of keyframe for the selected keyframes
     
     :param args: (override_context, execution_context, undo)
@@ -207,7 +207,7 @@ def keyframe_type(*args, type='KEYFRAME'):
         * 'KEYFRAME': Keyframe, Normal keyframe - e.g. for key poses.
         * 'BREAKDOWN': Breakdown, A breakdown pose - e.g. for transitions between key poses.
         * 'MOVING_HOLD': Moving Hold, A keyframe that is part of a moving hold.
-        * 'EXTREME': Extreme, An 'extreme' pose, or some other purpose as needed.
+        * 'EXTREME': Extreme, An ‘extreme’ pose, or some other purpose as needed.
         * 'JITTER': Jitter, A filler or baked keyframe for keying on ones, or some other purpose as needed.
         (type: enum in ['KEYFRAME', 'BREAKDOWN', 'MOVING_HOLD', 'EXTREME', 'JITTER'], (optional))
     :type type: str
@@ -244,7 +244,7 @@ def layer_prev(*args):
 
 
 def markers_make_local(*args):
-    """Move selected scene markers to the active Action as local 'pose' markers
+    """Move selected scene markers to the active Action as local ‘pose’ markers
     
     :param args: (override_context, execution_context, undo)
         override_context (dict)
@@ -256,7 +256,7 @@ def markers_make_local(*args):
     return {'FINISHED'}
 
 
-def mirror(*args, type='CFRA'):
+def mirror(*args, type=’CFRA’):
     """Flip selected keyframes over the selected mirror line
     
     :param args: (override_context, execution_context, undo)
@@ -288,7 +288,7 @@ def new(*args):
     return {'FINISHED'}
 
 
-def paste(*args, offset='START', merge='MIX', flipped=False):
+def paste(*args, offset=’START’, merge=’MIX’, flipped=False):
     """Paste keyframes from copy/paste buffer for the selected channels, starting on the current frame
     
     :param args: (override_context, execution_context, undo)
@@ -445,7 +445,7 @@ def select_circle(*args, x=0, y=0, radius=1, gesture_mode=0):
     return {'FINISHED'}
 
 
-def select_column(*args, mode='KEYS'):
+def select_column(*args, mode=’KEYS’):
     """Select all keyframes on the specified frame(s)
     
     :param args: (override_context, execution_context, undo)
@@ -483,7 +483,7 @@ def select_lasso(*args, path=None, deselect=False, extend=True):
     return {'FINISHED'}
 
 
-def select_leftright(*args, mode='CHECK', extend=False):
+def select_leftright(*args, mode=’CHECK’, extend=False):
     """Select keyframes to the left or the right of the current frame
     
     :param args: (override_context, execution_context, undo)
@@ -541,7 +541,7 @@ def select_more(*args):
     return {'FINISHED'}
 
 
-def snap(*args, type='CFRA'):
+def snap(*args, type=’CFRA’):
     """Snap selected keyframes to the times specified
     
     :param args: (override_context, execution_context, undo)
@@ -597,7 +597,7 @@ def unlink(*args, force_delete=False):
         override_context (dict)
         execution_context (str) -- enum in ['INVOKE_DEFAULT', 'INVOKE_REGION_WIN', 'INVOKE_REGION_CHANNELS', 'INVOKE_REGION_PREVIEW', 'INVOKE_AREA', 'INVOKE_SCREEN', 'EXEC_DEFAULT', 'EXEC_REGION_WIN', 'EXEC_REGION_CHANNELS', 'EXEC_REGION_PREVIEW', 'EXEC_AREA', 'EXEC_SCREEN']
         undo (bool)
-    :param force_delete: Force Delete, Clear Fake User and remove copy stashed in this data-block's NLA stack
+    :param force_delete: Force Delete, Clear Fake User and remove copy stashed in this data-block’s NLA stack
         (type: boolean, (optional))
     :type force_delete: bool
     :return: (type: enum set in {'RUNNING_MODAL', 'CANCELLED', 'FINISHED', 'PASS_THROUGH'})
