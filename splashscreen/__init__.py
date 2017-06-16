@@ -18,16 +18,16 @@
 
 
 bl_info = {
-    'name': 'Splash Screen',
-    'author': 'chromoly',
-    'version': (0, 1, 2),
-    'blender': (2, 78, 0),
-    'location': '',
-    'description': 'Replace default splash screen',
-    'warning': 'need PyQt5',
-    'wiki_url': '',
-    'tracker_url': '',
-    'category': 'Screen',
+    "name": "Splash Screen",
+    "author": "chromoly",
+    "version": (0, 1, 3),
+    "blender": (2, 78, 0),
+    "location": "",
+    "description": "Replace default splash screen",
+    "warning": "need PyQt5",
+    "wiki_url": "",
+    "tracker_url": "",
+    "category": "Screen",
 }
 
 
@@ -55,9 +55,9 @@ QT_TIMER_STEP = 0.05
 QT_ICON_SIZE = 16
 QT_IMAGE_BACK_COLOR = (0, 0, 0)
 QT_TOP = True
-QT_AUDIO_SUPPORT = ('.mp3', '.flac', '.wav')
+QT_AUDIO_SUPPORT = (".mp3", ".flac", ".wav")
 
-if 'first_run' not in globals():
+if "first_run" not in globals():
     first_run = True
 
 bl_queue = queue.Queue()
@@ -69,32 +69,32 @@ qt_queue = queue.Queue()
 
 class SplashScreenPreferences(
         addongroup.AddonGroup,
-        bpy.types.PropertyGroup if '.' in __name__ else
+        bpy.types.PropertyGroup if "." in __name__ else
         bpy.types.AddonPreferences):
     bl_idname = __name__
 
     image_file = bpy.props.StringProperty(
-        name='Image File',
-        default=os.path.join(os.path.dirname(__file__), 'splash.png'),
+        name="Image File",
+        default=os.path.join(os.path.dirname(__file__), "splash.png"),
         subtype='FILE_PATH',
     )
     sound_directory = bpy.props.StringProperty(
-        name='Sound Directory',
-        default='',
+        name="Sound Directory",
+        default="",
         subtype='DIR_PATH',
     )
     image_size = bpy.props.IntVectorProperty(
-        name='Image Size',
+        name="Image Size",
         default=(501, 282),
         size=2,
         min=200
     )
     expand_image = bpy.props.BoolProperty(
-        name='Expand Image',
+        name="Expand Image",
         default=True,
     )
     auto_play = bpy.props.BoolProperty(
-        name='Auto Play',
+        name="Auto Play",
         default=True,
     )
 
@@ -104,14 +104,14 @@ class SplashScreenPreferences(
         column = layout.column()
         split = column.split(0.7)
         col = split.column()
-        col.prop(self, 'image_file')
-        col.prop(self, 'sound_directory')
+        col.prop(self, "image_file")
+        col.prop(self, "sound_directory")
 
         col = split.column()
         row = col.row()
-        row.prop(self, 'image_size')
-        col.prop(self, 'expand_image')
-        col.prop(self, 'auto_play')
+        row.prop(self, "image_size")
+        col.prop(self, "expand_image")
+        col.prop(self, "auto_play")
 
         self.layout.separator()
         super().draw(context)
@@ -135,7 +135,7 @@ class CustomQGraphicsView(QtWidgets.QGraphicsView):
 
         self.pixmap = None
         self.image_path = image_path
-        self.expand = 'expand' if expand else 'scale'  # 'no','scale','expand'
+        self.expand = "expand" if expand else "scale"  # "no","scale","expand"
         self.set_image(image_path)
 
     def resize_image(self):
@@ -144,10 +144,10 @@ class CustomQGraphicsView(QtWidgets.QGraphicsView):
         view_size = self.viewport().size()
         image_size = self.pixmap.size()
         f = view_size.width() / image_size.width()
-        if self.expand == 'expand':
+        if self.expand == "expand":
             if view_size.height() > image_size.height() * f:
                 f = view_size.height() / image_size.height()
-        elif self.expand == 'scale':
+        elif self.expand == "scale":
             if view_size.height() < image_size.height() * f:
                 f = view_size.height() / image_size.height()
         else:
@@ -179,7 +179,7 @@ class CustomQGraphicsView(QtWidgets.QGraphicsView):
 
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.MiddleButton:
-            ls = ['no', 'scale', 'expand']
+            ls = ["no", "scale", "expand"]
             i = (ls.index(self.expand) + 1) % 3
             self.expand = ls[i]
             self.resize_image()
@@ -352,95 +352,95 @@ class SplashDialog(QtWidgets.QDialog):
         path = bpy.utils.resource_path('SYSTEM')
 
         if index == 0:
-            # op = ['wm.appconfig_default', (), {}]
+            # op = ["wm.appconfig_default", (), {}]
             appconfig_default(bpy.context)
         else:
             if index == 1:
-                p = os.path.join(path, 'scripts', 'presets', 'keyconfig',
-                                 '3dsmax.py')
+                p = os.path.join(path, "scripts", "presets", "keyconfig",
+                                 "3dsmax.py")
             elif index == 2:
-                p = os.path.join(path, 'scripts', 'addons_contrib', 'presets',
-                                 'keyconfig', 'blender_2012_experimental.py')
+                p = os.path.join(path, "scripts", "addons_contrib", "presets",
+                                 "keyconfig", "blender_2012_experimental.py")
             else:
-                p = os.path.join(path, 'scripts', 'presets', 'keyconfig',
-                                 'maya.py')
-            # op = ['wm.appconfig_activate', (), {'filepath': p}]
+                p = os.path.join(path, "scripts", "presets", "keyconfig",
+                                 "maya.py")
+            # op = ["wm.appconfig_activate", (), {"filepath": p}]
             appconfig_activate(bpy.context, p)
         # qt_queue.put(op)
 
     def init_preset_menu(self):
-        self.comboBox.activated['int'].connect(self.preset_change)
+        self.comboBox.activated["int"].connect(self.preset_change)
 
     def button_link(self, url):
-        qt_queue.put(['wm.url_open', (), {'url': url}])
+        qt_queue.put(["wm.url_open", (), {"url": url}])
         # self.accept()
         self.close()
 
     def button_resent(self, index):
         path = self.recent_files[index.row()]
-        qt_queue.put(['wm.open_mainfile', (), {'filepath': path}])
+        qt_queue.put(["wm.open_mainfile", (), {"filepath": path}])
         # self.accept()
         self.close()
 
     def button_open(self):
-        qt_queue.put(['wm.open_mainfile', ('INVOKE_DEFAULT',), {}])
+        qt_queue.put(["wm.open_mainfile", ('INVOKE_DEFAULT',), {}])
         # self.accept()
         self.close()
 
     def button_recover(self):
-        qt_queue.put(['wm.recover_last_session', (), {}])
+        qt_queue.put(["wm.recover_last_session", (), {}])
         # self.accept()
         self.close()
 
     def init_link_buttons(self):
-        icon_dir = os.path.join(os.path.dirname(__file__), 'icons')
+        icon_dir = os.path.join(os.path.dirname(__file__), "icons")
         icon_size = QtCore.QSize(QT_ICON_SIZE, QT_ICON_SIZE)
 
-        url = 'http://www.blender.org/foundation/donation-payment/'
+        url = "http://www.blender.org/foundation/donation-payment/"
         self.pushButton_donations.setToolTip(url)
         self.pushButton_donations.clicked.connect(
             functools.partial(self.button_link, url))
 
-        url = 'http://www.blender.org/about/credits/'
+        url = "http://www.blender.org/about/credits/"
         self.pushButton_credits.setToolTip(url)
         self.pushButton_credits.clicked.connect(
             functools.partial(self.button_link, url))
 
-        url = 'http://wiki.blender.org/index.php/Dev:Ref/Release_Notes/2.77'
+        url = "http://wiki.blender.org/index.php/Dev:Ref/Release_Notes/2.77"
         self.pushButton_release.setToolTip(url)
         self.pushButton_release.clicked.connect(
             functools.partial(self.button_link, url))
 
-        url = 'http://www.blender.org/manual'
+        url = "http://www.blender.org/manual"
         self.pushButton_manual.setToolTip(url)
         self.pushButton_manual.clicked.connect(
             functools.partial(self.button_link, url))
 
-        url = 'http://www.blender.org'
+        url = "http://www.blender.org"
         self.pushButton_home.setToolTip(url)
         self.pushButton_home.clicked.connect(
             functools.partial(self.button_link, url))
-        icon = QtGui.QIcon(os.path.join(icon_dir, 'icon16_blender.png'))
+        icon = QtGui.QIcon(os.path.join(icon_dir, "icon16_blender.png"))
         self.pushButton_home.setIcon(icon)
         self.pushButton_home.setIconSize(icon_size)
 
-        url = 'http://www.blender.org/documentation/blender_python_api_2_77_1'
+        url = "http://www.blender.org/documentation/blender_python_api_2_77_1"
         self.pushButton_python.setToolTip(url)
         self.pushButton_python.clicked.connect(
             functools.partial(self.button_link, url))
 
     def init_recent_buttons(self):
-        icon_dir = os.path.join(os.path.dirname(__file__), 'icons')
+        icon_dir = os.path.join(os.path.dirname(__file__), "icons")
         icon_size = QtCore.QSize(QT_ICON_SIZE, QT_ICON_SIZE)
 
         self.listWidget.clear()
         self.recent_files = []
         path = bpy.utils.resource_path('USER')
-        path = os.path.join(path, 'config', 'recent-files.txt')
+        path = os.path.join(path, "config", "recent-files.txt")
         try:
-            with open(path, 'r') as recent:
+            with open(path, "r") as recent:
                 for path in recent.readlines():
-                    path = path.rstrip('\n')
+                    path = path.rstrip("\n")
                     d, f = os.path.split(path)
                     item = QtWidgets.QListWidgetItem(f)
                     item.setText(f)
@@ -453,18 +453,18 @@ class SplashDialog(QtWidgets.QDialog):
         self.listWidget.activated.connect(self.button_resent)
 
         self.pushButton_open.clicked.connect(self.button_open)
-        icon = QtGui.QIcon(os.path.join(icon_dir, 'icon16_file_folder.png'))
+        icon = QtGui.QIcon(os.path.join(icon_dir, "icon16_file_folder.png"))
         self.pushButton_open.setIcon(icon)
         self.pushButton_open.setIconSize(icon_size)
 
         self.pushButton_recover.clicked.connect(self.button_recover)
-        icon = QtGui.QIcon(os.path.join(icon_dir, 'icon16_recover_last.png'))
+        icon = QtGui.QIcon(os.path.join(icon_dir, "icon16_recover_last.png"))
         self.pushButton_recover.setIcon(icon)
         self.pushButton_recover.setIconSize(icon_size)
 
     def init_info_label(self):
         self.label_info_data.setText(
-            'Date: {} {}, Hash: {}, Branch: {}'.format(
+            "Date: {} {}, Hash: {}, Branch: {}".format(
                 bpy.app.build_date.decode(),
                 bpy.app.build_time.decode(),
                 bpy.app.build_hash.decode(),
@@ -532,23 +532,23 @@ class SplashDialog(QtWidgets.QDialog):
         self.close()
 
     def closeEvent(self, event):
-        # print('closeEvent')
+        # print("closeEvent")
         # self.stop_sound()
         # self.save_settings()
         qt_queue.put(None)
 
     # 未使用
     # def save_settings(self):
-    #     p = os.path.join(os.path.dirname(__file__), 'settings.dat')
+    #     p = os.path.join(os.path.dirname(__file__), "settings.dat")
     #     settings = QtCore.QSettings(p, QtCore.QSettings.IniFormat)
-    #     settings.setIniCodec('utf-8')
-    #     settings.setValue('geometry', self.saveGeometry())
+    #     settings.setIniCodec("utf-8")
+    #     settings.setValue("geometry", self.saveGeometry())
     #
     # def restore_settings(self):
-    #     p = os.path.join(os.path.dirname(__file__), 'settings.dat')
+    #     p = os.path.join(os.path.dirname(__file__), "settings.dat")
     #     settings = QtCore.QSettings(p, QtCore.QSettings.IniFormat)
-    #     settings.setIniCodec('utf-8')
-    #     geom = settings.value('geometry')
+    #     settings.setIniCodec("utf-8")
+    #     geom = settings.value("geometry")
     #     if geom is not None:
     #         self.restoreGeometry(geom)
 
@@ -576,7 +576,7 @@ def execute_preset(context, filepath, menu_idname):
     if ext == ".py":
         # bpy.ops.script.python_file_run(filepath=filepath)
         try:
-            with open(filepath, 'r') as f:
+            with open(filepath, "r") as f:
                 txt = f.read()
                 exec(txt)
         except:
@@ -608,7 +608,7 @@ def appconfig_default(context):
     if os.path.exists(filepath):
         # bpy.ops.script.execute_preset(
         #     filepath=filepath, menu_idname="USERPREF_MT_interaction_presets")
-        execute_preset(context, filepath, 'USERPREF_MT_interaction_presets')
+        execute_preset(context, filepath, "USERPREF_MT_interaction_presets")
 
 
 def appconfig_activate(context, filepath):
@@ -627,12 +627,12 @@ def appconfig_activate(context, filepath):
     if os.path.exists(filepath):
         # bpy.ops.script.execute_preset(
         #     filepath=filepath, menu_idname="USERPREF_MT_interaction_presets")
-        execute_preset(context, filepath, 'USERPREF_MT_interaction_presets')
+        execute_preset(context, filepath, "USERPREF_MT_interaction_presets")
 
 
 class QTSplash(bpy.types.Operator):
-    bl_idname = 'wm.splash_qt'
-    bl_label = 'Qt Splash Screen'
+    bl_idname = "wm.splash_qt"
+    bl_label = "Qt Splash Screen"
 
     bl_options = {'REGISTER'}
 
@@ -716,7 +716,7 @@ class QTSplash(bpy.types.Operator):
         self.init_queue()
         app = QtWidgets.QApplication.instance()
         if not app:
-            app = QtWidgets.QApplication(['blender'])
+            app = QtWidgets.QApplication(["blender"])
         cls.app = app
         app.setWheelScrollLines(1)
 
@@ -738,7 +738,7 @@ def scene_update_pre(scene):
 def menu_item(self, context):
     layout = self.layout.column()
     # layout.operator_context = 'INVOKE_DEFAULT'
-    layout.operator('wm.splash_qt', icon='BLENDER')
+    layout.operator("wm.splash_qt", icon='BLENDER')
 
 
 classes = [
@@ -776,5 +776,5 @@ def unregister():
     U.view.show_splash = show_splash
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     register()
