@@ -37,7 +37,7 @@ def paste(*args):
     return {'FINISHED'}
 
 
-def sss_preset_add(*args, name=”“, remove_active=False):
+def sss_preset_add(*args, name="", remove_active=False):
     """Add or remove a Subsurface Scattering Preset
     
     :param args: (override_context, execution_context, undo)

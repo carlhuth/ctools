@@ -1,4 +1,4 @@
-def bend(*args, value=(0.0), mirror=False, proportional=’DISABLED’, proportional_edit_falloff=’SMOOTH’, proportional_size=1.0, snap=False, snap_target=’CLOSEST’, snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), gpencil_strokes=False, release_confirm=False, use_accurate=False):
+def bend(*args, value=(0.0), mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1.0, snap=False, snap_target='CLOSEST', snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), gpencil_strokes=False, release_confirm=False, use_accurate=False):
     """Bend selected items between the 3D cursor and the mouse
     
     :param args: (override_context, execution_context, undo)
@@ -66,7 +66,7 @@ def bend(*args, value=(0.0), mirror=False, proportional=’DISABLED’, proporti
     return {'FINISHED'}
 
 
-def create_orientation(*args, name=”“, use_view=False, use=False, overwrite=False):
+def create_orientation(*args, name="", use_view=False, use=False, overwrite=False):
     """Create transformation orientation from selection
     
     :param args: (override_context, execution_context, undo)
@@ -104,7 +104,7 @@ def delete_orientation(*args):
     return {'FINISHED'}
 
 
-def edge_bevelweight(*args, value=0.0, snap=False, snap_target=’CLOSEST’, snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), release_confirm=False, use_accurate=False):
+def edge_bevelweight(*args, value=0.0, snap=False, snap_target='CLOSEST', snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), release_confirm=False, use_accurate=False):
     """Change the bevel weight of edges
     
     :param args: (override_context, execution_context, undo)
@@ -145,7 +145,7 @@ def edge_bevelweight(*args, value=0.0, snap=False, snap_target=’CLOSEST’, sn
     return {'FINISHED'}
 
 
-def edge_crease(*args, value=0.0, snap=False, snap_target=’CLOSEST’, snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), release_confirm=False, use_accurate=False):
+def edge_crease(*args, value=0.0, snap=False, snap_target='CLOSEST', snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), release_confirm=False, use_accurate=False):
     """Change the crease of edges
     
     :param args: (override_context, execution_context, undo)
@@ -186,7 +186,7 @@ def edge_crease(*args, value=0.0, snap=False, snap_target=’CLOSEST’, snap_po
     return {'FINISHED'}
 
 
-def edge_slide(*args, value=0.0, single_side=False, use_even=False, flipped=False, use_clamp=True, mirror=False, snap=False, snap_target=’CLOSEST’, snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), correct_uv=False, release_confirm=False, use_accurate=False):
+def edge_slide(*args, value=0.0, single_side=False, use_even=False, flipped=False, use_clamp=True, mirror=False, snap=False, snap_target='CLOSEST', snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), correct_uv=False, release_confirm=False, use_accurate=False):
     """Slide an edge loop along a mesh
     
     :param args: (override_context, execution_context, undo)
@@ -245,7 +245,7 @@ def edge_slide(*args, value=0.0, single_side=False, use_even=False, flipped=Fals
     return {'FINISHED'}
 
 
-def mirror(*args, constraint_axis=(False, False, False), constraint_orientation=’GLOBAL’, proportional=’DISABLED’, proportional_edit_falloff=’SMOOTH’, proportional_size=1.0, gpencil_strokes=False, release_confirm=False, use_accurate=False):
+def mirror(*args, constraint_axis=(False, False, False), constraint_orientation='GLOBAL', proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1.0, gpencil_strokes=False, release_confirm=False, use_accurate=False):
     """Mirror selected items around one or more axes
     
     :param args: (override_context, execution_context, undo)
@@ -294,7 +294,7 @@ def mirror(*args, constraint_axis=(False, False, False), constraint_orientation=
     return {'FINISHED'}
 
 
-def push_pull(*args, value=0.0, mirror=False, proportional=’DISABLED’, proportional_edit_falloff=’SMOOTH’, proportional_size=1.0, snap=False, snap_target=’CLOSEST’, snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), release_confirm=False, use_accurate=False):
+def push_pull(*args, value=0.0, mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1.0, snap=False, snap_target='CLOSEST', snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), release_confirm=False, use_accurate=False):
     """Push/Pull selected items
     
     :param args: (override_context, execution_context, undo)
@@ -359,7 +359,7 @@ def push_pull(*args, value=0.0, mirror=False, proportional=’DISABLED’, propo
     return {'FINISHED'}
 
 
-def resize(*args, value=(1.0, 1.0, 1.0), constraint_axis=(False, False, False), constraint_orientation=’GLOBAL’, mirror=False, proportional=’DISABLED’, proportional_edit_falloff=’SMOOTH’, proportional_size=1.0, snap=False, snap_target=’CLOSEST’, snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), gpencil_strokes=False, texture_space=False, remove_on_cancel=False, release_confirm=False, use_accurate=False):
+def resize(*args, value=(1.0, 1.0, 1.0), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1.0, snap=False, snap_target='CLOSEST', snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), gpencil_strokes=False, texture_space=False, remove_on_cancel=False, release_confirm=False, use_accurate=False):
     """Scale (resize) selected items
     
     :param args: (override_context, execution_context, undo)
@@ -439,7 +439,7 @@ def resize(*args, value=(1.0, 1.0, 1.0), constraint_axis=(False, False, False), 
     return {'FINISHED'}
 
 
-def rotate(*args, value=0.0, axis=(0.0, 0.0, 0.0), constraint_axis=(False, False, False), constraint_orientation=’GLOBAL’, mirror=False, proportional=’DISABLED’, proportional_edit_falloff=’SMOOTH’, proportional_size=1.0, snap=False, snap_target=’CLOSEST’, snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), gpencil_strokes=False, release_confirm=False, use_accurate=False):
+def rotate(*args, value=0.0, axis=(0.0, 0.0, 0.0), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1.0, snap=False, snap_target='CLOSEST', snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), gpencil_strokes=False, release_confirm=False, use_accurate=False):
     """Rotate selected items
     
     :param args: (override_context, execution_context, undo)
@@ -516,7 +516,7 @@ def rotate(*args, value=0.0, axis=(0.0, 0.0, 0.0), constraint_axis=(False, False
     return {'FINISHED'}
 
 
-def select_orientation(*args, orientation=’GLOBAL’):
+def select_orientation(*args, orientation='GLOBAL'):
     """Select transformation orientation
     
     :param args: (override_context, execution_context, undo)
@@ -532,7 +532,7 @@ def select_orientation(*args, orientation=’GLOBAL’):
     return {'FINISHED'}
 
 
-def seq_slide(*args, value=(0.0, 0.0), snap=False, snap_target=’CLOSEST’, snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), release_confirm=False, use_accurate=False):
+def seq_slide(*args, value=(0.0, 0.0), snap=False, snap_target='CLOSEST', snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), release_confirm=False, use_accurate=False):
     """Slide a sequence strip in time
     
     :param args: (override_context, execution_context, undo)
@@ -573,7 +573,7 @@ def seq_slide(*args, value=(0.0, 0.0), snap=False, snap_target=’CLOSEST’, sn
     return {'FINISHED'}
 
 
-def shear(*args, value=0.0, mirror=False, proportional=’DISABLED’, proportional_edit_falloff=’SMOOTH’, proportional_size=1.0, snap=False, snap_target=’CLOSEST’, snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), gpencil_strokes=False, release_confirm=False, use_accurate=False):
+def shear(*args, value=0.0, mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1.0, snap=False, snap_target='CLOSEST', snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), gpencil_strokes=False, release_confirm=False, use_accurate=False):
     """Shear selected items along the horizontal screen axis
     
     :param args: (override_context, execution_context, undo)
@@ -641,7 +641,7 @@ def shear(*args, value=0.0, mirror=False, proportional=’DISABLED’, proportio
     return {'FINISHED'}
 
 
-def shrink_fatten(*args, value=0.0, use_even_offset=True, mirror=False, proportional=’DISABLED’, proportional_edit_falloff=’SMOOTH’, proportional_size=1.0, snap=False, snap_target=’CLOSEST’, snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), release_confirm=False, use_accurate=False):
+def shrink_fatten(*args, value=0.0, use_even_offset=True, mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1.0, snap=False, snap_target='CLOSEST', snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), release_confirm=False, use_accurate=False):
     """Shrink/fatten selected vertices along normals
     
     :param args: (override_context, execution_context, undo)
@@ -709,7 +709,7 @@ def shrink_fatten(*args, value=0.0, use_even_offset=True, mirror=False, proporti
     return {'FINISHED'}
 
 
-def skin_resize(*args, value=(1.0, 1.0, 1.0), constraint_axis=(False, False, False), constraint_orientation=’GLOBAL’, mirror=False, proportional=’DISABLED’, proportional_edit_falloff=’SMOOTH’, proportional_size=1.0, snap=False, snap_target=’CLOSEST’, snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), release_confirm=False, use_accurate=False):
+def skin_resize(*args, value=(1.0, 1.0, 1.0), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1.0, snap=False, snap_target='CLOSEST', snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), release_confirm=False, use_accurate=False):
     """Scale selected vertices’ skin radii
     
     :param args: (override_context, execution_context, undo)
@@ -780,7 +780,7 @@ def skin_resize(*args, value=(1.0, 1.0, 1.0), constraint_axis=(False, False, Fal
     return {'FINISHED'}
 
 
-def tilt(*args, value=0.0, mirror=False, proportional=’DISABLED’, proportional_edit_falloff=’SMOOTH’, proportional_size=1.0, snap=False, snap_target=’CLOSEST’, snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), release_confirm=False, use_accurate=False):
+def tilt(*args, value=0.0, mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1.0, snap=False, snap_target='CLOSEST', snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), release_confirm=False, use_accurate=False):
     """Tilt selected control vertices of 3D curve
     
     :param args: (override_context, execution_context, undo)
@@ -845,7 +845,7 @@ def tilt(*args, value=0.0, mirror=False, proportional=’DISABLED’, proportion
     return {'FINISHED'}
 
 
-def tosphere(*args, value=0.0, mirror=False, proportional=’DISABLED’, proportional_edit_falloff=’SMOOTH’, proportional_size=1.0, snap=False, snap_target=’CLOSEST’, snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), gpencil_strokes=False, release_confirm=False, use_accurate=False):
+def tosphere(*args, value=0.0, mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1.0, snap=False, snap_target='CLOSEST', snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), gpencil_strokes=False, release_confirm=False, use_accurate=False):
     """Move selected vertices outward in a spherical shape around mesh center
     
     :param args: (override_context, execution_context, undo)
@@ -913,7 +913,7 @@ def tosphere(*args, value=0.0, mirror=False, proportional=’DISABLED’, propor
     return {'FINISHED'}
 
 
-def trackball(*args, value=(0.0, 0.0), mirror=False, proportional=’DISABLED’, proportional_edit_falloff=’SMOOTH’, proportional_size=1.0, snap=False, snap_target=’CLOSEST’, snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), gpencil_strokes=False, release_confirm=False, use_accurate=False):
+def trackball(*args, value=(0.0, 0.0), mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1.0, snap=False, snap_target='CLOSEST', snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), gpencil_strokes=False, release_confirm=False, use_accurate=False):
     """Trackball style rotation of selected items
     
     :param args: (override_context, execution_context, undo)
@@ -981,7 +981,7 @@ def trackball(*args, value=(0.0, 0.0), mirror=False, proportional=’DISABLED’
     return {'FINISHED'}
 
 
-def transform(*args, mode=’TRANSLATION’, value=(0.0, 0.0, 0.0, 0.0), axis=(0.0, 0.0, 0.0), constraint_axis=(False, False, False), constraint_orientation=’GLOBAL’, mirror=False, proportional=’DISABLED’, proportional_edit_falloff=’SMOOTH’, proportional_size=1.0, snap=False, snap_target=’CLOSEST’, snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), gpencil_strokes=False, release_confirm=False, use_accurate=False):
+def transform(*args, mode='TRANSLATION', value=(0.0, 0.0, 0.0, 0.0), axis=(0.0, 0.0, 0.0), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1.0, snap=False, snap_target='CLOSEST', snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), gpencil_strokes=False, release_confirm=False, use_accurate=False):
     """Transform selected items by mode type
     
     :param args: (override_context, execution_context, undo)
@@ -1061,7 +1061,7 @@ def transform(*args, mode=’TRANSLATION’, value=(0.0, 0.0, 0.0, 0.0), axis=(0
     return {'FINISHED'}
 
 
-def translate(*args, value=(0.0, 0.0, 0.0), constraint_axis=(False, False, False), constraint_orientation=’GLOBAL’, mirror=False, proportional=’DISABLED’, proportional_edit_falloff=’SMOOTH’, proportional_size=1.0, snap=False, snap_target=’CLOSEST’, snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), gpencil_strokes=False, texture_space=False, remove_on_cancel=False, release_confirm=False, use_accurate=False):
+def translate(*args, value=(0.0, 0.0, 0.0), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1.0, snap=False, snap_target='CLOSEST', snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), gpencil_strokes=False, texture_space=False, remove_on_cancel=False, release_confirm=False, use_accurate=False):
     """Translate (move) selected items
     
     :param args: (override_context, execution_context, undo)
@@ -1141,7 +1141,7 @@ def translate(*args, value=(0.0, 0.0, 0.0), constraint_axis=(False, False, False
     return {'FINISHED'}
 
 
-def vert_slide(*args, value=0.0, use_even=False, flipped=False, use_clamp=True, mirror=False, snap=False, snap_target=’CLOSEST’, snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), correct_uv=False, release_confirm=False, use_accurate=False):
+def vert_slide(*args, value=0.0, use_even=False, flipped=False, use_clamp=True, mirror=False, snap=False, snap_target='CLOSEST', snap_point=(0.0, 0.0, 0.0), snap_align=False, snap_normal=(0.0, 0.0, 0.0), correct_uv=False, release_confirm=False, use_accurate=False):
     """Slide a vertex along a mesh
     
     :param args: (override_context, execution_context, undo)

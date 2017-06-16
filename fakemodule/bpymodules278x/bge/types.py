@@ -2166,7 +2166,7 @@ class KX_GameObject(SCA_IObject):
         :type margin: float
         """
 
-    def sendMessage(self, subject, body=”“, to=”“):
+    def sendMessage(self, subject, body="", to=""):
         """Sends a message.
         
         :param subject: The subject of the message

@@ -46,7 +46,7 @@ def action_unlink(*args, force_delete=False):
     return {'FINISHED'}
 
 
-def actionclip_add(*args, action=”):
+def actionclip_add(*args, action=""):
     """Add an Action-Clip strip (i.e. an NLA Strip referencing an Action) to the active track
     
     :param args: (override_context, execution_context, undo)
@@ -75,7 +75,7 @@ def apply_scale(*args):
     return {'FINISHED'}
 
 
-def bake(*args, frame_start=1, frame_end=250, step=1, only_selected=True, visual_keying=False, clear_constraints=False, clear_parents=False, use_current_action=False, bake_types={‘POSE’}):
+def bake(*args, frame_start=1, frame_end=250, step=1, only_selected=True, visual_keying=False, clear_constraints=False, clear_parents=False, use_current_action=False, bake_types={'POSE'}):
     """Bake object/pose loc/scale/rotation animation to a new action
     
     :param args: (override_context, execution_context, undo)
@@ -175,7 +175,7 @@ def delete(*args):
     return {'FINISHED'}
 
 
-def duplicate(*args, linked=False, mode=’TRANSLATION’):
+def duplicate(*args, linked=False, mode='TRANSLATION'):
     """Duplicate selected NLA-Strips, adding the new strips in new tracks above the originals
     
     :param args: (override_context, execution_context, undo)
@@ -194,7 +194,7 @@ def duplicate(*args, linked=False, mode=’TRANSLATION’):
     return {'FINISHED'}
 
 
-def fmodifier_add(*args, type=’NULL’, only_active=True):
+def fmodifier_add(*args, type='NULL', only_active=True):
     """Add F-Modifier to the active/selected NLA-Strips
     
     :param args: (override_context, execution_context, undo)
@@ -407,7 +407,7 @@ def select_border(*args, gesture_mode=0, xmin=0, xmax=0, ymin=0, ymax=0, extend=
     return {'FINISHED'}
 
 
-def select_leftright(*args, mode=’CHECK’, extend=False):
+def select_leftright(*args, mode='CHECK', extend=False):
     """Select strips to the left or the right of the current frame
     
     :param args: (override_context, execution_context, undo)
@@ -439,7 +439,7 @@ def selected_objects_add(*args):
     return {'FINISHED'}
 
 
-def snap(*args, type=’CFRA’):
+def snap(*args, type='CFRA'):
     """Move start of strips to specified time
     
     :param args: (override_context, execution_context, undo)

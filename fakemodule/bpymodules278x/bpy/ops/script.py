@@ -11,7 +11,7 @@ def autoexec_warn_clear(*args):
     return {'FINISHED'}
 
 
-def execute_preset(*args, filepath=”“, menu_idname=”“):
+def execute_preset(*args, filepath="", menu_idname=""):
     """Execute a preset
     
     :param args: (override_context, execution_context, undo)
@@ -30,7 +30,7 @@ def execute_preset(*args, filepath=”“, menu_idname=”“):
     return {'FINISHED'}
 
 
-def python_file_run(*args, filepath=”“):
+def python_file_run(*args, filepath=""):
     """Run Python file
     
     :param args: (override_context, execution_context, undo)

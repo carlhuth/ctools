@@ -91,7 +91,7 @@ class Color:
 
 
 class Euler:
-    def __new__(cls, angles, order=’XYZ’):
+    def __new__(cls, angles, order='XYZ'):
         """This object gives access to Eulers in Blender.
         
         :param angles: Three angles, in radians.

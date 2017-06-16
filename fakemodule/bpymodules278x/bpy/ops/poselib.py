@@ -56,7 +56,7 @@ def new(*args):
     return {'FINISHED'}
 
 
-def pose_add(*args, frame=1, name=”Pose”):
+def pose_add(*args, frame=1, name="Pose"):
     """Add the current Pose to the active Pose Library
     
     :param args: (override_context, execution_context, undo)
@@ -75,7 +75,7 @@ def pose_add(*args, frame=1, name=”Pose”):
     return {'FINISHED'}
 
 
-def pose_move(*args, pose=”, direction=’UP’):
+def pose_move(*args, pose="", direction='UP'):
     """Move the pose up or down in the active Pose Library
     
     :param args: (override_context, execution_context, undo)
@@ -94,7 +94,7 @@ def pose_move(*args, pose=”, direction=’UP’):
     return {'FINISHED'}
 
 
-def pose_remove(*args, pose=”):
+def pose_remove(*args, pose=""):
     """Remove nth pose from the active Pose Library
     
     :param args: (override_context, execution_context, undo)
@@ -110,7 +110,7 @@ def pose_remove(*args, pose=”):
     return {'FINISHED'}
 
 
-def pose_rename(*args, name=”RenamedPose”, pose=”):
+def pose_rename(*args, name="RenamedPose", pose=""):
     """Rename specified pose from the active Pose Library
     
     :param args: (override_context, execution_context, undo)

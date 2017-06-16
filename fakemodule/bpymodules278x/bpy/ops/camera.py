@@ -1,4 +1,4 @@
-def preset_add(*args, name=”“, remove_active=False, use_focal_length=False):
+def preset_add(*args, name="", remove_active=False, use_focal_length=False):
     """Add or remove a Camera Preset
     
     :param args: (override_context, execution_context, undo)

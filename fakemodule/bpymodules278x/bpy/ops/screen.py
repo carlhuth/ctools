@@ -135,7 +135,7 @@ def area_options(*args):
     return {'FINISHED'}
 
 
-def area_split(*args, direction=’HORIZONTAL’, factor=0.5, mouse_x=-100, mouse_y=-100):
+def area_split(*args, direction='HORIZONTAL', factor=0.5, mouse_x=-100, mouse_y=-100):
     """Split selected area into new windows
     
     :param args: (override_context, execution_context, undo)
@@ -454,7 +454,7 @@ def screen_set(*args, delta=0):
     return {'FINISHED'}
 
 
-def screencast(*args, filepath=”“, full=True):
+def screencast(*args, filepath="", full=True):
     """Capture a video of the active area or whole Blender window
     
     :param args: (override_context, execution_context, undo)
@@ -473,7 +473,7 @@ def screencast(*args, filepath=”“, full=True):
     return {'FINISHED'}
 
 
-def screenshot(*args, filepath=”“, check_existing=True, filter_blender=False, filter_backup=False, filter_image=True, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, show_multiview=False, use_multiview=False, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, full=True):
+def screenshot(*args, filepath="", check_existing=True, filter_blender=False, filter_backup=False, filter_image=True, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, show_multiview=False, use_multiview=False, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', full=True):
     """Capture a picture of the active area or whole Blender window
     
     :param args: (override_context, execution_context, undo)
@@ -557,7 +557,7 @@ def screenshot(*args, filepath=”“, check_existing=True, filter_blender=False
     return {'FINISHED'}
 
 
-def space_context_cycle(*args, direction=’NEXT’):
+def space_context_cycle(*args, direction='NEXT'):
     """Cycle through the editor context by activating the next/previous one
     
     :param args: (override_context, execution_context, undo)

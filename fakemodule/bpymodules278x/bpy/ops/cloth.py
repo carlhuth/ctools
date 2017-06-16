@@ -1,4 +1,4 @@
-def preset_add(*args, name=”“, remove_active=False):
+def preset_add(*args, name="", remove_active=False):
     """Add or remove a Cloth Preset
     
     :param args: (override_context, execution_context, undo)

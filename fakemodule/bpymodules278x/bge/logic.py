@@ -126,7 +126,7 @@ def addScene(name, overlay=1):
     """
 
 
-def sendMessage(subject, body=”“, to=”“, message_from=”“):
+def sendMessage(subject, body="", to="", message_from=""):
     """Sends a message to sensors in any active scene.
     
     :param subject: The subject of the message
@@ -388,7 +388,7 @@ def getAverageFrameRate():
     """
 
 
-def getBlendFileList(path = “//”):
+def getBlendFileList(path = "//"):
     """Returns a list of blend files in the same directory as the open blend file, or from using the option argument.
     
     :param path: Optional directory argument, will be expanded (like expandPath) into the full path.

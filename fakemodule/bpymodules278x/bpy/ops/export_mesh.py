@@ -1,4 +1,4 @@
-def ply(*args, filepath=”“, check_existing=True, axis_forward=’Y’, axis_up=’Z’, filter_glob=”*.ply”, use_mesh_modifiers=True, use_normals=True, use_uv_coords=True, use_colors=True, global_scale=1.0):
+def ply(*args, filepath="", check_existing=True, axis_forward='Y', axis_up='Z', filter_glob="*.ply", use_mesh_modifiers=True, use_normals=True, use_uv_coords=True, use_colors=True, global_scale=1.0):
     """Export a single object as a Stanford PLY with normals, colors and texture coordinates
     
     :param args: (override_context, execution_context, undo)
@@ -41,7 +41,7 @@ def ply(*args, filepath=”“, check_existing=True, axis_forward=’Y’, axis_
     return {'FINISHED'}
 
 
-def stl(*args, filepath=”“, check_existing=True, axis_forward=’Y’, axis_up=’Z’, filter_glob=”*.stl”, use_selection=False, global_scale=1.0, use_scene_unit=False, ascii=False, use_mesh_modifiers=True, batch_mode=’OFF’):
+def stl(*args, filepath="", check_existing=True, axis_forward='Y', axis_up='Z', filter_glob="*.stl", use_selection=False, global_scale=1.0, use_scene_unit=False, ascii=False, use_mesh_modifiers=True, batch_mode='OFF'):
     """Save STL triangle mesh data from the active object
     
     :param args: (override_context, execution_context, undo)

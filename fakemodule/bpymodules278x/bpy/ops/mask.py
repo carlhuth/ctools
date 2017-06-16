@@ -152,7 +152,7 @@ def feather_weight_clear(*args):
     return {'FINISHED'}
 
 
-def handle_type_set(*args, type=’AUTO’):
+def handle_type_set(*args, type='AUTO'):
     """Set type of handles for selected control points
     
     :param args: (override_context, execution_context, undo)
@@ -197,7 +197,7 @@ def hide_view_set(*args, unselected=False):
     return {'FINISHED'}
 
 
-def layer_move(*args, direction=’UP’):
+def layer_move(*args, direction='UP'):
     """Move the active layer up/down in the list
     
     :param args: (override_context, execution_context, undo)
@@ -213,7 +213,7 @@ def layer_move(*args, direction=’UP’):
     return {'FINISHED'}
 
 
-def layer_new(*args, name=”“):
+def layer_new(*args, name=""):
     """Add new mask layer for masking
     
     :param args: (override_context, execution_context, undo)
@@ -242,7 +242,7 @@ def layer_remove(*args):
     return {'FINISHED'}
 
 
-def new(*args, name=”“):
+def new(*args, name=""):
     """Create new mask
     
     :param args: (override_context, execution_context, undo)
@@ -373,7 +373,7 @@ def select(*args, extend=False, deselect=False, toggle=False, location=(0.0, 0.0
     return {'FINISHED'}
 
 
-def select_all(*args, action=’TOGGLE’):
+def select_all(*args, action='TOGGLE'):
     """Change selection of all curve points
     
     :param args: (override_context, execution_context, undo)

@@ -1,4 +1,4 @@
-def autodesk_3ds(*args, filepath=”“, axis_forward=’Y’, axis_up=’Z’, filter_glob=”*.3ds”, constrain_size=10.0, use_image_search=True, use_apply_transform=True):
+def autodesk_3ds(*args, filepath="", axis_forward='Y', axis_up='Z', filter_glob="*.3ds", constrain_size=10.0, use_image_search=True, use_apply_transform=True):
     """Import from 3DS file format (.3ds)
     
     :param args: (override_context, execution_context, undo)
@@ -32,7 +32,7 @@ def autodesk_3ds(*args, filepath=”“, axis_forward=’Y’, axis_up=’Z’, 
     return {'FINISHED'}
 
 
-def fbx(*args, filepath=”“, axis_forward=’-Z’, axis_up=’Y’, directory=”“, filter_glob=”*.fbx”, ui_tab=’MAIN’, use_manual_orientation=False, global_scale=1.0, bake_space_transform=False, use_custom_normals=True, use_image_search=True, use_alpha_decals=False, decal_offset=0.0, use_anim=True, anim_offset=1.0, use_custom_props=True, use_custom_props_enum_as_string=True, ignore_leaf_bones=False, force_connect_children=False, automatic_bone_orientation=False, primary_bone_axis=’Y’, secondary_bone_axis=’X’, use_prepost_rot=True):
+def fbx(*args, filepath="", axis_forward='-Z', axis_up='Y', directory="", filter_glob="*.fbx", ui_tab='MAIN', use_manual_orientation=False, global_scale=1.0, bake_space_transform=False, use_custom_normals=True, use_image_search=True, use_alpha_decals=False, decal_offset=0.0, use_anim=True, anim_offset=1.0, use_custom_props=True, use_custom_props_enum_as_string=True, ignore_leaf_bones=False, force_connect_children=False, automatic_bone_orientation=False, primary_bone_axis='Y', secondary_bone_axis='X', use_prepost_rot=True):
     """Load a FBX file
     
     :param args: (override_context, execution_context, undo)
@@ -116,7 +116,7 @@ def fbx(*args, filepath=”“, axis_forward=’-Z’, axis_up=’Y’, director
     return {'FINISHED'}
 
 
-def obj(*args, filepath=”“, axis_forward=’-Z’, axis_up=’Y’, filter_glob=”*.obj;*.mtl”, use_edges=True, use_smooth_groups=True, use_split_objects=True, use_split_groups=True, use_groups_as_vgroups=False, use_image_search=True, split_mode=’ON’, global_clamp_size=0.0):
+def obj(*args, filepath="", axis_forward='-Z', axis_up='Y', filter_glob="*.obj;*.mtl", use_edges=True, use_smooth_groups=True, use_split_objects=True, use_split_groups=True, use_groups_as_vgroups=False, use_image_search=True, split_mode='ON', global_clamp_size=0.0):
     """Load a Wavefront OBJ File
     
     :param args: (override_context, execution_context, undo)
@@ -167,7 +167,7 @@ def obj(*args, filepath=”“, axis_forward=’-Z’, axis_up=’Y’, filter_g
     return {'FINISHED'}
 
 
-def x3d(*args, filepath=”“, axis_forward=’Z’, axis_up=’Y’, filter_glob=”*.x3d;*.wrl”):
+def x3d(*args, filepath="", axis_forward='Z', axis_up='Y', filter_glob="*.x3d;*.wrl"):
     """Import an X3D or VRML2 file
     
     :param args: (override_context, execution_context, undo)

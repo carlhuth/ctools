@@ -11,7 +11,7 @@ def armature_apply(*args):
     return {'FINISHED'}
 
 
-def autoside_names(*args, axis=’XAXIS’):
+def autoside_names(*args, axis='XAXIS'):
     """Automatically renames the selected bones according to which side of the target axis they fall on
     
     :param args: (override_context, execution_context, undo)
@@ -46,7 +46,7 @@ def bone_layers(*args, layers=(False, False, False, False, False, False, False, 
     return {'FINISHED'}
 
 
-def breakdown(*args, percentage=0.5, prev_frame=0, next_frame=0, channels=’ALL’, axis_lock=’FREE’):
+def breakdown(*args, percentage=0.5, prev_frame=0, next_frame=0, channels='ALL', axis_lock='FREE'):
     """Create a suitable breakdown pose on the current frame
     
     :param args: (override_context, execution_context, undo)
@@ -84,7 +84,7 @@ def breakdown(*args, percentage=0.5, prev_frame=0, next_frame=0, channels=’ALL
     return {'FINISHED'}
 
 
-def constraint_add(*args, type=”):
+def constraint_add(*args, type=""):
     """Add a constraint to the active bone
     
     :param args: (override_context, execution_context, undo)
@@ -128,7 +128,7 @@ def constraint_add(*args, type=”):
     return {'FINISHED'}
 
 
-def constraint_add_with_targets(*args, type=”):
+def constraint_add_with_targets(*args, type=""):
     """Add a constraint to the active bone, with target (where applicable) set to the selected Objects/Bones
     
     :param args: (override_context, execution_context, undo)
@@ -266,7 +266,7 @@ def group_deselect(*args):
     return {'FINISHED'}
 
 
-def group_move(*args, direction=’UP’):
+def group_move(*args, direction='UP'):
     """Change position of active Bone Group in list of Bone Groups
     
     :param args: (override_context, execution_context, undo)
@@ -411,7 +411,7 @@ def paste(*args, flipped=False, selected_mask=False):
     return {'FINISHED'}
 
 
-def paths_calculate(*args, start_frame=1, end_frame=250, bake_location=’TAILS’):
+def paths_calculate(*args, start_frame=1, end_frame=250, bake_location='TAILS'):
     """Calculate paths for the selected bones
     
     :param args: (override_context, execution_context, undo)
@@ -464,7 +464,7 @@ def paths_update(*args):
     return {'FINISHED'}
 
 
-def propagate(*args, mode=’WHILE_HELD’, end_frame=250.0):
+def propagate(*args, mode='WHILE_HELD', end_frame=250.0):
     """Copy selected aspects of the current pose to subsequent poses already keyframed
     
     :param args: (override_context, execution_context, undo)
@@ -490,7 +490,7 @@ def propagate(*args, mode=’WHILE_HELD’, end_frame=250.0):
     return {'FINISHED'}
 
 
-def push(*args, percentage=0.5, prev_frame=0, next_frame=0, channels=’ALL’, axis_lock=’FREE’):
+def push(*args, percentage=0.5, prev_frame=0, next_frame=0, channels='ALL', axis_lock='FREE'):
     """Exaggerate the current pose
     
     :param args: (override_context, execution_context, undo)
@@ -541,7 +541,7 @@ def quaternions_flip(*args):
     return {'FINISHED'}
 
 
-def relax(*args, percentage=0.5, prev_frame=0, next_frame=0, channels=’ALL’, axis_lock=’FREE’):
+def relax(*args, percentage=0.5, prev_frame=0, next_frame=0, channels='ALL', axis_lock='FREE'):
     """Make the current pose more similar to its surrounding ones
     
     :param args: (override_context, execution_context, undo)
@@ -605,7 +605,7 @@ def rot_clear(*args):
     return {'FINISHED'}
 
 
-def rotation_mode_set(*args, type=’QUATERNION’):
+def rotation_mode_set(*args, type='QUATERNION'):
     """Set the rotation representation used by selected bones
     
     :param args: (override_context, execution_context, undo)
@@ -642,7 +642,7 @@ def scale_clear(*args):
     return {'FINISHED'}
 
 
-def select_all(*args, action=’TOGGLE’):
+def select_all(*args, action='TOGGLE'):
     """Toggle selection status of all bones
     
     :param args: (override_context, execution_context, undo)
@@ -675,7 +675,7 @@ def select_constraint_target(*args):
     return {'FINISHED'}
 
 
-def select_grouped(*args, extend=False, type=’LAYER’):
+def select_grouped(*args, extend=False, type='LAYER'):
     """Select all visible bones grouped by similar properties
     
     :param args: (override_context, execution_context, undo)
@@ -697,7 +697,7 @@ def select_grouped(*args, extend=False, type=’LAYER’):
     return {'FINISHED'}
 
 
-def select_hierarchy(*args, direction=’PARENT’, extend=False):
+def select_hierarchy(*args, direction='PARENT', extend=False):
     """Select immediate parent/children of selected bones
     
     :param args: (override_context, execution_context, undo)

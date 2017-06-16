@@ -30,7 +30,7 @@ def connect_hair(*args, all=False):
     return {'FINISHED'}
 
 
-def copy_particle_systems(*args, space=’OBJECT’, remove_target_particles=True, use_active=False):
+def copy_particle_systems(*args, space='OBJECT', remove_target_particles=True, use_active=False):
     """Copy particle systems from the active object to selected objects
     
     :param args: (override_context, execution_context, undo)
@@ -54,7 +54,7 @@ def copy_particle_systems(*args, space=’OBJECT’, remove_target_particles=Tru
     return {'FINISHED'}
 
 
-def delete(*args, type=’PARTICLE’):
+def delete(*args, type='PARTICLE'):
     """Delete selected particles or keys
     
     :param args: (override_context, execution_context, undo)
@@ -167,7 +167,7 @@ def edited_clear(*args):
     return {'FINISHED'}
 
 
-def hair_dynamics_preset_add(*args, name=”“, remove_active=False):
+def hair_dynamics_preset_add(*args, name="", remove_active=False):
     """Add or remove a Hair Dynamics Preset
     
     :param args: (override_context, execution_context, undo)
@@ -299,7 +299,7 @@ def reveal(*args):
     return {'FINISHED'}
 
 
-def select_all(*args, action=’TOGGLE’):
+def select_all(*args, action='TOGGLE'):
     """(De)select all particles’ keys
     
     :param args: (override_context, execution_context, undo)
@@ -364,7 +364,7 @@ def select_more(*args):
     return {'FINISHED'}
 
 
-def select_random(*args, percent=50.0, seed=0, action=’SELECT’, type=’HAIR’):
+def select_random(*args, percent=50.0, seed=0, action='SELECT', type='HAIR'):
     """Select a randomly distributed set of hair or points
     
     :param args: (override_context, execution_context, undo)
@@ -391,7 +391,7 @@ def select_random(*args, percent=50.0, seed=0, action=’SELECT’, type=’HAIR
     return {'FINISHED'}
 
 
-def select_roots(*args, action=’SELECT’):
+def select_roots(*args, action='SELECT'):
     """Select roots of all visible particles
     
     :param args: (override_context, execution_context, undo)
@@ -411,7 +411,7 @@ def select_roots(*args, action=’SELECT’):
     return {'FINISHED'}
 
 
-def select_tips(*args, action=’SELECT’):
+def select_tips(*args, action='SELECT'):
     """Select tips of all visible particles
     
     :param args: (override_context, execution_context, undo)

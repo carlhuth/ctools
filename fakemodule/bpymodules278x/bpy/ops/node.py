@@ -1,4 +1,4 @@
-def add_and_link_node(*args, type=”“, use_transform=False, settings=None, link_socket_index=0):
+def add_and_link_node(*args, type="", use_transform=False, settings=None, link_socket_index=0):
     """Add a node to the active tree and link to an existing socket
     
     :param args: (override_context, execution_context, undo)
@@ -23,7 +23,7 @@ def add_and_link_node(*args, type=”“, use_transform=False, settings=None, li
     return {'FINISHED'}
 
 
-def add_file(*args, filepath=”“, filter_blender=False, filter_backup=False, filter_image=True, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, name=”Image”):
+def add_file(*args, filepath="", filter_blender=False, filter_backup=False, filter_image=True, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', name="Image"):
     """Add a file node to the current node editor
     
     :param args: (override_context, execution_context, undo)
@@ -107,7 +107,7 @@ def add_file(*args, filepath=”“, filter_blender=False, filter_backup=False, 
     return {'FINISHED'}
 
 
-def add_mask(*args, name=”Mask”):
+def add_mask(*args, name="Mask"):
     """Add a mask node to the current node editor
     
     :param args: (override_context, execution_context, undo)
@@ -123,7 +123,7 @@ def add_mask(*args, name=”Mask”):
     return {'FINISHED'}
 
 
-def add_node(*args, type=”“, use_transform=False, settings=None):
+def add_node(*args, type="", use_transform=False, settings=None):
     """Add a node to the active tree
     
     :param args: (override_context, execution_context, undo)
@@ -164,7 +164,7 @@ def add_reroute(*args, path=None, cursor=6):
     return {'FINISHED'}
 
 
-def add_search(*args, type=”“, use_transform=False, settings=None, node_item=”):
+def add_search(*args, type="", use_transform=False, settings=None, node_item=""):
     """Add a node to the active tree
     
     :param args: (override_context, execution_context, undo)
@@ -482,7 +482,7 @@ def group_make(*args):
     return {'FINISHED'}
 
 
-def group_separate(*args, type=’COPY’):
+def group_separate(*args, type='COPY'):
     """Separate selected nodes from the node group
     
     :param args: (override_context, execution_context, undo)
@@ -696,7 +696,7 @@ def mute_toggle(*args):
     return {'FINISHED'}
 
 
-def new_node_tree(*args, type=”, name=”NodeTree”):
+def new_node_tree(*args, type="", name="NodeTree"):
     """Create a new node tree
     
     :param args: (override_context, execution_context, undo)
@@ -715,7 +715,7 @@ def new_node_tree(*args, type=”, name=”NodeTree”):
     return {'FINISHED'}
 
 
-def node_color_preset_add(*args, name=”“, remove_active=False):
+def node_color_preset_add(*args, name="", remove_active=False):
     """Add or remove a Node Color Preset
     
     :param args: (override_context, execution_context, undo)
@@ -760,7 +760,7 @@ def options_toggle(*args):
     return {'FINISHED'}
 
 
-def output_file_add_socket(*args, file_path=”Image”):
+def output_file_add_socket(*args, file_path="Image"):
     """Add a new input to a file output node
     
     :param args: (override_context, execution_context, undo)
@@ -776,7 +776,7 @@ def output_file_add_socket(*args, file_path=”Image”):
     return {'FINISHED'}
 
 
-def output_file_move_active_socket(*args, direction=’DOWN’):
+def output_file_move_active_socket(*args, direction='DOWN'):
     """Move the active input of a file output node up or down the list
     
     :param args: (override_context, execution_context, undo)
@@ -918,7 +918,7 @@ def select(*args, mouse_x=0, mouse_y=0, extend=False):
     return {'FINISHED'}
 
 
-def select_all(*args, action=’TOGGLE’):
+def select_all(*args, action='TOGGLE'):
     """(De)select all nodes
     
     :param args: (override_context, execution_context, undo)
@@ -997,7 +997,7 @@ def select_circle(*args, x=0, y=0, radius=1, gesture_mode=0):
     return {'FINISHED'}
 
 
-def select_grouped(*args, extend=False, type=’TYPE’):
+def select_grouped(*args, extend=False, type='TYPE'):
     """Select nodes with similar properties
     
     :param args: (override_context, execution_context, undo)
@@ -1195,7 +1195,7 @@ def tree_path_parent(*args):
     return {'FINISHED'}
 
 
-def tree_socket_add(*args, in_out=’IN’):
+def tree_socket_add(*args, in_out='IN'):
     """Add an input or output socket to the current node tree
     
     :param args: (override_context, execution_context, undo)
@@ -1211,7 +1211,7 @@ def tree_socket_add(*args, in_out=’IN’):
     return {'FINISHED'}
 
 
-def tree_socket_move(*args, direction=’UP’):
+def tree_socket_move(*args, direction='UP'):
     """Move a socket up or down in the current node tree’s sockets stack
     
     :param args: (override_context, execution_context, undo)

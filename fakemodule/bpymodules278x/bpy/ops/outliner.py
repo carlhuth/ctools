@@ -1,4 +1,4 @@
-def action_set(*args, action=”):
+def action_set(*args, action=""):
     """Change the active action used
     
     :param args: (override_context, execution_context, undo)
@@ -14,7 +14,7 @@ def action_set(*args, action=”):
     return {'FINISHED'}
 
 
-def animdata_operation(*args, type=’CLEAR_ANIMDATA’):
+def animdata_operation(*args, type='CLEAR_ANIMDATA'):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -35,7 +35,7 @@ def animdata_operation(*args, type=’CLEAR_ANIMDATA’):
     return {'FINISHED'}
 
 
-def constraint_operation(*args, type=’ENABLE’):
+def constraint_operation(*args, type='ENABLE'):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -51,7 +51,7 @@ def constraint_operation(*args, type=’ENABLE’):
     return {'FINISHED'}
 
 
-def data_operation(*args, type=’SELECT’):
+def data_operation(*args, type='SELECT'):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -106,7 +106,7 @@ def expanded_toggle(*args):
     return {'FINISHED'}
 
 
-def group_link(*args, object=”Object”):
+def group_link(*args, object="Object"):
     """Link Object to Group in Outliner
     
     :param args: (override_context, execution_context, undo)
@@ -122,7 +122,7 @@ def group_link(*args, object=”Object”):
     return {'FINISHED'}
 
 
-def group_operation(*args, type=’UNLINK’):
+def group_operation(*args, type='UNLINK'):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -161,7 +161,7 @@ def id_delete(*args):
     return {'FINISHED'}
 
 
-def id_operation(*args, type=’UNLINK’):
+def id_operation(*args, type='UNLINK'):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -186,7 +186,7 @@ def id_operation(*args, type=’UNLINK’):
     return {'FINISHED'}
 
 
-def id_remap(*args, id_type=’OBJECT’, old_id=”, new_id=”):
+def id_remap(*args, id_type='OBJECT', old_id="", new_id=""):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -282,7 +282,7 @@ def keyingset_remove_selected(*args):
     return {'FINISHED'}
 
 
-def lib_operation(*args, type=’RENAME’):
+def lib_operation(*args, type='RENAME'):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -315,7 +315,7 @@ def lib_relocate(*args):
     return {'FINISHED'}
 
 
-def material_drop(*args, object=”Object”, material=”Material”):
+def material_drop(*args, object="Object", material="Material"):
     """Drag material to object in Outliner
     
     :param args: (override_context, execution_context, undo)
@@ -334,7 +334,7 @@ def material_drop(*args, object=”Object”, material=”Material”):
     return {'FINISHED'}
 
 
-def modifier_operation(*args, type=’TOGVIS’):
+def modifier_operation(*args, type='TOGVIS'):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -350,7 +350,7 @@ def modifier_operation(*args, type=’TOGVIS’):
     return {'FINISHED'}
 
 
-def object_operation(*args, type=’SELECT’):
+def object_operation(*args, type='SELECT'):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -402,7 +402,7 @@ def orphans_purge(*args):
     return {'FINISHED'}
 
 
-def parent_clear(*args, dragged_obj=”Object”, type=’CLEAR’):
+def parent_clear(*args, dragged_obj="Object", type='CLEAR'):
     """Drag to clear parent in Outliner
     
     :param args: (override_context, execution_context, undo)
@@ -424,7 +424,7 @@ def parent_clear(*args, dragged_obj=”Object”, type=’CLEAR’):
     return {'FINISHED'}
 
 
-def parent_drop(*args, child=”Object”, parent=”Object”, type=’OBJECT’):
+def parent_drop(*args, child="Object", parent="Object", type='OBJECT'):
     """Drag to parent in Outliner
     
     :param args: (override_context, execution_context, undo)
@@ -459,7 +459,7 @@ def renderability_toggle(*args):
     return {'FINISHED'}
 
 
-def scene_drop(*args, object=”Object”, scene=”Scene”):
+def scene_drop(*args, object="Object", scene="Scene"):
     """Drag object to scene in Outliner
     
     :param args: (override_context, execution_context, undo)
@@ -478,7 +478,7 @@ def scene_drop(*args, object=”Object”, scene=”Scene”):
     return {'FINISHED'}
 
 
-def scene_operation(*args, type=’DELETE’):
+def scene_operation(*args, type='DELETE'):
     """Context menu for scene operations
     
     :param args: (override_context, execution_context, undo)

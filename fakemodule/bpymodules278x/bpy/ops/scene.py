@@ -37,7 +37,7 @@ def freestyle_add_face_marks_to_keying_set(*args):
     return {'FINISHED'}
 
 
-def freestyle_alpha_modifier_add(*args, type=’ALONG_STROKE’):
+def freestyle_alpha_modifier_add(*args, type='ALONG_STROKE'):
     """Add an alpha transparency modifier to the line style associated with the active lineset
     
     :param args: (override_context, execution_context, undo)
@@ -53,7 +53,7 @@ def freestyle_alpha_modifier_add(*args, type=’ALONG_STROKE’):
     return {'FINISHED'}
 
 
-def freestyle_color_modifier_add(*args, type=’ALONG_STROKE’):
+def freestyle_color_modifier_add(*args, type='ALONG_STROKE'):
     """Add a line color modifier to the line style associated with the active lineset
     
     :param args: (override_context, execution_context, undo)
@@ -69,7 +69,7 @@ def freestyle_color_modifier_add(*args, type=’ALONG_STROKE’):
     return {'FINISHED'}
 
 
-def freestyle_fill_range_by_selection(*args, type=’COLOR’, name=”“):
+def freestyle_fill_range_by_selection(*args, type='COLOR', name=""):
     """Fill the Range Min/Max entries by the min/max distance between selected mesh objects and the source object
     
     :param args: (override_context, execution_context, undo)
@@ -91,7 +91,7 @@ def freestyle_fill_range_by_selection(*args, type=’COLOR’, name=”“):
     return {'FINISHED'}
 
 
-def freestyle_geometry_modifier_add(*args, type=‘2D_OFFSET’):
+def freestyle_geometry_modifier_add(*args, type='2D_OFFSET'):
     """Add a stroke geometry modifier to the line style associated with the active lineset
     
     :param args: (override_context, execution_context, undo)
@@ -133,7 +133,7 @@ def freestyle_lineset_copy(*args):
     return {'FINISHED'}
 
 
-def freestyle_lineset_move(*args, direction=’UP’):
+def freestyle_lineset_move(*args, direction='UP'):
     """Change the position of the active line set within the list of line sets
     
     :param args: (override_context, execution_context, undo)
@@ -201,7 +201,7 @@ def freestyle_modifier_copy(*args):
     return {'FINISHED'}
 
 
-def freestyle_modifier_move(*args, direction=’UP’):
+def freestyle_modifier_move(*args, direction='UP'):
     """Move the modifier within the list of modifiers
     
     :param args: (override_context, execution_context, undo)
@@ -243,7 +243,7 @@ def freestyle_module_add(*args):
     return {'FINISHED'}
 
 
-def freestyle_module_move(*args, direction=’UP’):
+def freestyle_module_move(*args, direction='UP'):
     """Change the position of the style module within in the list of style modules
     
     :param args: (override_context, execution_context, undo)
@@ -259,7 +259,7 @@ def freestyle_module_move(*args, direction=’UP’):
     return {'FINISHED'}
 
 
-def freestyle_module_open(*args, filepath=”“, make_internal=True):
+def freestyle_module_open(*args, filepath="", make_internal=True):
     """Open a style module file
     
     :param args: (override_context, execution_context, undo)
@@ -304,7 +304,7 @@ def freestyle_stroke_material_create(*args):
     return {'FINISHED'}
 
 
-def freestyle_thickness_modifier_add(*args, type=’ALONG_STROKE’):
+def freestyle_thickness_modifier_add(*args, type='ALONG_STROKE'):
     """Add a line thickness modifier to the line style associated with the active lineset
     
     :param args: (override_context, execution_context, undo)
@@ -320,7 +320,7 @@ def freestyle_thickness_modifier_add(*args, type=’ALONG_STROKE’):
     return {'FINISHED'}
 
 
-def new(*args, type=’NEW’):
+def new(*args, type='NEW'):
     """Add new scene by type
     
     :param args: (override_context, execution_context, undo)
@@ -393,7 +393,7 @@ def render_view_remove(*args):
     return {'FINISHED'}
 
 
-def units_length_preset_add(*args, name=”“, remove_active=False):
+def units_length_preset_add(*args, name="", remove_active=False):
     """Add or remove length units preset
     
     :param args: (override_context, execution_context, undo)

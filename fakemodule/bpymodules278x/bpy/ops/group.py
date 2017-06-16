@@ -1,4 +1,4 @@
-def create(*args, name=”Group”):
+def create(*args, name="Group"):
     """Create an object group from selected objects
     
     :param args: (override_context, execution_context, undo)
@@ -14,7 +14,7 @@ def create(*args, name=”Group”):
     return {'FINISHED'}
 
 
-def objects_add_active(*args, group=”):
+def objects_add_active(*args, group=""):
     """Add the object to an object group that contains the active object
     
     :param args: (override_context, execution_context, undo)
@@ -30,7 +30,7 @@ def objects_add_active(*args, group=”):
     return {'FINISHED'}
 
 
-def objects_remove(*args, group=”):
+def objects_remove(*args, group=""):
     """Remove selected objects from a group
     
     :param args: (override_context, execution_context, undo)
@@ -46,7 +46,7 @@ def objects_remove(*args, group=”):
     return {'FINISHED'}
 
 
-def objects_remove_active(*args, group=”):
+def objects_remove_active(*args, group=""):
     """Remove the object from an object group that contains the active object
     
     :param args: (override_context, execution_context, undo)

@@ -94,7 +94,7 @@ def channels_delete(*args):
     return {'FINISHED'}
 
 
-def channels_editable_toggle(*args, mode=’TOGGLE’, type=’PROTECT’):
+def channels_editable_toggle(*args, mode='TOGGLE', type='PROTECT'):
     """Toggle editability of selected channels
     
     :param args: (override_context, execution_context, undo)
@@ -142,7 +142,7 @@ def channels_fcurves_enable(*args):
     return {'FINISHED'}
 
 
-def channels_find(*args, query=”Query”):
+def channels_find(*args, query="Query"):
     """Filter the set of channels shown to only include those with matching names
     
     :param args: (override_context, execution_context, undo)
@@ -158,7 +158,7 @@ def channels_find(*args, query=”Query”):
     return {'FINISHED'}
 
 
-def channels_group(*args, name=”New Group”):
+def channels_group(*args, name="New Group"):
     """Add selected F-Curves to a new group
     
     :param args: (override_context, execution_context, undo)
@@ -174,7 +174,7 @@ def channels_group(*args, name=”New Group”):
     return {'FINISHED'}
 
 
-def channels_move(*args, direction=’DOWN’):
+def channels_move(*args, direction='DOWN'):
     """Rearrange selected animation channels
     
     :param args: (override_context, execution_context, undo)
@@ -250,7 +250,7 @@ def channels_select_border(*args, gesture_mode=0, xmin=0, xmax=0, ymin=0, ymax=0
     return {'FINISHED'}
 
 
-def channels_setting_disable(*args, mode=’DISABLE’, type=’PROTECT’):
+def channels_setting_disable(*args, mode='DISABLE', type='PROTECT'):
     """Disable specified setting on all selected animation channels
     
     :param args: (override_context, execution_context, undo)
@@ -269,7 +269,7 @@ def channels_setting_disable(*args, mode=’DISABLE’, type=’PROTECT’):
     return {'FINISHED'}
 
 
-def channels_setting_enable(*args, mode=’ENABLE’, type=’PROTECT’):
+def channels_setting_enable(*args, mode='ENABLE', type='PROTECT'):
     """Enable specified setting on all selected animation channels
     
     :param args: (override_context, execution_context, undo)
@@ -288,7 +288,7 @@ def channels_setting_enable(*args, mode=’ENABLE’, type=’PROTECT’):
     return {'FINISHED'}
 
 
-def channels_setting_toggle(*args, mode=’TOGGLE’, type=’PROTECT’):
+def channels_setting_toggle(*args, mode='TOGGLE', type='PROTECT'):
     """Toggle specified setting on all selected animation channels
     
     :param args: (override_context, execution_context, undo)
@@ -349,7 +349,7 @@ def copy_driver_button(*args):
     return {'FINISHED'}
 
 
-def driver_button_add(*args, mapping_type=’SINGLE_MANY’):
+def driver_button_add(*args, mapping_type='SINGLE_MANY'):
     """Add driver(s) for the property(s) represented by the highlighted button
     
     :param args: (override_context, execution_context, undo)
@@ -415,7 +415,7 @@ def keyframe_clear_v3d(*args):
     return {'FINISHED'}
 
 
-def keyframe_delete(*args, type=’DEFAULT’, confirm_success=True):
+def keyframe_delete(*args, type='DEFAULT', confirm_success=True):
     """Delete keyframes on the current frame for all properties in the specified Keying Set
     
     :param args: (override_context, execution_context, undo)
@@ -463,7 +463,7 @@ def keyframe_delete_v3d(*args):
     return {'FINISHED'}
 
 
-def keyframe_insert(*args, type=’DEFAULT’, confirm_success=True):
+def keyframe_insert(*args, type='DEFAULT', confirm_success=True):
     """Insert keyframes on the current frame for all properties in the specified Keying Set
     
     :param args: (override_context, execution_context, undo)
@@ -498,7 +498,7 @@ def keyframe_insert_button(*args, all=True):
     return {'FINISHED'}
 
 
-def keyframe_insert_menu(*args, type=’DEFAULT’, confirm_success=False, always_prompt=False):
+def keyframe_insert_menu(*args, type='DEFAULT', confirm_success=False, always_prompt=False):
     """Insert Keyframes for specified Keying Set, with menu of available Keying Sets if undefined
     
     :param args: (override_context, execution_context, undo)
@@ -520,7 +520,7 @@ def keyframe_insert_menu(*args, type=’DEFAULT’, confirm_success=False, alway
     return {'FINISHED'}
 
 
-def keying_set_active_set(*args, type=’DEFAULT’):
+def keying_set_active_set(*args, type='DEFAULT'):
     """Select a new keying set as the active one
     
     :param args: (override_context, execution_context, undo)
@@ -549,7 +549,7 @@ def keying_set_add(*args):
     return {'FINISHED'}
 
 
-def keying_set_export(*args, filepath=”“, filter_folder=True, filter_text=True, filter_python=True):
+def keying_set_export(*args, filepath="", filter_folder=True, filter_text=True, filter_python=True):
     """Export Keying Set to a python script
     
     :param args: (override_context, execution_context, undo)

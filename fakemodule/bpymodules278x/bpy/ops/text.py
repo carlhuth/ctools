@@ -24,7 +24,7 @@ def comment(*args):
     return {'FINISHED'}
 
 
-def convert_whitespace(*args, type=’SPACES’):
+def convert_whitespace(*args, type='SPACES'):
     """Convert whitespaces by type
     
     :param args: (override_context, execution_context, undo)
@@ -85,7 +85,7 @@ def cut(*args):
     return {'FINISHED'}
 
 
-def delete(*args, type=’NEXT_CHARACTER’):
+def delete(*args, type='NEXT_CHARACTER'):
     """Delete text by cursor position
     
     :param args: (override_context, execution_context, undo)
@@ -153,7 +153,7 @@ def indent(*args):
     return {'FINISHED'}
 
 
-def insert(*args, text=”“):
+def insert(*args, text=""):
     """Insert text at cursor position
     
     :param args: (override_context, execution_context, undo)
@@ -224,7 +224,7 @@ def make_internal(*args):
     return {'FINISHED'}
 
 
-def move(*args, type=’LINE_BEGIN’):
+def move(*args, type='LINE_BEGIN'):
     """Move cursor to position type
     
     :param args: (override_context, execution_context, undo)
@@ -240,7 +240,7 @@ def move(*args, type=’LINE_BEGIN’):
     return {'FINISHED'}
 
 
-def move_lines(*args, direction=’DOWN’):
+def move_lines(*args, direction='DOWN'):
     """Move the currently selected line(s) up/down
     
     :param args: (override_context, execution_context, undo)
@@ -256,7 +256,7 @@ def move_lines(*args, direction=’DOWN’):
     return {'FINISHED'}
 
 
-def move_select(*args, type=’LINE_BEGIN’):
+def move_select(*args, type='LINE_BEGIN'):
     """Move the cursor while selecting
     
     :param args: (override_context, execution_context, undo)
@@ -285,7 +285,7 @@ def new(*args):
     return {'FINISHED'}
 
 
-def open(*args, filepath=”“, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=True, filter_font=False, filter_sound=False, filter_text=True, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, internal=False):
+def open(*args, filepath="", filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=True, filter_font=False, filter_sound=False, filter_text=True, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', internal=False):
     """Open a new text data-block
     
     :param args: (override_context, execution_context, undo)
@@ -454,7 +454,7 @@ def replace_set_selected(*args):
     return {'FINISHED'}
 
 
-def resolve_conflict(*args, resolution=’IGNORE’):
+def resolve_conflict(*args, resolution='IGNORE'):
     """When external text is out of sync, resolve the conflict
     
     :param args: (override_context, execution_context, undo)
@@ -496,7 +496,7 @@ def save(*args):
     return {'FINISHED'}
 
 
-def save_as(*args, filepath=”“, check_existing=True, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=True, filter_font=False, filter_sound=False, filter_text=True, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’):
+def save_as(*args, filepath="", check_existing=True, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=True, filter_font=False, filter_sound=False, filter_text=True, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA'):
     """Save active text file with options
     
     :param args: (override_context, execution_context, undo)

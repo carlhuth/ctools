@@ -1,4 +1,4 @@
-def background_image_add(*args, name=”Image”, filepath=”“, filter_blender=False, filter_backup=False, filter_image=True, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’):
+def background_image_add(*args, name="Image", filepath="", filter_blender=False, filter_backup=False, filter_image=True, filter_movie=True, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA'):
     """Add a new background image (Ctrl for Empty Object)
     
     :param args: (override_context, execution_context, undo)
@@ -332,7 +332,7 @@ def localview(*args):
     return {'FINISHED'}
 
 
-def manipulator(*args, constraint_axis=(False, False, False), constraint_orientation=’GLOBAL’, release_confirm=False, use_accurate=False, use_planar_constraint=False):
+def manipulator(*args, constraint_axis=(False, False, False), constraint_orientation='GLOBAL', release_confirm=False, use_accurate=False, use_planar_constraint=False):
     """Manipulate selected item by axis
     
     :param args: (override_context, execution_context, undo)
@@ -649,7 +649,7 @@ def select_lasso(*args, path=None, deselect=False, extend=True):
     return {'FINISHED'}
 
 
-def select_menu(*args, name=”, toggle=False):
+def select_menu(*args, name="", toggle=False):
     """Menu object selection
     
     :param args: (override_context, execution_context, undo)
@@ -929,7 +929,7 @@ def view_lock_to_active(*args):
     return {'FINISHED'}
 
 
-def view_orbit(*args, angle=0.0, type=’ORBITLEFT’):
+def view_orbit(*args, angle=0.0, type='ORBITLEFT'):
     """Orbit the view
     
     :param args: (override_context, execution_context, undo)
@@ -952,7 +952,7 @@ def view_orbit(*args, angle=0.0, type=’ORBITLEFT’):
     return {'FINISHED'}
 
 
-def view_pan(*args, type=’PANLEFT’):
+def view_pan(*args, type='PANLEFT'):
     """Pan the view
     
     :param args: (override_context, execution_context, undo)
@@ -985,7 +985,7 @@ def view_persportho(*args):
     return {'FINISHED'}
 
 
-def view_roll(*args, angle=0.0, type=’ANGLE’):
+def view_roll(*args, angle=0.0, type='ANGLE'):
     """Roll the view
     
     :param args: (override_context, execution_context, undo)
@@ -1023,7 +1023,7 @@ def view_selected(*args, use_all_regions=False):
     return {'FINISHED'}
 
 
-def viewnumpad(*args, type=’LEFT’, align_active=False):
+def viewnumpad(*args, type='LEFT', align_active=False):
     """Use a preset viewpoint
     
     :param args: (override_context, execution_context, undo)

@@ -1,4 +1,4 @@
-def cyclic_toggle(*args, direction=’CYCLIC_U’):
+def cyclic_toggle(*args, direction='CYCLIC_U'):
     """Make active spline closed/opened loop
     
     :param args: (override_context, execution_context, undo)
@@ -40,7 +40,7 @@ def de_select_last(*args):
     return {'FINISHED'}
 
 
-def delete(*args, type=’VERT’):
+def delete(*args, type='VERT'):
     """Delete selected control points or segments
     
     :param args: (override_context, execution_context, undo)
@@ -69,7 +69,7 @@ def dissolve_verts(*args):
     return {'FINISHED'}
 
 
-def draw(*args, error_threshold=0.0, fit_method=’REFIT’, corner_angle=1.22173, use_cyclic=True, stroke=None, wait_for_input=True):
+def draw(*args, error_threshold=0.0, fit_method='REFIT', corner_angle=1.22173, use_cyclic=True, stroke=None, wait_for_input=True):
     """Draw a freehand spline
     
     :param args: (override_context, execution_context, undo)
@@ -134,7 +134,7 @@ def duplicate_move(*args, CURVE_OT_duplicate=None, TRANSFORM_OT_translate=None):
     return {'FINISHED'}
 
 
-def extrude(*args, mode=’TRANSLATION’):
+def extrude(*args, mode='TRANSLATION'):
     """Extrude selected control point(s)
     
     :param args: (override_context, execution_context, undo)
@@ -169,7 +169,7 @@ def extrude_move(*args, CURVE_OT_extrude=None, TRANSFORM_OT_translate=None):
     return {'FINISHED'}
 
 
-def handle_type_set(*args, type=’AUTOMATIC’):
+def handle_type_set(*args, type='AUTOMATIC'):
     """Set type of handles for selected control points
     
     :param args: (override_context, execution_context, undo)
@@ -427,7 +427,7 @@ def reveal(*args):
     return {'FINISHED'}
 
 
-def select_all(*args, action=’TOGGLE’):
+def select_all(*args, action='TOGGLE'):
     """(De)select all control points
     
     :param args: (override_context, execution_context, undo)
@@ -550,7 +550,7 @@ def select_previous(*args):
     return {'FINISHED'}
 
 
-def select_random(*args, percent=50.0, seed=0, action=’SELECT’):
+def select_random(*args, percent=50.0, seed=0, action='SELECT'):
     """Randomly select some control points
     
     :param args: (override_context, execution_context, undo)
@@ -587,7 +587,7 @@ def select_row(*args):
     return {'FINISHED'}
 
 
-def select_similar(*args, type=’WEIGHT’, compare=’EQUAL’, threshold=0.1):
+def select_similar(*args, type='WEIGHT', compare='EQUAL', threshold=0.1):
     """Select similar curve points by property type
     
     :param args: (override_context, execution_context, undo)
@@ -732,7 +732,7 @@ def spin(*args, center=(0.0, 0.0, 0.0), axis=(0.0, 0.0, 0.0)):
     return {'FINISHED'}
 
 
-def spline_type_set(*args, type=’POLY’, use_handles=False):
+def spline_type_set(*args, type='POLY', use_handles=False):
     """Set type of active spline
     
     :param args: (override_context, execution_context, undo)

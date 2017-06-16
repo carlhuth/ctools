@@ -1,4 +1,4 @@
-def align(*args, axis=’ALIGN_AUTO’):
+def align(*args, axis='ALIGN_AUTO'):
     """Align selected UV vertices to an axis
     
     :param args: (override_context, execution_context, undo)
@@ -99,7 +99,7 @@ def cursor_set(*args, location=(0.0, 0.0)):
     return {'FINISHED'}
 
 
-def cylinder_project(*args, direction=’VIEW_ON_EQUATOR’, align=’POLAR_ZX’, radius=1.0, correct_aspect=True, clip_to_bounds=False, scale_to_bounds=False):
+def cylinder_project(*args, direction='VIEW_ON_EQUATOR', align='POLAR_ZX', radius=1.0, correct_aspect=True, clip_to_bounds=False, scale_to_bounds=False):
     """Project the UV vertices of the mesh over the curved wall of a cylinder
     
     :param args: (override_context, execution_context, undo)
@@ -135,7 +135,7 @@ def cylinder_project(*args, direction=’VIEW_ON_EQUATOR’, align=’POLAR_ZX�
     return {'FINISHED'}
 
 
-def export_layout(*args, filepath=”“, check_existing=True, export_all=False, modified=False, mode=’PNG’, size=(1024, 1024), opacity=0.25, tessellated=False):
+def export_layout(*args, filepath="", check_existing=True, export_all=False, modified=False, mode='PNG', size=(1024, 1024), opacity=0.25, tessellated=False):
     """Export UV layout to file
     
     :param args: (override_context, execution_context, undo)
@@ -175,7 +175,7 @@ def export_layout(*args, filepath=”“, check_existing=True, export_all=False,
     return {'FINISHED'}
 
 
-def follow_active_quads(*args, mode=’LENGTH_AVERAGE’):
+def follow_active_quads(*args, mode='LENGTH_AVERAGE'):
     """Follow UVs from active quads along continuous face loops
     
     :param args: (override_context, execution_context, undo)
@@ -210,7 +210,7 @@ def hide(*args, unselected=False):
     return {'FINISHED'}
 
 
-def lightmap_pack(*args, PREF_CONTEXT=’SEL_FACES’, PREF_PACK_IN_ONE=True, PREF_NEW_UVLAYER=False, PREF_APPLY_IMAGE=False, PREF_IMG_PX_SIZE=512, PREF_BOX_DIV=12, PREF_MARGIN_DIV=0.1):
+def lightmap_pack(*args, PREF_CONTEXT='SEL_FACES', PREF_PACK_IN_ONE=True, PREF_NEW_UVLAYER=False, PREF_APPLY_IMAGE=False, PREF_IMG_PX_SIZE=512, PREF_BOX_DIV=12, PREF_MARGIN_DIV=0.1):
     """Pack each faces UV’s into the UV bounds
     
     :param args: (override_context, execution_context, undo)
@@ -431,7 +431,7 @@ def select(*args, extend=False, location=(0.0, 0.0)):
     return {'FINISHED'}
 
 
-def select_all(*args, action=’TOGGLE’):
+def select_all(*args, action='TOGGLE'):
     """Change selection of all UV vertices
     
     :param args: (override_context, execution_context, undo)
@@ -641,7 +641,7 @@ def smart_project(*args, angle_limit=66.0, island_margin=0.0, user_area_weight=0
     return {'FINISHED'}
 
 
-def snap_cursor(*args, target=’PIXELS’):
+def snap_cursor(*args, target='PIXELS'):
     """Snap cursor to target type
     
     :param args: (override_context, execution_context, undo)
@@ -657,7 +657,7 @@ def snap_cursor(*args, target=’PIXELS’):
     return {'FINISHED'}
 
 
-def snap_selected(*args, target=’PIXELS’):
+def snap_selected(*args, target='PIXELS'):
     """Snap selected UV vertices to target type
     
     :param args: (override_context, execution_context, undo)
@@ -673,7 +673,7 @@ def snap_selected(*args, target=’PIXELS’):
     return {'FINISHED'}
 
 
-def sphere_project(*args, direction=’VIEW_ON_EQUATOR’, align=’POLAR_ZX’, correct_aspect=True, clip_to_bounds=False, scale_to_bounds=False):
+def sphere_project(*args, direction='VIEW_ON_EQUATOR', align='POLAR_ZX', correct_aspect=True, clip_to_bounds=False, scale_to_bounds=False):
     """Project the UV vertices of the mesh over the curved surface of a sphere
     
     :param args: (override_context, execution_context, undo)
@@ -706,7 +706,7 @@ def sphere_project(*args, direction=’VIEW_ON_EQUATOR’, align=’POLAR_ZX’,
     return {'FINISHED'}
 
 
-def stitch(*args, use_limit=False, snap_islands=True, limit=0.01, static_island=0, midpoint_snap=False, clear_seams=True, mode=’VERTEX’, stored_mode=’VERTEX’, selection=None):
+def stitch(*args, use_limit=False, snap_islands=True, limit=0.01, static_island=0, midpoint_snap=False, clear_seams=True, mode='VERTEX', stored_mode='VERTEX', selection=None):
     """Stitch selected UV vertices by proximity
     
     :param args: (override_context, execution_context, undo)
@@ -762,7 +762,7 @@ def tile_set(*args, tile=(0, 0)):
     return {'FINISHED'}
 
 
-def unwrap(*args, method=’ANGLE_BASED’, fill_holes=True, correct_aspect=True, use_subsurf_data=False, margin=0.001):
+def unwrap(*args, method='ANGLE_BASED', fill_holes=True, correct_aspect=True, use_subsurf_data=False, margin=0.001):
     """Unwrap the mesh of the object being edited
     
     :param args: (override_context, execution_context, undo)

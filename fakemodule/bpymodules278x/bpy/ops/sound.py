@@ -11,7 +11,7 @@ def bake_animation(*args):
     return {'FINISHED'}
 
 
-def mixdown(*args, filepath=”“, check_existing=True, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=True, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, accuracy=1024, container=’FLAC’, codec=’FLAC’, format=’S16’, bitrate=192, split_channels=False):
+def mixdown(*args, filepath="", check_existing=True, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=True, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', accuracy=1024, container='FLAC', codec='FLAC', format='S16', bitrate=192, split_channels=False):
     """Mix the scene’s audio to a sound file
     
     :param args: (override_context, execution_context, undo)
@@ -119,7 +119,7 @@ def mixdown(*args, filepath=”“, check_existing=True, filter_blender=False, f
     return {'FINISHED'}
 
 
-def open(*args, filepath=”“, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=True, filter_python=False, filter_font=False, filter_sound=True, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, cache=False, mono=False):
+def open(*args, filepath="", filter_blender=False, filter_backup=False, filter_image=False, filter_movie=True, filter_python=False, filter_font=False, filter_sound=True, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', cache=False, mono=False):
     """Load a sound file
     
     :param args: (override_context, execution_context, undo)
@@ -206,7 +206,7 @@ def open(*args, filepath=”“, filter_blender=False, filter_backup=False, filt
     return {'FINISHED'}
 
 
-def open_mono(*args, filepath=”“, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=True, filter_python=False, filter_font=False, filter_sound=True, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, cache=False, mono=True):
+def open_mono(*args, filepath="", filter_blender=False, filter_backup=False, filter_image=False, filter_movie=True, filter_python=False, filter_font=False, filter_sound=True, filter_text=False, filter_btx=False, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, show_multiview=False, use_multiview=False, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', cache=False, mono=True):
     """Load a sound file as mono
     
     :param args: (override_context, execution_context, undo)
@@ -306,7 +306,7 @@ def pack(*args):
     return {'FINISHED'}
 
 
-def unpack(*args, method=’USE_LOCAL’, id=”“):
+def unpack(*args, method='USE_LOCAL', id=""):
     """Unpack the sound to the samples filename
     
     :param args: (override_context, execution_context, undo)

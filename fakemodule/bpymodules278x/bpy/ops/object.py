@@ -1,4 +1,4 @@
-def add(*args, radius=1.0, type=’EMPTY’, view_align=False, enter_editmode=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
+def add(*args, radius=1.0, type='EMPTY', view_align=False, enter_editmode=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
     """Add an object to the scene
     
     :param args: (override_context, execution_context, undo)
@@ -32,7 +32,7 @@ def add(*args, radius=1.0, type=’EMPTY’, view_align=False, enter_editmode=Fa
     return {'FINISHED'}
 
 
-def add_named(*args, linked=False, name=”“):
+def add_named(*args, linked=False, name=""):
     """Add named object
     
     :param args: (override_context, execution_context, undo)
@@ -51,7 +51,7 @@ def add_named(*args, linked=False, name=”“):
     return {'FINISHED'}
 
 
-def align(*args, bb_quality=True, align_mode=’OPT_2’, relative_to=’OPT_4’, align_axis={}):
+def align(*args, bb_quality=True, align_mode='OPT_2', relative_to='OPT_4', align_axis={}):
     """Align Objects
     
     :param args: (override_context, execution_context, undo)
@@ -124,7 +124,7 @@ def armature_add(*args, radius=1.0, view_align=False, enter_editmode=False, loca
     return {'FINISHED'}
 
 
-def bake(*args, type=’COMBINED’, pass_filter={}, filepath=”“, width=512, height=512, margin=16, use_selected_to_active=False, cage_extrusion=0.0, cage_object=”“, normal_space=’TANGENT’, normal_r=’POS_X’, normal_g=’POS_Y’, normal_b=’POS_Z’, save_mode=’INTERNAL’, use_clear=False, use_cage=False, use_split_materials=False, use_automatic_name=False, uv_layer=”“):
+def bake(*args, type='COMBINED', pass_filter={}, filepath="", width=512, height=512, margin=16, use_selected_to_active=False, cage_extrusion=0.0, cage_object="", normal_space='TANGENT', normal_r='POS_X', normal_g='POS_Y', normal_b='POS_Z', save_mode='INTERNAL', use_clear=False, use_cage=False, use_split_materials=False, use_automatic_name=False, uv_layer=""):
     """Bake image textures of selected objects
     
     :param args: (override_context, execution_context, undo)
@@ -239,7 +239,7 @@ def camera_add(*args, view_align=False, enter_editmode=False, location=(0.0, 0.0
     return {'FINISHED'}
 
 
-def constraint_add(*args, type=”):
+def constraint_add(*args, type=""):
     """Add a constraint to the active object
     
     :param args: (override_context, execution_context, undo)
@@ -283,7 +283,7 @@ def constraint_add(*args, type=”):
     return {'FINISHED'}
 
 
-def constraint_add_with_targets(*args, type=”):
+def constraint_add_with_targets(*args, type=""):
     """Add a constraint to the active object, with target (where applicable) set to the selected Objects/Bones
     
     :param args: (override_context, execution_context, undo)
@@ -353,7 +353,7 @@ def constraints_copy(*args):
     return {'FINISHED'}
 
 
-def convert(*args, target=’MESH’, keep_original=False):
+def convert(*args, target='MESH', keep_original=False):
     """Convert selected objects to another type
     
     :param args: (override_context, execution_context, undo)
@@ -372,7 +372,7 @@ def convert(*args, target=’MESH’, keep_original=False):
     return {'FINISHED'}
 
 
-def correctivesmooth_bind(*args, modifier=”“):
+def correctivesmooth_bind(*args, modifier=""):
     """Bind base pose in Corrective Smooth modifier
     
     :param args: (override_context, execution_context, undo)
@@ -388,7 +388,7 @@ def correctivesmooth_bind(*args, modifier=”“):
     return {'FINISHED'}
 
 
-def data_transfer(*args, use_reverse_transfer=False, use_freeze=False, data_type=”, use_create=True, vert_mapping=’NEAREST’, edge_mapping=’NEAREST’, loop_mapping=’NEAREST_POLYNOR’, poly_mapping=’NEAREST’, use_auto_transform=False, use_object_transform=True, use_max_distance=False, max_distance=1.0, ray_radius=0.0, islands_precision=0.1, layers_select_src=’ACTIVE’, layers_select_dst=’ACTIVE’, mix_mode=’REPLACE’, mix_factor=1.0):
+def data_transfer(*args, use_reverse_transfer=False, use_freeze=False, data_type="", use_create=True, vert_mapping='NEAREST', edge_mapping='NEAREST', loop_mapping='NEAREST_POLYNOR', poly_mapping='NEAREST', use_auto_transform=False, use_object_transform=True, use_max_distance=False, max_distance=1.0, ray_radius=0.0, islands_precision=0.1, layers_select_src='ACTIVE', layers_select_dst='ACTIVE', mix_mode='REPLACE', mix_factor=1.0):
     """Transfer data layer(s) (weights, edge sharp, …) from active to selected meshes
     
     :param args: (override_context, execution_context, undo)
@@ -503,7 +503,7 @@ def data_transfer(*args, use_reverse_transfer=False, use_freeze=False, data_type
     return {'FINISHED'}
 
 
-def datalayout_transfer(*args, modifier=”“, data_type=”, use_delete=False, layers_select_src=’ACTIVE’, layers_select_dst=’ACTIVE’):
+def datalayout_transfer(*args, modifier="", data_type="", use_delete=False, layers_select_src='ACTIVE', layers_select_dst='ACTIVE'):
     """Transfer layout of data layer(s) from active to selected meshes
     
     :param args: (override_context, execution_context, undo)
@@ -566,7 +566,7 @@ def delete(*args, use_global=False):
     return {'FINISHED'}
 
 
-def drop_named_image(*args, filepath=”“, relative_path=True, name=”“, view_align=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
+def drop_named_image(*args, filepath="", relative_path=True, name="", view_align=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
     """Add an empty image type to scene with data
     
     :param args: (override_context, execution_context, undo)
@@ -600,7 +600,7 @@ def drop_named_image(*args, filepath=”“, relative_path=True, name=”“, vi
     return {'FINISHED'}
 
 
-def drop_named_material(*args, name=”Material”):
+def drop_named_material(*args, name="Material"):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -629,7 +629,7 @@ def dupli_offset_from_cursor(*args):
     return {'FINISHED'}
 
 
-def duplicate(*args, linked=False, mode=’TRANSLATION’):
+def duplicate(*args, linked=False, mode='TRANSLATION'):
     """Duplicate selected objects
     
     :param args: (override_context, execution_context, undo)
@@ -718,7 +718,7 @@ def editmode_toggle(*args):
     return {'FINISHED'}
 
 
-def effector_add(*args, type=’FORCE’, radius=1.0, view_align=False, enter_editmode=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
+def effector_add(*args, type='FORCE', radius=1.0, view_align=False, enter_editmode=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
     """Add an empty object with a physics effector to the scene
     
     :param args: (override_context, execution_context, undo)
@@ -752,7 +752,7 @@ def effector_add(*args, type=’FORCE’, radius=1.0, view_align=False, enter_ed
     return {'FINISHED'}
 
 
-def empty_add(*args, type=’PLAIN_AXES’, radius=1.0, view_align=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
+def empty_add(*args, type='PLAIN_AXES', radius=1.0, view_align=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
     """Add an empty object to the scene
     
     :param args: (override_context, execution_context, undo)
@@ -783,7 +783,7 @@ def empty_add(*args, type=’PLAIN_AXES’, radius=1.0, view_align=False, locati
     return {'FINISHED'}
 
 
-def explode_refresh(*args, modifier=”“):
+def explode_refresh(*args, modifier=""):
     """Refresh data in the Explode modifier
     
     :param args: (override_context, execution_context, undo)
@@ -838,7 +838,7 @@ def game_property_clear(*args):
     return {'FINISHED'}
 
 
-def game_property_copy(*args, operation=’COPY’, property=”):
+def game_property_copy(*args, operation='COPY', property=""):
     """Copy/merge/replace a game property from active object to all selected objects
     
     :param args: (override_context, execution_context, undo)
@@ -857,7 +857,7 @@ def game_property_copy(*args, operation=’COPY’, property=”):
     return {'FINISHED'}
 
 
-def game_property_move(*args, index=0, direction=’UP’):
+def game_property_move(*args, index=0, direction='UP'):
     """Move game property
     
     :param args: (override_context, execution_context, undo)
@@ -876,7 +876,7 @@ def game_property_move(*args, index=0, direction=’UP’):
     return {'FINISHED'}
 
 
-def game_property_new(*args, type=’FLOAT’, name=”“):
+def game_property_new(*args, type='FLOAT', name=""):
     """Create a new property available to the game engine
     
     :param args: (override_context, execution_context, undo)
@@ -929,7 +929,7 @@ def group_add(*args):
     return {'FINISHED'}
 
 
-def group_instance_add(*args, name=”Group”, group=”, view_align=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
+def group_instance_add(*args, name="Group", group="", view_align=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
     """Add a dupligroup instance
     
     :param args: (override_context, execution_context, undo)
@@ -960,7 +960,7 @@ def group_instance_add(*args, name=”Group”, group=”, view_align=False, loc
     return {'FINISHED'}
 
 
-def group_link(*args, group=”):
+def group_link(*args, group=""):
     """Add an object to an existing group
     
     :param args: (override_context, execution_context, undo)
@@ -1115,7 +1115,7 @@ def hook_add_selob(*args, use_bone=False):
     return {'FINISHED'}
 
 
-def hook_assign(*args, modifier=”):
+def hook_assign(*args, modifier=""):
     """Assign the selected vertices to a hook
     
     :param args: (override_context, execution_context, undo)
@@ -1131,7 +1131,7 @@ def hook_assign(*args, modifier=”):
     return {'FINISHED'}
 
 
-def hook_recenter(*args, modifier=”):
+def hook_recenter(*args, modifier=""):
     """Set hook center to cursor position
     
     :param args: (override_context, execution_context, undo)
@@ -1147,7 +1147,7 @@ def hook_recenter(*args, modifier=”):
     return {'FINISHED'}
 
 
-def hook_remove(*args, modifier=”):
+def hook_remove(*args, modifier=""):
     """Remove a hook from the active object
     
     :param args: (override_context, execution_context, undo)
@@ -1163,7 +1163,7 @@ def hook_remove(*args, modifier=”):
     return {'FINISHED'}
 
 
-def hook_reset(*args, modifier=”):
+def hook_reset(*args, modifier=""):
     """Recalculate and clear offset transformation
     
     :param args: (override_context, execution_context, undo)
@@ -1179,7 +1179,7 @@ def hook_reset(*args, modifier=”):
     return {'FINISHED'}
 
 
-def hook_select(*args, modifier=”):
+def hook_select(*args, modifier=""):
     """Select affected vertices on mesh
     
     :param args: (override_context, execution_context, undo)
@@ -1247,7 +1247,7 @@ def join_uvs(*args):
     return {'FINISHED'}
 
 
-def lamp_add(*args, type=’POINT’, radius=1.0, view_align=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
+def lamp_add(*args, type='POINT', radius=1.0, view_align=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
     """Add a lamp object to the scene
     
     :param args: (override_context, execution_context, undo)
@@ -1283,7 +1283,7 @@ def lamp_add(*args, type=’POINT’, radius=1.0, view_align=False, location=(0.
     return {'FINISHED'}
 
 
-def laplaciandeform_bind(*args, modifier=”“):
+def laplaciandeform_bind(*args, modifier=""):
     """Bind mesh to system in laplacian deform modifier
     
     :param args: (override_context, execution_context, undo)
@@ -1418,7 +1418,7 @@ def make_dupli_face(*args):
     return {'FINISHED'}
 
 
-def make_links_data(*args, type=’OBDATA’):
+def make_links_data(*args, type='OBDATA'):
     """Apply active object links to other selected objects
     
     :param args: (override_context, execution_context, undo)
@@ -1434,7 +1434,7 @@ def make_links_data(*args, type=’OBDATA’):
     return {'FINISHED'}
 
 
-def make_links_scene(*args, scene=”):
+def make_links_scene(*args, scene=""):
     """Link selection to another scene
     
     :param args: (override_context, execution_context, undo)
@@ -1450,7 +1450,7 @@ def make_links_scene(*args, scene=”):
     return {'FINISHED'}
 
 
-def make_local(*args, type=’SELECT_OBJECT’):
+def make_local(*args, type='SELECT_OBJECT'):
     """Make library linked data-blocks local to this file
     
     :param args: (override_context, execution_context, undo)
@@ -1466,7 +1466,7 @@ def make_local(*args, type=’SELECT_OBJECT’):
     return {'FINISHED'}
 
 
-def make_single_user(*args, type=’SELECTED_OBJECTS’, object=False, obdata=False, material=False, texture=False, animation=False):
+def make_single_user(*args, type='SELECTED_OBJECTS', object=False, obdata=False, material=False, texture=False, animation=False):
     """Make linked data local to each object
     
     :param args: (override_context, execution_context, undo)
@@ -1549,7 +1549,7 @@ def material_slot_deselect(*args):
     return {'FINISHED'}
 
 
-def material_slot_move(*args, direction=’UP’):
+def material_slot_move(*args, direction='UP'):
     """Move the active material up/down in the list
     
     :param args: (override_context, execution_context, undo)
@@ -1591,7 +1591,7 @@ def material_slot_select(*args):
     return {'FINISHED'}
 
 
-def meshdeform_bind(*args, modifier=”“):
+def meshdeform_bind(*args, modifier=""):
     """Bind mesh to cage in mesh deform modifier
     
     :param args: (override_context, execution_context, undo)
@@ -1607,7 +1607,7 @@ def meshdeform_bind(*args, modifier=”“):
     return {'FINISHED'}
 
 
-def metaball_add(*args, type=’BALL’, radius=1.0, view_align=False, enter_editmode=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
+def metaball_add(*args, type='BALL', radius=1.0, view_align=False, enter_editmode=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
     """Add an metaball object to the scene
     
     :param args: (override_context, execution_context, undo)
@@ -1641,7 +1641,7 @@ def metaball_add(*args, type=’BALL’, radius=1.0, view_align=False, enter_edi
     return {'FINISHED'}
 
 
-def mode_set(*args, mode=’OBJECT’, toggle=False):
+def mode_set(*args, mode='OBJECT', toggle=False):
     """Sets the object interaction mode
     
     :param args: (override_context, execution_context, undo)
@@ -1669,7 +1669,7 @@ def mode_set(*args, mode=’OBJECT’, toggle=False):
     return {'FINISHED'}
 
 
-def modifier_add(*args, type=’SUBSURF’):
+def modifier_add(*args, type='SUBSURF'):
     """Add a procedural operation/effect to the active object
     
     :param args: (override_context, execution_context, undo)
@@ -1737,7 +1737,7 @@ def modifier_add(*args, type=’SUBSURF’):
     return {'FINISHED'}
 
 
-def modifier_apply(*args, apply_as=’DATA’, modifier=”“):
+def modifier_apply(*args, apply_as='DATA', modifier=""):
     """Apply modifier and remove from the stack
     
     :param args: (override_context, execution_context, undo)
@@ -1758,7 +1758,7 @@ def modifier_apply(*args, apply_as=’DATA’, modifier=”“):
     return {'FINISHED'}
 
 
-def modifier_convert(*args, modifier=”“):
+def modifier_convert(*args, modifier=""):
     """Convert particles to a mesh object
     
     :param args: (override_context, execution_context, undo)
@@ -1774,7 +1774,7 @@ def modifier_convert(*args, modifier=”“):
     return {'FINISHED'}
 
 
-def modifier_copy(*args, modifier=”“):
+def modifier_copy(*args, modifier=""):
     """Duplicate modifier at the same position in the stack
     
     :param args: (override_context, execution_context, undo)
@@ -1790,7 +1790,7 @@ def modifier_copy(*args, modifier=”“):
     return {'FINISHED'}
 
 
-def modifier_move_down(*args, modifier=”“):
+def modifier_move_down(*args, modifier=""):
     """Move modifier down in the stack
     
     :param args: (override_context, execution_context, undo)
@@ -1806,7 +1806,7 @@ def modifier_move_down(*args, modifier=”“):
     return {'FINISHED'}
 
 
-def modifier_move_up(*args, modifier=”“):
+def modifier_move_up(*args, modifier=""):
     """Move modifier up in the stack
     
     :param args: (override_context, execution_context, undo)
@@ -1822,7 +1822,7 @@ def modifier_move_up(*args, modifier=”“):
     return {'FINISHED'}
 
 
-def modifier_remove(*args, modifier=”“):
+def modifier_remove(*args, modifier=""):
     """Remove a modifier from the active object
     
     :param args: (override_context, execution_context, undo)
@@ -1854,7 +1854,7 @@ def move_to_layer(*args, layers=(False, False, False, False, False, False, False
     return {'FINISHED'}
 
 
-def multires_base_apply(*args, modifier=”“):
+def multires_base_apply(*args, modifier=""):
     """Modify the base mesh to conform to the displaced mesh
     
     :param args: (override_context, execution_context, undo)
@@ -1883,7 +1883,7 @@ def multires_external_pack(*args):
     return {'FINISHED'}
 
 
-def multires_external_save(*args, filepath=”“, check_existing=True, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=True, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, display_type=’DEFAULT’, sort_method=’FILE_SORT_ALPHA’, modifier=”“):
+def multires_external_save(*args, filepath="", check_existing=True, filter_blender=False, filter_backup=False, filter_image=False, filter_movie=False, filter_python=False, filter_font=False, filter_sound=False, filter_text=False, filter_btx=True, filter_collada=False, filter_alembic=False, filter_folder=True, filter_blenlib=False, filemode=9, relative_path=True, display_type='DEFAULT', sort_method='FILE_SORT_ALPHA', modifier=""):
     """Save displacements to an external file
     
     :param args: (override_context, execution_context, undo)
@@ -1964,7 +1964,7 @@ def multires_external_save(*args, filepath=”“, check_existing=True, filter_b
     return {'FINISHED'}
 
 
-def multires_higher_levels_delete(*args, modifier=”“):
+def multires_higher_levels_delete(*args, modifier=""):
     """Deletes the higher resolution mesh, potential loss of detail
     
     :param args: (override_context, execution_context, undo)
@@ -1980,7 +1980,7 @@ def multires_higher_levels_delete(*args, modifier=”“):
     return {'FINISHED'}
 
 
-def multires_reshape(*args, modifier=”“):
+def multires_reshape(*args, modifier=""):
     """Copy vertex coordinates from other object
     
     :param args: (override_context, execution_context, undo)
@@ -1996,7 +1996,7 @@ def multires_reshape(*args, modifier=”“):
     return {'FINISHED'}
 
 
-def multires_subdivide(*args, modifier=”“):
+def multires_subdivide(*args, modifier=""):
     """Add a new level of subdivision
     
     :param args: (override_context, execution_context, undo)
@@ -2012,7 +2012,7 @@ def multires_subdivide(*args, modifier=”“):
     return {'FINISHED'}
 
 
-def ocean_bake(*args, modifier=”“, free=False):
+def ocean_bake(*args, modifier="", free=False):
     """Bake an image sequence of ocean data
     
     :param args: (override_context, execution_context, undo)
@@ -2044,7 +2044,7 @@ def origin_clear(*args):
     return {'FINISHED'}
 
 
-def origin_set(*args, type=’GEOMETRY_ORIGIN’, center=’MEDIAN’):
+def origin_set(*args, type='GEOMETRY_ORIGIN', center='MEDIAN'):
     """Set the object’s origin, by either moving the data, or set to center of data, or use 3D cursor
     
     :param args: (override_context, execution_context, undo)
@@ -2067,7 +2067,7 @@ def origin_set(*args, type=’GEOMETRY_ORIGIN’, center=’MEDIAN’):
     return {'FINISHED'}
 
 
-def parent_clear(*args, type=’CLEAR’):
+def parent_clear(*args, type='CLEAR'):
     """Clear the object’s parenting
     
     :param args: (override_context, execution_context, undo)
@@ -2099,7 +2099,7 @@ def parent_no_inverse_set(*args):
     return {'FINISHED'}
 
 
-def parent_set(*args, type=’OBJECT’, xmirror=False, keep_transform=False):
+def parent_set(*args, type='OBJECT', xmirror=False, keep_transform=False):
     """Set the object’s parenting
     
     :param args: (override_context, execution_context, undo)
@@ -2208,7 +2208,7 @@ def posemode_toggle(*args):
     return {'FINISHED'}
 
 
-def proxy_make(*args, object=’DEFAULT’):
+def proxy_make(*args, object='DEFAULT'):
     """Add empty object to become local replacement data of a library-linked object
     
     :param args: (override_context, execution_context, undo)
@@ -2224,7 +2224,7 @@ def proxy_make(*args, object=’DEFAULT’):
     return {'FINISHED'}
 
 
-def quick_explode(*args, style=’EXPLODE’, amount=100, frame_duration=50, frame_start=1, frame_end=10, velocity=1.0, fade=True):
+def quick_explode(*args, style='EXPLODE', amount=100, frame_duration=50, frame_start=1, frame_end=10, velocity=1.0, fade=True):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -2258,7 +2258,7 @@ def quick_explode(*args, style=’EXPLODE’, amount=100, frame_duration=50, fra
     return {'FINISHED'}
 
 
-def quick_fluid(*args, style=’BASIC’, initial_velocity=(0.0, 0.0, 0.0), show_flows=False, start_baking=False):
+def quick_fluid(*args, style='BASIC', initial_velocity=(0.0, 0.0, 0.0), show_flows=False, start_baking=False):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -2283,7 +2283,7 @@ def quick_fluid(*args, style=’BASIC’, initial_velocity=(0.0, 0.0, 0.0), show
     return {'FINISHED'}
 
 
-def quick_fur(*args, density=’MEDIUM’, view_percentage=10, length=0.1):
+def quick_fur(*args, density='MEDIUM', view_percentage=10, length=0.1):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -2305,7 +2305,7 @@ def quick_fur(*args, density=’MEDIUM’, view_percentage=10, length=0.1):
     return {'FINISHED'}
 
 
-def quick_smoke(*args, style=’SMOKE’, show_flows=False):
+def quick_smoke(*args, style='SMOKE', show_flows=False):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -2396,7 +2396,7 @@ def scale_clear(*args, clear_delta=False):
     return {'FINISHED'}
 
 
-def select_all(*args, action=’TOGGLE’):
+def select_all(*args, action='TOGGLE'):
     """Change selection of all visible objects in scene
     
     :param args: (override_context, execution_context, undo)
@@ -2416,7 +2416,7 @@ def select_all(*args, action=’TOGGLE’):
     return {'FINISHED'}
 
 
-def select_by_layer(*args, match=’EXACT’, extend=False, layers=1):
+def select_by_layer(*args, match='EXACT', extend=False, layers=1):
     """Select all visible objects on a layer
     
     :param args: (override_context, execution_context, undo)
@@ -2438,7 +2438,7 @@ def select_by_layer(*args, match=’EXACT’, extend=False, layers=1):
     return {'FINISHED'}
 
 
-def select_by_type(*args, extend=False, type=’MESH’):
+def select_by_type(*args, extend=False, type='MESH'):
     """Select all visible objects that are of a type
     
     :param args: (override_context, execution_context, undo)
@@ -2473,7 +2473,7 @@ def select_camera(*args, extend=False):
     return {'FINISHED'}
 
 
-def select_grouped(*args, extend=False, type=’CHILDREN_RECURSIVE’):
+def select_grouped(*args, extend=False, type='CHILDREN_RECURSIVE'):
     """Select all visible objects grouped by various properties
     
     :param args: (override_context, execution_context, undo)
@@ -2505,7 +2505,7 @@ def select_grouped(*args, extend=False, type=’CHILDREN_RECURSIVE’):
     return {'FINISHED'}
 
 
-def select_hierarchy(*args, direction=’PARENT’, extend=False):
+def select_hierarchy(*args, direction='PARENT', extend=False):
     """Select object relative to the active object’s position in the hierarchy
     
     :param args: (override_context, execution_context, undo)
@@ -2537,7 +2537,7 @@ def select_less(*args):
     return {'FINISHED'}
 
 
-def select_linked(*args, extend=False, type=’OBDATA’):
+def select_linked(*args, extend=False, type='OBDATA'):
     """Select all visible objects that are linked
     
     :param args: (override_context, execution_context, undo)
@@ -2585,7 +2585,7 @@ def select_more(*args):
     return {'FINISHED'}
 
 
-def select_pattern(*args, pattern=”*”, case_sensitive=False, extend=True):
+def select_pattern(*args, pattern="*", case_sensitive=False, extend=True):
     """Select objects matching a naming pattern
     
     :param args: (override_context, execution_context, undo)
@@ -2607,7 +2607,7 @@ def select_pattern(*args, pattern=”*”, case_sensitive=False, extend=True):
     return {'FINISHED'}
 
 
-def select_random(*args, percent=50.0, seed=0, action=’SELECT’):
+def select_random(*args, percent=50.0, seed=0, action='SELECT'):
     """Set select on random visible objects
     
     :param args: (override_context, execution_context, undo)
@@ -2631,7 +2631,7 @@ def select_random(*args, percent=50.0, seed=0, action=’SELECT’):
     return {'FINISHED'}
 
 
-def select_same_group(*args, group=”“):
+def select_same_group(*args, group=""):
     """Select object in the same group
     
     :param args: (override_context, execution_context, undo)
@@ -2718,7 +2718,7 @@ def shape_key_mirror(*args, use_topology=False):
     return {'FINISHED'}
 
 
-def shape_key_move(*args, type=’TOP’):
+def shape_key_move(*args, type='TOP'):
     """Move the active shape key up/down in the list
     
     :param args: (override_context, execution_context, undo)
@@ -2767,7 +2767,7 @@ def shape_key_retime(*args):
     return {'FINISHED'}
 
 
-def shape_key_transfer(*args, mode=’OFFSET’, use_clamp=False):
+def shape_key_transfer(*args, mode='OFFSET', use_clamp=False):
     """Copy another selected objects active shape to this one by applying the relative offsets
     
     :param args: (override_context, execution_context, undo)
@@ -2789,7 +2789,7 @@ def shape_key_transfer(*args, mode=’OFFSET’, use_clamp=False):
     return {'FINISHED'}
 
 
-def skin_armature_create(*args, modifier=”“):
+def skin_armature_create(*args, modifier=""):
     """Create an armature that parallels the skin layout
     
     :param args: (override_context, execution_context, undo)
@@ -2805,7 +2805,7 @@ def skin_armature_create(*args, modifier=”“):
     return {'FINISHED'}
 
 
-def skin_loose_mark_clear(*args, action=’MARK’):
+def skin_loose_mark_clear(*args, action='MARK'):
     """Mark/clear selected vertices as loose
     
     :param args: (override_context, execution_context, undo)
@@ -2922,7 +2922,7 @@ def subdivision_set(*args, level=1, relative=False):
     return {'FINISHED'}
 
 
-def surfacedeform_bind(*args, modifier=”“):
+def surfacedeform_bind(*args, modifier=""):
     """Bind mesh to target in surface deform modifier
     
     :param args: (override_context, execution_context, undo)
@@ -2969,7 +2969,7 @@ def text_add(*args, radius=1.0, view_align=False, enter_editmode=False, location
     return {'FINISHED'}
 
 
-def track_clear(*args, type=’CLEAR’):
+def track_clear(*args, type='CLEAR'):
     """Clear tracking constraint or flag from object
     
     :param args: (override_context, execution_context, undo)
@@ -2985,7 +2985,7 @@ def track_clear(*args, type=’CLEAR’):
     return {'FINISHED'}
 
 
-def track_set(*args, type=’DAMPTRACK’):
+def track_set(*args, type='DAMPTRACK'):
     """Make the object track another object, using various methods/constraints
     
     :param args: (override_context, execution_context, undo)
@@ -3023,7 +3023,7 @@ def transform_apply(*args, location=False, rotation=False, scale=False):
     return {'FINISHED'}
 
 
-def transforms_to_deltas(*args, mode=’ALL’, reset_values=True):
+def transforms_to_deltas(*args, mode='ALL', reset_values=True):
     """Convert normal object transforms to delta transforms, any existing delta transforms will be included as well
     
     :param args: (override_context, execution_context, undo)
@@ -3098,7 +3098,7 @@ def vertex_group_assign_new(*args):
     return {'FINISHED'}
 
 
-def vertex_group_clean(*args, group_select_mode=”, limit=0.0, keep_single=False):
+def vertex_group_clean(*args, group_select_mode="", limit=0.0, keep_single=False):
     """Remove vertex group assignments which are not required
     
     :param args: (override_context, execution_context, undo)
@@ -3194,7 +3194,7 @@ def vertex_group_fix(*args, dist=0.0, strength=1.0, accuracy=1.0):
     return {'FINISHED'}
 
 
-def vertex_group_invert(*args, group_select_mode=”, auto_assign=True, auto_remove=True):
+def vertex_group_invert(*args, group_select_mode="", auto_assign=True, auto_remove=True):
     """Invert active vertex group’s weights
     
     :param args: (override_context, execution_context, undo)
@@ -3216,7 +3216,7 @@ def vertex_group_invert(*args, group_select_mode=”, auto_assign=True, auto_rem
     return {'FINISHED'}
 
 
-def vertex_group_levels(*args, group_select_mode=”, offset=0.0, gain=1.0):
+def vertex_group_levels(*args, group_select_mode="", offset=0.0, gain=1.0):
     """Add some offset and multiply with some gain the weights of the active vertex group
     
     :param args: (override_context, execution_context, undo)
@@ -3238,7 +3238,7 @@ def vertex_group_levels(*args, group_select_mode=”, offset=0.0, gain=1.0):
     return {'FINISHED'}
 
 
-def vertex_group_limit_total(*args, group_select_mode=”, limit=4):
+def vertex_group_limit_total(*args, group_select_mode="", limit=4):
     """Limit deform weights associated with a vertex to a specified number by removing lowest weights
     
     :param args: (override_context, execution_context, undo)
@@ -3257,7 +3257,7 @@ def vertex_group_limit_total(*args, group_select_mode=”, limit=4):
     return {'FINISHED'}
 
 
-def vertex_group_lock(*args, action=’TOGGLE’):
+def vertex_group_lock(*args, action='TOGGLE'):
     """Change the lock state of all vertex groups of active object
     
     :param args: (override_context, execution_context, undo)
@@ -3302,7 +3302,7 @@ def vertex_group_mirror(*args, mirror_weights=True, flip_group_names=True, all_g
     return {'FINISHED'}
 
 
-def vertex_group_move(*args, direction=’UP’):
+def vertex_group_move(*args, direction='UP'):
     """Move the active vertex group up/down in the list
     
     :param args: (override_context, execution_context, undo)
@@ -3331,7 +3331,7 @@ def vertex_group_normalize(*args):
     return {'FINISHED'}
 
 
-def vertex_group_normalize_all(*args, group_select_mode=”, lock_active=True):
+def vertex_group_normalize_all(*args, group_select_mode="", lock_active=True):
     """Normalize all weights of all vertex groups, so that for each vertex, the sum of all weights is 1.0
     
     :param args: (override_context, execution_context, undo)
@@ -3350,7 +3350,7 @@ def vertex_group_normalize_all(*args, group_select_mode=”, lock_active=True):
     return {'FINISHED'}
 
 
-def vertex_group_quantize(*args, group_select_mode=”, steps=4):
+def vertex_group_quantize(*args, group_select_mode="", steps=4):
     """Set weights to a fixed number of steps
     
     :param args: (override_context, execution_context, undo)
@@ -3420,7 +3420,7 @@ def vertex_group_select(*args):
     return {'FINISHED'}
 
 
-def vertex_group_set_active(*args, group=”):
+def vertex_group_set_active(*args, group=""):
     """Set the active vertex group
     
     :param args: (override_context, execution_context, undo)
@@ -3436,7 +3436,7 @@ def vertex_group_set_active(*args, group=”):
     return {'FINISHED'}
 
 
-def vertex_group_smooth(*args, group_select_mode=”, factor=0.5, repeat=1, expand=0.0, source=’ALL’):
+def vertex_group_smooth(*args, group_select_mode="", factor=0.5, repeat=1, expand=0.0, source='ALL'):
     """Smooth weights for selected vertices
     
     :param args: (override_context, execution_context, undo)
@@ -3464,7 +3464,7 @@ def vertex_group_smooth(*args, group_select_mode=”, factor=0.5, repeat=1, expa
     return {'FINISHED'}
 
 
-def vertex_group_sort(*args, sort_type=’NAME’):
+def vertex_group_sort(*args, sort_type='NAME'):
     """Sort vertex groups
     
     :param args: (override_context, execution_context, undo)

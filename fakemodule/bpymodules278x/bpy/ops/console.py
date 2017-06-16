@@ -82,7 +82,7 @@ def copy_as_script(*args):
     return {'FINISHED'}
 
 
-def delete(*args, type=’NEXT_CHARACTER’):
+def delete(*args, type='NEXT_CHARACTER'):
     """Delete text by cursor position
     
     :param args: (override_context, execution_context, undo)
@@ -114,7 +114,7 @@ def execute(*args, interactive=False):
     return {'FINISHED'}
 
 
-def history_append(*args, text=”“, current_character=0, remove_duplicates=False):
+def history_append(*args, text="", current_character=0, remove_duplicates=False):
     """Append history at cursor position
     
     :param args: (override_context, execution_context, undo)
@@ -165,7 +165,7 @@ def indent(*args):
     return {'FINISHED'}
 
 
-def insert(*args, text=”“):
+def insert(*args, text=""):
     """Insert text at cursor position
     
     :param args: (override_context, execution_context, undo)
@@ -181,7 +181,7 @@ def insert(*args, text=”“):
     return {'FINISHED'}
 
 
-def language(*args, language=”“):
+def language(*args, language=""):
     """Set the current language for this console
     
     :param args: (override_context, execution_context, undo)
@@ -197,7 +197,7 @@ def language(*args, language=”“):
     return {'FINISHED'}
 
 
-def move(*args, type=’LINE_BEGIN’):
+def move(*args, type='LINE_BEGIN'):
     """Move cursor position
     
     :param args: (override_context, execution_context, undo)
@@ -226,7 +226,7 @@ def paste(*args):
     return {'FINISHED'}
 
 
-def scrollback_append(*args, text=”“, type=’OUTPUT’):
+def scrollback_append(*args, text="", type='OUTPUT'):
     """Append scrollback text by type
     
     :param args: (override_context, execution_context, undo)

@@ -224,7 +224,7 @@ class VideoFFmpeg:
         :rtype: bool
         """
 
-    def refresh(self, buffer=None, format=”RGBA”, timestamp=-1.0):
+    def refresh(self, buffer=None, format="RGBA", timestamp=-1.0):
         """Refresh video - get its status and optionally copy the frame to an external buffer.
         
         :param buffer: An optional object that implements the buffer protocol.
@@ -310,7 +310,7 @@ class ImageFFmpeg:
         * FilterRGBA32
     """
 
-    def refresh(self, buffer=None, format=”RGBA”):
+    def refresh(self, buffer=None, format="RGBA"):
         """Refresh image, get its status and optionally copy the frame to an external buffer.
         
         :param buffer: An optional object that implements the buffer protocol.
@@ -511,7 +511,7 @@ class ImageMirror:
     :type: bgl.Buffer or None
     """
 
-    def refresh(self, buffer=None, format=”RGBA”):
+    def refresh(self, buffer=None, format="RGBA"):
         """Refresh image - render and copy the image to an external buffer (optional)
                                         then invalidate its current content.
         
@@ -621,7 +621,7 @@ class ImageMix:
     :type: bgl.Buffer or None
     """
 
-    def refresh(self, buffer=None, format=”RGBA”):
+    def refresh(self, buffer=None, format="RGBA"):
         """Refresh image - calculate and copy the image to an external buffer (optional)
                                         then invalidate its current content.
         
@@ -802,7 +802,7 @@ class ImageRender:
     def refresh(self):
         """"""
 
-    def refresh(self, buffer, format=”RGBA”):
+    def refresh(self, buffer, format="RGBA"):
         """Refresh video - render and optionally copy the image to an external buffer then invalidate its current content.
                                         The render may have been started earlier with the bge.texture.ImageRender.render method,
                                         in which case this function simply waits for the render operations to complete.
@@ -882,7 +882,7 @@ class ImageViewport:
     :type: collections.Sequence
     """
 
-    def refresh(self, buffer=None, format=”RGBA”):
+    def refresh(self, buffer=None, format="RGBA"):
         """Refresh video - copy the viewport to an external buffer (optional) then invalidate its current content.
         
         :param buffer: An optional object that implements the buffer protocol.
@@ -1127,7 +1127,7 @@ class Texture:
 
 
 class DeckLink:
-    def __new__(cls, cardIdx=0, format=”“):
+    def __new__(cls, cardIdx=0, format=""):
         """Certain DeckLink devices can be used to playback video: the host sends video frames regularly
                                 for immediate or scheduled playback. The video feed is outputted on HDMI or SDI interfaces.
                                 This class supports the immediate playback mode: it has a source attribute that is assigned

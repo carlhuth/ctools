@@ -1,4 +1,4 @@
-def sunsky_preset_add(*args, name=”“, remove_active=False):
+def sunsky_preset_add(*args, name="", remove_active=False):
     """Add or remove a Sky & Atmosphere Preset
     
     :param args: (override_context, execution_context, undo)

@@ -1,7 +1,7 @@
 import sys
 
 
-def BoolProperty(name=”“, description=”“, default=False, options={‘ANIMATABLE’}, subtype=’NONE’, update=None, get=None, set=None):
+def BoolProperty(name="", description="", default=False, options={'ANIMATABLE'}, subtype='NONE', update=None, get=None, set=None):
     """Returns a new boolean property definition.
     
     :param name: Name used in the user interface.
@@ -28,7 +28,7 @@ def BoolProperty(name=”“, description=”“, default=False, options={‘ANI
     """
 
 
-def BoolVectorProperty(name=”“, description=”“, default=(False, False, False), options={‘ANIMATABLE’}, subtype=’NONE’, size=3, update=None, get=None, set=None):
+def BoolVectorProperty(name="", description="", default=(False, False, False), options={'ANIMATABLE'}, subtype='NONE', size=3, update=None, get=None, set=None):
     """Returns a new vector boolean property definition.
     
     :param name: Name used in the user interface.
@@ -60,7 +60,7 @@ def BoolVectorProperty(name=”“, description=”“, default=(False, False, F
     """
 
 
-def CollectionProperty(type=None, name=”“, description=”“, options={‘ANIMATABLE’}):
+def CollectionProperty(type=None, name="", description="", options={'ANIMATABLE'}):
     """Returns a new collection property definition.
     
     :param type: A subclass of bpy.types.PropertyGroup or bpy.types.ID.
@@ -77,7 +77,7 @@ def CollectionProperty(type=None, name=”“, description=”“, options={‘A
     """
 
 
-def EnumProperty(items, name=”“, description=”“, default=None, options={‘ANIMATABLE’}, update=None, get=None, set=None):
+def EnumProperty(items, name="", description="", default=None, options={'ANIMATABLE'}, update=None, get=None, set=None):
     """Returns a new enumerator property definition.
     
     :param items: sequence of enum items formatted:
@@ -123,7 +123,7 @@ def EnumProperty(items, name=”“, description=”“, default=None, options={
     """
 
 
-def FloatProperty(name=”“, description=”“, default=0.0, min=sys.float_info.min, max=sys.float_info.max, soft_min=sys.float_info.min, soft_max=sys.float_info.max, step=3, precision=2, options={‘ANIMATABLE’}, subtype=’NONE’, unit=’NONE’, update=None, get=None, set=None):
+def FloatProperty(name="", description="", default=0.0, min=sys.float_info.min, max=sys.float_info.max, soft_min=sys.float_info.min, soft_max=sys.float_info.max, step=3, precision=2, options={'ANIMATABLE'}, subtype='NONE', unit='NONE', update=None, get=None, set=None):
     """Returns a new float property definition.
     
     :param name: Name used in the user interface.
@@ -164,7 +164,7 @@ def FloatProperty(name=”“, description=”“, default=0.0, min=sys.float_in
     """
 
 
-def FloatVectorProperty(name=”“, description=”“, default=(0.0, 0.0, 0.0), min=sys.float_info.min, max=sys.float_info.max, soft_min=sys.float_info.min, soft_max=sys.float_info.max, step=3, precision=2, options={‘ANIMATABLE’}, subtype=’NONE’, unit=’NONE’, size=3, update=None, get=None, set=None):
+def FloatVectorProperty(name="", description="", default=(0.0, 0.0, 0.0), min=sys.float_info.min, max=sys.float_info.max, soft_min=sys.float_info.min, soft_max=sys.float_info.max, step=3, precision=2, options={'ANIMATABLE'}, subtype='NONE', unit='NONE', size=3, update=None, get=None, set=None):
     """Returns a new vector float property definition.
     
     :param name: Name used in the user interface.
@@ -210,7 +210,7 @@ def FloatVectorProperty(name=”“, description=”“, default=(0.0, 0.0, 0.0)
     """
 
 
-def IntProperty(name=”“, description=”“, default=0, min=-2**31, max=2**31-1, soft_min=-2**31, soft_max=2**31-1, step=1, options={‘ANIMATABLE’}, subtype=’NONE’, update=None, get=None, set=None):
+def IntProperty(name="", description="", default=0, min=-2**31, max=2**31-1, soft_min=-2**31, soft_max=2**31-1, step=1, options={'ANIMATABLE'}, subtype='NONE', update=None, get=None, set=None):
     """Returns a new int property definition.
     
     :param name: Name used in the user interface.
@@ -247,7 +247,7 @@ def IntProperty(name=”“, description=”“, default=0, min=-2**31, max=2**3
     """
 
 
-def IntVectorProperty(name=”“, description=”“, default=(0, 0, 0), min=-2**31, max=2**31-1, soft_min=-2**31, soft_max=2**31-1, step=1, options={‘ANIMATABLE’}, subtype=’NONE’, size=3, update=None, get=None, set=None):
+def IntVectorProperty(name="", description="", default=(0, 0, 0), min=-2**31, max=2**31-1, soft_min=-2**31, soft_max=2**31-1, step=1, options={'ANIMATABLE'}, subtype='NONE', size=3, update=None, get=None, set=None):
     """Returns a new vector int property definition.
     
     :param name: Name used in the user interface.
@@ -289,8 +289,25 @@ def IntVectorProperty(name=”“, description=”“, default=(0, 0, 0), min=-2
     """
 
 
-def PointerProperty(type=None, name="", description="", options={'ANIMATABLE'}, update=None,():
-    """"""
+def PointerProperty(type=None, name="", description="", options={'ANIMATABLE'}, update=None, poll=None):
+    """Returns a new pointer property definition.
+    
+    :param type: A subclass of bpy.types.PropertyGroup or bpy.types.ID.
+    :type type: class
+    :param name: Name used in the user interface.
+    :type name: str
+    :param description: Text used for the tooltip and api documentation.
+    :type description: str
+    :param options: Enumerator in [‘HIDDEN’, ‘SKIP_SAVE’, ‘ANIMATABLE’, ‘LIBRARY_EDITABLE’, ‘PROPORTIONAL’,’TEXTEDIT_UPDATE’].
+    :type options: set
+    :param poll: function to be called to determine whether an item is valid for this property.
+                                                    The function must take 2 values (self,object) and return Bool.
+    :type poll: function
+    :param update: Function to be called when this value is modified,
+                                                    This function must take 2 values (self, context) and return None.
+                                                    Warning there are no safety checks to avoid infinite recursion.
+    :type update: function
+    """
 
 
 def RemoveProperty(cls, attr=""):
@@ -303,7 +320,7 @@ def RemoveProperty(cls, attr=""):
     """
 
 
-def StringProperty(name=”“, description=”“, default=”“, maxlen=0, options={‘ANIMATABLE’}, subtype=’NONE’, update=None, get=None, set=None):
+def StringProperty(name="", description="", default="", maxlen=0, options={'ANIMATABLE'}, subtype='NONE', update=None, get=None, set=None):
     """Returns a new string property definition.
     
     :param name: Name used in the user interface.

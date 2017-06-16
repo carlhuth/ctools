@@ -114,7 +114,7 @@ def eyedropper_depth(*args):
     return {'FINISHED'}
 
 
-def eyedropper_driver(*args, mapping_type=’SINGLE_MANY’):
+def eyedropper_driver(*args, mapping_type='SINGLE_MANY'):
     """Pick a property to use as a driver target
     
     :param args: (override_context, execution_context, undo)

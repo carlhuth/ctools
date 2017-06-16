@@ -90,7 +90,7 @@ def modules_from_path(path, loaded_modules):
     """
 
 
-def preset_find(name, preset_path, display_name=False, ext=’.py’):
+def preset_find(name, preset_path, display_name=False, ext='.py'):
     """"""
 
 
@@ -202,7 +202,7 @@ def unregister_module(module, verbose=False):
     """"""
 
 
-def user_resource(resource_type, path=”, create=False):
+def user_resource(resource_type, path="", create=False):
     """Return a user resource path (normally from the users home directory).
     
     :param type: Resource type in [‘DATAFILES’, ‘CONFIG’, ‘SCRIPTS’, ‘AUTOSAVE’].

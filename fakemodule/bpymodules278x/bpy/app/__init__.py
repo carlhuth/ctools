@@ -52,7 +52,7 @@ render_icon_size = 32
 render_preview_size = 128
 """Reference size for icon/preview renders (read-only)"""
 
-tempdir = "/home/sui/tmp/blender_qVK242/"
+tempdir = "/home/sui/tmp/blender_ICWPgB/"
 """String, the temp directory used by blender (read-only)"""
 
 background = True
@@ -91,7 +91,7 @@ build_platform = b'Linux'
 build_system = b'CMake'
 """Build system used"""
 
-build_time = b'15:10:31'
+build_time = b'17:35:06'
 """The time this blender instance was built"""
 
 build_type = b'Release'
@@ -125,7 +125,7 @@ ffmpeg = None
 """constant value bpy.app.ffmpeg(supported=False, avcodec_version=’Unknown’, avcodec_version_string=’Unknown’, avdevice_version=’Unknown’, avdevice_version_string=’Unknown’, avformat_version=’Unknown’, avformat_version_string=’Unknown’, avutil_version=’Unknown’, avutil_version_string=’Unknown’, swscale_version=’Unknown’, swscale_version_string=’Unknown’)"""
 
 handlers = None
-"""constant value bpy.app.handlers(frame_change_pre=[], frame_change_post=[], render_pre=[], render_post=[], render_write=[], render_stats=[], render_init=[], render_complete=[], render_cancel=[], load_pre=[], load_post=[], save_pre=[], save_post=[], scene_update_pre=[], scene_update_post=[], game_pre=[], game_post=[], version_update=[<function do_versions at 0x7f7e55755a60>], persistent=<class ‘persistent’>)"""
+"""constant value bpy.app.handlers(frame_change_pre=[], frame_change_post=[], render_pre=[], render_post=[], render_write=[], render_stats=[], render_init=[], render_complete=[], render_cancel=[], load_pre=[], load_post=[], save_pre=[], save_post=[], scene_update_pre=[], scene_update_post=[], game_pre=[], game_post=[], version_update=[<function do_versions at 0x7f8435655a60>], persistent=<class ‘persistent’>)"""
 
 ocio = None
 """constant value bpy.app.ocio(supported=False, version=(0, 0, 0), version_string=’Unknown’)"""
@@ -133,7 +133,7 @@ ocio = None
 oiio = None
 """constant value bpy.app.oiio(supported=True, version=(1, 7, 13), version_string=’ 1,  7, 13’)"""
 
-opensubdiv = bpy.app.opensubdiv(supported=False, version=(0, 0, 0), version_string='Unknown')
+opensubdiv = None
 """constant value bpy.app.opensubdiv(supported=False, version=(0, 0, 0), version_string=’Unknown’)"""
 
 openvdb = None

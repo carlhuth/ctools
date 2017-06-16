@@ -72,7 +72,7 @@ def reveal_metaelems(*args):
     return {'FINISHED'}
 
 
-def select_all(*args, action=’TOGGLE’):
+def select_all(*args, action='TOGGLE'):
     """Change selection of all meta elements
     
     :param args: (override_context, execution_context, undo)
@@ -92,7 +92,7 @@ def select_all(*args, action=’TOGGLE’):
     return {'FINISHED'}
 
 
-def select_random_metaelems(*args, percent=50.0, seed=0, action=’SELECT’):
+def select_random_metaelems(*args, percent=50.0, seed=0, action='SELECT'):
     """Randomly select metaelements
     
     :param args: (override_context, execution_context, undo)
@@ -116,7 +116,7 @@ def select_random_metaelems(*args, percent=50.0, seed=0, action=’SELECT’):
     return {'FINISHED'}
 
 
-def select_similar(*args, type=’TYPE’, threshold=0.1):
+def select_similar(*args, type='TYPE', threshold=0.1):
     """Select similar metaballs by property types
     
     :param args: (override_context, execution_context, undo)

@@ -11,7 +11,7 @@ def bake(*args):
     return {'FINISHED'}
 
 
-def preset_add(*args, name=”“, remove_active=False):
+def preset_add(*args, name="", remove_active=False):
     """Add or remove a Fluid Preset
     
     :param args: (override_context, execution_context, undo)

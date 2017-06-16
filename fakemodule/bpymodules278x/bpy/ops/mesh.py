@@ -14,7 +14,7 @@ def beautify_fill(*args, angle_limit=3.14159):
     return {'FINISHED'}
 
 
-def bevel(*args, offset_type=’OFFSET’, offset=0.0, segments=1, profile=0.5, vertex_only=False, clamp_overlap=False, loop_slide=True, material=-1):
+def bevel(*args, offset_type='OFFSET', offset=0.0, segments=1, profile=0.5, vertex_only=False, clamp_overlap=False, loop_slide=True, material=-1):
     """Edge Bevel
     
     :param args: (override_context, execution_context, undo)
@@ -101,7 +101,7 @@ def bisect(*args, plane_co=(0.0, 0.0, 0.0), plane_no=(0.0, 0.0, 0.0), use_fill=F
     return {'FINISHED'}
 
 
-def blend_from_shape(*args, shape=”, blend=1.0, add=True):
+def blend_from_shape(*args, shape="", blend=1.0, add=True):
     """Blend in shape from a shape key
     
     :param args: (override_context, execution_context, undo)
@@ -123,7 +123,7 @@ def blend_from_shape(*args, shape=”, blend=1.0, add=True):
     return {'FINISHED'}
 
 
-def bridge_edge_loops(*args, type=’SINGLE’, use_merge=False, merge_factor=0.5, twist_offset=0, number_cuts=0, interpolation=’PATH’, smoothness=1.0, profile_shape_factor=0.0, profile_shape=’SMOOTH’):
+def bridge_edge_loops(*args, type='SINGLE', use_merge=False, merge_factor=0.5, twist_offset=0, number_cuts=0, interpolation='PATH', smoothness=1.0, profile_shape_factor=0.0, profile_shape='SMOOTH'):
     """Make faces between two or more edge loops
     
     :param args: (override_context, execution_context, undo)
@@ -309,7 +309,7 @@ def customdata_skin_clear(*args):
     return {'FINISHED'}
 
 
-def decimate(*args, ratio=1.0, use_vertex_group=False, vertex_group_factor=1.0, invert_vertex_group=False, use_symmetry=False, symmetry_axis=’Y’):
+def decimate(*args, ratio=1.0, use_vertex_group=False, vertex_group_factor=1.0, invert_vertex_group=False, use_symmetry=False, symmetry_axis='Y'):
     """Simplify geometry by collapsing edges
     
     :param args: (override_context, execution_context, undo)
@@ -340,7 +340,7 @@ def decimate(*args, ratio=1.0, use_vertex_group=False, vertex_group_factor=1.0, 
     return {'FINISHED'}
 
 
-def delete(*args, type=’VERT’):
+def delete(*args, type='VERT'):
     """Delete selected vertices, edges or faces
     
     :param args: (override_context, execution_context, undo)
@@ -445,7 +445,7 @@ def dissolve_faces(*args, use_verts=False):
     return {'FINISHED'}
 
 
-def dissolve_limited(*args, angle_limit=0.0872665, use_dissolve_boundaries=False, delimit={‘NORMAL’}):
+def dissolve_limited(*args, angle_limit=0.0872665, use_dissolve_boundaries=False, delimit={'NORMAL'}):
     """Dissolve selected edges and verts, limited by the angle of surrounding geometry
     
     :param args: (override_context, execution_context, undo)
@@ -513,7 +513,7 @@ def dissolve_verts(*args, use_face_split=False, use_boundary_tear=False):
     return {'FINISHED'}
 
 
-def drop_named_image(*args, name=”Image”, filepath=”Path”, relative_path=True):
+def drop_named_image(*args, name="Image", filepath="Path", relative_path=True):
     """Assign Image to active UV Map, or create an UV Map
     
     :param args: (override_context, execution_context, undo)
@@ -892,7 +892,7 @@ def face_split_by_edges(*args):
     return {'FINISHED'}
 
 
-def faces_mirror_uv(*args, direction=’POSITIVE’, precision=3):
+def faces_mirror_uv(*args, direction='POSITIVE', precision=3):
     """Copy mirror UV coordinates on the X axis based on a mirrored mesh
     
     :param args: (override_context, execution_context, undo)
@@ -1079,7 +1079,7 @@ def inset(*args, use_boundary=True, use_even_offset=True, use_relative_offset=Fa
     return {'FINISHED'}
 
 
-def intersect(*args, mode=’SELECT_UNSELECT’, separate_mode=’CUT’, threshold=1e-06):
+def intersect(*args, mode='SELECT_UNSELECT', separate_mode='CUT', threshold=1e-06):
     """Cut an intersection into faces
     
     :param args: (override_context, execution_context, undo)
@@ -1106,7 +1106,7 @@ def intersect(*args, mode=’SELECT_UNSELECT’, separate_mode=’CUT’, thresh
     return {'FINISHED'}
 
 
-def intersect_boolean(*args, operation=’DIFFERENCE’, use_swap=False, threshold=1e-06):
+def intersect_boolean(*args, operation='DIFFERENCE', use_swap=False, threshold=1e-06):
     """Cut solid geometry from selected to unselected
     
     :param args: (override_context, execution_context, undo)
@@ -1220,7 +1220,7 @@ def loop_to_region(*args, select_bigger=False):
     return {'FINISHED'}
 
 
-def loopcut(*args, number_cuts=1, smoothness=0.0, falloff=’INVERSE_SQUARE’, edge_index=-1, mesh_select_mode_init=(False, False, False)):
+def loopcut(*args, number_cuts=1, smoothness=0.0, falloff='INVERSE_SQUARE', edge_index=-1, mesh_select_mode_init=(False, False, False)):
     """Add a new loop between existing loops
     
     :param args: (override_context, execution_context, undo)
@@ -1337,7 +1337,7 @@ def mark_sharp(*args, clear=False, use_verts=False):
     return {'FINISHED'}
 
 
-def merge(*args, type=’CENTER’, uvs=False):
+def merge(*args, type='CENTER', uvs=False):
     """Merge selected vertices
     
     :param args: (override_context, execution_context, undo)
@@ -1488,7 +1488,7 @@ def offset_edge_loops_slide(*args, MESH_OT_offset_edge_loops=None, TRANSFORM_OT_
     return {'FINISHED'}
 
 
-def poke(*args, offset=0.0, use_relative_offset=False, center_mode=’MEAN_WEIGHTED’):
+def poke(*args, offset=0.0, use_relative_offset=False, center_mode='MEAN_WEIGHTED'):
     """Split a face into a fan
     
     :param args: (override_context, execution_context, undo)
@@ -1513,7 +1513,7 @@ def poke(*args, offset=0.0, use_relative_offset=False, center_mode=’MEAN_WEIGH
     return {'FINISHED'}
 
 
-def primitive_circle_add(*args, vertices=32, radius=1.0, fill_type=’NOTHING’, calc_uvs=False, view_align=False, enter_editmode=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
+def primitive_circle_add(*args, vertices=32, radius=1.0, fill_type='NOTHING', calc_uvs=False, view_align=False, enter_editmode=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
     """Construct a circle mesh
     
     :param args: (override_context, execution_context, undo)
@@ -1556,7 +1556,7 @@ def primitive_circle_add(*args, vertices=32, radius=1.0, fill_type=’NOTHING’
     return {'FINISHED'}
 
 
-def primitive_cone_add(*args, vertices=32, radius1=1.0, radius2=0.0, depth=2.0, end_fill_type=’NGON’, calc_uvs=False, view_align=False, enter_editmode=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
+def primitive_cone_add(*args, vertices=32, radius1=1.0, radius2=0.0, depth=2.0, end_fill_type='NGON', calc_uvs=False, view_align=False, enter_editmode=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
     """Construct a conic mesh
     
     :param args: (override_context, execution_context, undo)
@@ -1639,7 +1639,7 @@ def primitive_cube_add(*args, radius=1.0, calc_uvs=False, view_align=False, ente
     return {'FINISHED'}
 
 
-def primitive_cylinder_add(*args, vertices=32, radius=1.0, depth=2.0, end_fill_type=’NGON’, calc_uvs=False, view_align=False, enter_editmode=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
+def primitive_cylinder_add(*args, vertices=32, radius=1.0, depth=2.0, end_fill_type='NGON', calc_uvs=False, view_align=False, enter_editmode=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)):
     """Construct a cylinder mesh
     
     :param args: (override_context, execution_context, undo)
@@ -1830,7 +1830,7 @@ def primitive_plane_add(*args, radius=1.0, calc_uvs=False, view_align=False, ent
     return {'FINISHED'}
 
 
-def primitive_torus_add(*args, view_align=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False), major_segments=48, minor_segments=12, mode=’MAJOR_MINOR’, major_radius=1.0, minor_radius=0.25, abso_major_rad=1.25, abso_minor_rad=0.75, generate_uvs=False):
+def primitive_torus_add(*args, view_align=False, location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), layers=(False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False), major_segments=48, minor_segments=12, mode='MAJOR_MINOR', major_radius=1.0, minor_radius=0.25, abso_major_rad=1.25, abso_minor_rad=0.75, generate_uvs=False):
     """Add a torus mesh
     
     :param args: (override_context, execution_context, undo)
@@ -1921,7 +1921,7 @@ def primitive_uv_sphere_add(*args, segments=32, ring_count=16, size=1.0, calc_uv
     return {'FINISHED'}
 
 
-def quads_convert_to_tris(*args, quad_method=’BEAUTY’, ngon_method=’BEAUTY’):
+def quads_convert_to_tris(*args, quad_method='BEAUTY', ngon_method='BEAUTY'):
     """Triangulate selected faces
     
     :param args: (override_context, execution_context, undo)
@@ -1991,7 +1991,7 @@ def reveal(*args):
     return {'FINISHED'}
 
 
-def rip(*args, mirror=False, proportional=’DISABLED’, proportional_edit_falloff=’SMOOTH’, proportional_size=1.0, release_confirm=False, use_accurate=False, use_fill=False):
+def rip(*args, mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1.0, release_confirm=False, use_accurate=False, use_fill=False):
     """Disconnect vertex or edges from connected geometry
     
     :param args: (override_context, execution_context, undo)
@@ -2037,7 +2037,7 @@ def rip(*args, mirror=False, proportional=’DISABLED’, proportional_edit_fall
     return {'FINISHED'}
 
 
-def rip_edge(*args, mirror=False, proportional=’DISABLED’, proportional_edit_falloff=’SMOOTH’, proportional_size=1.0, release_confirm=False, use_accurate=False):
+def rip_edge(*args, mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1.0, release_confirm=False, use_accurate=False):
     """Extend vertices along the edge closest to the cursor
     
     :param args: (override_context, execution_context, undo)
@@ -2162,7 +2162,7 @@ def screw(*args, steps=9, turns=1, center=(0.0, 0.0, 0.0), axis=(0.0, 0.0, 0.0))
     return {'FINISHED'}
 
 
-def select_all(*args, action=’TOGGLE’):
+def select_all(*args, action='TOGGLE'):
     """(De)select all vertices, edges or faces
     
     :param args: (override_context, execution_context, undo)
@@ -2182,7 +2182,7 @@ def select_all(*args, action=’TOGGLE’):
     return {'FINISHED'}
 
 
-def select_axis(*args, mode=’POSITIVE’, axis=’X_AXIS’, threshold=0.0001):
+def select_axis(*args, mode='POSITIVE', axis='X_AXIS', threshold=0.0001):
     """Select all data in the mesh on a single axis
     
     :param args: (override_context, execution_context, undo)
@@ -2204,7 +2204,7 @@ def select_axis(*args, mode=’POSITIVE’, axis=’X_AXIS’, threshold=0.0001)
     return {'FINISHED'}
 
 
-def select_face_by_sides(*args, number=4, type=’EQUAL’, extend=True):
+def select_face_by_sides(*args, number=4, type='EQUAL', extend=True):
     """Select vertices or faces by the number of polygon sides
     
     :param args: (override_context, execution_context, undo)
@@ -2255,7 +2255,7 @@ def select_less(*args, use_face_step=True):
     return {'FINISHED'}
 
 
-def select_linked(*args, delimit={‘SEAM’}):
+def select_linked(*args, delimit={'SEAM'}):
     """Select all vertices linked to the active mesh
     
     :param args: (override_context, execution_context, undo)
@@ -2276,7 +2276,7 @@ def select_linked(*args, delimit={‘SEAM’}):
     return {'FINISHED'}
 
 
-def select_linked_pick(*args, deselect=False, delimit={‘SEAM’}, index=-1):
+def select_linked_pick(*args, deselect=False, delimit={'SEAM'}, index=-1):
     """(De)select all vertices linked to the edge under the mouse cursor
     
     :param args: (override_context, execution_context, undo)
@@ -2316,7 +2316,7 @@ def select_loose(*args, extend=False):
     return {'FINISHED'}
 
 
-def select_mirror(*args, axis={‘X’}, extend=False):
+def select_mirror(*args, axis={'X'}, extend=False):
     """Select mesh items at mirrored locations
     
     :param args: (override_context, execution_context, undo)
@@ -2335,7 +2335,7 @@ def select_mirror(*args, axis={‘X’}, extend=False):
     return {'FINISHED'}
 
 
-def select_mode(*args, use_extend=False, use_expand=False, type=’VERT’, action=’TOGGLE’):
+def select_mode(*args, use_extend=False, use_expand=False, type='VERT', action='TOGGLE'):
     """Change selection mode
     
     :param args: (override_context, execution_context, undo)
@@ -2458,7 +2458,7 @@ def select_prev_item(*args):
     return {'FINISHED'}
 
 
-def select_random(*args, percent=50.0, seed=0, action=’SELECT’):
+def select_random(*args, percent=50.0, seed=0, action='SELECT'):
     """Randomly select vertices
     
     :param args: (override_context, execution_context, undo)
@@ -2482,7 +2482,7 @@ def select_random(*args, percent=50.0, seed=0, action=’SELECT’):
     return {'FINISHED'}
 
 
-def select_similar(*args, type=’NORMAL’, compare=’EQUAL’, threshold=0.0):
+def select_similar(*args, type='NORMAL', compare='EQUAL', threshold=0.0):
     """Select similar vertices, edges or faces by property types
     
     :param args: (override_context, execution_context, undo)
@@ -2533,7 +2533,7 @@ def select_ungrouped(*args, extend=False):
     return {'FINISHED'}
 
 
-def separate(*args, type=’SELECTED’):
+def separate(*args, type='SELECTED'):
     """Separate selected geometry into a new mesh
     
     :param args: (override_context, execution_context, undo)
@@ -2653,7 +2653,7 @@ def solidify(*args, thickness=0.01):
     return {'FINISHED'}
 
 
-def sort_elements(*args, type=’VIEW_ZAXIS’, elements={‘VERT’}, reverse=False, seed=0):
+def sort_elements(*args, type='VIEW_ZAXIS', elements={'VERT'}, reverse=False, seed=0):
     """The order of selected vertices/edges/faces is modified, based on a given method
     
     :param args: (override_context, execution_context, undo)
@@ -2726,7 +2726,7 @@ def split(*args):
     return {'FINISHED'}
 
 
-def subdivide(*args, number_cuts=1, smoothness=0.0, quadtri=False, quadcorner=’STRAIGHT_CUT’, fractal=0.0, fractal_along_normal=0.0, seed=0):
+def subdivide(*args, number_cuts=1, smoothness=0.0, quadtri=False, quadcorner='STRAIGHT_CUT', fractal=0.0, fractal_along_normal=0.0, seed=0):
     """Subdivide selected edges
     
     :param args: (override_context, execution_context, undo)
@@ -2760,7 +2760,7 @@ def subdivide(*args, number_cuts=1, smoothness=0.0, quadtri=False, quadcorner=�
     return {'FINISHED'}
 
 
-def subdivide_edgering(*args, number_cuts=10, interpolation=’PATH’, smoothness=1.0, profile_shape_factor=0.0, profile_shape=’SMOOTH’):
+def subdivide_edgering(*args, number_cuts=10, interpolation='PATH', smoothness=1.0, profile_shape_factor=0.0, profile_shape='SMOOTH'):
     """Undocumented
     
     :param args: (override_context, execution_context, undo)
@@ -2794,7 +2794,7 @@ def subdivide_edgering(*args, number_cuts=10, interpolation=’PATH’, smoothne
     return {'FINISHED'}
 
 
-def symmetrize(*args, direction=’NEGATIVE_X’, threshold=0.0001):
+def symmetrize(*args, direction='NEGATIVE_X', threshold=0.0001):
     """Enforce symmetry (both form and topological) across an axis
     
     :param args: (override_context, execution_context, undo)
@@ -2813,7 +2813,7 @@ def symmetrize(*args, direction=’NEGATIVE_X’, threshold=0.0001):
     return {'FINISHED'}
 
 
-def symmetry_snap(*args, direction=’NEGATIVE_X’, threshold=0.05, factor=0.5, use_center=True):
+def symmetry_snap(*args, direction='NEGATIVE_X', threshold=0.05, factor=0.5, use_center=True):
     """Snap vertex pairs to their mirrored locations
     
     :param args: (override_context, execution_context, undo)

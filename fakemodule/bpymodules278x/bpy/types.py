@@ -81,7 +81,7 @@ class bpy_struct:
         :rtype: list
         """
 
-    def keyframe_delete(self, data_path, index=-1, frame="bpy.context.scene.frame_current", group=”“):
+    def keyframe_delete(self, data_path, index=-1, frame="bpy.context.scene.frame_current", group=""):
         """Remove a keyframe from this properties fcurve.
         
         :param data_path: path to the property to remove a key, analogous to the fcurve’s data path.
@@ -96,7 +96,7 @@ class bpy_struct:
         :rtype: bool
         """
 
-    def keyframe_insert(self, data_path, index=-1, frame="bpy.context.scene.frame_current", group=”“):
+    def keyframe_insert(self, data_path, index=-1, frame="bpy.context.scene.frame_current", group=""):
         """Insert a keyframe on the property given, adding fcurves and animation data when necessary.
         This is the most simple example of inserting a keyframe from python.
         Note that when keying data paths which contain nested properties this must be
@@ -131,7 +131,7 @@ class bpy_struct:
         :rtype: list
         """
 
-    def path_from_id(self, property=”“):
+    def path_from_id(self, property=""):
         """Returns the data path from the ID to this object (string).
         
         :param property: Optional property name which can be used if the path is
@@ -247,7 +247,7 @@ class bpy_prop_collection:
 class ActionFCurves(bpy_struct):
     """Collection of action F-Curves"""
 
-    def new(self, data_path, index=0, action_group=”“):
+    def new(self, data_path, index=0, action_group=""):
         """Add an F-Curve to the action
         
         :param data_path: Data Path, F-Curve data path to use
@@ -861,7 +861,7 @@ class Area(bpy_struct):
     def tag_redraw(self):
         """tag_redraw"""
 
-    def header_text_set(self, text=”“):
+    def header_text_set(self, text=""):
         """Set the header text
         
         :param text: Text, New string for the header, no argument clears the text
@@ -1800,7 +1800,7 @@ class BlendDataBrushes(bpy_struct):
     :type: bool
     """
 
-    def new(self, name, mode=’TEXTURE_PAINT’):
+    def new(self, name, mode='TEXTURE_PAINT'):
         """Add a new brush to the main database
         
         :param name: New name for the data-block
@@ -2314,7 +2314,7 @@ class BlendDataMasks(bpy_struct):
         :type value: bool
         """
 
-    def new(self, name=”“):
+    def new(self, name=""):
         """Add a new mask with a given name to the main database
         
         :param name: Mask, Name of new mask data-block
@@ -3716,7 +3716,7 @@ class BoneGroups(bpy_struct):
     :type: int
     """
 
-    def new(self, name=”Group”):
+    def new(self, name="Group"):
         """Add a new bone group to the object
         
         :param name: Name of the new group
@@ -8090,7 +8090,7 @@ class FCurve(bpy_struct):
 class FCurveKeyframePoints(bpy_struct):
     """Collection of keyframe points"""
 
-    def insert(self, frame, value, options={}, keyframe_type=’KEYFRAME’):
+    def insert(self, frame, value, options={}, keyframe_type='KEYFRAME'):
         """Add a keyframe point to a F-Curve
         
         :param frame: X Value of this keyframe point
@@ -10442,7 +10442,7 @@ class GPencilStrokePoints(bpy_struct):
 class GPencilStrokes(bpy_struct):
     """Collection of grease pencil stroke"""
 
-    def new(self, colorname=”“):
+    def new(self, colorname=""):
         """Add a new grease pencil stroke
         
         :param colorname: Color, Name of the color
@@ -12406,7 +12406,7 @@ class KeyMapItem(bpy_struct):
 class KeyMapItems(bpy_struct):
     """Collection of keymap items"""
 
-    def new(self, idname, type, value, any=False, shift=False, ctrl=False, alt=False, oskey=False, key_modifier=’NONE’, head=False):
+    def new(self, idname, type, value, any=False, shift=False, ctrl=False, alt=False, oskey=False, key_modifier='NONE', head=False):
         """new
         
         :param idname: Operator Identifier
@@ -12818,7 +12818,7 @@ class KeyMapItems(bpy_struct):
         :rtype: KeyMapItem
         """
 
-    def new_modal(self, propvalue, type, value, any=False, shift=False, ctrl=False, alt=False, oskey=False, key_modifier=’NONE’):
+    def new_modal(self, propvalue, type, value, any=False, shift=False, ctrl=False, alt=False, oskey=False, key_modifier='NONE'):
         """new_modal
         
         :param propvalue: Property Value
@@ -13250,7 +13250,7 @@ class KeyMapItems(bpy_struct):
 class KeyMaps(bpy_struct):
     """Collection of keymaps"""
 
-    def new(self, name, space_type=’EMPTY’, region_type=’WINDOW’, modal=False):
+    def new(self, name, space_type='EMPTY', region_type='WINDOW', modal=False):
         """new
         
         :param name: Name
@@ -13296,7 +13296,7 @@ class KeyMaps(bpy_struct):
         :type keymap: KeyMap
         """
 
-    def find(self, name, space_type=’EMPTY’, region_type=’WINDOW’):
+    def find(self, name, space_type='EMPTY', region_type='WINDOW'):
         """find
         
         :param name: Name
@@ -13725,7 +13725,7 @@ class KeyingSetPaths(bpy_struct):
     :type: int
     """
 
-    def add(self, target_id, data_path, index=-1, group_method=’KEYINGSET’, group_name=”“):
+    def add(self, target_id, data_path, index=-1, group_method='KEYINGSET', group_name=""):
         """Add a new path for the Keying Set
         
         :param target_id: Target ID, ID data-block for the destination
@@ -13777,7 +13777,7 @@ class KeyingSets(bpy_struct):
     :type: int
     """
 
-    def new(self, idname=”KeyingSet”, name=”KeyingSet”):
+    def new(self, idname="KeyingSet", name="KeyingSet"):
         """Add a new Keying Set to Scene
         
         :param idname: IDName, Internal identifier of Keying Set
@@ -14234,7 +14234,7 @@ class LoopColors(bpy_struct):
     :type: int
     """
 
-    def new(self, name=”Col”):
+    def new(self, name="Col"):
         """Add a vertex color layer to Mesh
         
         :param name: Vertex color name
@@ -14438,7 +14438,7 @@ class MaskLayers(bpy_struct):
     :type: MaskLayer
     """
 
-    def new(self, name=”“):
+    def new(self, name=""):
         """Add layer to this mask
         
         :param name: Name, Name of new layer
@@ -15508,7 +15508,7 @@ class Menu(bpy_struct):
                                         - preset_operator_defaults (dict of keyword args)
         """
 
-    def path_menu(self, searchpaths, operator, *, props_default=None, prop_filepath=’filepath’, filter_ext=None, filter_path=None, display_name=None):
+    def path_menu(self, searchpaths, operator, *, props_default=None, prop_filepath='filepath', filter_ext=None, filter_path=None, display_name=None):
         """Populate a menu from a list of paths.
         
         :param searchpaths: Paths to scan.
@@ -16544,7 +16544,7 @@ class MetaBallElements(bpy_struct):
     :type: MetaElement
     """
 
-    def new(self, type=’BALL’):
+    def new(self, type='BALL'):
         """Add a new element to the metaball
         
         :param type: type for the new meta-element
@@ -17373,7 +17373,7 @@ class MovieTrackingObjectTracks(bpy_struct):
     :type: MovieTrackingTrack
     """
 
-    def new(self, name=”“, frame=1):
+    def new(self, name="", frame=1):
         """create new motion track in this movie clip
         
         :param name: Name of new track
@@ -18155,7 +18155,7 @@ class MovieTrackingTracks(bpy_struct):
     :type: MovieTrackingTrack
     """
 
-    def new(self, name=”“, frame=1):
+    def new(self, name="", frame=1):
         """Create new motion track in this movie clip
         
         :param name: Name of new track
@@ -18796,7 +18796,7 @@ class Node(bpy_struct):
 class NodeInputs(bpy_struct):
     """Collection of Node Sockets"""
 
-    def new(self, type, name, identifier=”“):
+    def new(self, type, name, identifier=""):
         """Add a socket to this node
         
         :param type: Type, Data type
@@ -18975,7 +18975,7 @@ class NodeOutputFileSlotLayer(bpy_struct):
 class NodeOutputs(bpy_struct):
     """Collection of Node Sockets"""
 
-    def new(self, type, name, identifier=”“):
+    def new(self, type, name, identifier=""):
         """Add a socket to this node
         
         :param type: Type, Data type
@@ -20836,7 +20836,7 @@ class ParticleSystem(bpy_struct):
     :type: str
     """
 
-    def set_resolution(self, scene=None, object=None, resolution=’PREVIEW’):
+    def set_resolution(self, scene=None, object=None, resolution='PREVIEW'):
         """Set the resolution to use for the number of particles
         
         :param scene: Scene
@@ -21324,7 +21324,7 @@ class PointDensity(bpy_struct):
 class PolygonFloatProperties(bpy_struct):
     """Collection of float properties"""
 
-    def new(self, name=”Float Prop”):
+    def new(self, name="Float Prop"):
         """Add a float property layer to Mesh
         
         :param name: Float property name
@@ -21339,7 +21339,7 @@ class PolygonFloatProperties(bpy_struct):
 class PolygonIntProperties(bpy_struct):
     """Collection of int properties"""
 
-    def new(self, name=”Int Prop”):
+    def new(self, name="Int Prop"):
         """Add a integer property layer to Mesh
         
         :param name: Int property name
@@ -21354,7 +21354,7 @@ class PolygonIntProperties(bpy_struct):
 class PolygonStringProperties(bpy_struct):
     """Collection of string properties"""
 
-    def new(self, name=”String Prop”):
+    def new(self, name="String Prop"):
         """Add a string property layer to Mesh
         
         :param name: String property name
@@ -22543,7 +22543,7 @@ class RenderEngine(bpy_struct):
     def update_render_passes(self, scene=None, renderlayer=None):
         """Update the render passes that will be generated"""
 
-    def begin_result(self, x, y, w, h, layer=”“, view=”“):
+    def begin_result(self, x, y, w, h, layer="", view=""):
         """Create render result to write linear floating point render layers and passes
         
         :param x: X
@@ -22594,7 +22594,7 @@ class RenderEngine(bpy_struct):
         :type do_merge_results: bool
         """
 
-    def add_pass(self, name, channels, chan_id, layer=”“):
+    def add_pass(self, name, channels, chan_id, layer=""):
         """Add a pass to the render layer
         
         :param name: Name, Name of the Pass, without view or channel tag
@@ -22735,7 +22735,7 @@ class RenderEngine(bpy_struct):
         :rtype: bool
         """
 
-    def register_pass(self, scene=None, srl=None, name=”“, channels=1, chanid=”“, type=’VALUE’):
+    def register_pass(self, scene=None, srl=None, name="", channels=1, chanid="", type='VALUE'):
         """Register a render pass that will be part of the render with the current settings
         
         :param name: Name
@@ -24252,7 +24252,7 @@ class RenderSettings(bpy_struct):
     :type: str
     """
 
-    def frame_path(self, frame=-2147483648, preview=False, view=”“):
+    def frame_path(self, frame=-2147483648, preview=False, view=""):
         """Return the absolute path to the filename to be written for a given frame
         
         :param frame: Frame number to use, if unset the current frame will be used
@@ -29002,7 +29002,7 @@ class TessfaceUVTextures(bpy_struct):
     :type: int
     """
 
-    def new(self, name=”UVMap”):
+    def new(self, name="UVMap"):
         """Add a UV tessface-texture layer to Mesh (only for meshes with no polygons)
         
         :param name: UV map name
@@ -32895,7 +32895,7 @@ class UILayout(bpy_struct):
         :rtype: int
         """
 
-    def prop(self, data, property, text=”“, text_ctxt=”“, translate=True, icon=’NONE’, expand=False, slider=False, toggle=False, icon_only=False, event=False, full_event=False, emboss=True, index=-1, icon_value=0):
+    def prop(self, data, property, text="", text_ctxt="", translate=True, icon='NONE', expand=False, slider=False, toggle=False, icon_only=False, event=False, full_event=False, emboss=True, index=-1, icon_value=0):
         """Item. Exposes an RNA item and places it into the layout
         
         :param data: Data from which to take property
@@ -32956,7 +32956,7 @@ class UILayout(bpy_struct):
         :type property: str
         """
 
-    def prop_menu_enum(self, data, property, text=”“, text_ctxt=”“, translate=True, icon=’NONE’):
+    def prop_menu_enum(self, data, property, text="", text_ctxt="", translate=True, icon='NONE'):
         """prop_menu_enum
         
         :param data: Data from which to take property
@@ -32979,7 +32979,7 @@ class UILayout(bpy_struct):
         :type icon: str
         """
 
-    def prop_enum(self, data, property, value, text=”“, text_ctxt=”“, translate=True, icon=’NONE’):
+    def prop_enum(self, data, property, value, text="", text_ctxt="", translate=True, icon='NONE'):
         """prop_enum
         
         :param data: Data from which to take property
@@ -33005,7 +33005,7 @@ class UILayout(bpy_struct):
         :type icon: str
         """
 
-    def prop_search(self, data, property, search_data, search_property, text=”“, text_ctxt=”“, translate=True, icon=’NONE’):
+    def prop_search(self, data, property, search_data, search_property, text="", text_ctxt="", translate=True, icon='NONE'):
         """prop_search
         
         :param data: Data from which to take property
@@ -33034,7 +33034,7 @@ class UILayout(bpy_struct):
         :type icon: str
         """
 
-    def operator(self, operator, text=”“, text_ctxt=”“, translate=True, icon=’NONE’, emboss=True, icon_value=0):
+    def operator(self, operator, text="", text_ctxt="", translate=True, icon='NONE', emboss=True, icon_value=0):
         """Item. Places a button into the layout to call an Operator
         
         :param operator: Identifier of the operator
@@ -33074,7 +33074,7 @@ class UILayout(bpy_struct):
         :type property: str
         """
 
-    def operator_menu_enum(self, operator, property, text=”“, text_ctxt=”“, translate=True, icon=’NONE’):
+    def operator_menu_enum(self, operator, property, text="", text_ctxt="", translate=True, icon='NONE'):
         """operator_menu_enum
         
         :param operator: Identifier of the operator
@@ -33097,7 +33097,7 @@ class UILayout(bpy_struct):
         :type icon: str
         """
 
-    def label(self, text=”“, text_ctxt=”“, translate=True, icon=’NONE’, icon_value=0):
+    def label(self, text="", text_ctxt="", translate=True, icon='NONE', icon_value=0):
         """Item. Displays text and/or icon in the layout
         
         :param text: Override automatic text of the item
@@ -33117,7 +33117,7 @@ class UILayout(bpy_struct):
         :type icon_value: int
         """
 
-    def menu(self, menu, text=”“, text_ctxt=”“, translate=True, icon=’NONE’, icon_value=0):
+    def menu(self, menu, text="", text_ctxt="", translate=True, icon='NONE', icon_value=0):
         """menu
         
         :param menu: Identifier of the menu
@@ -33157,7 +33157,7 @@ class UILayout(bpy_struct):
     def template_header(self):
         """Inserts common Space header UI (editor type selector)"""
 
-    def template_ID(self, data, property, new=”“, open=”“, unlink=”“):
+    def template_ID(self, data, property, new="", open="", unlink=""):
         """template_ID
         
         :param data: Data from which to take property
@@ -33177,7 +33177,7 @@ class UILayout(bpy_struct):
         :type unlink: str
         """
 
-    def template_ID_preview(self, data, property, new=”“, open=”“, unlink=”“, rows=0, cols=0):
+    def template_ID_preview(self, data, property, new="", open="", unlink="", rows=0, cols=0):
         """template_ID_preview
         
         :param data: Data from which to take property
@@ -33203,7 +33203,7 @@ class UILayout(bpy_struct):
         :type cols: int
         """
 
-    def template_any_ID(self, data, property, type_property, text=”“, text_ctxt=”“, translate=True):
+    def template_any_ID(self, data, property, type_property, text="", text_ctxt="", translate=True):
         """template_any_ID
         
         :param data: Data from which to take property
@@ -33226,7 +33226,7 @@ class UILayout(bpy_struct):
         :type translate: bool
         """
 
-    def template_path_builder(self, data, property, root, text=”“, text_ctxt=”“, translate=True):
+    def template_path_builder(self, data, property, root, text="", text_ctxt="", translate=True):
         """template_path_builder
         
         :param data: Data from which to take property
@@ -33271,7 +33271,7 @@ class UILayout(bpy_struct):
         :rtype: UILayout
         """
 
-    def template_preview(self, id, show_buttons=True, parent=None, slot=None, preview_id=”“):
+    def template_preview(self, id, show_buttons=True, parent=None, slot=None, preview_id=""):
         """Item. A preview window for materials, textures, lamps or worlds
         
         :param id: ID data-block
@@ -33291,7 +33291,7 @@ class UILayout(bpy_struct):
         :type preview_id: str
         """
 
-    def template_curve_mapping(self, data, property, type=’NONE’, levels=False, brush=False, use_negative_slope=False):
+    def template_curve_mapping(self, data, property, type='NONE', levels=False, brush=False, use_negative_slope=False):
         """Item. A curve mapping widget used for e.g falloff curves for lamps
         
         :param data: Data from which to take property
@@ -33519,7 +33519,7 @@ class UILayout(bpy_struct):
         :type property: str
         """
 
-    def template_list(self, listtype_name, list_id=”“, dataptr, propname, active_dataptr, active_propname, item_dyntip_propname=”“, rows=5, maxrows=5, type=’DEFAULT’, columns=9):
+    def template_list(self, listtype_name, list_id, dataptr, propname, active_dataptr, active_propname, item_dyntip_propname="", rows=5, maxrows=5, type='DEFAULT', columns=9):
         """Item. A list widget to display data, e.g. vertexgroups.
         
         :param listtype_name: Identifier of the list type to use
@@ -33587,7 +33587,7 @@ class UILayout(bpy_struct):
     def template_keymap_item_properties(self, item):
         """template_keymap_item_properties"""
 
-    def template_component_menu(self, data, property, name=”“):
+    def template_component_menu(self, data, property, name=""):
         """Item. Display expanded property in a popup menu
         
         :param data: Data from which to take property
@@ -33829,7 +33829,7 @@ class UVTextures(bpy_struct):
     :type: int
     """
 
-    def new(self, name=”UVMap”):
+    def new(self, name="UVMap"):
         """Add a UV map layer to Mesh
         
         :param name: UV map name
@@ -35510,7 +35510,7 @@ class VertexColors(bpy_struct):
     :type: int
     """
 
-    def new(self, name=”Col”):
+    def new(self, name="Col"):
         """Add a vertex color layer to Mesh
         
         :param name: Vertex color name
@@ -35525,7 +35525,7 @@ class VertexColors(bpy_struct):
 class VertexFloatProperties(bpy_struct):
     """Collection of float properties"""
 
-    def new(self, name=”Float Prop”):
+    def new(self, name="Float Prop"):
         """Add a float property layer to Mesh
         
         :param name: Float property name
@@ -35632,7 +35632,7 @@ class VertexGroups(bpy_struct):
     :type: int
     """
 
-    def new(self, name=”Group”):
+    def new(self, name="Group"):
         """Add vertex group to object
         
         :param name: Vertex group name
@@ -35658,7 +35658,7 @@ class VertexGroups(bpy_struct):
 class VertexIntProperties(bpy_struct):
     """Collection of int properties"""
 
-    def new(self, name=”Int Prop”):
+    def new(self, name="Int Prop"):
         """Add a integer property layer to Mesh
         
         :param name: Int property name
@@ -35673,7 +35673,7 @@ class VertexIntProperties(bpy_struct):
 class VertexStringProperties(bpy_struct):
     """Collection of string properties"""
 
-    def new(self, name=”String Prop”):
+    def new(self, name="String Prop"):
         """Add a string property layer to Mesh
         
         :param name: String property name
@@ -43031,7 +43031,7 @@ class GPENCIL_PIE_sculpt(Menu):
                                     - preset_operator_defaults (dict of keyword args)
         """
 
-    def path_menu(self, searchpaths, operator, *, props_default=None, prop_filepath=’filepath’, filter_ext=None, filter_path=None, display_name=None):
+    def path_menu(self, searchpaths, operator, *, props_default=None, prop_filepath='filepath', filter_ext=None, filter_path=None, display_name=None):
         """Populate a menu from a list of paths.
         
         :param searchpaths: Paths to scan.
@@ -43066,7 +43066,7 @@ class GPENCIL_PIE_settings_palette(Menu):
                                     - preset_operator_defaults (dict of keyword args)
         """
 
-    def path_menu(self, searchpaths, operator, *, props_default=None, prop_filepath=’filepath’, filter_ext=None, filter_path=None, display_name=None):
+    def path_menu(self, searchpaths, operator, *, props_default=None, prop_filepath='filepath', filter_ext=None, filter_path=None, display_name=None):
         """Populate a menu from a list of paths.
         
         :param searchpaths: Paths to scan.
@@ -43101,7 +43101,7 @@ class GPENCIL_PIE_tool_palette(Menu):
                                     - preset_operator_defaults (dict of keyword args)
         """
 
-    def path_menu(self, searchpaths, operator, *, props_default=None, prop_filepath=’filepath’, filter_ext=None, filter_path=None, display_name=None):
+    def path_menu(self, searchpaths, operator, *, props_default=None, prop_filepath='filepath', filter_ext=None, filter_path=None, display_name=None):
         """Populate a menu from a list of paths.
         
         :param searchpaths: Paths to scan.
@@ -43136,7 +43136,7 @@ class GPENCIL_PIE_tools_more(Menu):
                                     - preset_operator_defaults (dict of keyword args)
         """
 
-    def path_menu(self, searchpaths, operator, *, props_default=None, prop_filepath=’filepath’, filter_ext=None, filter_path=None, display_name=None):
+    def path_menu(self, searchpaths, operator, *, props_default=None, prop_filepath='filepath', filter_ext=None, filter_path=None, display_name=None):
         """Populate a menu from a list of paths.
         
         :param searchpaths: Paths to scan.
@@ -43417,19 +43417,19 @@ class IMAGE_UV_sculpt(Panel):
     def paint_settings(self, context):
         """"""
 
-    def prop_unified_color(self, parent, context, brush, prop_name, text=”):
+    def prop_unified_color(self, parent, context, brush, prop_name, text=""):
         """"""
 
     def prop_unified_color_picker(self, parent, context, brush, prop_name, value_slider=True):
         """"""
 
-    def prop_unified_size(self, parent, context, brush, prop_name, icon=’NONE’, text=”, slider=False):
+    def prop_unified_size(self, parent, context, brush, prop_name, icon='NONE', text="", slider=False):
         """"""
 
-    def prop_unified_strength(self, parent, context, brush, prop_name, icon=’NONE’, text=”, slider=False):
+    def prop_unified_strength(self, parent, context, brush, prop_name, icon='NONE', text="", slider=False):
         """"""
 
-    def prop_unified_weight(self, parent, context, brush, prop_name, icon=’NONE’, text=”, slider=False):
+    def prop_unified_weight(self, parent, context, brush, prop_name, icon='NONE', text="", slider=False):
         """"""
 
     def unified_paint_settings(self, parent, context):
@@ -43814,7 +43814,7 @@ class Image(ID):
     def save(self):
         """Save image to its source path"""
 
-    def pack(self, as_png=False, data=”“, data_len=0):
+    def pack(self, as_png=False, data="", data_len=0):
         """Pack an image as embedded data into the .blend file
         
         :param as_png: as_png, Pack the image as PNG (needed for generated/dirty images)
@@ -43828,7 +43828,7 @@ class Image(ID):
         :type data_len: int
         """
 
-    def unpack(self, method=’USE_LOCAL’):
+    def unpack(self, method='USE_LOCAL'):
         """Save an image packed in the .blend file to disk
         
         :param method: method, How to unpack
@@ -48032,7 +48032,7 @@ class Mesh(ID):
         :type free_loop_normals: bool
         """
 
-    def calc_tangents(self, uvmap=”“):
+    def calc_tangents(self, uvmap=""):
         """Compute tangents and bitangent signs, to be used together with the split normals to get a complete tangent space for normal mapping (split normals are also computed if not yet present)
         
         :param uvmap: Name of the UV map to use for tangent space computation
@@ -50423,7 +50423,7 @@ class Object(ID):
                                     (readonly)
     """
 
-    def convert_space(self, pose_bone=None, matrix=(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0), from_space=’WORLD’, to_space=’WORLD’):
+    def convert_space(self, pose_bone=None, matrix=(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0), from_space='WORLD', to_space='WORLD'):
         """Convert (transform) the given matrix from one space to another
         
         :param pose_bone: Bone to use to define spaces (may be None, in which case only the two ‘WORLD’ and ‘LOCAL’ spaces are usable)
@@ -50510,7 +50510,7 @@ class Object(ID):
         :rtype: Mesh
         """
 
-    def dupli_list_create(self, scene, settings=’VIEWPORT’):
+    def dupli_list_create(self, scene, settings='VIEWPORT'):
         """Create a list of dupli objects for this object, needs to be freed manually with free_dupli_list to restore the objects real matrix and layers
         
         :param scene: Scene within which to evaluate duplis
@@ -50535,7 +50535,7 @@ class Object(ID):
         :rtype: Object
         """
 
-    def shape_key_add(self, name=”Key”, from_mix=True):
+    def shape_key_add(self, name="Key", from_mix=True):
         """Add shape key to this object
         
         :param name: Unique name for the new keyblock
@@ -55177,7 +55177,7 @@ class Sound(ID):
     def pack(self):
         """Pack the sound into the current blend file"""
 
-    def unpack(self, method=’USE_LOCAL’):
+    def unpack(self, method='USE_LOCAL'):
         """Unpack the sound to the samples filename
         
         :param method: method, How to unpack
@@ -59138,7 +59138,7 @@ class TriangulateModifier(Modifier):
 class UI_UL_list(UIList):
     """"""
 
-    def filter_items_by_name(self, pattern, bitflag, items, propname=’name’, flags=None, reverse=False):
+    def filter_items_by_name(self, pattern, bitflag, items, propname='name', flags=None, reverse=False):
         """Set FILTER_ITEM for items which name matches filter_name one (case-insensitive).
                                     pattern is the filtering pattern.
                                     propname is the name of the string property to use for filtering.
@@ -59305,7 +59305,7 @@ class VectorFont(ID):
     def pack(self):
         """Pack the font into the current blend file"""
 
-    def unpack(self, method=’USE_LOCAL’):
+    def unpack(self, method='USE_LOCAL'):
         """Unpack the font to the samples filename
         
         :param method: method, How to unpack
@@ -60246,7 +60246,7 @@ class WindowManager(ID):
         :rtype: enum set in {‘RUNNING_MODAL’, ‘CANCELLED’, ‘FINISHED’, ‘PASS_THROUGH’, ‘INTERFACE’}
         """
 
-    def pupmenu_begin__internal(self, title, icon=’NONE’):
+    def pupmenu_begin__internal(self, title, icon='NONE'):
         """pupmenu_begin__internal
         
         :param icon: icon
@@ -60259,7 +60259,7 @@ class WindowManager(ID):
     def pupmenu_end__internal(self, menu=None):
         """pupmenu_end__internal"""
 
-    def piemenu_begin__internal(self, title, icon=’NONE’, event=None):
+    def piemenu_begin__internal(self, title, icon='NONE', event=None):
         """piemenu_begin__internal
         
         :param icon: icon
@@ -60272,12 +60272,12 @@ class WindowManager(ID):
     def piemenu_end__internal(self, menu=None):
         """piemenu_end__internal"""
 
-    def popup_menu(self, draw_func, title=”, icon=’NONE’):
+    def popup_menu(self, draw_func, title="", icon='NONE'):
         """Popup menus can be useful for creating menus without having to register menu classes.
         Note that they will not block the scripts execution, so the caller can’t wait for user input.
         """
 
-    def popup_menu_pie(self, event, draw_func, title=”, icon=’NONE’):
+    def popup_menu_pie(self, event, draw_func, title="", icon='NONE'):
         """"""
 
 
@@ -75295,7 +75295,7 @@ class ShaderNodeTexPointDensity(ShaderNode):
         :rtype: NodeInternalSocketTemplate
         """
 
-    def cache_point_density(self, scene=None, settings=’RENDER’):
+    def cache_point_density(self, scene=None, settings='RENDER'):
         """Cache point density data for later calculation
         
         :param settings: Calculate density for rendering
@@ -75305,7 +75305,7 @@ class ShaderNodeTexPointDensity(ShaderNode):
         :type settings: str
         """
 
-    def calc_point_density(self, scene=None, settings=’RENDER’):
+    def calc_point_density(self, scene=None, settings='RENDER'):
         """Calculate point density
         
         :param settings: Calculate density for rendering
@@ -75318,7 +75318,7 @@ class ShaderNodeTexPointDensity(ShaderNode):
         :rtype: collections.Sequence[float]
         """
 
-    def calc_point_density_minmax(self, scene=None, settings=’RENDER’):
+    def calc_point_density_minmax(self, scene=None, settings='RENDER'):
         """Calculate point density
         
         :param settings: Calculate density for rendering

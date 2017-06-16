@@ -17,7 +17,7 @@ def basename(path):
     """
 
 
-def clean_name(name, replace=’_’):
+def clean_name(name, replace='_'):
     """Returns a name with characters replaced that
                         may cause problems under various circumstances,
                         such as writing to a file.

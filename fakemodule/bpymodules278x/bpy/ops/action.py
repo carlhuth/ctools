@@ -97,7 +97,7 @@ def duplicate_move(*args, ACTION_OT_duplicate=None, TRANSFORM_OT_transform=None)
     return {'FINISHED'}
 
 
-def extrapolation_type(*args, type=’CONSTANT’):
+def extrapolation_type(*args, type='CONSTANT'):
     """Set extrapolation mode for selected F-Curves
     
     :param args: (override_context, execution_context, undo)
@@ -130,7 +130,7 @@ def frame_jump(*args):
     return {'FINISHED'}
 
 
-def handle_type(*args, type=’FREE’):
+def handle_type(*args, type='FREE'):
     """Set type of handle for selected keyframes
     
     :param args: (override_context, execution_context, undo)
@@ -151,7 +151,7 @@ def handle_type(*args, type=’FREE’):
     return {'FINISHED'}
 
 
-def interpolation_type(*args, type=’CONSTANT’):
+def interpolation_type(*args, type='CONSTANT'):
     """Set interpolation mode for the F-Curve segments starting from the selected keyframes
     
     :param args: (override_context, execution_context, undo)
@@ -180,7 +180,7 @@ def interpolation_type(*args, type=’CONSTANT’):
     return {'FINISHED'}
 
 
-def keyframe_insert(*args, type=’ALL’):
+def keyframe_insert(*args, type='ALL'):
     """Insert keyframes for the specified channels
     
     :param args: (override_context, execution_context, undo)
@@ -196,7 +196,7 @@ def keyframe_insert(*args, type=’ALL’):
     return {'FINISHED'}
 
 
-def keyframe_type(*args, type=’KEYFRAME’):
+def keyframe_type(*args, type='KEYFRAME'):
     """Set type of keyframe for the selected keyframes
     
     :param args: (override_context, execution_context, undo)
@@ -256,7 +256,7 @@ def markers_make_local(*args):
     return {'FINISHED'}
 
 
-def mirror(*args, type=’CFRA’):
+def mirror(*args, type='CFRA'):
     """Flip selected keyframes over the selected mirror line
     
     :param args: (override_context, execution_context, undo)
@@ -288,7 +288,7 @@ def new(*args):
     return {'FINISHED'}
 
 
-def paste(*args, offset=’START’, merge=’MIX’, flipped=False):
+def paste(*args, offset='START', merge='MIX', flipped=False):
     """Paste keyframes from copy/paste buffer for the selected channels, starting on the current frame
     
     :param args: (override_context, execution_context, undo)
@@ -445,7 +445,7 @@ def select_circle(*args, x=0, y=0, radius=1, gesture_mode=0):
     return {'FINISHED'}
 
 
-def select_column(*args, mode=’KEYS’):
+def select_column(*args, mode='KEYS'):
     """Select all keyframes on the specified frame(s)
     
     :param args: (override_context, execution_context, undo)
@@ -483,7 +483,7 @@ def select_lasso(*args, path=None, deselect=False, extend=True):
     return {'FINISHED'}
 
 
-def select_leftright(*args, mode=’CHECK’, extend=False):
+def select_leftright(*args, mode='CHECK', extend=False):
     """Select keyframes to the left or the right of the current frame
     
     :param args: (override_context, execution_context, undo)
@@ -541,7 +541,7 @@ def select_more(*args):
     return {'FINISHED'}
 
 
-def snap(*args, type=’CFRA’):
+def snap(*args, type='CFRA'):
     """Snap selected keyframes to the times specified
     
     :param args: (override_context, execution_context, undo)

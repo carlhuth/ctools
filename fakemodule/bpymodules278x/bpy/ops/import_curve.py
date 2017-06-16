@@ -1,4 +1,4 @@
-def svg(*args, filepath=”“, filter_glob=”*.svg”):
+def svg(*args, filepath="", filter_glob="*.svg"):
     """Load a SVG file
     
     :param args: (override_context, execution_context, undo)

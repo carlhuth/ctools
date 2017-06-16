@@ -1,8 +1,8 @@
-def orientation_helper_factory(name, axis_forward=’Y’, axis_up=’Z’):
+def orientation_helper_factory(name, axis_forward='Y', axis_up='Z'):
     """"""
 
 
-def axis_conversion(from_forward=’Y’, from_up=’Z’, to_forward=’Y’, to_up=’Z’):
+def axis_conversion(from_forward='Y', from_up='Z', to_forward='Y', to_up='Z'):
     """Each argument us an axis in [‘X’, ‘Y’, ‘Z’, ‘-X’, ‘-Y’, ‘-Z’]
                         where the first 2 are a source and the second 2 are the target.
     """
@@ -39,7 +39,7 @@ def unpack_face_list(list_of_tuples):
     """"""
 
 
-def path_reference(filepath, base_src, base_dst, mode=’AUTO’, copy_subdir=”, copy_set=None, library=None):
+def path_reference(filepath, base_src, base_dst, mode='AUTO', copy_subdir="", copy_set=None, library=None):
     """Return a filepath relative to a destination directory, for use with
                         exporters.
     
@@ -77,7 +77,7 @@ def path_reference_copy(copy_set, report="<built-in function print>"):
     """
 
 
-def unique_name(key, name, name_dict, name_max=-1, clean_func=None, sep=’.’):
+def unique_name(key, name, name_dict, name_max=-1, clean_func=None, sep='.'):
     """Helper function for storing unique names which may have special characters
                         stripped and restricted to a maximum length.
     

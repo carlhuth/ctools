@@ -1,4 +1,4 @@
-def cycles_integrator_preset_add(*args, name=”“, remove_active=False):
+def cycles_integrator_preset_add(*args, name="", remove_active=False):
     """Add an Integrator Preset
     
     :param args: (override_context, execution_context, undo)
@@ -17,7 +17,7 @@ def cycles_integrator_preset_add(*args, name=”“, remove_active=False):
     return {'FINISHED'}
 
 
-def cycles_sampling_preset_add(*args, name=”“, remove_active=False):
+def cycles_sampling_preset_add(*args, name="", remove_active=False):
     """Add a Sampling Preset
     
     :param args: (override_context, execution_context, undo)
@@ -74,7 +74,7 @@ def play_rendered_anim(*args):
     return {'FINISHED'}
 
 
-def preset_add(*args, name=”“, remove_active=False):
+def preset_add(*args, name="", remove_active=False):
     """Add or remove a Render Preset
     
     :param args: (override_context, execution_context, undo)
@@ -93,7 +93,7 @@ def preset_add(*args, name=”“, remove_active=False):
     return {'FINISHED'}
 
 
-def render(*args, animation=False, write_still=False, use_viewport=False, layer=”“, scene=”“):
+def render(*args, animation=False, write_still=False, use_viewport=False, layer="", scene=""):
     """Render active scene
     
     :param args: (override_context, execution_context, undo)
@@ -121,7 +121,7 @@ def render(*args, animation=False, write_still=False, use_viewport=False, layer=
     return {'FINISHED'}
 
 
-def shutter_curve_preset(*args, shape=’SMOOTH’):
+def shutter_curve_preset(*args, shape='SMOOTH'):
     """Set shutter curve
     
     :param args: (override_context, execution_context, undo)

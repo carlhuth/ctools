@@ -47,7 +47,7 @@ sys.path.append(os.path.dirname(__file__))
 import bgl_functions
 
 
-VERSION = 1.0
+VERSION = 1.1
 
 REPLACE_MOD = True
 
@@ -670,7 +670,16 @@ class CallableParser(AttributeParser):
         ls = []
         for ele in element:
             if ele.tag == 'desc_parameter':
-                ls.append(''.join(get_itertext(ele)))
+                t = ''.join(get_itertext(ele))
+                t = t.replace('’', "'")
+                t = t.replace('‘', "'")  # bpy.ops.export_scene.py
+                t = t.replace('”', '"')  # bpy.ops.cachefile.open
+                t = t.replace('“', '"')  # bpy.ops.cachefile.open
+                if t.endswith("='"):
+                    t += "'"
+                elif t.endswith('="'):  # bpy.ops.group.objects_add_active
+                    t += '"'
+                ls.append(t)
             elif ele.tag == 'desc_optional':
                 for e in ele:
                     if e.tag == 'desc_parameter':
@@ -1144,7 +1153,7 @@ class ModuleParser(list):
                 if parser.name in (
                         'build_options', 'count', 'driver_namespace', 'ffmpeg',
                         'index', 'handlers', 'ocio', 'oiio', 'sdl',
-                        'translations', 'openvdb', 'alembic'):
+                        'translations', 'opensubdiv', 'openvdb', 'alembic'):
                     continue
                 value = getattr(bpy.app, parser.name)
                 if isinstance(value, str):

@@ -1,4 +1,4 @@
-def childof_clear_inverse(*args, constraint=”“, owner=’OBJECT’):
+def childof_clear_inverse(*args, constraint="", owner='OBJECT'):
     """Clear inverse correction for ChildOf constraint
     
     :param args: (override_context, execution_context, undo)
@@ -19,7 +19,7 @@ def childof_clear_inverse(*args, constraint=”“, owner=’OBJECT’):
     return {'FINISHED'}
 
 
-def childof_set_inverse(*args, constraint=”“, owner=’OBJECT’):
+def childof_set_inverse(*args, constraint="", owner='OBJECT'):
     """Set inverse correction for ChildOf constraint
     
     :param args: (override_context, execution_context, undo)
@@ -53,7 +53,7 @@ def delete(*args):
     return {'FINISHED'}
 
 
-def followpath_path_animate(*args, constraint=”“, owner=’OBJECT’, frame_start=1, length=100):
+def followpath_path_animate(*args, constraint="", owner='OBJECT', frame_start=1, length=100):
     """Add default animation for path used by constraint if it isn’t animated already
     
     :param args: (override_context, execution_context, undo)
@@ -80,7 +80,7 @@ def followpath_path_animate(*args, constraint=”“, owner=’OBJECT’, frame_
     return {'FINISHED'}
 
 
-def limitdistance_reset(*args, constraint=”“, owner=’OBJECT’):
+def limitdistance_reset(*args, constraint="", owner='OBJECT'):
     """Reset limiting distance for Limit Distance Constraint
     
     :param args: (override_context, execution_context, undo)
@@ -101,7 +101,7 @@ def limitdistance_reset(*args, constraint=”“, owner=’OBJECT’):
     return {'FINISHED'}
 
 
-def move_down(*args, constraint=”“, owner=’OBJECT’):
+def move_down(*args, constraint="", owner='OBJECT'):
     """Move constraint down in constraint stack
     
     :param args: (override_context, execution_context, undo)
@@ -122,7 +122,7 @@ def move_down(*args, constraint=”“, owner=’OBJECT’):
     return {'FINISHED'}
 
 
-def move_up(*args, constraint=”“, owner=’OBJECT’):
+def move_up(*args, constraint="", owner='OBJECT'):
     """Move constraint up in constraint stack
     
     :param args: (override_context, execution_context, undo)
@@ -143,7 +143,7 @@ def move_up(*args, constraint=”“, owner=’OBJECT’):
     return {'FINISHED'}
 
 
-def objectsolver_clear_inverse(*args, constraint=”“, owner=’OBJECT’):
+def objectsolver_clear_inverse(*args, constraint="", owner='OBJECT'):
     """Clear inverse correction for ObjectSolver constraint
     
     :param args: (override_context, execution_context, undo)
@@ -164,7 +164,7 @@ def objectsolver_clear_inverse(*args, constraint=”“, owner=’OBJECT’):
     return {'FINISHED'}
 
 
-def objectsolver_set_inverse(*args, constraint=”“, owner=’OBJECT’):
+def objectsolver_set_inverse(*args, constraint="", owner='OBJECT'):
     """Set inverse correction for ObjectSolver constraint
     
     :param args: (override_context, execution_context, undo)
@@ -185,7 +185,7 @@ def objectsolver_set_inverse(*args, constraint=”“, owner=’OBJECT’):
     return {'FINISHED'}
 
 
-def stretchto_reset(*args, constraint=”“, owner=’OBJECT’):
+def stretchto_reset(*args, constraint="", owner='OBJECT'):
     """Reset original length of bone for Stretch To Constraint
     
     :param args: (override_context, execution_context, undo)
