@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Vertex Slide',
     'author': 'chromoly',
-    'version': (0, 1, 1),
+    'version': (0, 1, 2),
     'blender': (2, 78, 0),
     'location': 'View3D > Mouse',
     'description': '',
@@ -33,7 +33,6 @@ import bpy
 from mathutils import Vector
 import bgl
 import bmesh
-
 
 from .utils import addongroup
 
@@ -69,7 +68,6 @@ class MESH_OT_vertext_slide(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         return context.area.type == 'VIEW_3D' and context.mode == 'EDIT_MESH'
-
 
     def execute(self, context):
         threshold = 1e-6
@@ -180,6 +178,7 @@ class MESH_OT_vertext_slide(bpy.types.Operator):
                 new_coordinates[i] = imat * newco
 
         # apply
+        bm.verts.ensure_lookup_table()
         for i, vec in new_coordinates.items():
             bm.verts[i].co = vec
 
@@ -247,7 +246,6 @@ class MESH_OT_vertext_slide(bpy.types.Operator):
             context.area.tag_redraw()
 
         return retval
-
 
     def invoke(self, context=None, event=None):
         v3d = context.space_data
